@@ -1,0 +1,12 @@
+﻿C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\Controllers\PreSubscriptionController.cs
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\Controllers\SubscriptionController.cs
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\Program.cs
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\obj\Release\net10.0\SubMgmt.WebAPI.GlobalUsings.g.cs
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\obj\Release\net10.0\.NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\obj\Release\net10.0\SubMgmt.WebAPI.AssemblyInfo.cs
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\obj\Release\net10.0\SubMgmt.WebAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\nlog.config
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\appsettings.Development.json
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\appsettings.json
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\SubMgmt.WebAPI.http
+C:\Users\hhcardona\Documents\SonarQubeProjects\pw.0154.subscription-bs-management-service\src\SubMgmt.WebAPI\Properties\launchSettings.json

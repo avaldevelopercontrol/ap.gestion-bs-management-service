@@ -1,0 +1,6 @@
+@GesMgmt.WebAPI_HostAddress = http://localhost:5279
+
+GET {{GesMgmt.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

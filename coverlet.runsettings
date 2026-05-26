@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>opencover,cobertura,json</Format>
+          <Exclude>[*.UnitTests]*,[*.Tests]*,[*Test*]*,[*]*.Program,[*]*Startup*</Exclude>
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <ExcludeByFile>**/Migrations/**,**/Program.cs,**/Startup.cs,**/bin/**,**/obj/**</ExcludeByFile>
+          <Include>[SubMgmt.Application]*,[SubMgmt.Domain]*,[SubMgmt.Infraestructure]*,[SubMgmt.WebAPI]*</Include>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

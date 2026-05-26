@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/API/">
+    <Project Path="src/GesMgmt.WebAPI/GesMgmt.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="src/GesMgmt.Application/GesMgmt.Application.csproj" />
+    <Project Path="src/GesMgmt.Domain/GesMgmt.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infraestructure/">
+    <Project Path="src/GesMgmt.Infraestructure/GesMgmt.Infraestructure.csproj" />
+  </Folder>
+  <Folder Name="/Test/" />
+</Solution>

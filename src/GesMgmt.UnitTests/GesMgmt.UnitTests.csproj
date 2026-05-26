@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+	<IsTestProject>true</IsTestProject>
+	<CollectCoverage>true</CollectCoverage>
+	<CoverletOutputFormat>opencover,cobertura,json</CoverletOutputFormat>
+	<CoverletOutput>../../TestResults/</CoverletOutput>
+	<Exclude>[*.UnitTests]*,[*.Tests]*</Exclude>
+	<Include>[SubMgmt.Application]*,[SubMgmt.Domain]*,[SubMgmt.Infraestructure]*,[SubMgmt.WebAPI]*</Include>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="coverlet.collector" Version="6.0.4" />
+	<PackageReference Include="coverlet.msbuild" Version="6.0.4" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.7" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+	<PackageReference Include="MockQueryable.Moq" Version="10.0.5" />
+	<PackageReference Include="Moq" Version="4.20.72" />
+	<PackageReference Include="Moq.EntityFrameworkCore" Version="10.0.0.2" />
+	<PackageReference Include="xunit" Version="2.9.3" />
+	<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SubMgmt.Application\SubMgmt.Application.csproj" />
+    <ProjectReference Include="..\SubMgmt.Domain\SubMgmt.Domain.csproj" />
+    <ProjectReference Include="..\SubMgmt.Infraestructure\SubMgmt.Infraestructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
