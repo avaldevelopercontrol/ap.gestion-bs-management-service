@@ -2,6 +2,7 @@
 {
     public interface IUnitOfWork : IDisposable
     {
+        Iav_CabPantallaCobRepository av_CabPantallaCobs { get; }
         Iav_CarteraRepository av_Carteras { get; }
         Iav_ClienteRepository av_Clientes { get; }
         Iav_ContratoRepository av_Contratos { get; }

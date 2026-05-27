@@ -12,7 +12,7 @@ namespace GesMgmt.Infraestructure.Configurations
         public void Configure(EntityTypeBuilder<av_CabPantallaCob> builder)
         {
             builder.ToTable("av_CabPantallaCob", "dbo");
-            builder.HasKey(car => car.nId_CabPantalla);
+            builder.HasKey(cpc => cpc.nId_CabPantalla);
         }
     }
 }

@@ -29,6 +29,38 @@
         }
     }
 
+    public class ResultListCabeceraDto<T>
+    {
+        public string Code { get; }
+        public string Message { get; }
+        public string MessageUser { get; }
+        public int StatusCode { get; }
+        public T Response { get; set; }
+
+        private ResultListCabeceraDto(T response, string code, string message, string messageUser, int statusCode)
+        {
+            Response = response;
+            Code = code;
+            Message = message;
+            MessageUser = messageUser;
+            StatusCode = statusCode;
+        }
+
+        public ResultListCabeceraDto()
+        {
+        }
+
+        public static ResultListCabeceraDto<T> Success(T response, string code, string message, string messageUser, int statusCode)
+        {
+            return new ResultListCabeceraDto<T>(response, code, message, messageUser, statusCode);
+        }
+
+        public static ResultListCabeceraDto<T> Failure(string code, string message, string messageUser, int statusCode)
+        {
+            return new ResultListCabeceraDto<T>(default, code, message, messageUser, statusCode);
+        }
+    }
+
     public class ResultListDto<T>
     {
         public string Code { get; }

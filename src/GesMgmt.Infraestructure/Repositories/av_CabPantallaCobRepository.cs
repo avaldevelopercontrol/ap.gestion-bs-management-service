@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
@@ -22,6 +23,21 @@ namespace GesMgmt.Infraestructure.Repositories
         public async Task<IQueryable<av_CabPantallaCob>> Query()
         {
             return _dbSet.AsNoTracking();
+        }
+
+        public IQueryable<av_CabPantallaCob> GetCabeceraGestionesAsync(av_CabPantallaCob av_CabPantallaCob)
+        {
+            var query = _dbSet
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (av_CabPantallaCob.nId_Cliente > 0)
+                query = query.Where(s => s.nId_Cliente == av_CabPantallaCob.nId_Cliente);
+
+            if (av_CabPantallaCob.nId_Contrato > 0)
+                query = query.Where(s => s.nId_Contrato == av_CabPantallaCob.nId_Contrato);
+
+            return query.OrderBy(s => s.nOrden);
         }
 
     }

@@ -14,10 +14,6 @@
             private ValidationMessageDto _oValMsgDto;
             private GetGestionRequestDto _requestDto;
 
-            public int nId_Cliente { get; set; }
-            public int nId_Cartera { get; set; }
-            public int nId_Persdeudor { get; set; }
-
             public GetGestionRequestValidator(
                 IUnitOfWork unitOfWork, 
                 IValidationMessageService validationMessageService, 
@@ -31,7 +27,6 @@
 
             public async Task<ResultListDto<IEnumerable<GetGestionResponseDto>>> Validate()
             {
-
                 #region Default
                 var validationResultDefault = await ValidateDefault();
 
@@ -40,9 +35,7 @@
                     return validationResultDefault;
                 }
                 #endregion
-
                 return ResultListDto< IEnumerable<GetGestionResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-
             }
 
             private async Task<ResultListDto<IEnumerable<GetGestionResponseDto>>> ValidateDefault()

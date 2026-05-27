@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using GesMgmt.Application.DTOs;
+﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
-using GesMgmt.Application.Utils;
 using GesMgmt.Application.Validators;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GesMgmt.Application.Services
 {
@@ -24,6 +20,7 @@ namespace GesMgmt.Application.Services
             _validationMessageService = validationMessageService;
         }
 
+        #region "Listado de Gestiones"
         public async Task<ResultListDto<IEnumerable<GetGestionResponseDto>>> GetGestionesAsync(GetGestionRequestDto gestionDto)
         {
             GetGestionRequestValidator validator = new GetGestionRequestValidator(_unitOfWork, _validationMessageService, gestionDto);
@@ -68,6 +65,8 @@ namespace GesMgmt.Application.Services
 
                 data = new List<GetGestionResponseDto>(entities.Count);
 
+                int conta_nro = 0;
+
                 foreach (var s in entities)
                 {
                     // Llamamos al repositorio async para obtener la última operación fuera de la proyección EF
@@ -77,7 +76,7 @@ namespace GesMgmt.Application.Services
                     {
                         //PK
                         nId_DocxCobrar = s.nId_DocxCobrar,
-                        Mejor_Status = s.mej_status,
+                        mejorStatus = s.mej_status,
                         nId_Moneda = s.av_Moneda?.nId_Moneda ?? 0,
                         bEstado = s.bEstado,
                         nZona = s.av_DocxCobrarParam?.cDocParamZona,
@@ -85,23 +84,24 @@ namespace GesMgmt.Application.Services
                         nId_Estrategia = s.nid_estrategia,
                         nId_Cartera = s.nId_Cartera,
 
-                        Nro = 0,
-                        Numero_Documento = s.cDoc_Numero,
-                        Estado = s.bEstado == 1 ? "ACTIVO" : "INACTIVO",
-                        Fecha_Vencimiento = s.dDoc_FecVenc.HasValue ? FormatearFecha(s.dDoc_FecVenc) : null,
-                        Sigla_Moneda = s.av_Moneda?.cSigla_Moneda,
-                        Importe_Total = s.nDoc_ImpTotal,
-                        Importe_Saldo = s.nDoc_ImpSaldo,
-                        Dias_Atrazo = s.nDoc_DiasAtrazo ?? 0,
-                        Servicio = s.av_DocxCobrarParam?.cDocParam14,
-                        Comentario = s.cDoc_Coment,
-                        Codigo_Cliente = s.cPers_CodCliente,
-                        Estado_Documento = s.av_DocxCobrarParam?.cDocParam90,
-                        Fecha_Estado_Documento = s.av_DocxCobrarParam?.cDocParam53,
+                        nro = conta_nro + 1,
+                        numeroDocumento = s.cDoc_Numero,
+                        estado = s.bEstado == 1 ? "ACTIVO" : "INACTIVO",
+                        fechaVencimiento = s.dDoc_FecVenc.HasValue ? FormatearFecha(s.dDoc_FecVenc) : null,
+                        siglaMoneda = s.av_Moneda?.cSigla_Moneda,
+                        importeTotal = s.nDoc_ImpTotal,
+                        importeSaldo = s.nDoc_ImpSaldo,
+                        diasAtrazo = s.nDoc_DiasAtrazo ?? 0,
+                        servicio = s.av_DocxCobrarParam?.cDocParam14,
+                        comentario = s.cDoc_Coment,
+                        codigoCliente = s.cPers_CodCliente,
+                        estadoDocumento = s.av_DocxCobrarParam?.cDocParam90,
+                        fechaEstadoDocumento = s.av_DocxCobrarParam?.cDocParam53,
                         // Asignamos una representación string de la operación obtenida (evitar conversión directa de Task<>)
-                        Status_Documento = ObtenerTipoGestion(lastOpe?.nId_OpeCodOut.ToString()),
-                        Fecha_StatusDocumento = s.av_DocxCobrarParam?.cDocParam91,
-                        Gestor_Call = s.av_Usuario != null ? s.av_Usuario.nId_Usuario + " - " + s.av_Usuario.cUsr_Login : null
+                        statusDocumento = ObtenerTipoGestion(lastOpe?.nId_OpeCodOut.ToString()),
+                        fechaStatusDocumento = s.av_DocxCobrarParam?.cDocParam91,
+                        gestorCall = s.av_Usuario != null ? s.av_Usuario.nId_Usuario + " - " + s.av_Usuario.cUsr_Login : null,
+                        bajaProvabilidad = s.av_DocxCobrarParam?.cDocParam85
                     });
                 }
             }
@@ -116,7 +116,7 @@ namespace GesMgmt.Application.Services
             return response;
         }
 
-        public static string FormatearFecha(DateTime? fecha)
+        private static string FormatearFecha(DateTime? fecha)
         {
             return fecha.Value.ToString("dd MMM yyyy",
                 System.Globalization.CultureInfo.InvariantCulture);
@@ -141,6 +141,49 @@ namespace GesMgmt.Application.Services
 
             return "";
         }
+        #endregion
 
+        #region "Cabecera de Gestiones"
+        public async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> GetCabeceraGestionesAsync(GetGestionCabeceraRequestDto gestionCabeceraDto)
+        {
+            GetGestionCabeceraRequestValidator validator = new GetGestionCabeceraRequestValidator(_unitOfWork, _validationMessageService, gestionCabeceraDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            var filter = new av_CabPantallaCob
+            {
+                nId_Cliente = gestionCabeceraDto.nId_Cliente,
+                nId_Contrato = gestionCabeceraDto.nId_Contrato
+            };
+
+            var query = _unitOfWork.av_CabPantallaCobs.GetCabeceraGestionesAsync(filter);
+
+            var data = await query
+                .Select(s => new GetGestionCabeceraResponseDto
+                {
+                    idCabeceraPantalla = s.nId_CabPantalla,
+                    tituloCabeceraPantalla = s.cTitulo,
+                    tipoDato = s.cTipoDato,
+                    operaTotal = s.bOperaTotal,
+                    compromiso = s.bCompromisoClick,
+                    orden = s.nOrden,
+                    pantalla = s.nPantalla,
+                    alineacionHtml = s.cAlignHtml,
+                    nId_Contrato = s.nId_Contrato,
+                    nId_Cliente = s.nId_Cliente
+                })
+                .ToListAsync();
+
+            var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+            return response;
+        }
+        #endregion
     }
 }

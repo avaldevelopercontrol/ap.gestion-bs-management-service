@@ -6,5 +6,6 @@ namespace GesMgmt.Application.Interfaces
     public interface IGestionService
     {
         Task<ResultListDto<IEnumerable<GetGestionResponseDto>>> GetGestionesAsync(GetGestionRequestDto suscriptionDto);
+        Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> GetCabeceraGestionesAsync(GetGestionCabeceraRequestDto gestionCabeceraDto);
     }
 }

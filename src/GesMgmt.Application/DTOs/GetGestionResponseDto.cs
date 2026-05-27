@@ -5,7 +5,7 @@ namespace GesMgmt.Application.DTOs
     public class GetGestionResponseDto
     {
         public int nId_DocxCobrar { get; set; } //1 Cabecera principal
-        public int? Mejor_Status { get; set; } //2 Cabecera principal
+        public int? mejorStatus { get; set; } //2 Cabecera principal
         public int? nId_Moneda { get; set; } //2 Cabecera principal
         public int? bEstado { get; set; } //3 Cabecera principal
         public string? nZona { get; set; } //3 Cabecera principal
@@ -15,24 +15,24 @@ namespace GesMgmt.Application.DTOs
 
         //-- Campos adicionales para la gestión
         //-- 95 CLARO
-        public int Nro { get; set; }
-        public string? Numero_Documento { get; set; }
-        public string? Estado { get; set; }
-        public string? Fecha_Vencimiento { get; set; }
-        public string? Sigla_Moneda { get; set; }
-        public decimal? Importe_Total { get; set; }
-        public decimal? Importe_Saldo { get; set; }
-        public decimal Deuda_Vencida { get; set; }
-        public int Dias_Atrazo { get; set; }
-        public string? Servicio { get; set; }
-        public string? Comentario { get; set; }
-        public string? Codigo_Cliente { get; set; }
-        public string? Estado_Documento { get; set; }
-        public string? Fecha_Estado_Documento { get; set; }
-        public string? Estado_Pago { get; set; }
-        public string? Status_Documento { get; set; }
-        public string? Fecha_StatusDocumento { get; set; }
-        public string? Gestor_Call { get; set; }
-        public string? Baja_Provabilidad { get; set; }
+        public int nro { get; set; }
+        public string? numeroDocumento { get; set; }
+        public string? estado { get; set; }
+        public string? fechaVencimiento { get; set; }
+        public string? siglaMoneda { get; set; }
+        public decimal? importeTotal { get; set; }
+        public decimal? importeSaldo { get; set; }
+        public decimal deudaVencida { get; set; }
+        public int diasAtrazo { get; set; }
+        public string? servicio { get; set; }
+        public string? comentario { get; set; }
+        public string? codigoCliente { get; set; }
+        public string? estadoDocumento { get; set; }
+        public string? fechaEstadoDocumento { get; set; }
+        public string? estadoPago { get; set; }
+        public string? statusDocumento { get; set; }
+        public string? fechaStatusDocumento { get; set; }
+        public string? gestorCall { get; set; }
+        public string? bajaProvabilidad { get; set; }
     }
 }

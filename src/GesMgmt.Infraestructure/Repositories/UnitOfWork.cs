@@ -46,6 +46,8 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
 
+        //public Iav_CabPantallaCobRepository av_av_CabPantallaCobs => throw new NotImplementedException();
+
         #endregion
 
         #region Methods
