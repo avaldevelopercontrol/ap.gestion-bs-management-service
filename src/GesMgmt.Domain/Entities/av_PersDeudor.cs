@@ -31,6 +31,7 @@ namespace GesMgmt.Domain.Entities
         public string? cNomCompleto { get; set; }
         public DateTime? dFecNacimiento { get; set; }
         public int? nGra_Instruccion { get; set; }
+
         public string? codigo { get; set; }
         public int? nid_cliente { get; set; }
         public string? cCorreo { get; set; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GesMgmt.Domain.Entities
 {
-    public class av_DocxCobrar //: BaseEntity
+    public class av_DocxCobrar
     {
         public int nId_DocxCobrar { get; set; }
 
@@ -18,7 +18,7 @@ namespace GesMgmt.Domain.Entities
         public virtual av_PersDeudor av_PersDeudor { get; set; }
         public virtual av_Moneda av_Moneda { get; set; }
         public virtual av_Usuario av_Usuario { get; set; }
-        public virtual av_DocxCobrarParam av_DocxCobrarParam { get; set; }
+        //public virtual av_DocxCobrarParam av_DocxCobrarParam { get; set; }
 
         //public DateTime? dDoc_FecIngreso { get; set; }
         //public int? nId_DocTipo { get; set; }

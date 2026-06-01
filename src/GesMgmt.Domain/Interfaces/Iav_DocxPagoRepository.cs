@@ -5,8 +5,8 @@ using System.Text;
 
 namespace GesMgmt.Domain.Interfaces
 {
-    public interface Iav_UsuarioRepository
+    public interface Iav_DocxPagoRepository
     {
-        Task<IQueryable<av_Usuario>> Query();
+        Task<IQueryable<av_DocxPago>> Query();
     }
 }

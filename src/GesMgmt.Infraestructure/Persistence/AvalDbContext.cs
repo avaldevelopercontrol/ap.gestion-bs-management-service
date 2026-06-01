@@ -7,6 +7,7 @@ namespace GesMgmt.Infraestructure.Persistence
 {
     public class AvalDbContext: DbContext
     {
+        public DbSet<av_Agenda> av_Agendas { get; set; }
         public DbSet<av_CabPantallaCob> av_CabPantallaCobs { get; set; }
         public DbSet<av_Cartera> av_Carteras { get; set; }
         public DbSet<av_Cliente> av_Clientes { get; set; }
@@ -14,6 +15,9 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_DocxCobrar> av_DocxCobrars { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
         public DbSet<av_DocxCobrarParam> av_DocxCobrarParams { get; set; }
+        public DbSet<av_DocxPago> av_DocxPagos { get; set; }
+        public DbSet<av_EstadoAsteriskAval> av_EstadoAsteriskAvals { get; set; }
+        public DbSet<av_MaeTabla> av_MaeTablas { get; set; }
         public DbSet<av_Moneda> av_Monedas { get; set; }
         public DbSet<av_PersDeudor> av_PersDeudors { get; set; }
         public DbSet<av_Usuario> av_Usuarios { get; set; }
@@ -27,6 +31,7 @@ namespace GesMgmt.Infraestructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new av_AgendaConfiguration());
             modelBuilder.ApplyConfiguration(new av_CabPantallaCobConfiguration());
             modelBuilder.ApplyConfiguration(new av_CarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ClienteConfiguration());
@@ -34,6 +39,9 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_DocxCobrarConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarParamConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DocxPagoConfiguration());
+            modelBuilder.ApplyConfiguration(new av_EstadoAsteriskAvalConfiguration());
+            modelBuilder.ApplyConfiguration(new av_MaeTablaConfiguration());
             modelBuilder.ApplyConfiguration(new av_MonedaConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorConfiguration());
             modelBuilder.ApplyConfiguration(new av_UsuarioConfiguration());

@@ -6,7 +6,7 @@ namespace GesMgmt.Application.DTOs
     {
         public int nId_DocxCobrar { get; set; } //1 Cabecera principal
         public int? mejorStatus { get; set; } //2 Cabecera principal
-        public int? nId_Moneda { get; set; } //2 Cabecera principal
+        public int nId_Moneda { get; set; } //2 Cabecera principal
         public int? bEstado { get; set; } //3 Cabecera principal
         public string? nZona { get; set; } //3 Cabecera principal
         public bool bSelected { get; set; } //4 Cabecera principal
@@ -22,7 +22,7 @@ namespace GesMgmt.Application.DTOs
         public string? siglaMoneda { get; set; }
         public decimal? importeTotal { get; set; }
         public decimal? importeSaldo { get; set; }
-        public decimal deudaVencida { get; set; }
+        //public decimal deudaVencida { get; set; }
         public int diasAtrazo { get; set; }
         public string? servicio { get; set; }
         public string? comentario { get; set; }

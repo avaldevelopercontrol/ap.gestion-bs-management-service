@@ -7,12 +7,12 @@ using System.Text;
 
 namespace GesMgmt.Infraestructure.Configurations
 {
-    public class av_CarteraConfiguration : IEntityTypeConfiguration<av_Cartera>
+    public class av_DocxPagoConfiguration : IEntityTypeConfiguration<av_DocxPago>
     {
-        public void Configure(EntityTypeBuilder<av_Cartera> builder)
+        public void Configure(EntityTypeBuilder<av_DocxPago> builder)
         {
-            builder.ToTable("av_Cartera","dbo");
-            builder.HasKey(car => car.nId_Cartera);
+            builder.ToTable("av_DocxPago", "dbo");
+            builder.HasKey(cpc => cpc.nId_DocxPago);
         }
     }
 }

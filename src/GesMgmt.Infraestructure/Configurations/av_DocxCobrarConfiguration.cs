@@ -34,18 +34,6 @@ namespace GesMgmt.Infraestructure.Configurations
                 .WithMany()
                 .HasForeignKey(dc => dc.nId_Usuario);
 
-            builder.HasOne(dc => dc.av_DocxCobrarParam)
-                .WithMany()
-                .HasForeignKey(dc => dc.nId_Usuario);
-
-            //builder.HasMany(dc => dc.av_DocxCobrarOpes)
-            //    .WithOne(dc => dc.av_DocxCobrar)
-            //    .HasForeignKey(dc => dc.av_DocxCobrar);
-
-            //builder.HasOne(usu => usu.av_Usuario)
-            //    .WithMany()
-            //    .HasForeignKey(usu => usu.nId_OpeTelef);
-
             //builder.Property(dc => dc.nImpTotal)
             //    .HasPrecision(18, 2);
 

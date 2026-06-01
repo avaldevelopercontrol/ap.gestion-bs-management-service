@@ -20,6 +20,11 @@ namespace GesMgmt.Infraestructure.Repositories
             _db_av_DocxCobrarOpe = context.Set<av_DocxCobrarOpe>();
         }
 
+        public async Task<IQueryable<av_DocxCobrar>> Query()
+        {
+            return _db_av_DocxCobrar.AsNoTracking();
+        }
+
         public IQueryable<av_DocxCobrar> GetGestionesAsync(av_DocxCobrar av_DocxCobrar)
         {
 
@@ -28,7 +33,6 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Include(d => d.av_PersDeudor)
                 .Include(m => m.av_Moneda)
                 .Include(u => u.av_Usuario)
-                .Include(p => p.av_DocxCobrarParam)
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -42,12 +46,6 @@ namespace GesMgmt.Infraestructure.Repositories
                 query = query.Where(s => s.nId_PersDeudor == av_DocxCobrar.nId_PersDeudor);
 
             return query;
-        }
-
-        public async Task<IQueryable<av_DocxCobrar>> Query()
-        {
-            return _db_av_DocxCobrar.AsNoTracking();
-
         }
 
     }

@@ -16,15 +16,13 @@
         public const string LANGUAGE_ESP = "ESP";
         public const string LANGUAGE_ENG = "ENG";
 
-        public const string ORIGIN_API = "API";
-        public const string ORIGIN_PANEL = "PANEL";
-        public const string ORIGIN_MASIVO = "MASIVO";
-
         public const string SUCCESS_CODE = "00";
         public const string SUCCESS_MESSAGE = "OK";
+        public const string ERROR_MESSAGE = "ERROR";
 
         public const int BAD_REQUEST_CODE = 400;
         public const int OK_REQUEST_CODE = 200;
+        public const int ERROR_REQUEST_CODE = 500;
 
         public const string DOCUMENT_TYPE_DNI = "DNI";
         public const string DOCUMENT_TYPE_CE = "CE";
@@ -46,10 +44,6 @@
 
         public const int CHARGE_TYPE_FIXED = 1;
         public const int CHARGE_TYPE_VARIABLE = 2;
-
-        // MovimientoStatus
-        public const int MOV_STAT_SIN_PROCESAR = 1;
-        public const int MOV_STAT_CANCEL = 6;
 
         public const string STAT_CONFIRM_APPROVE = "A"; 
         public const string STAT_CONFIRM_DENY = "D";

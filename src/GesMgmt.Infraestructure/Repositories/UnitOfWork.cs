@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Caching.Memory;
+﻿using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
@@ -12,6 +13,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private readonly IMemoryCache _cache;
         private IDbContextTransaction? _transaction;
 
+        private Iav_AgendaRepository? _av_Agendas;
         private Iav_CabPantallaCobRepository? _av_CabPantallaCobs;
         private Iav_CarteraRepository? _av_Carteras;
         private Iav_ClienteRepository? _av_Clientes;
@@ -19,6 +21,9 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_DocxCobrarOpeRepository? _av_DocxCobrarOpes;
         private Iav_DocxCobrarParamRepository? _av_DocxCobrarParams;
         private Iav_DocxCobrarRepository? _av_DocxCobrars;
+        private Iav_DocxPagoRepository? _av_DocxPagos;
+        private Iav_EstadoAsteriskAvalRepository? _av_EstadoAsteriskAvals;
+        private Iav_MaeTablaRepository? _av_MaeTablas;
         private Iav_MonedaRepository? _av_Monedas;
         private Iav_PersDeudorRepository? _av_PersDeudors;
         private Iav_UsuarioRepository? _av_Usuarios;
@@ -34,6 +39,7 @@ namespace GesMgmt.Infraestructure.Repositories
         #endregion
 
         #region Properties
+        public Iav_AgendaRepository av_Agendas => _av_Agendas ??= new av_AgendaRepository(_context);
         public Iav_CabPantallaCobRepository av_CabPantallaCobs => _av_CabPantallaCobs ??= new av_CabPantallaCobRepository(_context);
         public Iav_CarteraRepository av_Carteras => _av_Carteras ??= new av_CarteraRepository(_context);
         public Iav_ClienteRepository av_Clientes => _av_Clientes ??= new av_ClienteRepository(_context);
@@ -41,13 +47,13 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_DocxCobrarOpeRepository av_DocxCobrarOpes => _av_DocxCobrarOpes ??= new av_DocxCobrarOpeRepository(_context);
         public Iav_DocxCobrarParamRepository av_DocxCobrarParams => _av_DocxCobrarParams ??= new av_DocxCobrarParamRepository(_context);
         public Iav_DocxCobrarRepository av_DocxCobrars => _av_DocxCobrars ??= new av_DocxCobrarRepository(_context);
+        public Iav_DocxPagoRepository av_DocxPagos => _av_DocxPagos ??= new av_DocxPagoRepository(_context);
+        public Iav_EstadoAsteriskAvalRepository av_EstadoAsteriskAvals => _av_EstadoAsteriskAvals ??= new av_EstadoAsteriskAvalRepository(_context);
+        public Iav_MaeTablaRepository av_MaeTablas => _av_MaeTablas ??= new av_MaeTablaRepository(_context);
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
-
-        //public Iav_CabPantallaCobRepository av_av_CabPantallaCobs => throw new NotImplementedException();
-
         #endregion
 
         #region Methods

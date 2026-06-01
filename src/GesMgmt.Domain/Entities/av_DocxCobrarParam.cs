@@ -7,8 +7,13 @@ namespace GesMgmt.Domain.Entities
     public class av_DocxCobrarParam //: BaseEntity
     {
         public int nId_DocxCobrarParam { get; set; }
+
         public int? nId_Cartera { get; set; }
         public int nId_DocxCobrar { get; set; }
+
+        public virtual av_Cartera av_Cartera { get; set; }
+        public virtual av_DocxCobrar av_DocxCobrar { get; set; }
+
         public int? bEstado { get; set; }
         public string? cDocParam01 { get; set; }
         public string? cDocParam02 { get; set; }
@@ -36,8 +41,8 @@ namespace GesMgmt.Domain.Entities
         public string? cDocParam24 { get; set; }
         public string? cDocParam25 { get; set; }
         public string? cDocParamZona { get; set; }
-        public int? nid_cliente { get; set; }
-        public ICollection<av_Cliente> av_Clientes { get; set; }
+        public int? nId_cliente { get; set; }
+        //public av_Cliente av_Cliente { get; set; }
         public string? cDocParam26 { get; set; }
         public string? cDocParam27 { get; set; }
         public string? cDocParam28 { get; set; }
