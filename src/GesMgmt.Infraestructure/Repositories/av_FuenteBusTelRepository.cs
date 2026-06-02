@@ -8,20 +8,21 @@ using System.Text;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
-    public class av_CarteraRepository : Iav_CarteraRepository
+    public class av_FuenteBusTelRepository : Iav_FuenteBusTelRepository
     {
         protected readonly AvalDbContext _context;
-        protected readonly DbSet<av_Cartera> _dbSet;
+        protected readonly DbSet<av_FuenteBusTel> _dbSet;
 
-        public av_CarteraRepository(AvalDbContext context)
+        public av_FuenteBusTelRepository(AvalDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<av_Cartera>();
+            _dbSet = context.Set<av_FuenteBusTel>();
         }
 
-        public async Task<IQueryable<av_Cartera>> Query()
+        public async Task<IQueryable<av_FuenteBusTel>> Query()
         {
             return _dbSet.AsNoTracking();
         }
+
     }
 }

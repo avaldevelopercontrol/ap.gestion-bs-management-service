@@ -6,6 +6,8 @@ using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Net.WebRequestMethods;
 
 namespace GesMgmt.Application.Services
 {
@@ -21,6 +23,54 @@ namespace GesMgmt.Application.Services
         }
 
         #region "Listado de Gestiones"
+        public async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> GetCabeceraGestionesAsync(GetGestionCabeceraRequestDto gestionCabeceraDto)
+        {
+            GetGestionCabeceraRequestValidator validator = new GetGestionCabeceraRequestValidator(_unitOfWork, _validationMessageService, gestionCabeceraDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            var filter = new av_CabPantallaCob
+            {
+                nId_Cliente = gestionCabeceraDto.nId_Cliente,
+                nId_Contrato = gestionCabeceraDto.nId_Contrato
+            };
+
+            try
+            {
+                var query = _unitOfWork.av_CabPantallaCobs.GetCabeceraGestionesAsync(filter);
+
+                var data = await query
+                    .Select(s => new GetGestionCabeceraResponseDto
+                    {
+                        idCabeceraPantalla = s.nId_CabPantalla,
+                        tituloCabeceraPantalla = s.cTitulo,
+                        tipoDato = s.cTipoDato,
+                        operaTotal = s.bOperaTotal,
+                        compromiso = s.bCompromisoClick,
+                        orden = s.nOrden,
+                        pantalla = s.nPantalla,
+                        alineacionHtml = s.cAlignHtml,
+                        nId_Contrato = s.nId_Contrato,
+                        nId_Cliente = s.nId_Cliente
+                    })
+                    .ToListAsync();
+
+                var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+
         public async Task<ResultListDto<IEnumerable<GetGestionResponseDto>>> GetGestionesAsync(GetGestionRequestDto gestionDto)
         {
             GetGestionRequestValidator validator = new GetGestionRequestValidator(_unitOfWork, _validationMessageService, gestionDto);
@@ -167,7 +217,7 @@ namespace GesMgmt.Application.Services
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionResponseDto>>.Success(default, ex.GetHashCode().ToString(), ex.Message, Const.SUCCESS_MESSAGE, Const.ERROR_REQUEST_CODE);
+                return ResultListDto<IEnumerable<GetGestionResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
 
@@ -177,31 +227,9 @@ namespace GesMgmt.Application.Services
                 System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        private string ObtenerTipoGestion(string idOpeCodOut)
+        public async Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> GetCabeceraGestionesAdicionalesAsync(GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto)
         {
-            if (new[] { "4293", "4299", "4309", "4322" }.Contains(idOpeCodOut))
-                return "Alineación";
-
-            if (new[] { "4289", "4319" }.Contains(idOpeCodOut))
-                return "Débito";
-
-            if (new[] { "4294", "4300", "4310", "4323", "4334", "4335", "4336" }.Contains(idOpeCodOut))
-                return "Oservación";
-
-            if (new[] { "4283", "4304", "4296", "4321", "4284", "4305", "4280", "4302", "4286", "4307" }.Contains(idOpeCodOut))
-                return "Promesa";
-
-            if (new[] { "4735", "4291", "4734" }.Contains(idOpeCodOut))
-                return "Trans.";
-
-            return "";
-        }
-        #endregion
-
-        #region "Cabecera de Gestiones"
-        public async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> GetCabeceraGestionesAsync(GetGestionCabeceraRequestDto gestionCabeceraDto)
-        {
-            GetGestionCabeceraRequestValidator validator = new GetGestionCabeceraRequestValidator(_unitOfWork, _validationMessageService, gestionCabeceraDto);
+            GetGestionCabeceraAdicionalRequestValidator validator = new GetGestionCabeceraAdicionalRequestValidator(_unitOfWork, _validationMessageService, gestionCabeceraAdicionalDto);
 
             // Validaciones
             var validationResult = await validator.Validate();
@@ -211,33 +239,96 @@ namespace GesMgmt.Application.Services
                 return validationResult;
             }
 
-            var filter = new av_CabPantallaCob
+            var filter = new av_TablaCampoGeneral
             {
-                nId_Cliente = gestionCabeceraDto.nId_Cliente,
-                nId_Contrato = gestionCabeceraDto.nId_Contrato
+                nId_Cliente = gestionCabeceraAdicionalDto.nId_Cliente,
+                pantalla = gestionCabeceraAdicionalDto.pantalla
             };
 
-            var query = _unitOfWork.av_CabPantallaCobs.GetCabeceraGestionesAsync(filter);
+            try
+            {
+                var query = _unitOfWork.av_TablaCampoGenerals.GetCabeceraGestionesAdicionalAsync(filter);
 
-            var data = await query
-                .Select(s => new GetGestionCabeceraResponseDto
-                {
-                    idCabeceraPantalla = s.nId_CabPantalla,
-                    tituloCabeceraPantalla = s.cTitulo,
-                    tipoDato = s.cTipoDato,
-                    operaTotal = s.bOperaTotal,
-                    compromiso = s.bCompromisoClick,
-                    orden = s.nOrden,
-                    pantalla = s.nPantalla,
-                    alineacionHtml = s.cAlignHtml,
-                    nId_Contrato = s.nId_Contrato,
-                    nId_Cliente = s.nId_Cliente
-                })
-                .ToListAsync();
+                var data = await query
+               .Select(s => new GetGestionCabeceraAdicionalResponseDto
+               {
+                   idCab = s.id_cab,
+                   recibo = s.cabAdicional01,
+                   telefono = s.cabAdicional02,
+                   servicio = s.cabAdicional03,
+                   estadoServicio = s.cabAdicional04,
+                   motivo = s.cabAdicional05,
+                   codigoCliente = s.cabAdicional10
+               }).FirstOrDefaultAsync();
 
-            var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(data, "200", "OK", "OK", 200);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
 
-            return response;
+        public async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> GetGestionesAdicionalesAsync(GetGestionAdicionalRequestDto gestionAdicionalDto)
+        {
+            GetGestionAdicionalRequestValidator validator = new GetGestionAdicionalRequestValidator(_unitOfWork, _validationMessageService, gestionAdicionalDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            var filter = new av_DocxCobrarAdicional
+            {
+                nId_Cliente = gestionAdicionalDto.nId_Cliente,
+                nId_Cartera = gestionAdicionalDto.nId_Cartera,
+                nId_PersDeudor = gestionAdicionalDto.nId_Persdeudor
+            };
+
+            try
+            {
+                var q_DocAd = _unitOfWork.av_DocxCobrarAdicionals.GetGestionesAdicionalesAsync(filter);
+                // 🔹 TOTAL DE REGISTROS
+                var totalRecords = await q_DocAd.CountAsync();
+                // 🔹 PAGINADO
+                var data = await q_DocAd
+                    //.OrderBy(s => s.SuscriptionId)
+                    .Skip((gestionAdicionalDto.PageNumber - 1) * gestionAdicionalDto.PageSize)
+                    .Take(gestionAdicionalDto.PageSize)
+                    .Select(s => new GetGestionAdicionalResponseDto
+                    {
+                        nId_DocxCobrarAd = s.nId_DocxCobrarAd,
+                        nId_DocxCobrar = s.nId_DocxCobrar,
+                        nId_PersDeudor = s.nId_PersDeudor,
+                        nId_Cartera = s.nId_Cartera,
+                        nId_Cliente = s.nId_Cliente,
+                        //
+                        recibo = s.adParam01 ?? "",
+                        telefono = s.adParam02 ?? "",
+                        servicio = s.adParam03 ?? "",
+                        estadoServicio = s.adParam04 ?? "",
+                        motivo = s.adParam05 ?? "",
+                        codigoCliente = s.adParam06 ?? ""
+                    })
+                    .ToListAsync();
+
+                var response = ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = gestionAdicionalDto.PageNumber;
+                response.PageSize = gestionAdicionalDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionAdicionalDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
         }
         #endregion
 
@@ -341,7 +432,7 @@ namespace GesMgmt.Application.Services
             }
             catch (Exception ex)
             {
-                return ResultDto<GetDeudorResponseDto>.Success(default, Const.ERROR_REQUEST_CODE.ToString(), ex.Message, Const.ERROR_MESSAGE, Const.ERROR_REQUEST_CODE);
+                return ResultDto<GetDeudorResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion

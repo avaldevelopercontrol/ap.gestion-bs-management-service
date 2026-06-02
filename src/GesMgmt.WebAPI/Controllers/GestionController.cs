@@ -28,6 +28,16 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera de Gestiones")]
+        [HttpGet("GetCabeceraGestiones")]
+        public async Task<IActionResult> GetCabeceraGestionesAsync([FromQuery] GetGestionCabeceraRequestDto gestionCabeceraDto)
+        {
+            _Logger.LogInfo($"GetCabeceraGestiones|Begin|GetCabeceraGestionesAsync|request: {JsonSerializer.Serialize(gestionCabeceraDto)}");
+            var result = await _gestionService.GetCabeceraGestionesAsync(gestionCabeceraDto);
+            _Logger.LogInfo($"GetCabeceraGestiones|End|GetCabeceraGestionesAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones")]
         [HttpGet("GetGestiones")]
         public async Task<IActionResult> GetGestionesAsync([FromQuery] GetGestionRequestDto gestionDto)
@@ -39,22 +49,32 @@ namespace GesMgmt.WebAPI.Controllers
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera de Gestiones")]
-        [HttpGet("GetCabeceraGestiones")]
-        public async Task<IActionResult> GetCabeceraGestionesAsync([FromQuery] GetGestionCabeceraRequestDto gestionCabeceraDto)
-        {
-            _Logger.LogInfo($"GetCabeceraGestiones|Begin|GetCabeceraGestionesAsync|request: {JsonSerializer.Serialize(gestionCabeceraDto)}");
-            var result = await _gestionService.GetCabeceraGestionesAsync(gestionCabeceraDto);
-            _Logger.LogInfo($"GetCabeceraGestiones|End|GetCabeceraGestionesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
-        }
-
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera de Gestiones")]
         [HttpGet("GetDeudorGestion")]
         public async Task<IActionResult> GetDeudorGestionAsync([FromQuery] GetDeudorRequestDto gestionDeudorDto)
         {
             _Logger.LogInfo($"GetGestion|Begin|GetGestionAsync|request: {JsonSerializer.Serialize(gestionDeudorDto)}");
             var result = await _gestionService.GetDeudorGestionAsync(gestionDeudorDto);
             _Logger.LogInfo($"GetGestion|End|GetGestionAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera Gestiones Adicionales")]
+        [HttpGet("GetCabeceraGestionesAdicionales")]
+        public async Task<IActionResult> GetGestionesAdicionalesAsync([FromQuery] GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto)
+        {
+            _Logger.LogInfo($"GetCabeceraGestionesAdicionales|Begin|GetCabeceraGestionesAdicionalesAsync|request: {JsonSerializer.Serialize(gestionCabeceraAdicionalDto)}");
+            var result = await _gestionService.GetCabeceraGestionesAdicionalesAsync(gestionCabeceraAdicionalDto);
+            _Logger.LogInfo($"GetCabeceraGestionesAdicionales|End|GetCabeceraGestionesAdicionalesAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Adicionales")]
+        [HttpGet("GetGestionesAdicionales")]
+        public async Task<IActionResult> GetGestionesAdicionalesAsync([FromQuery] GetGestionAdicionalRequestDto gestionAdicionalDto)
+        {
+            _Logger.LogInfo($"GetGestionAdicional|Begin|GetGestionAdicionalAsync|request: {JsonSerializer.Serialize(gestionAdicionalDto)}");
+            var result = await _gestionService.GetGestionesAdicionalesAsync(gestionAdicionalDto);
+            _Logger.LogInfo($"GetGestionAdicional|End|GetGestionAdicionalAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 

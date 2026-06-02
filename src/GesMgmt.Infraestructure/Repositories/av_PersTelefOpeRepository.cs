@@ -8,18 +8,18 @@ using System.Text;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
-    public class av_CarteraRepository : Iav_CarteraRepository
+    public class av_PersTelefOpeRepository : Iav_PersTelefOpeRepository
     {
         protected readonly AvalDbContext _context;
-        protected readonly DbSet<av_Cartera> _dbSet;
+        protected readonly DbSet<av_PersTelefOpe> _dbSet;
 
-        public av_CarteraRepository(AvalDbContext context)
+        public av_PersTelefOpeRepository(AvalDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<av_Cartera>();
+            _dbSet = context.Set<av_PersTelefOpe>();
         }
 
-        public async Task<IQueryable<av_Cartera>> Query()
+        public async Task<IQueryable<av_PersTelefOpe>> Query()
         {
             return _dbSet.AsNoTracking();
         }

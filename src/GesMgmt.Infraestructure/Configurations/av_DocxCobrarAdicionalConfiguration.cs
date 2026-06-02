@@ -12,7 +12,7 @@ namespace GesMgmt.Infraestructure.Configurations
         public void Configure(EntityTypeBuilder<av_DocxCobrarAdicional> builder)
         {
             builder.ToTable("av_DocxCobrarAdicional", "dbo");
-            builder.HasKey(dcp => dcp.nid_docxcobrarAd);
+            builder.HasKey(dcp => dcp.nId_DocxCobrarAd);
 
             builder.HasOne(dc => dc.av_Cliente)
                 .WithMany()
@@ -25,6 +25,10 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.HasOne(dc => dc.av_DocxCobrar)
                 .WithMany()
                 .HasForeignKey(dc => dc.nId_DocxCobrar);
+
+            builder.HasOne(dc => dc.av_PersDeudor)
+                .WithMany()
+                .HasForeignKey(dc => dc.nId_PersDeudor);
         }
     }
 }

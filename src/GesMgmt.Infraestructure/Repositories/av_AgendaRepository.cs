@@ -23,6 +23,5 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
-
     }
 }
