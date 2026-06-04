@@ -10,7 +10,5 @@ namespace GesMgmt.Domain.Constants
         public const string ORIGIN_LENGTH_INVALID = "081";
         public const string ORIGIN_NOT_SUPPORTED = "014";
         public const string DISAFFILIATION_ONE_DAY = "009";
-
     }
-    
 }

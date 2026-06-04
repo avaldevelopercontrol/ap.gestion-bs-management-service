@@ -10,5 +10,6 @@ namespace GesMgmt.Application.Interfaces
         Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> GetCabeceraGestionesAdicionalesAsync(GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto);
         Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> GetGestionesAdicionalesAsync(GetGestionAdicionalRequestDto gestionAdicionalDto);
         Task<ResultDto<GetDeudorResponseDto>> GetDeudorGestionAsync(GetDeudorRequestDto gestionDeudorDto);
+        Task<ResultListDto<IEnumerable<GetTelefonoResponseDto>>> GetTelefonoGestionAsync(GetTelefonoRequestDto gestionTelefonoDto);
     }
 }

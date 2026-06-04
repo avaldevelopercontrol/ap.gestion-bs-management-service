@@ -22,7 +22,6 @@ namespace GesMgmt.Infraestructure.Repositories
         public async Task<IQueryable<av_Moneda>> Query()
         {
             return _dbSet.AsNoTracking();
-
         }
     }
 }

@@ -9,5 +9,4 @@
   <Folder Name="/Infraestructure/">
     <Project Path="src/GesMgmt.Infraestructure/GesMgmt.Infraestructure.csproj" />
   </Folder>
-  <Folder Name="/Test/" />
 </Solution>

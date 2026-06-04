@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Validators;
+using GesMgmt.Application.Validatorsa;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
@@ -347,7 +348,6 @@ namespace GesMgmt.Application.Services
 
             try
             {
-
                 var q_Deudor = await _unitOfWork.av_PersDeudors.Query();
                 var q_Maestra = await _unitOfWork.av_MaeTablas.Query();
                 var maestras = await q_Maestra.Where(x => x.cod_tabla == 13).ToListAsync();
@@ -433,6 +433,58 @@ namespace GesMgmt.Application.Services
             catch (Exception ex)
             {
                 return ResultDto<GetDeudorResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Telefonos"
+        public async Task<ResultListDto<IEnumerable<GetTelefonoResponseDto>>> GetTelefonoGestionAsync(GetTelefonoRequestDto gestionTelefonoDto)
+        {
+            GetTelefonoRequestValidator validator = new GetTelefonoRequestValidator(_unitOfWork, _validationMessageService, gestionTelefonoDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+
+                var filter = new av_PersTelef
+                {
+                    nId_PersDeudor = gestionTelefonoDto.nId_Persdeudor
+                };
+
+                var q_Telefono = _unitOfWork.av_PersTelefs.GetTelefonosAsync(filter);
+
+                var totalRecords = await q_Telefono.CountAsync();
+                var data = await q_Telefono
+                   //.OrderBy(s => s.SuscriptionId)
+                   .Skip((gestionTelefonoDto.PageNumber - 1) * gestionTelefonoDto.PageSize)
+                   .Take(gestionTelefonoDto.PageSize)
+                   .Select(s => new GetTelefonoResponseDto
+                   {
+                       prioridad = s.nTelef_Prioridad,
+                       nroTelefono = s.nTelef_Nro
+                   })
+                   .ToListAsync();
+
+
+                var response = ResultListDto<IEnumerable<GetTelefonoResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = gestionTelefonoDto.PageNumber;
+                response.PageSize = gestionTelefonoDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionTelefonoDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetTelefonoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion

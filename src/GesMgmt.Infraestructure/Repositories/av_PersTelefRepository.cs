@@ -23,5 +23,19 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public IQueryable<av_PersTelef> GetTelefonosAsync(av_PersTelef av_PersTelef)
+        {
+
+            var query = _dbSet
+                .Include(tel => tel.av_PersDeudor)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (av_PersTelef.nId_PersDeudor > 0)
+                query = query.Where(tel => tel.nId_PersDeudor == av_PersTelef.nId_PersDeudor);
+
+            return query;
+        }
     }
 }

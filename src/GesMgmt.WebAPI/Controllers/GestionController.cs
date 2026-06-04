@@ -78,5 +78,15 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Telefonos")]
+        [HttpGet("GetTelefonos")]
+        public async Task<IActionResult> GetTelefonosAsync([FromQuery] GetTelefonoRequestDto gestionTelefonoDto)
+        {
+            _Logger.LogInfo($"GetTelefonos|Begin|GetTelefonosAsync|request: {JsonSerializer.Serialize(gestionTelefonoDto)}");
+            var result = await _gestionService.GetTelefonoGestionAsync(gestionTelefonoDto);
+            _Logger.LogInfo($"GetTelefonos|End|GetTelefonosAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
     }
 }
