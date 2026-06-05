@@ -10,6 +10,5 @@
         public string Message_Friendy_ENG { get; set; }
         public string Action { get; set; }
         public string Api { get; set; }
-
     }
 }

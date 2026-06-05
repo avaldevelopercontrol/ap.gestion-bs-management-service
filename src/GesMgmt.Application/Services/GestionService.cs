@@ -461,9 +461,12 @@ namespace GesMgmt.Application.Services
                 var q_Telefono = _unitOfWork.av_PersTelefs.GetTelefonosAsync(filter);
                 var totalContactados = await q_Telefono.SumAsync(x => x.ncontactados ?? 0);
                 var q_detalleTelefono = await _unitOfWork.av_DetallePersTelefs.Query();
+                var q_PerDeuGesHrs = await _unitOfWork.av_PersDeudorGestionHrss.Query();
+                var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
 
                 var data = await (
                                     from pe in q_Telefono
+                                    
                                     join det in q_detalleTelefono
                                     on new
                                     {
@@ -477,12 +480,23 @@ namespace GesMgmt.Application.Services
                                     }
                                     into detJoin
                                     from det in detJoin.DefaultIfEmpty()
+                                    
+                                    join hrs in q_PerDeuGesHrs
+                                    on pe.nId_PersDeudorGestionHrs equals hrs.nId_PersDeudorGestionHrs
+                                    into hrsJoin
+                                    from hrs in hrsJoin.DefaultIfEmpty()
+
+                                    join refUbi in q_PerRefUbi
+                                    on pe.nId_PersRefUbi equals refUbi.nId_PersRefUbi
+                                    into refUbiJoin
+                                    from refUbi in refUbiJoin.DefaultIfEmpty()
+
                                     select new GetTelefonoResponseDto
                                     {
                                         prioridad = pe.nTelef_Prioridad ?? 0,
                                         nroTelefono = pe.nTelef_Nro ?? "",
-                                        horario = "",
-                                        referenciaUbicacion = "",
+                                        horario = hrs.cNombren_PersDeudorGestionHrs ?? "",
+                                        referenciaUbicacion = refUbi.cNombre_PersRefUbi ?? "",
                                         estado = "",
                                         fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
                                         fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",

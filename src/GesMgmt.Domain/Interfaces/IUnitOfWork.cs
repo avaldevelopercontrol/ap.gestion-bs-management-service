@@ -17,9 +17,9 @@
         Iav_FuenteBusTelRepository av_FuenteBusTels { get; }
         Iav_MaeTablaRepository av_MaeTablas { get; }
         Iav_MonedaRepository av_Monedas { get; }
-        //Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrs { get; }
+        Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss { get; }
         Iav_PersDeudorRepository av_PersDeudors { get; }
-        //Iav_PersRefUbiRepository av_PersRefUbis { get; }
+        Iav_PersRefUbiRepository av_PersRefUbis { get; }
         //Iav_PersTelefOpeRepository av_PersTelefOpes { get; }
         Iav_PersTelefRepository av_PersTelefs { get; }
         Iav_TablaCampoGeneralRepository av_TablaCampoGenerals { get; }

@@ -28,9 +28,9 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_FuenteBusTelRepository? _av_FuenteBusTels;
         private Iav_MaeTablaRepository? _av_MaeTablas;
         private Iav_MonedaRepository? _av_Monedas;
-        //private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrs;
+        private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrss;
         private Iav_PersDeudorRepository? _av_PersDeudors;
-        //private Iav_PersRefUbiRepository? _av_PersRefUbis;
+        private Iav_PersRefUbiRepository? _av_PersRefUbis;
         //private Iav_PersTelefOpeRepository? _av_PersTelefOpes;
         private Iav_PersTelefRepository? _av_PersTelefs;
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
@@ -63,8 +63,8 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_MaeTablaRepository av_MaeTablas => _av_MaeTablas ??= new av_MaeTablaRepository(_context);
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
-        //public Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrs => _av_PersDeudorGestionHrs ??= new av_PersDeudorGestionHrsRepository(_context);
-        //public Iav_PersRefUbiRepository av_PersRefUbis => _av_PersRefUbis ??= new av_PersRefUbiRepository(_context);
+        public Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss => _av_PersDeudorGestionHrss ??= new av_PersDeudorGestionHrsRepository(_context);
+        public Iav_PersRefUbiRepository av_PersRefUbis => _av_PersRefUbis ??= new av_PersRefUbiRepository(_context);
         //public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);
         public Iav_PersTelefRepository av_PersTelefs => _av_PersTelefs ??= new av_PersTelefRepository(_context);
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
