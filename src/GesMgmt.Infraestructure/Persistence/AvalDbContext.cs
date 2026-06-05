@@ -13,7 +13,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_Cartera> av_Carteras { get; set; }
         public DbSet<av_Cliente> av_Clientes { get; set; }
         public DbSet<av_Contrato> av_Contratos { get; set; }
-        //public DbSet<av_DetallePersTelef> av_DetallePersTelefs { get; set; }
+        public DbSet<av_DetallePersTelef> av_DetallePersTelefs { get; set; }
         public DbSet<av_DocxCobrarAdicional> av_DocxCobrars { get; set; }
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
@@ -46,7 +46,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_CarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ClienteConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContratoConfiguration());
-            //modelBuilder.ApplyConfiguration(new av_DetallePersTelefConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DetallePersTelefConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarAdicionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeConfiguration());

@@ -459,19 +459,53 @@ namespace GesMgmt.Application.Services
                 };
 
                 var q_Telefono = _unitOfWork.av_PersTelefs.GetTelefonosAsync(filter);
+                var totalContactados = await q_Telefono.SumAsync(x => x.ncontactados ?? 0);
+                var q_detalleTelefono = await _unitOfWork.av_DetallePersTelefs.Query();
 
-                var totalRecords = await q_Telefono.CountAsync();
-                var data = await q_Telefono
-                   //.OrderBy(s => s.SuscriptionId)
-                   .Skip((gestionTelefonoDto.PageNumber - 1) * gestionTelefonoDto.PageSize)
-                   .Take(gestionTelefonoDto.PageSize)
-                   .Select(s => new GetTelefonoResponseDto
-                   {
-                       prioridad = s.nTelef_Prioridad,
-                       nroTelefono = s.nTelef_Nro
-                   })
-                   .ToListAsync();
+                var data = await (
+                                    from pe in q_Telefono
+                                    join det in q_detalleTelefono
+                                    on new
+                                    {
+                                        pe.nId_PersTelef,
+                                        nId_Cliente = gestionTelefonoDto.nId_Cliente
+                                    }
+                                    equals new
+                                    {
+                                        det.nId_PersTelef,
+                                        det.nId_Cliente
+                                    }
+                                    into detJoin
+                                    from det in detJoin.DefaultIfEmpty()
+                                    select new GetTelefonoResponseDto
+                                    {
+                                        prioridad = pe.nTelef_Prioridad ?? 0,
+                                        nroTelefono = pe.nTelef_Nro ?? "",
+                                        horario = "",
+                                        referenciaUbicacion = "",
+                                        estado = "",
+                                        fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
+                                        fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",
+                                        contactados = det.nId_Cliente == 95
+                                                    ? (
+                                                        totalContactados == 0
+                                                            ? "0%"
+                                                            : (((pe.ncontactados ?? 0) * 100m / totalContactados)
+                                                                .ToString("0.00") + "%")
+                                                      )
+                                                    : (pe.ncontactados ?? 0).ToString(),
+                                        noContactados = pe.nNoContactados ?? 0,
+                                        cantidadIvr = pe.nCant_Ivr ?? 0,
+                                        fuente = "",
+                                        ordenSearch = ""
+                                    }
+                                )
+                                .Skip((gestionTelefonoDto.PageNumber - 1) * gestionTelefonoDto.PageSize)
+                                .Take(gestionTelefonoDto.PageSize)
+                                .ToListAsync();
 
+
+                int totalRecords = q_Telefono.Count();
 
                 var response = ResultListDto<IEnumerable<GetTelefonoResponseDto>>.Success(data, "200", "OK", "OK", 200);
 

@@ -7,7 +7,7 @@
         Iav_CarteraRepository av_Carteras { get; }
         Iav_ClienteRepository av_Clientes { get; }
         Iav_ContratoRepository av_Contratos { get; }
-        //Iav_DetallePersTelefRepository av_DetallePersTelefs { get; }
+        Iav_DetallePersTelefRepository av_DetallePersTelefs { get; }
         Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals { get; }
         Iav_DocxCobrarOpeRepository av_DocxCobrarOpes { get; }
         Iav_DocxCobrarParamRepository av_DocxCobrarParams { get; }
