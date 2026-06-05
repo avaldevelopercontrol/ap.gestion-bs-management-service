@@ -31,7 +31,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrss;
         private Iav_PersDeudorRepository? _av_PersDeudors;
         private Iav_PersRefUbiRepository? _av_PersRefUbis;
-        //private Iav_PersTelefOpeRepository? _av_PersTelefOpes;
+        private Iav_PersTelefOpeRepository? _av_PersTelefOpes;
         private Iav_PersTelefRepository? _av_PersTelefs;
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
         private Iav_UsuarioRepository? _av_Usuarios;
@@ -65,7 +65,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
         public Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss => _av_PersDeudorGestionHrss ??= new av_PersDeudorGestionHrsRepository(_context);
         public Iav_PersRefUbiRepository av_PersRefUbis => _av_PersRefUbis ??= new av_PersRefUbiRepository(_context);
-        //public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);
+        public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);
         public Iav_PersTelefRepository av_PersTelefs => _av_PersTelefs ??= new av_PersTelefRepository(_context);
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);

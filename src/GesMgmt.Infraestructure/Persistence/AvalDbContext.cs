@@ -27,7 +27,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_PersDeudorGestionHrs> av_PersDeudorGestionHrs { get; set; }
         public DbSet<av_PersRefUbi> av_PersRefUbis { get; set; }
         public DbSet<av_PersTelef> av_PersTelefs { get; set; }
-        //public DbSet<av_PersTelefOpe> av_PersTelefOpes { get; set; }
+        public DbSet<av_PersTelefOpe> av_PersTelefOpes { get; set; }
         public DbSet<av_TablaCampoGeneral> av_TablaCampoGenerals { get; set; }
         public DbSet<av_Usuario> av_Usuarios { get; set; }
         
@@ -60,7 +60,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_PersDeudorGestionHrsConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersRefUbiConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersTelefConfiguration());
-            //modelBuilder.ApplyConfiguration(new av_PersTelefOpeConfiguration());
+            modelBuilder.ApplyConfiguration(new av_PersTelefOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_TablaCampoGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_UsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new ValidationMessageConfiguration());

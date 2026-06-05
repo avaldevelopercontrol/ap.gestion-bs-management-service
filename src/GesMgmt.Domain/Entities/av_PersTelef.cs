@@ -19,6 +19,7 @@ namespace GesMgmt.Domain.Entities
         public int? nId_PersDirecc { get; set; }
         public int? nTelef_Prioridad { get; set; }
         public int? nId_PersTelefOpe { get; set; }
+        public av_PersTelefOpe av_PersTelefOpe { get; set; }
         public int? nId_PersDeudorGestionHrs { get; set; }
         public av_PersDeudorGestionHrs? av_PersDeudorGestionHrs { get; set; }
         public DateTime? dFecUlt_PerstelefOpe { get; set; }

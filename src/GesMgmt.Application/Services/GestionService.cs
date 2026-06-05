@@ -463,6 +463,7 @@ namespace GesMgmt.Application.Services
                 var q_detalleTelefono = await _unitOfWork.av_DetallePersTelefs.Query();
                 var q_PerDeuGesHrs = await _unitOfWork.av_PersDeudorGestionHrss.Query();
                 var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
+                var q_PerTelOpe = await _unitOfWork.av_PersTelefOpes.Query();
 
                 var data = await (
                                     from pe in q_Telefono
@@ -491,13 +492,18 @@ namespace GesMgmt.Application.Services
                                     into refUbiJoin
                                     from refUbi in refUbiJoin.DefaultIfEmpty()
 
+                                    join pto in q_PerTelOpe
+                                    on pe.nId_PersTelefOpe equals pto.nId_PersTelefOpe
+                                    into ptoJoin
+                                    from pto in ptoJoin.DefaultIfEmpty()
+
                                     select new GetTelefonoResponseDto
                                     {
                                         prioridad = pe.nTelef_Prioridad ?? 0,
                                         nroTelefono = pe.nTelef_Nro ?? "",
                                         horario = hrs.cNombren_PersDeudorGestionHrs ?? "",
                                         referenciaUbicacion = refUbi.cNombre_PersRefUbi ?? "",
-                                        estado = "",
+                                        estado = pto.cNombre_PersTelefOpe ?? "",
                                         fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
                                         fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",
                                         contactados = det.nId_Cliente == 95
