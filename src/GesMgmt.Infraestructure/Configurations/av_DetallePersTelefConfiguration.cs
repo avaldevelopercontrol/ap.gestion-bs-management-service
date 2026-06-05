@@ -14,6 +14,8 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.ToTable("av_DetallePersTelef", "dbo");
             builder.HasKey(car => car.nId_DetallePersTelef);
 
+            builder.Property(car => car.nId_Fuente).HasColumnName("nfuenteBusDet");
+
             builder.HasOne(car => car.av_Cliente)
                 .WithMany()
                 .HasForeignKey(car => car.nId_Cliente);

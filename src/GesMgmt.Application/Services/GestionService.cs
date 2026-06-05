@@ -464,6 +464,7 @@ namespace GesMgmt.Application.Services
                 var q_PerDeuGesHrs = await _unitOfWork.av_PersDeudorGestionHrss.Query();
                 var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
                 var q_PerTelOpe = await _unitOfWork.av_PersTelefOpes.Query();
+                var q_fuBusTel = await _unitOfWork.av_FuenteBusTels.Query();
 
                 var data = await (
                                     from pe in q_Telefono
@@ -497,6 +498,14 @@ namespace GesMgmt.Application.Services
                                     into ptoJoin
                                     from pto in ptoJoin.DefaultIfEmpty()
 
+                                    join fu in q_fuBusTel
+                                        on (det != null && det.nId_Fuente.HasValue
+                                                ? det.nId_Fuente
+                                                : pe.nId_Fuente)
+                                    equals fu.nId_Fuente
+                                    into fuJoin
+                                    from fu in fuJoin.DefaultIfEmpty()
+
                                     select new GetTelefonoResponseDto
                                     {
                                         prioridad = pe.nTelef_Prioridad ?? 0,
@@ -516,7 +525,7 @@ namespace GesMgmt.Application.Services
                                                     : (pe.ncontactados ?? 0).ToString(),
                                         noContactados = pe.nNoContactados ?? 0,
                                         cantidadIvr = pe.nCant_Ivr ?? 0,
-                                        fuente = "",
+                                        fuente = fu.cDescripcion ?? "",
                                         ordenSearch = ""
                                     }
                                 )

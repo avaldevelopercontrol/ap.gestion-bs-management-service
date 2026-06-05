@@ -13,7 +13,7 @@ namespace GesMgmt.Domain.Entities
         public av_Cliente av_Cliente { get; set; }
         public DateTime? dFec_Registro { get; set; }
         public DateTime? dFec_Actualiza { get; set; }
-        public int? nfuenteBusDet { get; set; }
+        public int? nId_Fuente { get; set; }
         public int? nId_UsuReg { get; set; }
         public bool? bBase { get; set; }
         public bool? bestado { get; set; }

@@ -28,7 +28,7 @@ namespace GesMgmt.Domain.Entities
         public int? ncontactados { get; set; }
         public string? baseTelef { get; set; }
         public string? cbus { get; set; }
-        public int? nfuenteBus { get; set; }
+        public int? nId_Fuente { get; set; }
         public int? nreferencia { get; set; }
         public int? nid_usuarioupd { get; set; }
         public int? nId_OperadorTelefonico { get; set; }

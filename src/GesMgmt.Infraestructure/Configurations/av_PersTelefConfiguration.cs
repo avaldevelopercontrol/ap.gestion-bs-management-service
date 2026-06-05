@@ -15,6 +15,7 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.HasKey(tel => tel.nId_PersTelef);
 
             builder.Property(tel => tel.baseTelef).HasColumnName("base");
+            builder.Property(tel => tel.nId_Fuente).HasColumnName("nfuenteBus");
 
             builder.HasOne(tel => tel.av_PersDeudor)
             .WithMany()
