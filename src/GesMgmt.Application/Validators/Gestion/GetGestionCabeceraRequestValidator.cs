@@ -1,4 +1,5 @@
 ﻿using GesMgmt.Application.DTOs;
+using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
@@ -6,19 +7,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GesMgmt.Application.Validatorsa
+namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetTelefonoRequestValidator
+    public class GetGestionCabeceraRequestValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetTelefonoRequestDto _requestDto;
+        private GetGestionCabeceraRequestDto _requestDto;
 
-        public GetTelefonoRequestValidator(
+        public GetGestionCabeceraRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetTelefonoRequestDto requestDto)
+                GetGestionCabeceraRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -26,7 +27,7 @@ namespace GesMgmt.Application.Validatorsa
             _requestDto = requestDto;
         }
 
-        public async Task<ResultListDto<IEnumerable<GetTelefonoResponseDto>>> Validate()
+        public async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -36,12 +37,13 @@ namespace GesMgmt.Application.Validatorsa
                 return validationResultDefault;
             }
             #endregion
-            return ResultListDto<IEnumerable<GetTelefonoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultListDto<IEnumerable<GetTelefonoResponseDto>>> ValidateDefault()
+        private async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> ValidateDefault()
         {
-            return ResultListDto<IEnumerable<GetTelefonoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
+
     }
 }

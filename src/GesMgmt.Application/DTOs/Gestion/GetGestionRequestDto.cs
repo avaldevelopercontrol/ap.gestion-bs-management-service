@@ -1,4 +1,4 @@
-﻿namespace GesMgmt.Application.DTOs
+﻿namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GetGestionRequestDto
     {

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GesMgmt.Application.DTOs
+namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetDeudorRequestDto
+    public class GetGestionDeudorRequestDto
     {
-        public GetDeudorRequestDto()
+        public GetGestionDeudorRequestDto()
         {
             nId_Cliente = 0;
             nId_Cartera = 0;

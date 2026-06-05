@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GesMgmt.Application.DTOs
+namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetDeudorResponseDto
+    public class GetGestionDeudorResponseDto
     {
         public int nId_PersDeudor { get; set; }
         public string? dni { get; set; }

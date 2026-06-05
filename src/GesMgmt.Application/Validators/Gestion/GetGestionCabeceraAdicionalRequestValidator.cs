@@ -1,21 +1,25 @@
 ﻿using GesMgmt.Application.DTOs;
+using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace GesMgmt.Application.Validators
+namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetDeudorRequestValidator
+    public class GetGestionCabeceraAdicionalRequestValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetDeudorRequestDto _requestDto;
+        private GetGestionCabeceraAdicionalRequestDto _requestDto;
 
-        public GetDeudorRequestValidator(
+        public GetGestionCabeceraAdicionalRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetDeudorRequestDto requestDto)
+                GetGestionCabeceraAdicionalRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -23,7 +27,7 @@ namespace GesMgmt.Application.Validators
             _requestDto = requestDto;
         }
 
-        public async Task<ResultDto<GetDeudorResponseDto>> Validate()
+        public async Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -33,13 +37,12 @@ namespace GesMgmt.Application.Validators
                 return validationResultDefault;
             }
             #endregion
-            return ResultDto<GetDeudorResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<GetDeudorResponseDto>> ValidateDefault()
+        private async Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> ValidateDefault()
         {
-            return ResultDto<GetDeudorResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
-
     }
 }

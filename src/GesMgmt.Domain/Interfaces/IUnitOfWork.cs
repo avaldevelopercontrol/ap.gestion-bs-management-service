@@ -19,6 +19,7 @@
         Iav_MonedaRepository av_Monedas { get; }
         Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss { get; }
         Iav_PersDeudorRepository av_PersDeudors { get; }
+        Iav_PersDireccRepository av_PersDireccs { get; }
         Iav_PersRefUbiRepository av_PersRefUbis { get; }
         Iav_PersTelefOpeRepository av_PersTelefOpes { get; }
         Iav_PersTelefRepository av_PersTelefs { get; }

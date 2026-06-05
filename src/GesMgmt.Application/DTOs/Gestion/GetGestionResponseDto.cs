@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GesMgmt.Application.DTOs
+namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GetGestionResponseDto
     {

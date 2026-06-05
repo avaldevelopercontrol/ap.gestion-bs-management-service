@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GesMgmt.Application.DTOs
+namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GetGestionCabeceraAdicionalResponseDto
     {

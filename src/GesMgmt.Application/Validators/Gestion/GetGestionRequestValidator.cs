@@ -1,11 +1,12 @@
-﻿    using GesMgmt.Application.DTOs;
-    using GesMgmt.Application.Interfaces;
-    using GesMgmt.Application.Utils;
-    using GesMgmt.Domain.Constants;
-    using GesMgmt.Domain.Interfaces;
-    using System.Globalization;
+﻿using GesMgmt.Application.DTOs;
+using GesMgmt.Application.DTOs.Gestion;
+using GesMgmt.Application.Interfaces;
+using GesMgmt.Application.Utils;
+using GesMgmt.Domain.Constants;
+using GesMgmt.Domain.Interfaces;
+using System.Globalization;
 
-    namespace GesMgmt.Application.Validators
+namespace GesMgmt.Application.Validators.Gestion
     {
         public class GetGestionRequestValidator
         {

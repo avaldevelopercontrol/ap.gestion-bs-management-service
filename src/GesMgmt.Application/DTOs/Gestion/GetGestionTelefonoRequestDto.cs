@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GesMgmt.Application.DTOs
+namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetTelefonoRequestDto
+    public class GetGestionTelefonoRequestDto
     {
 
-        public GetTelefonoRequestDto()
+        public GetGestionTelefonoRequestDto()
         {
             nId_Cliente = 0;
             nId_Persdeudor = 0;

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GesMgmt.Application.DTOs
+namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetTelefonoResponseDto
+    public class GetGestionTelefonoResponseDto
     {
         public int? prioridad { get; set; }
         public string? nroTelefono { get; set; }
