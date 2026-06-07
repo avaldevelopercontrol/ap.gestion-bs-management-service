@@ -8,39 +8,43 @@ namespace GesMgmt.Infraestructure.Repositories
     public class av_DocxCobrarOpeRepository : Iav_DocxCobrarOpeRepository
     {
         protected readonly AvalDbContext _context;
-        protected readonly DbSet<av_DocxCobrarOpe> _db_av_DocxCobrarOpe;
-        protected readonly DbSet<av_DocxCobrar> _db_av_DocxCobrar;
+        protected readonly DbSet<av_DocxCobrarOpe> _dbSet;
 
         public av_DocxCobrarOpeRepository(AvalDbContext context)
         {
             _context = context;
-            _db_av_DocxCobrarOpe = context.Set<av_DocxCobrarOpe>();
-            _db_av_DocxCobrar = context.Set<av_DocxCobrar>();
+            _dbSet = context.Set<av_DocxCobrarOpe>();
         }
 
         public async Task<IQueryable<av_DocxCobrarOpe>> Query()
         {
-            return _db_av_DocxCobrarOpe.AsNoTracking();
+            return _dbSet.AsNoTracking();
         }
 
-        public async Task<av_DocxCobrarOpe?> Get_av_DocxCobrarOpeLastGest(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        public IQueryable<av_DocxCobrarOpe?> GetGestionesCarteraDeudor(int nId_Cliente, int nId_Cartera, int nId_PersDeudor, int? nId_PerfilUsuario)
         {
-            var ultGesDoc = _db_av_DocxCobrar
-                            .Join(_db_av_DocxCobrarOpe,
-                            dc => dc.nId_DocxCobrar,
-                            op => op.nId_DocxCobrar,
-                            (dc, op) => new { dc, op })
-                            .Where(x =>
-                                    x.dc.nId_Cliente == nId_Cliente &&
-                                    x.dc.nId_Cartera == nId_Cartera &&
-                                    x.dc.nId_PersDeudor == nId_PersDeudor)
-                            .GroupBy(x => x.dc.nId_DocxCobrar)
-                            .Select(g => g
-                                .OrderByDescending(x => x.op.dDocCobOpe_FecIni)
-                                .FirstOrDefault())
-                            .ToList();
-            return ultGesDoc.Select(x => x.op).FirstOrDefault();
-        }
+            var query = _dbSet
+                .Include(dc => dc.av_DocxCobrar)
+                .Include(tg => tg.av_TipoGestion)
+                .Include(u => u.av_Cliente)
+                .AsNoTracking()
+                .AsQueryable();
 
+            if (nId_Cliente > 0)
+                query = query.Where(s => s.nId_Cliente == nId_Cliente);
+
+            if (nId_Cartera > 0)
+                query = query.Where(s => s.nId_Cartera == nId_Cartera);
+
+            if (nId_PersDeudor > 0)
+                query = query.Where(s => s.nId_PersDeudor == nId_PersDeudor);
+
+            if (nId_Cliente != 95)
+            {
+                if (nId_PerfilUsuario > 0)
+                    query = query.Where(s => s.av_Usuario.nId_PerfilGest == nId_PerfilUsuario);
+            }
+            return query;
+        }
     }
 }

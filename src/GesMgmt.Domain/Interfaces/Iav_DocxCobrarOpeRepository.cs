@@ -8,6 +8,6 @@ namespace GesMgmt.Domain.Interfaces
     public interface Iav_DocxCobrarOpeRepository
     {
         Task<IQueryable<av_DocxCobrarOpe>> Query();
-        Task<av_DocxCobrarOpe?> Get_av_DocxCobrarOpeLastGest(int nId_Cliente, int nId_Cartera, int nId_PersDeudor);
+        IQueryable<av_DocxCobrarOpe?> GetGestionesCarteraDeudor(int nId_Cliente, int nId_Cartera, int nId_PersDeudor, int? nId_PerfilUsuario);
     }
 }

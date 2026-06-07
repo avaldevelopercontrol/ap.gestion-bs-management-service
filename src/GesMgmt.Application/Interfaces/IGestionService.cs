@@ -6,12 +6,13 @@ namespace GesMgmt.Application.Interfaces
 {
     public interface IGestionService
     {
-        Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> GetGestionesCabeceraAsync(GetGestionCabeceraRequestDto gestionCabeceraDto);
-        Task<ResultListDto<IEnumerable<GetGestionResponseDto>>> GetGestionesAsync(GetGestionRequestDto suscriptionDto);
-        Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> GetGestionesCabeceraAdicionalesAsync(GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto);
-        Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> GetGestionesAdicionalesAsync(GetGestionAdicionalRequestDto gestionAdicionalDto);
-        Task<ResultDto<GetGestionDeudorResponseDto>> GetGestionesDeudorAsync(GetGestionDeudorRequestDto gestionDeudorDto);
-        Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> GetTelefonoGestionAsync(GetGestionTelefonoRequestDto gestionTelefonoDto);
+        Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> GetGestionDocumentosCabeceraAsync(GetGestionCabeceraRequestDto gestionCabeceraDto);
+        Task<ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>> GetGestionDocumentosAsync(GetGestionDocumentoRequestDto suscriptionDto);
+        Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> GetGestionDocumentosAdicionalesCabeceraAsync(GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto);
+        Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> GetGestionDocumentosAdicionalesAsync(GetGestionAdicionalRequestDto gestionAdicionalDto);
+        Task<ResultDto<GetGestionDeudorResponseDto>> GetGestionDeudorAsync(GetGestionDeudorRequestDto gestionDeudorDto);
+        Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> GetGestionTelefonosAsync(GetGestionTelefonoRequestDto gestionTelefonoDto);
         Task<ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>> GetGestionDireccionesAsync(GetGestionDireccionRequestDto gestionDireccionDto);
+        Task<ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>> GetGestionGestionesCarteraDeudorAsync(GetGestionGestionesCarteraDeudorRequestDto gestionCarteraDeudorDto);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionResponseDto
+    public class GetGestionDocumentoResponseDto
     {
         public int nId_DocxCobrar { get; set; } //1 Cabecera principal
         public int? mejorStatus { get; set; } //2 Cabecera principal

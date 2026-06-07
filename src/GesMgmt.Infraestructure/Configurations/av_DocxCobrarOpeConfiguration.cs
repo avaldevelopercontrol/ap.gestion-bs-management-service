@@ -14,9 +14,16 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.ToTable("av_DocxCobrarOpe", "dbo");
             builder.HasKey(dco => dco.nId_DocxCobrarOpe);
 
+            builder.Property(dco => dco.nId_TipoGestion).HasColumnName("tip_gestion");
+            builder.Property(dco => dco.nId_Usuario).HasColumnName("nId_UsuOpe");
+
             builder.HasOne(dco => dco.av_DocxCobrar)
                 .WithMany()
                 .HasForeignKey(dc => dc.nId_DocxCobrar);
+
+            builder.HasOne(dco => dco.av_Usuario)
+                .WithMany()
+                .HasForeignKey(dc => dc.nId_Usuario);
         }
     }
 }

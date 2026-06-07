@@ -35,6 +35,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_PersTelefOpeRepository? _av_PersTelefOpes;
         private Iav_PersTelefRepository? _av_PersTelefs;
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
+        private Iav_TipoGestionRepository? _av_TipoGestions;
         private Iav_UsuarioRepository? _av_Usuarios;
         private IValidationMessageRepository? _validationMessages;
         #endregion
@@ -70,6 +71,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);
         public Iav_PersTelefRepository av_PersTelefs => _av_PersTelefs ??= new av_PersTelefRepository(_context);
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
+        public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
         #endregion

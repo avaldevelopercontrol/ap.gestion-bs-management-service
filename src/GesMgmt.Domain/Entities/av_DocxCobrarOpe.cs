@@ -15,12 +15,14 @@ namespace GesMgmt.Domain.Entities
         public string? cDocOpeCobIn_Descr { get; set; }
         public int nId_OpeCodOut { get; set; }
         public bool? bEstado { get; set; }
-        public int? nId_UsuOpe { get; set; }
+        public int? nId_Usuario { get; set; }
+        public av_Usuario? av_Usuario { get; set; }
         public int? nId_Estrategia { get; set; }
         public int? nId_UsrLider { get; set; }
         public int? nDoc_NroLote { get; set; }
         public string? cDocOpeCobOut_Descr { get; set; }
         public int? nId_Cliente { get; set; }
+        public av_Cliente? av_Cliente { get; set; }
         public int? nId_Contrato { get; set; }
         public int? nId_Cartera { get; set; }
         public int nId_PersDeudor { get; set; }
@@ -33,7 +35,8 @@ namespace GesMgmt.Domain.Entities
         public decimal? monto_comp { get; set; }
         public decimal? monto_compDolares { get; set; }
         public bool? cDocxCobOpeInconcert { get; set; }
-        public int? tip_gestion { get; set; }
+        public int? nId_TipoGestion { get; set; }
+        public av_TipoGestion? av_TipoGestion { get; set; }
         public string? cDispositivoMovil { get; set; }
         public string? cusuar { get; set; }
         public string? ccobra { get; set; }

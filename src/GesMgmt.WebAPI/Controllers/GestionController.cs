@@ -29,73 +29,83 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera de Gestiones")]
-        [HttpGet("GetGestionesCabecera")]
-        public async Task<IActionResult> GetGestionesCabeceraAsync([FromQuery] GetGestionCabeceraRequestDto gestionCabeceraDto)
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Documentos Cabecera")]
+        [HttpGet("GetGestionDocumentosCabecera")]
+        public async Task<IActionResult> GetGestionDocumentosCabeceraAsync([FromQuery] GetGestionCabeceraRequestDto gestionCabeceraDto)
         {
-            _Logger.LogInfo($"GetGestionesCabecera|Begin|GetGestionesCabeceraAsync|request: {JsonSerializer.Serialize(gestionCabeceraDto)}");
-            var result = await _gestionService.GetGestionesCabeceraAsync(gestionCabeceraDto);
-            _Logger.LogInfo($"GetGestionesCabecera|End|GetGestionesCabeceraAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionCabecera|Begin|GetGestionDocumentosCabeceraAsync|request: {JsonSerializer.Serialize(gestionCabeceraDto)}");
+            var result = await _gestionService.GetGestionDocumentosCabeceraAsync(gestionCabeceraDto);
+            _Logger.LogInfo($"GetGestionCabecera|End|GetGestionDocumentosCabeceraAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones")]
-        [HttpGet("GetGestiones")]
-        public async Task<IActionResult> GetGestionesAsync([FromQuery] GetGestionRequestDto gestionDto)
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Documentos")]
+        [HttpGet("GetGestionDocumentos")]
+        public async Task<IActionResult> GetGestionDocumentosAsync([FromQuery] GetGestionDocumentoRequestDto gestionDto)
         {
-            _Logger.LogInfo($"GetGestiones|Begin|GetGestionesAsync|request: {JsonSerializer.Serialize(gestionDto)}");
-            var result = await _gestionService.GetGestionesAsync(gestionDto);
-            _Logger.LogInfo($"GetGestiones|End|GetGestionesAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionDocumentos|Begin|GetGestionesDocumentosAsync|request: {JsonSerializer.Serialize(gestionDto)}");
+            var result = await _gestionService.GetGestionDocumentosAsync(gestionDto);
+            _Logger.LogInfo($"GetGestionDocumentos|End|GetGestionesDocumentosAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Gestiones Deudores")]
-        [HttpGet("GetGestionesDeudor")]
-        public async Task<IActionResult> GetGestionesDeudorAsync([FromQuery] GetGestionDeudorRequestDto gestionDeudorDto)
+        [HttpGet("GetGestionDeudor")]
+        public async Task<IActionResult> GetGestionDeudorAsync([FromQuery] GetGestionDeudorRequestDto gestionDeudorDto)
         {
-            _Logger.LogInfo($"GetGestionesDeudor|Begin|GetGestionesDeudorAsync|request: {JsonSerializer.Serialize(gestionDeudorDto)}");
-            var result = await _gestionService.GetGestionesDeudorAsync(gestionDeudorDto);
-            _Logger.LogInfo($"GetGestionesDeudor|End|GetGestionesDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionDeudor|Begin|GetGestionDeudorAsync|request: {JsonSerializer.Serialize(gestionDeudorDto)}");
+            var result = await _gestionService.GetGestionDeudorAsync(gestionDeudorDto);
+            _Logger.LogInfo($"GetGestionDeudor|End|GetGestionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera Gestiones Adicionales")]
-        [HttpGet("GetGestionesCabeceraAdicionales")]
-        public async Task<IActionResult> GetGestionesCabeceraAdicionalesAsync([FromQuery] GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto)
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera Gestiones Documentos Adicionales")]
+        [HttpGet("GetGestionDocumentosAdicionalesCabecera")]
+        public async Task<IActionResult> GetGestionDocumentosAdicionalesCabeceraAsync([FromQuery] GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto)
         {
-            _Logger.LogInfo($"GetGestionesCabeceraAdicionales|Begin|GetGestionesCabeceraAdicionalesAsync|request: {JsonSerializer.Serialize(gestionCabeceraAdicionalDto)}");
-            var result = await _gestionService.GetGestionesCabeceraAdicionalesAsync(gestionCabeceraAdicionalDto);
-            _Logger.LogInfo($"GetGestionesCabeceraAdicionales|End|GetGestionesCabeceraAdicionalesAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionDocumentosAdicionalesCabecera|Begin|GetGestionDocumentosAdicionalesCabeceraAsync|request: {JsonSerializer.Serialize(gestionCabeceraAdicionalDto)}");
+            var result = await _gestionService.GetGestionDocumentosAdicionalesCabeceraAsync(gestionCabeceraAdicionalDto);
+            _Logger.LogInfo($"GetGestionDocumentosAdicionalesCabecera|End|GetGestionDocumentosAdicionalesCabeceraAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Adicionales")]
-        [HttpGet("GetGestionesAdicionales")]
-        public async Task<IActionResult> GetGestionesAdicionalesAsync([FromQuery] GetGestionAdicionalRequestDto gestionAdicionalDto)
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Documentos Adicionales")]
+        [HttpGet("GetGestionDocumentosAdicionales")]
+        public async Task<IActionResult> GetGestionDocumentosAdicionalesAsync([FromQuery] GetGestionAdicionalRequestDto gestionAdicionalDto)
         {
-            _Logger.LogInfo($"GetGestionesAdicionales|Begin|GetGestionesAdicionalesAsync|request: {JsonSerializer.Serialize(gestionAdicionalDto)}");
-            var result = await _gestionService.GetGestionesAdicionalesAsync(gestionAdicionalDto);
-            _Logger.LogInfo($"GetGestionesAdicionales|End|GetGestionesAdicionalesAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionDocumentosAdicionales|Begin|GetGestionDocumentosAdicionalesAsync|request: {JsonSerializer.Serialize(gestionAdicionalDto)}");
+            var result = await _gestionService.GetGestionDocumentosAdicionalesAsync(gestionAdicionalDto);
+            _Logger.LogInfo($"GetGestionDocumentosAdicionales|End|GetGestionDocumentosAdicionalesAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Telefonos")]
-        [HttpGet("GetGestionesTelefonos")]
-        public async Task<IActionResult> GetGestionesTelefonosAsync([FromQuery] GetGestionTelefonoRequestDto gestionTelefonoDto)
+        [HttpGet("GetGestionTelefonos")]
+        public async Task<IActionResult> GetGestionTelefonosAsync([FromQuery] GetGestionTelefonoRequestDto gestionTelefonoDto)
         {
-            _Logger.LogInfo($"GetGestionesTelefonos|Begin|GetGestionesTelefonosAsync|request: {JsonSerializer.Serialize(gestionTelefonoDto)}");
-            var result = await _gestionService.GetTelefonoGestionAsync(gestionTelefonoDto);
-            _Logger.LogInfo($"GetGestionesTelefonos|End|GetGestionesTelefonosAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionTelefonos|Begin|GetGestionTelefonosAsync|request: {JsonSerializer.Serialize(gestionTelefonoDto)}");
+            var result = await _gestionService.GetGestionTelefonosAsync(gestionTelefonoDto);
+            _Logger.LogInfo($"GetGestionTelefonos|End|GetGestionTelefonosAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Direcciones")]
-        [HttpGet("GetGestionesDirecciones")]
+        [HttpGet("GetGestionDirecciones")]
         public async Task<IActionResult> GetGestionesDireccionAsync([FromQuery] GetGestionDireccionRequestDto gestionDireccionDto)
         {
-            _Logger.LogInfo($"GetGestionesDirecciones|Begin|GetGestionesDireccionesAsync|request: {JsonSerializer.Serialize(gestionDireccionDto)}");
+            _Logger.LogInfo($"GetGestionDirecciones|Begin|GetGestionDireccionesAsync|request: {JsonSerializer.Serialize(gestionDireccionDto)}");
             var result = await _gestionService.GetGestionDireccionesAsync(gestionDireccionDto);
-            _Logger.LogInfo($"GetGestionesDirecciones|End|GetGestionesDireccionesAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionDirecciones|End|GetGestionDireccionesAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Direcciones")]
+        [HttpGet("GetGestionGestionesCarteraDeudor")]
+        public async Task<IActionResult> GetGestionGestionesCarteraDeudorAsync([FromQuery] GetGestionGestionesCarteraDeudorRequestDto gestionCarteraDeudorDto)
+        {
+            _Logger.LogInfo($"GetGestionGestionesCarteraDeudor|Begin|GetGestionGestionesCarteraDeudorAsync|request: {JsonSerializer.Serialize(gestionCarteraDeudorDto)}");
+            var result = await _gestionService.GetGestionGestionesCarteraDeudorAsync(gestionCarteraDeudorDto);
+            _Logger.LogInfo($"GetGestionGestionesCarteraDeudor|End|GetGestionGestionesCarteraDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
     }
