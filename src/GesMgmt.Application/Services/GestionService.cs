@@ -124,7 +124,7 @@ namespace GesMgmt.Application.Services
                                             select new
                                             {
                                                 op.nId_DocxCobrar,
-                                                nId_OpeCodOut = (int?)op.nId_OpeCodOut
+                                                nId_OpeCodOut = (int?)op.nId_OpeCodCliOut
                                             };
 
                 var data = await (
@@ -653,17 +653,27 @@ namespace GesMgmt.Application.Services
             try
             {
                 var q_Doc = _unitOfWork.av_DocxCobrarOpes.GetGestionesCarteraDeudor(filterdc.nId_Cliente.Value, filterdc.nId_Cartera.Value, filterdc.nId_PersDeudor, filterdc.av_Usuario.nId_PerfilGest);
+                var q_DesGes = await _unitOfWork.av_OpeCodCliOuts.Query();
+                var q_DesGes2 = await _unitOfWork.av_OpeCodCliOuts.Query();
 
                 var data = await (
                                     from s in q_Doc
+
+                                    join d in q_DesGes
+                                    on s.nId_OpeCodCliOut equals d.nId_OpeCodCliOut into dg
+                                    from d in dg.DefaultIfEmpty()
+
                                     select new GetGestionGestionesCarteraDeudorResponseDto
                                     {
                                         nId_DocxCobrarOpe = s.nId_DocxCobrarOpe,
                                         fechaGestion = s.dDocCobOpe_FecIni.HasValue ? FormatearFecha(s.dDocCobOpe_FecIni) : "",
                                         gestor = s.av_Usuario != null ? $"{s.av_Usuario.nId_Usuario} - {s.av_Usuario.cUsr_Login}" : "",
                                         documento = s.av_DocxCobrar != null ? s.av_DocxCobrar.cDoc_Numero : "",
-                                        respuesta = "",
-                                        comentario = s.cDocOpeCobOut_Descr
+                                        respuesta = d.cNombre_OpeCodCliOut ?? "",
+                                        comentario = (s.cDocOpeCobOut_Descr + " Nro Telef: " + s.nTelef_Nro) +
+                                                    (s.monto_comp > 0 ? " Compromiso de Pago " + s.monto_comp.ToString() : "") +
+                                                    (s.monto_compDolares > 0 ? " Compromiso de Pago $ US " + s.monto_compDolares.ToString() : "") +
+                                                    (s.dFechCompromisoPago.HasValue && s.dFechCompromisoPago.Value.Date != new DateTime(1900, 1, 1) ? " Fecha Comp.: " + s.dFechCompromisoPago.Value.ToString("dd/MM/yyyy") : "")
                                     }
                     )
                     .Skip((gestionCarteraDeudorDto.PageNumber - 1) * gestionCarteraDeudorDto.PageSize)

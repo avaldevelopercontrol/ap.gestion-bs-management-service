@@ -16,6 +16,7 @@ namespace GesMgmt.Infraestructure.Configurations
 
             builder.Property(dco => dco.nId_TipoGestion).HasColumnName("tip_gestion");
             builder.Property(dco => dco.nId_Usuario).HasColumnName("nId_UsuOpe");
+            builder.Property(dco => dco.nId_OpeCodCliOut).HasColumnName("nId_OpeCodOut");
 
             builder.HasOne(dco => dco.av_DocxCobrar)
                 .WithMany()

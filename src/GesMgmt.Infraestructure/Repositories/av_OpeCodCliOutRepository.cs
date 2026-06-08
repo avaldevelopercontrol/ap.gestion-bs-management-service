@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
-    public class av_CarteraRepository : Iav_CarteraRepository
+    public class av_OpeCodCliOutRepository : Iav_OpeCodCliOutRepository
     {
         protected readonly AvalDbContext _context;
-        protected readonly DbSet<av_Cartera> _dbSet;
+        protected readonly DbSet<av_OpeCodCliOut> _dbSet;
 
-        public av_CarteraRepository(AvalDbContext context)
+        public av_OpeCodCliOutRepository(AvalDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<av_Cartera>();
+            _dbSet = context.Set<av_OpeCodCliOut>();
         }
 
-        public async Task<IQueryable<av_Cartera>> Query()
+        public async Task<IQueryable<av_OpeCodCliOut>> Query()
         {
             return _dbSet.AsNoTracking();
         }

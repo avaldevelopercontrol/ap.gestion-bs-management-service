@@ -13,7 +13,8 @@ namespace GesMgmt.Domain.Entities
         public DateTime? dDocCobOpe_FecIni { get; set; }
         public DateTime? dDocCobOpe_FecFin { get; set; }
         public string? cDocOpeCobIn_Descr { get; set; }
-        public int nId_OpeCodOut { get; set; }
+        public int nId_OpeCodCliOut { get; set; }
+        public av_OpeCodCliOut av_OpeCodCliOut { get; set; }
         public bool? bEstado { get; set; }
         public int? nId_Usuario { get; set; }
         public av_Usuario? av_Usuario { get; set; }
