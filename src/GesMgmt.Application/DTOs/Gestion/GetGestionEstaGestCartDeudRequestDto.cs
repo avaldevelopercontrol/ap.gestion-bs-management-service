@@ -4,9 +4,9 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionAdicionalRequestDto
+    public class GetGestionEstaGestCartDeudRequestDto
     {
-        public GetGestionAdicionalRequestDto()
+        public GetGestionEstaGestCartDeudRequestDto()
         {
             nId_Cliente = 0;
             nId_Cartera = 0;
@@ -19,13 +19,12 @@ namespace GesMgmt.Application.DTOs.Gestion
 
         // 🔹 PAGINACIÓN
         public int PageNumber { get; set; } = 1;
-
         private int _pageSize = 10;
+
         public int PageSize
         {
             get => _pageSize;
             set => _pageSize = value > 50 ? 50 : value; // Máximo 50
         }
-
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionTelefonoResponseDto
+    public class GetGestionTeleResponseDto
     {
         public int? prioridad { get; set; }
         public string? nroTelefono { get; set; }

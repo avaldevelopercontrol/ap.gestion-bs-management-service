@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionAdicionalResponseDto
+    public class GetGestionAdicResponseDto
     {
         public int nId_DocxCobrarAd { get; set; } //1 Cabecera principal
         public int? nId_DocxCobrar { get; set; } //2 Cabecera principal

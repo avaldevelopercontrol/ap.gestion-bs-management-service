@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionCabeceraResponseDto
+    public class GetGestionCabeResponseDto
     {
         public int idCabeceraPantalla { get; set; }
         public string tituloCabeceraPantalla { get; set; }

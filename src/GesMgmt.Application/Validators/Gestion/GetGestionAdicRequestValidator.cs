@@ -9,17 +9,17 @@ using System.Text;
 
 namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetGestionCabeceraAdicionalRequestValidator
+    public class GetGestionAdicRequestValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetGestionCabeceraAdicionalRequestDto _requestDto;
+        private GetGestionAdicRequestDto _requestDto;
 
-        public GetGestionCabeceraAdicionalRequestValidator(
+        public GetGestionAdicRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetGestionCabeceraAdicionalRequestDto requestDto)
+                GetGestionAdicRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -27,7 +27,7 @@ namespace GesMgmt.Application.Validators.Gestion
             _requestDto = requestDto;
         }
 
-        public async Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> Validate()
+        public async Task<ResultListDto<IEnumerable<GetGestionAdicResponseDto>>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -37,12 +37,18 @@ namespace GesMgmt.Application.Validators.Gestion
                 return validationResultDefault;
             }
             #endregion
-            return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> ValidateDefault()
+        private async Task<ResultListDto<IEnumerable<GetGestionAdicResponseDto>>> ValidateDefault()
         {
-            return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
+
+        public async Task<ResultListDto<IEnumerable<GetGestionAdicResponseDto>>> ValidateSearchResult(int rows)
+        {
+            return ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+        }
+
     }
 }

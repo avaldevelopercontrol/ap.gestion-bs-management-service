@@ -9,17 +9,17 @@ using System.Text;
 
 namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetGestionTelefonoRequestValidator
+    public class GetGestionDireRequestValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetGestionTelefonoRequestDto _requestDto;
+        private GetGestionDireRequestDto _requestDto;
 
-        public GetGestionTelefonoRequestValidator(
+        public GetGestionDireRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetGestionTelefonoRequestDto requestDto)
+                GetGestionDireRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -27,7 +27,7 @@ namespace GesMgmt.Application.Validators.Gestion
             _requestDto = requestDto;
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> Validate()
+        public async Task<ResultListDto<IEnumerable<GetGestionDireResponseDto>>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -37,12 +37,12 @@ namespace GesMgmt.Application.Validators.Gestion
                 return validationResultDefault;
             }
             #endregion
-            return ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionDireResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> ValidateDefault()
+        private async Task<ResultListDto<IEnumerable<GetGestionDireResponseDto>>> ValidateDefault()
         {
-            return ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionDireResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
     }
 }

@@ -9,17 +9,17 @@ using System.Text;
 
 namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetGestionGestionesCarteraDeudorValidator
+    public class GetGestionGestCartDeudValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetGestionGestionesCarteraDeudorRequestDto _requestDto;
+        private GetGestionGestCartDeudRequestDto _requestDto;
 
-        public GetGestionGestionesCarteraDeudorValidator(
+        public GetGestionGestCartDeudValidator(
             IUnitOfWork unitOfWork,
             IValidationMessageService validationMessageService,
-            GetGestionGestionesCarteraDeudorRequestDto requestDto)
+            GetGestionGestCartDeudRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -27,7 +27,7 @@ namespace GesMgmt.Application.Validators.Gestion
             _requestDto = requestDto;
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>> Validate()
+        public async Task<ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -37,12 +37,12 @@ namespace GesMgmt.Application.Validators.Gestion
                 return validationResultDefault;
             }
             #endregion
-            return ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>> ValidateDefault()
+        private async Task<ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>> ValidateDefault()
         {
-            return ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
     }

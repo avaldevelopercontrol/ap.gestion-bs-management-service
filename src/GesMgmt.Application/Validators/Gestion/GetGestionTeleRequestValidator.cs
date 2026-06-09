@@ -9,17 +9,17 @@ using System.Text;
 
 namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetGestionAdicionalRequestValidator
+    public class GetGestionTeleRequestValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetGestionAdicionalRequestDto _requestDto;
+        private GetGestionTeleRequestDto _requestDto;
 
-        public GetGestionAdicionalRequestValidator(
+        public GetGestionTeleRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetGestionAdicionalRequestDto requestDto)
+                GetGestionTeleRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -27,7 +27,7 @@ namespace GesMgmt.Application.Validators.Gestion
             _requestDto = requestDto;
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> Validate()
+        public async Task<ResultListDto<IEnumerable<GetGestionTeleResponseDto>>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -37,18 +37,12 @@ namespace GesMgmt.Application.Validators.Gestion
                 return validationResultDefault;
             }
             #endregion
-            return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionTeleResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> ValidateDefault()
+        private async Task<ResultListDto<IEnumerable<GetGestionTeleResponseDto>>> ValidateDefault()
         {
-            return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionTeleResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
-
-        public async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> ValidateSearchResult(int rows)
-        {
-            return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-        }
-
     }
 }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionDeudorRequestDto
+    public class GetGestionDeudRequestDto
     {
-        public GetGestionDeudorRequestDto()
+        public GetGestionDeudRequestDto()
         {
             nId_Cliente = 0;
             nId_Cartera = 0;

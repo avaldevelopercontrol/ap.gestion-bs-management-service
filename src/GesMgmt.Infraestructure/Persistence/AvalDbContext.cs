@@ -17,12 +17,14 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_DocxCobrarAdicional> av_DocxCobrars { get; set; }
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
+        public DbSet<av_DocxCobrarOpeEst> av_DocxCobrarOpeEsts { get; set; }
         public DbSet<av_DocxCobrarParam> av_DocxCobrarParams { get; set; }
         public DbSet<av_DocxPago> av_DocxPagos { get; set; }
         public DbSet<av_EstadoAsteriskAval> av_EstadoAsteriskAvals { get; set; }
         public DbSet<av_FuenteBusTel> av_FuenteBusTels { get; set; }
         public DbSet<av_MaeTabla> av_MaeTablas { get; set; }
         public DbSet<av_Moneda> av_Monedas { get; set; }
+        public DbSet<av_OpeCodCliOutEst> av_OpeCodCliOutEsts { get; set; }
         public DbSet<av_OpeCodCliOut> av_OpeCodCliOuts { get; set; }
         public DbSet<av_PersDeudor> av_PersDeudors { get; set; }
         public DbSet<av_PersDirecc> av_PersDireccs { get; set; }
@@ -53,12 +55,14 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_DocxCobrarConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarAdicionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeEstConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarParamConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxPagoConfiguration());
             modelBuilder.ApplyConfiguration(new av_EstadoAsteriskAvalConfiguration());
             modelBuilder.ApplyConfiguration(new av_FuenteBusTelConfiguration());
             modelBuilder.ApplyConfiguration(new av_MaeTablaConfiguration());
             modelBuilder.ApplyConfiguration(new av_MonedaConfiguration());
+            modelBuilder.ApplyConfiguration(new av_OpeCodCliOutEstConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDireccConfiguration());

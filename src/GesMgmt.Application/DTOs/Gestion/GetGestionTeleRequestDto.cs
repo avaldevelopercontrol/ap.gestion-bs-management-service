@@ -4,9 +4,10 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionDireccionRequestDto
+    public class GetGestionTeleRequestDto
     {
-        public GetGestionDireccionRequestDto()
+
+        public GetGestionTeleRequestDto()
         {
             nId_Cliente = 0;
             nId_Persdeudor = 0;

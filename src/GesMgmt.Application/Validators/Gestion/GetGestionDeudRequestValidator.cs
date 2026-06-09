@@ -6,17 +6,17 @@ using GesMgmt.Domain.Interfaces;
 
 namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetGestionDeudorRequestValidator
+    public class GetGestionDeudRequestValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetGestionDeudorRequestDto _requestDto;
+        private GetGestionDeudRequestDto _requestDto;
 
-        public GetGestionDeudorRequestValidator(
+        public GetGestionDeudRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetGestionDeudorRequestDto requestDto)
+                GetGestionDeudRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -24,7 +24,7 @@ namespace GesMgmt.Application.Validators.Gestion
             _requestDto = requestDto;
         }
 
-        public async Task<ResultDto<GetGestionDeudorResponseDto>> Validate()
+        public async Task<ResultDto<GetGestionDeudResponseDto>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -34,12 +34,12 @@ namespace GesMgmt.Application.Validators.Gestion
                 return validationResultDefault;
             }
             #endregion
-            return ResultDto<GetGestionDeudorResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<GetGestionDeudResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<GetGestionDeudorResponseDto>> ValidateDefault()
+        private async Task<ResultDto<GetGestionDeudResponseDto>> ValidateDefault()
         {
-            return ResultDto<GetGestionDeudorResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<GetGestionDeudResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
     }

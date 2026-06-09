@@ -7,12 +7,12 @@ using System.Text;
 
 namespace GesMgmt.Infraestructure.Configurations
 {
-    public class av_DocxCobrarOpeConfiguration : IEntityTypeConfiguration<av_DocxCobrarOpe>
+    public class av_DocxCobrarOpeEstConfiguration : IEntityTypeConfiguration<av_DocxCobrarOpeEst>
     {
-        public void Configure(EntityTypeBuilder<av_DocxCobrarOpe> builder)
+        public void Configure(EntityTypeBuilder<av_DocxCobrarOpeEst> builder)
         {
-            builder.ToTable("av_DocxCobrarOpe", "dbo");
-            builder.HasKey(dco => dco.nId_DocxCobrarOpe);
+            builder.ToTable("av_DocxCobrarOpeEst", "dbo");
+            builder.HasKey(car => car.nId_DocxCobrarOpe);
 
             builder.Property(dco => dco.nId_TipoGestion).HasColumnName("tip_gestion");
             builder.Property(dco => dco.nId_Usuario).HasColumnName("nId_UsuOpe");
@@ -29,6 +29,10 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.HasOne(dco => dco.av_TipoGestion)
                 .WithMany()
                 .HasForeignKey(dc => dc.nId_TipoGestion);
+
+            //builder.HasOne(dco => dco.av_OpeCodCliOutEst)
+            //    .WithMany()
+            //    .HasForeignKey(dc => dc.nId_OpeCodCliOut);
         }
     }
 }

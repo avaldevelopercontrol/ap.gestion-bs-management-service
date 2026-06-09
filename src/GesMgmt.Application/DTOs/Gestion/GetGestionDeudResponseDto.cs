@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionDeudorResponseDto
+    public class GetGestionDeudResponseDto
     {
         public int nId_PersDeudor { get; set; }
         public string? dni { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionDireccionResponseDto
+    public class GetGestionDireResponseDto
     {
         public int nId_PersDirecc { get; set; }
         public string? direccion { get; set; }

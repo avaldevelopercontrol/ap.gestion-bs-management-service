@@ -8,17 +8,17 @@ using System.Globalization;
 
 namespace GesMgmt.Application.Validators.Gestion
     {
-        public class GetGestionDocumentoRequestValidator
+        public class GetGestionDocuRequestValidator
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IValidationMessageService _validationMessageService;
             private ValidationMessageDto _oValMsgDto;
-            private GetGestionDocumentoRequestDto _requestDto;
+            private GetGestionDocuRequestDto _requestDto;
 
-            public GetGestionDocumentoRequestValidator(
+            public GetGestionDocuRequestValidator(
                 IUnitOfWork unitOfWork, 
                 IValidationMessageService validationMessageService, 
-                GetGestionDocumentoRequestDto requestDto)
+                GetGestionDocuRequestDto requestDto)
             {
                 _unitOfWork = unitOfWork;
                 _validationMessageService = validationMessageService;
@@ -26,7 +26,7 @@ namespace GesMgmt.Application.Validators.Gestion
                 _requestDto = requestDto;
             }
 
-            public async Task<ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>> Validate()
+            public async Task<ResultListDto<IEnumerable<GetGestionDocuResponseDto>>> Validate()
             {
                 #region Default
                 var validationResultDefault = await ValidateDefault();
@@ -36,17 +36,17 @@ namespace GesMgmt.Application.Validators.Gestion
                     return validationResultDefault;
                 }
                 #endregion
-                return ResultListDto< IEnumerable<GetGestionDocumentoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return ResultListDto< IEnumerable<GetGestionDocuResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
 
-            private async Task<ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>> ValidateDefault()
+            private async Task<ResultListDto<IEnumerable<GetGestionDocuResponseDto>>> ValidateDefault()
             {
-                return ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return ResultListDto<IEnumerable<GetGestionDocuResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
 
-            public async Task<ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>> ValidateSearchResult(int rows)
+            public async Task<ResultListDto<IEnumerable<GetGestionDocuResponseDto>>> ValidateSearchResult(int rows)
             {
-                return ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return ResultListDto<IEnumerable<GetGestionDocuResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
 
         }

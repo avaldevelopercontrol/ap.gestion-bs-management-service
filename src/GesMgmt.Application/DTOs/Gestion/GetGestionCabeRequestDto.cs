@@ -4,9 +4,9 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionCabeceraRequestDto
+    public class GetGestionCabeRequestDto
     {
-        public GetGestionCabeceraRequestDto()
+        public GetGestionCabeRequestDto()
         {
             nId_Cliente = 0;
             nId_Contrato = 0;

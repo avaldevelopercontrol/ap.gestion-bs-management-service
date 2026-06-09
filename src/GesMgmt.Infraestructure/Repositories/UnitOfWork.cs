@@ -20,6 +20,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_ContratoRepository? _av_Contratos;
         private Iav_DetallePersTelefRepository _av_DetallePersTelefs;
         private Iav_DocxCobrarAdicionalRepository? _av_DocxCobrarOpeAdicionals;
+        private Iav_DocxCobrarOpeEstRepository? _av_DocxCobrarOpeEsts;
         private Iav_DocxCobrarOpeRepository? _av_DocxCobrarOpes;
         private Iav_DocxCobrarParamRepository? _av_DocxCobrarParams;
         private Iav_DocxCobrarRepository? _av_DocxCobrars;
@@ -28,6 +29,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_FuenteBusTelRepository? _av_FuenteBusTels;
         private Iav_MaeTablaRepository? _av_MaeTablas;
         private Iav_MonedaRepository? _av_Monedas;
+        private Iav_OpeCodCliOutEstRepository? _av_OpeCodCliOutEsts;
         private Iav_OpeCodCliOutRepository? _av_OpeCodCliOuts;
         private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrss;
         private Iav_PersDeudorRepository? _av_PersDeudors;
@@ -57,6 +59,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_ContratoRepository av_Contratos => _av_Contratos ??= new av_ContratoRepository(_context);
         public Iav_DetallePersTelefRepository av_DetallePersTelefs => _av_DetallePersTelefs ??= new av_DetallePersTelefRepository(_context);
         public Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals => _av_DocxCobrarOpeAdicionals ??= new av_DocxCobrarAdicionalRepository(_context);
+        public Iav_DocxCobrarOpeEstRepository av_DocxCobrarOpeEsts => _av_DocxCobrarOpeEsts ??= new av_DocxCobrarOpeEstRepository(_context);
         public Iav_DocxCobrarOpeRepository av_DocxCobrarOpes => _av_DocxCobrarOpes ??= new av_DocxCobrarOpeRepository(_context);
         public Iav_DocxCobrarParamRepository av_DocxCobrarParams => _av_DocxCobrarParams ??= new av_DocxCobrarParamRepository(_context);
         public Iav_DocxCobrarRepository av_DocxCobrars => _av_DocxCobrars ??= new av_DocxCobrarRepository(_context);
@@ -65,6 +68,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_FuenteBusTelRepository av_FuenteBusTels => _av_FuenteBusTels ??= new av_FuenteBusTelRepository(_context);
         public Iav_MaeTablaRepository av_MaeTablas => _av_MaeTablas ??= new av_MaeTablaRepository(_context);
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
+        public Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts => _av_OpeCodCliOutEsts ??= new av_OpeCodCliOutEstRepository(_context);
         public Iav_OpeCodCliOutRepository av_OpeCodCliOuts => _av_OpeCodCliOuts ??= new av_OpeCodCliOutRepository(_context);
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
         public Iav_PersDireccRepository av_PersDireccs => _av_PersDireccs ??= new av_PersDireccRepository(_context);

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionCabeceraAdicionalRequestDto
+    public class GetGestionCabeAdicRequestDto
     {
-        public GetGestionCabeceraAdicionalRequestDto()
+        public GetGestionCabeAdicRequestDto()
         {
             nId_Cliente = 0;
             pantalla = 0;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Gestion
 {
-    public class GetGestionGestionesCarteraDeudorResponseDto
+    public class GetGestionGestCartDeudResponseDto
     {
         public int nId_DocxCobrarOpe { get; set; }
         public int nro { get; set; }
