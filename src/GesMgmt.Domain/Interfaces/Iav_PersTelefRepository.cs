@@ -13,5 +13,6 @@ namespace GesMgmt.Domain.Interfaces
         Task<av_PersTelef> GetTelefonoNroTelefonoByIdDeudorAsync(string nTelef_Nro, int nId_PersDeudor);
         Task<av_PersTelef> GetTelefonoNroTelefonoAsync(string nTelef_Nro);
         Task<av_PersTelef> AddAsync(av_PersTelef av_PersTelef);
+        Task<av_PersTelef> UpdateAsync(av_PersTelef av_PersTelef)
     }
 }

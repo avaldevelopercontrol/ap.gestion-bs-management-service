@@ -6,6 +6,7 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GetGestionTeleResponseDto
     {
+        public int nId_PersTelef { get; set; }
         public int? prioridad { get; set; }
         public string? nroTelefono { get; set; }
         public string? horario { get; set; }

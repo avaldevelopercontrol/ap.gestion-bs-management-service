@@ -511,6 +511,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                                     select new GetGestionTeleResponseDto
                                     {
+                                        nId_PersTelef = pe.nId_PersTelef,
                                         prioridad = pe.nTelef_Prioridad ?? 0,
                                         nroTelefono = pe.nTelef_Nro ?? "",
                                         horario = hrs.cNombren_PersDeudorGestionHrs ?? "",

@@ -71,5 +71,11 @@ namespace GesMgmt.Infraestructure.Repositories
             await _dbSet.AddAsync(av_PersTelef);
             return av_PersTelef;
         }
+
+        public async Task<av_PersTelef> UpdateAsync(av_PersTelef av_PersTelef)
+        {
+            _dbSet.Update(av_PersTelef);
+            return av_PersTelef;
+        }
     }
 }
