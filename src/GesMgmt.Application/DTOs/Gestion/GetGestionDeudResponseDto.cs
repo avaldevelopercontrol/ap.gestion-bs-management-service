@@ -28,5 +28,6 @@ namespace GesMgmt.Application.DTOs.Gestion
         public string? clientePorVision { get; set; }
         public string? clienteListaBlanca { get; set; }
         public string? clienteConSinPe { get; set; }
+        public string? nGra_Instruccion { get; set; }
     }
 }

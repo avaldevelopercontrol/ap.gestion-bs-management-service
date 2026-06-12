@@ -8,7 +8,7 @@ namespace GesMgmt.Infraestructure.Configurations
     {
         public void Configure(EntityTypeBuilder<ValidationMessage> builder)
         {
-            builder.ToTable("Message", "Payment");
+            builder.ToTable("Message", "dbo");
             builder.HasKey(m => m.Id);
         }
     }

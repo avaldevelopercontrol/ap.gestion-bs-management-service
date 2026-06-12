@@ -1,10 +1,10 @@
-﻿using GesMgmt.Domain.Entities;
+﻿using GesMgmt.Application.DTOs;
+using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using static GesMgmt.Application.DTOs.Telefono.GetTelefonoResponseDto;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
@@ -39,6 +39,27 @@ namespace GesMgmt.Infraestructure.Repositories
                 query = query.Where(dettel => dettel.nId_PersTelef == av_DetallePersTelef.nId_PersTelef);
 
             return query;
+        }
+
+        public async Task<av_DetallePersTelef> GetDetalleTelefonoSearchAsync(int nId_Cliente, int nId_PersTelef)
+        {
+            try
+            {
+                var query = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nId_Cliente == nId_Cliente && s.nId_PersTelef == nId_PersTelef);
+                return query;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<av_DetallePersTelef> AddAsync(av_DetallePersTelef av_DetallePersTelef)
+        {
+            await _dbSet.AddAsync(av_DetallePersTelef);
+            return av_DetallePersTelef;
         }
     }
 }

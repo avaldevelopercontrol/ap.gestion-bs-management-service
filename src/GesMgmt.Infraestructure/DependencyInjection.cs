@@ -7,6 +7,10 @@ using GesMgmt.Infraestructure.Persistence;
 using GesMgmt.Infraestructure.Repositories;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Services;
+using GesMgmt.Application.Services.Gestion;
+using GesMgmt.Application.Interfaces.Gestion;
+using GesMgmt.Application.Services.Telefono;
+using GesMgmt.Application.Interfaces.Telefono;
 
 namespace GesMgmt.Infraestructure
 {
@@ -30,6 +34,7 @@ namespace GesMgmt.Infraestructure
 
             // Services
             services.AddScoped<IGestionService, GestionService>();
+            services.AddScoped<ITelefonoService, TelefonoService>();
             services.AddScoped<IValidationMessageService, ValidationMessageService>();
 
             // Logger

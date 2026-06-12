@@ -23,5 +23,12 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public IQueryable<av_PersRefUbi> GetUbicacionesTelefono()
+        {
+            return _dbSet
+                .AsNoTracking()
+                .Where(p => p.bEstado == true);
+        }
     }
 }

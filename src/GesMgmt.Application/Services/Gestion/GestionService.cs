@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
+using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Application.Validators.Gestion;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
@@ -10,7 +11,7 @@ using System.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.WebRequestMethods;
 
-namespace GesMgmt.Application.Services
+namespace GesMgmt.Application.Services.Gestion
 {
     public class GestionService: IGestionService
     {
@@ -313,7 +314,7 @@ namespace GesMgmt.Application.Services
                         servicio = s.adParam03 ?? "",
                         estadoServicio = s.adParam04 ?? "",
                         motivo = s.adParam05 ?? "",
-                        codigoCliente = s.adParam06 ?? ""
+                        codigoCliente = s.adParam10 ?? ""
                     })
                     .ToListAsync();
 
@@ -396,9 +397,10 @@ namespace GesMgmt.Application.Services
                                         ruc = d.cPers_RUC,
                                         nombre = d.cPers_Nombres,
                                         nombreCompleto = d.cNomCompleto,
+                                        gradoInstruccion = d.nGra_Instruccion.ToString(),
                                         edad = d.dFecNacimiento.HasValue
                                             ? ((DateTime.Now - d.dFecNacimiento.Value).Days / 365).ToString()
-                                            : null,
+                                            : "",
                                         correo = d.cCorreo,
                                         informacionAdicional = d.bInfoAdicional,
                                         pagos = q_DocPago.Any(x =>
@@ -422,9 +424,10 @@ namespace GesMgmt.Application.Services
                                         validaCronograma = false,
                                         clientePorVision = docParamsQuery.Max(x => x.cDocParam160) ?? "",
                                         clienteListaBlanca = docParamsQuery.Max(x => x.cDocParam161) ?? "",
-                                        clienteConSinPe = docParamsQuery.Max(x => x.cDocParam162) ?? "",
+                                        clienteConSinPe = docParamsQuery.Max(x => x.cDocParam162) ?? ""
                                         // Se llena después
-                                        gradoInstruccion = null
+                                        //nGra_Instruccion = d.nGra_Instruccion.ToString(),
+                                        
                                     }).FirstOrDefaultAsync();
 
                 var response = ResultDto<GetGestionDeudResponseDto>.Success(data, "200", "OK", "OK", 200);
@@ -610,7 +613,6 @@ namespace GesMgmt.Application.Services
 
                 int totalRecords = q_PerDir.Count();
 
-
                 var response = ResultListDto<IEnumerable<GetGestionDireResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 response.TotalRecords = totalRecords;
@@ -646,8 +648,6 @@ namespace GesMgmt.Application.Services
                 nId_Cartera = gestionCarteraDeudorDto.nId_Cartera,
                 nId_PersDeudor = gestionCarteraDeudorDto.nId_Persdeudor,
                 av_Usuario = new av_Usuario { nid_perfil = gestionCarteraDeudorDto.nId_PerfilUsuario }
-
-
             };
 
             try

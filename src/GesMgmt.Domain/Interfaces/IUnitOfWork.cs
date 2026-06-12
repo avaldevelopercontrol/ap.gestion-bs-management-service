@@ -22,6 +22,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_MonedaRepository av_Monedas { get; }
         Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts { get; }
         Iav_OpeCodCliOutRepository av_OpeCodCliOuts { get; }
+        Iav_OperadorTelefonicoRepository av_OperadorTelefonicos { get;  }
         Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss { get; }
         Iav_PersDeudorRepository av_PersDeudors { get; }
         Iav_PersDireccRepository av_PersDireccs { get; }

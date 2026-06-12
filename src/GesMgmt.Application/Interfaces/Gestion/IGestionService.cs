@@ -2,7 +2,7 @@
 using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Domain.Entities;
 
-namespace GesMgmt.Application.Interfaces
+namespace GesMgmt.Application.Interfaces.Gestion
 {
     public interface IGestionService
     {

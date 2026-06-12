@@ -2,6 +2,7 @@
 using GesMgmt.Domain.Entities;
 using GesMgmt.Infraestructure.Configurations;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data;
 
 
 namespace GesMgmt.Infraestructure.Persistence
@@ -26,6 +27,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_Moneda> av_Monedas { get; set; }
         public DbSet<av_OpeCodCliOutEst> av_OpeCodCliOutEsts { get; set; }
         public DbSet<av_OpeCodCliOut> av_OpeCodCliOuts { get; set; }
+        public DbSet<av_OperadorTelefonico> av_OperadorTelefonicos { get; set; }
         public DbSet<av_PersDeudor> av_PersDeudors { get; set; }
         public DbSet<av_PersDirecc> av_PersDireccs { get; set; }
         public DbSet<av_PersDeudorGestionHrs> av_PersDeudorGestionHrs { get; set; }
@@ -64,6 +66,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_MonedaConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutEstConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutConfiguration());
+            modelBuilder.ApplyConfiguration(new av_OperadorTelefonicoConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDireccConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorGestionHrsConfiguration());

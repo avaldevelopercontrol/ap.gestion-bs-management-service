@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static GesMgmt.Application.DTOs.Telefono.GetTelefonoResponseDto;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
@@ -24,6 +25,15 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
+        public async Task<av_PersTelef> GetTelefonoByIdTelefonoAsync(int nId_PersTelef)
+        {
+            var query = await _dbSet
+                .Include(tel => tel.av_PersDeudor)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nId_PersTelef == nId_PersTelef);
+            return query;
+        }
+
         public IQueryable<av_PersTelef> GetTelefonosAsync(av_PersTelef av_PersTelef)
         {
 
@@ -36,6 +46,30 @@ namespace GesMgmt.Infraestructure.Repositories
                 query = query.Where(tel => tel.nId_PersDeudor == av_PersTelef.nId_PersDeudor);
 
             return query;
+        }
+
+        public async Task<av_PersTelef> GetTelefonoNroTelefonoByIdDeudorAsync(string nTelef_Nro, int nId_PersDeudor)
+        {
+            var query = await _dbSet
+                .Include(tel => tel.av_PersDeudor)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nTelef_Nro == nTelef_Nro && s.nId_PersDeudor == nId_PersDeudor);
+            return query;
+        }
+
+        public async Task<av_PersTelef> GetTelefonoNroTelefonoAsync(string nTelef_Nro)
+        {
+            var query = await _dbSet
+                .Include(tel => tel.av_PersDeudor)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nTelef_Nro == nTelef_Nro);
+            return query;
+        }
+
+        public async Task<av_PersTelef> AddAsync(av_PersTelef av_PersTelef)
+        {
+            await _dbSet.AddAsync(av_PersTelef);
+            return av_PersTelef;
         }
     }
 }

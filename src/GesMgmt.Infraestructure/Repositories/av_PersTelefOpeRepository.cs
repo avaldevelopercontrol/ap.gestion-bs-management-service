@@ -23,5 +23,12 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public IQueryable<av_PersTelefOpe> GetResultadosTelefono()
+        {
+            return _dbSet
+                .AsNoTracking()
+                .Where(p => p.bEstado == true);
+        }
     }
 }

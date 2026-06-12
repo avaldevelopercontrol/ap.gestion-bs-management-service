@@ -31,6 +31,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_MonedaRepository? _av_Monedas;
         private Iav_OpeCodCliOutEstRepository? _av_OpeCodCliOutEsts;
         private Iav_OpeCodCliOutRepository? _av_OpeCodCliOuts;
+        private Iav_OperadorTelefonicoRepository? _av_OperadorTelefonicos;
         private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrss;
         private Iav_PersDeudorRepository? _av_PersDeudors;
         private Iav_PersDireccRepository? _av_PersDireccs;
@@ -70,6 +71,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
         public Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts => _av_OpeCodCliOutEsts ??= new av_OpeCodCliOutEstRepository(_context);
         public Iav_OpeCodCliOutRepository av_OpeCodCliOuts => _av_OpeCodCliOuts ??= new av_OpeCodCliOutRepository(_context);
+        public Iav_OperadorTelefonicoRepository av_OperadorTelefonicos => _av_OperadorTelefonicos ??= new av_OperadorTelefonicoRepository(_context);
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
         public Iav_PersDireccRepository av_PersDireccs => _av_PersDireccs ??= new av_PersDireccRepository(_context);
         public Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss => _av_PersDeudorGestionHrss ??= new av_PersDeudorGestionHrsRepository(_context);
