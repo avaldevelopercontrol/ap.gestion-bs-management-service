@@ -6,6 +6,9 @@ namespace GesMgmt.Domain.Constants
     public class ConstMsgVal
     {
         public const string TELEFONO_REQUERIDO = "001";
+        public const string TELEFONO_MENOR_LONGITUD = "007";
+        public const string TELEFONO_MAYOR_LONGITUD = "008";
+
         public const string TELEFONO_DEUDOR_EXISTE = "002";
         public const string TELEFONO_EXISTE = "003";
         public const string UBICACION_REQUERIDO = "004";

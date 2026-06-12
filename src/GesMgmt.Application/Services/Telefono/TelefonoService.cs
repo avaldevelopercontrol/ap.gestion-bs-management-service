@@ -233,9 +233,9 @@ namespace GesMgmt.Application.Services.Telefono
         }
 
         #region "Grabar Telefono"
-        public async Task<ResultDto<CreateTelefonoResponseDto>> CreateTelefonoAsync(CreateTelefonoRequestDto telefonoDto)
+        public async Task<ResultDto<CreateTelefonoResponseDto>> CreateTelefonoAsync(CreateTelefonoRequestDto telefonoCreateDto)
         {
-            CreateTelefonoRequestValidator validator = new CreateTelefonoRequestValidator(_unitOfWork, _validationMessageService, telefonoDto);
+            CreateTelefonoRequestValidator validator = new CreateTelefonoRequestValidator(_unitOfWork, _validationMessageService, telefonoCreateDto);
 
             // Validaciones
             var validationResult = await validator.Validate();
@@ -251,23 +251,23 @@ namespace GesMgmt.Application.Services.Telefono
             {
                 av_PersTelef perstelef = new av_PersTelef
                 {
-                    nId_PersDeudor = telefonoDto.nId_PersDeudor,
-                    nTelef_Pre = telefonoDto.nTelef_Pre,
-                    nTelef_Nro = telefonoDto.nTelef_Nro,
-                    nTelef_Anexo = telefonoDto.nTelef_Anexo,
-                    nId_PersRefUbi = telefonoDto.nId_PersRefUbi,
-                    nTelef_Prioridad = telefonoDto.nTelef_Prioridad,
-                    cTelef_Coment = telefonoDto.cTelef_Coment,
-                    nId_PersDeudorGestionHrs = telefonoDto.nId_PersDeudorGestionHrs,
-                    nId_PersTelefOpe = telefonoDto.nId_PersTelefOpe,
-                    bEstado = telefonoDto.bEstado,
-                    nId_Fuente = telefonoDto.nId_Fuente,
-                    nreferencia = telefonoDto.nreferencia,
+                    nId_PersDeudor = telefonoCreateDto.nId_PersDeudor,
+                    nTelef_Pre = telefonoCreateDto.nTelef_Pre,
+                    nTelef_Nro = telefonoCreateDto.nTelef_Nro,
+                    nTelef_Anexo = telefonoCreateDto.nTelef_Anexo,
+                    nId_PersRefUbi = telefonoCreateDto.nId_PersRefUbi,
+                    nTelef_Prioridad = telefonoCreateDto.nTelef_Prioridad,
+                    cTelef_Coment = telefonoCreateDto.cTelef_Coment,
+                    nId_PersDeudorGestionHrs = telefonoCreateDto.nId_PersDeudorGestionHrs,
+                    nId_PersTelefOpe = telefonoCreateDto.nId_PersTelefOpe,
+                    bEstado = telefonoCreateDto.bEstado,
+                    nId_Fuente = telefonoCreateDto.nId_Fuente,
+                    nreferencia = telefonoCreateDto.nreferencia,
                     dFecUlt_PerstelefOpe = DateTime.Now,
                     dFecCarga_PersTelef = DateTime.Now,
-                    nid_usuarioupd = telefonoDto.nid_usuarioupd,
-                    nId_OperadorTelefonico = telefonoDto.nId_OperadorTelefonico,
-                    bReclamo = telefonoDto.bReclamo,
+                    nid_usuarioupd = telefonoCreateDto.nid_usuarioupd,
+                    nId_OperadorTelefonico = telefonoCreateDto.nId_OperadorTelefonico,
+                    bReclamo = telefonoCreateDto.bReclamo,
                 };
                 var telefonoCreate = await _unitOfWork.av_PersTelefs.AddAsync(perstelef);
                 await _unitOfWork.SaveChangesAsync();
@@ -311,7 +311,112 @@ namespace GesMgmt.Application.Services.Telefono
                 return ResultDto<CreateTelefonoResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
             }
         }
+        #endregion
 
+        #region "Actualizar Telefono"
+        public async Task<ResultDto<EditTelefonoResponseDto>> EditTelefonoAsync(EditTelefonoRequestDto telefonoEditDto)
+        {
+            EditTelefonoRequestValidator validator = new EditTelefonoRequestValidator(_unitOfWork, _validationMessageService, telefonoEditDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            // Iniciar Transacción y ejecutar actualización (común para ambos casos)
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                //obtener los datoa antes de actualizar
+                var resultTelefOrig = await _unitOfWork.av_PersTelefs.GetTelefonoByIdTelefonoAsync(telefonoEditDto.nId_PersTelef);
+                if (telefonoEditDto.nId_PersTelefOpe == 10)
+                {
+                    if (resultTelefOrig.nId_PersTelefOpe != 10)
+                    {
+                        av_PersTelefOpeDetalle det_perstelefope = new av_PersTelefOpeDetalle
+                        {
+                            nId_PersTelef = telefonoEditDto.nId_PersTelef,
+                            nId_PersTelefOpe = telefonoEditDto.nId_PersTelefOpe,
+                            dFec_PerstelefOpe = DateTime.Now,
+                            nId_Usuario = telefonoEditDto.nid_usuarioupd
+                        };
+
+                        var detalleTelefonoCreate = await _unitOfWork.av_PersTelefOpeDetalles.AddAsync(det_perstelefope);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                }
+
+                if (resultTelefOrig.nId_PersTelefOpe == 10)
+                {
+                    //obtener Usuario - Perfil
+                    var usuPerfil = await _unitOfWork.av_Usuarios.GetByIdAsync(telefonoEditDto.nid_usuarioupd.Value);
+
+                    if (!new[] { 3, 8, 9, 14 }.Contains(usuPerfil.nid_perfil ?? 0))
+                    {
+                        telefonoEditDto.nId_PersTelefOpe = resultTelefOrig.nId_PersTelefOpe;
+                    }
+                    if (telefonoEditDto.nId_PersTelefOpe != 10)
+                    {
+                        av_PersTelefOpeDetalle det_perstelefope = new av_PersTelefOpeDetalle
+                        {
+                            nId_PersTelef = telefonoEditDto.nId_PersTelef,
+                            nId_PersTelefOpe = telefonoEditDto.nId_PersTelefOpe,
+                            dFec_PerstelefOpe = DateTime.Now,
+                            nId_Usuario = telefonoEditDto.nid_usuarioupd
+                        };
+
+                        var detalleTelefonoCreate = await _unitOfWork.av_PersTelefOpeDetalles.AddAsync(det_perstelefope);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                }
+
+                av_PersTelef perstelef = new av_PersTelef
+                {
+                    nId_PersTelef = telefonoEditDto.nId_PersTelef,
+                    nId_PersDeudor = telefonoEditDto.nId_PersDeudor,
+                    nTelef_Pre = telefonoEditDto.nTelef_Pre,
+                    nTelef_Nro = telefonoEditDto.nTelef_Nro,
+                    nTelef_Anexo = telefonoEditDto.nTelef_Anexo,
+                    nId_PersRefUbi = telefonoEditDto.nId_PersRefUbi,
+                    nTelef_Prioridad = telefonoEditDto.nTelef_Prioridad,
+                    cTelef_Coment = telefonoEditDto.cTelef_Coment,
+                    nId_PersDeudorGestionHrs = telefonoEditDto.nId_PersDeudorGestionHrs,
+                    nId_PersTelefOpe = telefonoEditDto.nId_PersTelefOpe,
+                    bEstado = telefonoEditDto.bEstado,
+                    nId_Fuente = telefonoEditDto.nId_Fuente,
+                    nreferencia = telefonoEditDto.nreferencia,
+                    dFecUlt_PerstelefOpe = DateTime.Now,
+                    nid_usuarioupd = telefonoEditDto.nid_usuarioupd,
+                    nId_OperadorTelefonico = telefonoEditDto.nId_OperadorTelefonico,
+                    bReclamo = telefonoEditDto.bReclamo,
+                };
+                var telefonoCreate = await _unitOfWork.av_PersTelefs.UpdateAsync(perstelef);
+                await _unitOfWork.SaveChangesAsync();
+
+                EditTelefonoResponseDto responseDto = new EditTelefonoResponseDto
+                {
+                    nId_PersTelef = telefonoCreate.nId_PersTelef,
+                    nId_PersDeudor = telefonoCreate.nId_PersDeudor,
+                    nTelef_Nro = telefonoCreate.nTelef_Nro
+                };
+
+                ResultDto<EditTelefonoResponseDto> response = ResultDto<EditTelefonoResponseDto>
+                                           .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return response;
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<EditTelefonoResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
         #endregion
     }
 }

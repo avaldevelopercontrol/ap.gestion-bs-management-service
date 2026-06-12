@@ -119,5 +119,17 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"CreateSuscription|End|CreateTelefonoAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(ResultDto<EditTelefonoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditTelefonoAsync([FromBody] EditTelefonoRequestDto telefonoEditDto)
+        {
+            _Logger.LogInfo($"CreateSuscription|Begin|CreateTelefonoAsync|request: {JsonSerializer.Serialize(telefonoEditDto)}");
+            var result = await _telefonoService.EditTelefonoAsync(telefonoEditDto);
+            _Logger.LogInfo($"CreateSuscription|End|CreateTelefonoAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }

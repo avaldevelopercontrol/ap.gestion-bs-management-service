@@ -25,7 +25,14 @@ namespace GesMgmt.Infraestructure.Repositories
         public async Task<IQueryable<av_Usuario>> Query()
         {
             return _dbSet.AsNoTracking();
+        }
 
+        public async Task<av_Usuario> GetByIdAsync(int nId_Usuario)
+        {
+            var query = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nId_Usuario == nId_Usuario);
+            return query;
         }
     }
 }

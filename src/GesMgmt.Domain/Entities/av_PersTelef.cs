@@ -15,8 +15,8 @@ namespace GesMgmt.Domain.Entities
         public int? nId_PersRefUbi { get; set; }
         //public av_PersRefUbi? av_PersRefUbi { get; set; }
         public string? cTelef_Coment { get; set; }
+        public int? nId_PersDirecc {  get; set; }
         public bool? bEstado { get; set; }
-        public int? nId_PersDirecc { get; set; }
         public int? nTelef_Prioridad { get; set; }
         public int? nId_PersTelefOpe { get; set; }
         //public av_PersTelefOpe av_PersTelefOpe { get; set; }

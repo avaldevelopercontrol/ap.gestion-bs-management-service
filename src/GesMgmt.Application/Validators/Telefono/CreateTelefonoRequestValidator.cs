@@ -58,6 +58,17 @@ namespace GesMgmt.Application.Validators.Telefono
                 return ResultDto<CreateTelefonoResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
+            if (_requestDto.nTelef_Nro.Length <= 6)
+            {
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.TELEFONO_MENOR_LONGITUD, "ESP");
+                return ResultDto<CreateTelefonoResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+            }
+            if (_requestDto.nTelef_Nro.Length > 9)
+            {
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.TELEFONO_MAYOR_LONGITUD, "ESP");
+                return ResultDto<CreateTelefonoResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+            }
+
             var v_telefono_01 = await _unitOfWork.av_PersTelefs.GetTelefonoNroTelefonoByIdDeudorAsync(_requestDto.nTelef_Nro, _requestDto.nId_PersDeudor.Value);
             if (v_telefono_01 != null)
             {

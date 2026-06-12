@@ -28,6 +28,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_PersDireccRepository av_PersDireccs { get; }
         Iav_PersRefUbiRepository av_PersRefUbis { get; }
         Iav_PersTelefOpeRepository av_PersTelefOpes { get; }
+        Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles { get; }
         Iav_PersTelefRepository av_PersTelefs { get; }
         Iav_TablaCampoGeneralRepository av_TablaCampoGenerals { get; }
         Iav_TipoGestionRepository av_TipoGestions { get; }
