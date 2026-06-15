@@ -1,13 +1,12 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Telefono;
-using GesMgmt.Application.Utils;
-using GesMgmt.Domain.Constants;
 using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Telefono.GetTelefonoResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -31,16 +30,41 @@ namespace GesMgmt.WebAPI.Controllers
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Telefono Por Id")]
-        [HttpGet("GetTelefonoByIdTelefono")]
+        //[HttpGet("GetTelefonoByIdTelefono")]
+        [HttpGet("{nId_PersTelef}")]
         [ProducesResponseType(typeof(ResultDto<GetTelefonoAsync>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetTelefonoByIdTelefonoAsync(int nId_PersTelef)
+        public async Task<IActionResult> Get(int nId_PersTelef)
         {
             _Logger.LogInfo($"GetTelefonoByIdTelefono|Begin|GetTelefonoByIdTelefonoAsync|request:");
             var result = await _telefonoService.GetTelefonoByIdTelefonoAsync(nId_PersTelef);
             _Logger.LogInfo($"GetTelefonoByIdTelefono|End|GetTelefonoByIdTelefonoAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(ResultDto<CreateTelefonoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateTelefonoAsync([FromBody] CreateTelefonoRequestDto telefonoDto)
+        {
+            _Logger.LogInfo($"CreateSuscription|Begin|CreateTelefonoAsync|request: {JsonSerializer.Serialize(telefonoDto)}");
+            var result = await _telefonoService.CreateTelefonoAsync(telefonoDto);
+            _Logger.LogInfo($"CreateSuscription|End|CreateTelefonoAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(ResultDto<EditTelefonoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditTelefonoAsync([FromBody] EditTelefonoRequestDto telefonoEditDto)
+        {
+            _Logger.LogInfo($"CreateSuscription|Begin|CreateTelefonoAsync|request: {JsonSerializer.Serialize(telefonoEditDto)}");
+            var result = await _telefonoService.EditTelefonoAsync(telefonoEditDto);
+            _Logger.LogInfo($"CreateSuscription|End|CreateTelefonoAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Resultados de Telefono")]
@@ -106,30 +130,6 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _telefonoService.GetTelefonoFuenteBusquedaAsync();
             _Logger.LogInfo($"GetTelefonoFuenteBusqueda|End|GetTelefonoFuenteBusquedaAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
-        }
-
-        [HttpPost]
-        [ProducesResponseType(typeof(ResultDto<CreateTelefonoResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateTelefonoAsync([FromBody] CreateTelefonoRequestDto telefonoDto)
-        {
-            _Logger.LogInfo($"CreateSuscription|Begin|CreateTelefonoAsync|request: {JsonSerializer.Serialize(telefonoDto)}");
-            var result = await _telefonoService.CreateTelefonoAsync(telefonoDto);
-            _Logger.LogInfo($"CreateSuscription|End|CreateTelefonoAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [HttpPut]
-        [ProducesResponseType(typeof(ResultDto<EditTelefonoResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> EditTelefonoAsync([FromBody] EditTelefonoRequestDto telefonoEditDto)
-        {
-            _Logger.LogInfo($"CreateSuscription|Begin|CreateTelefonoAsync|request: {JsonSerializer.Serialize(telefonoEditDto)}");
-            var result = await _telefonoService.EditTelefonoAsync(telefonoEditDto);
-            _Logger.LogInfo($"CreateSuscription|End|CreateTelefonoAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using GesMgmt.Application.DTOs;
-using GesMgmt.Application.DTOs.Telefono;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Telefono;
 using GesMgmt.Application.Validators.Telefono;
@@ -7,8 +6,8 @@ using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using static GesMgmt.Application.DTOs.Telefono.GetTelefonoResponseDto;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.Application.Services.Telefono
 {

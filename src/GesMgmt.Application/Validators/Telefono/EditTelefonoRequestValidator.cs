@@ -2,10 +2,8 @@
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static GesMgmt.Application.DTOs.Telefono.GetTelefonoResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.Application.Validators.Telefono
 {

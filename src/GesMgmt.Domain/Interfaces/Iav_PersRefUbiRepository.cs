@@ -9,5 +9,6 @@ namespace GesMgmt.Domain.Interfaces
     {
         Task<IQueryable<av_PersRefUbi>> Query();
         IQueryable<av_PersRefUbi> GetUbicacionesTelefono();
+        IQueryable<av_PersRefUbi> GetUbicacionesDireccion();
     }
 }

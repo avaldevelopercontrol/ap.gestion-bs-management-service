@@ -37,6 +37,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_PersTelefOpe> av_PersTelefOpes { get; set; }
         public DbSet<av_TablaCampoGeneral> av_TablaCampoGenerals { get; set; }
         public DbSet<av_TipoGestion> av_TipoGestions { get; set; }
+        public DbSet<av_Ubigeo> av_Ubigeos { get; set; }
         public DbSet<av_Usuario> av_Usuarios { get; set; }
         
         public DbSet<ValidationMessage> ValidationMessages { get; set; }
@@ -77,6 +78,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_PersTelefOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_TablaCampoGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_TipoGestionConfiguration());
+            modelBuilder.ApplyConfiguration(new av_UbigeoConfiguration());
             modelBuilder.ApplyConfiguration(new av_UsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new ValidationMessageConfiguration());
         }

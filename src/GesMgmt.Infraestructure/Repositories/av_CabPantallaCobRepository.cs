@@ -2,10 +2,6 @@
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GesMgmt.Infraestructure.Repositories
 {

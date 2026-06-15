@@ -1,5 +1,4 @@
-﻿using GesMgmt.Domain.Entities;
-using GesMgmt.Domain.Interfaces;
+﻿using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
@@ -41,6 +40,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_PersTelefRepository? _av_PersTelefs;
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
         private Iav_TipoGestionRepository? _av_TipoGestions;
+        private Iav_UbigeoRepository? _av_Ubigeos;
         private Iav_UsuarioRepository? _av_Usuarios;
         private IValidationMessageRepository? _validationMessages;
         #endregion
@@ -82,6 +82,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_PersTelefRepository av_PersTelefs => _av_PersTelefs ??= new av_PersTelefRepository(_context);
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
         public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
+        public Iav_UbigeoRepository av_Ubigeos => _av_Ubigeos ??= new av_UbigeoRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
         #endregion

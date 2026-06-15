@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using GesMgmt.Domain;
-using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;

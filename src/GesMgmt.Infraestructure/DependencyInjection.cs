@@ -1,16 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using GesMgmt.Application.Interfaces;
+using GesMgmt.Application.Interfaces.Direccion;
+using GesMgmt.Application.Interfaces.Gestion;
+using GesMgmt.Application.Interfaces.Telefono;
+using GesMgmt.Application.Services;
+using GesMgmt.Application.Services.Direccion;
+using GesMgmt.Application.Services.Gestion;
+using GesMgmt.Application.Services.Telefono;
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Logger;
 using GesMgmt.Infraestructure.Persistence;
 using GesMgmt.Infraestructure.Repositories;
-using GesMgmt.Application.Interfaces;
-using GesMgmt.Application.Services;
-using GesMgmt.Application.Services.Gestion;
-using GesMgmt.Application.Interfaces.Gestion;
-using GesMgmt.Application.Services.Telefono;
-using GesMgmt.Application.Interfaces.Telefono;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GesMgmt.Infraestructure
 {
@@ -35,6 +37,7 @@ namespace GesMgmt.Infraestructure
             // Services
             services.AddScoped<IGestionService, GestionService>();
             services.AddScoped<ITelefonoService, TelefonoService>();
+            services.AddScoped<IDireccionService, DireccionService>();
             services.AddScoped<IValidationMessageService, ValidationMessageService>();
 
             // Logger

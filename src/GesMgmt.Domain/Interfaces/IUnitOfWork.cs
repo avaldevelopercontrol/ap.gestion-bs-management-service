@@ -32,6 +32,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_PersTelefRepository av_PersTelefs { get; }
         Iav_TablaCampoGeneralRepository av_TablaCampoGenerals { get; }
         Iav_TipoGestionRepository av_TipoGestions { get; }
+        Iav_UbigeoRepository av_Ubigeos { get; }
         Iav_UsuarioRepository av_Usuarios { get; }
         IValidationMessageRepository ValidationMessages { get; }
 

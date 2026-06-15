@@ -30,5 +30,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 .AsNoTracking()
                 .Where(p => p.bEstado == true);
         }
+
+        public IQueryable<av_PersRefUbi> GetUbicacionesDireccion()
+        {
+            return _dbSet
+                .AsNoTracking()
+                .Where(p => p.bEstado == true);
+        }
+
     }
 }

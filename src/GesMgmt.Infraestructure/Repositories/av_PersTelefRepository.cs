@@ -2,10 +2,6 @@
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static GesMgmt.Application.DTOs.Telefono.GetTelefonoResponseDto;
 
 namespace GesMgmt.Infraestructure.Repositories
 {

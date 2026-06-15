@@ -2,9 +2,6 @@
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
@@ -24,6 +21,23 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
+        public async Task<av_PersDirecc> GetDireccionByIdDireccionAsync(int nId_PersDirecc)
+        {
+            var query = await _dbSet
+                .Include(d => d.av_Cliente)
+                .Include(tel => tel.av_PersDeudor)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nId_PersDirecc == nId_PersDirecc);
+            return query;
+        }
+
+        public IQueryable<av_PersDirecc> GetDireccionByIdDireccion(int nId_PersDirecc)
+        {
+            return _dbSet
+                .AsNoTracking()
+                .Where(x => x.nId_PersDirecc == nId_PersDirecc);
+        }
+
         public IQueryable<av_PersDirecc> GetGestionesDireccionesAsync(av_PersDirecc av_PersDirecc)
         {
             var query = _dbSet
@@ -39,6 +53,18 @@ namespace GesMgmt.Infraestructure.Repositories
                 query = query.Where(s => s.nId_PersDeudor == av_PersDirecc.nId_PersDeudor);
 
             return query;
+        }
+
+        public async Task<av_PersDirecc> AddAsync(av_PersDirecc av_PersDirecc)
+        {
+            await _dbSet.AddAsync(av_PersDirecc);
+            return av_PersDirecc;
+        }
+
+        public async Task<av_PersDirecc> UpdateAsync(av_PersDirecc av_PersDirecc)
+        {
+            _dbSet.Update(av_PersDirecc);
+            return av_PersDirecc;
         }
     }
 }

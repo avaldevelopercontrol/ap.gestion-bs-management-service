@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GesMgmt.Application.DTOs.Telefono
+namespace GesMgmt.Application.DTOs.Direccion
 {
-    public class GetTelefonoRequestDto
+    public class DireccionRequestDto
     {
     }
 }

@@ -4,7 +4,7 @@ using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
-using static GesMgmt.Application.DTOs.Telefono.GetTelefonoResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
