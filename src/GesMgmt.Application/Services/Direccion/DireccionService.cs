@@ -84,7 +84,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
         }
 
-        public async Task<ResultListaDto<IEnumerable<GetUbigeoDepartamentos>>> GetUbigeoDepartamentosAsync() 
+        public async Task<ResultListaDto<IEnumerable<GetDireccionDepartamentos>>> GetDireccionDepartamentosAsync() 
         {
             try
             {
@@ -92,22 +92,22 @@ namespace GesMgmt.Application.Services.Direccion
                 var data = await (
                                     from s in q_Resultados
                                     orderby s.cNombre_Ubigeo, s.nId_Departamento
-                                    select new GetUbigeoDepartamentos
+                                    select new GetDireccionDepartamentos
                                     {
                                         nId_Departamento = s.nId_Ubigeo,
                                         cNombre_Departamento = s.cNombre_Ubigeo
                                     }
                     ).ToListAsync();
 
-                return ResultListaDto<IEnumerable<GetUbigeoDepartamentos>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return ResultListaDto<IEnumerable<GetDireccionDepartamentos>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
             {
-                return ResultListaDto<IEnumerable<GetUbigeoDepartamentos>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListaDto<IEnumerable<GetDireccionDepartamentos>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
 
-        public async Task<ResultListaDto<IEnumerable<GetUbigeoProvincias>>> GetUbigeoProvinciasAsync(int nId_Departamento)
+        public async Task<ResultListaDto<IEnumerable<GetDireccionProvincias>>> GetDireccionProvinciasAsync(int nId_Departamento)
         {
             try
             {
@@ -115,22 +115,22 @@ namespace GesMgmt.Application.Services.Direccion
                 var data = await (
                                     from s in q_Resultados
                                     orderby s.cNombre_Ubigeo, s.nId_Departamento
-                                    select new GetUbigeoProvincias
+                                    select new GetDireccionProvincias
                                     {
                                         nId_Provincia = s.nId_Ubigeo,
                                         cNombre_Provincia = s.cNombre_Ubigeo
                                     }
                     ).ToListAsync();
 
-                return ResultListaDto<IEnumerable<GetUbigeoProvincias>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return ResultListaDto<IEnumerable<GetDireccionProvincias>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
             {
-                return ResultListaDto<IEnumerable<GetUbigeoProvincias>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListaDto<IEnumerable<GetDireccionProvincias>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
 
-        public async Task<ResultListaDto<IEnumerable<GetUbigeoDistritos>>> GetUbigeoDistritosAsync(int nId_Departamento, int nId_Provincia)
+        public async Task<ResultListaDto<IEnumerable<GetDireccionDistritos>>> GetDireccionDistritosAsync(int nId_Departamento, int nId_Provincia)
         {
             try
             {
@@ -138,18 +138,43 @@ namespace GesMgmt.Application.Services.Direccion
                 var data = await (
                                     from s in q_Resultados
                                     orderby s.cNombre_Ubigeo, s.nId_Departamento
-                                    select new GetUbigeoDistritos
+                                    select new GetDireccionDistritos
                                     {
                                         nId_Distrito = s.nId_Ubigeo,
                                         cNombre_Distrito = s.cNombre_Ubigeo
                                     }
                     ).ToListAsync();
 
-                return ResultListaDto<IEnumerable<GetUbigeoDistritos>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return ResultListaDto<IEnumerable<GetDireccionDistritos>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
             {
-                return ResultListaDto<IEnumerable<GetUbigeoDistritos>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListaDto<IEnumerable<GetDireccionDistritos>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+
+        public async Task<ResultListaDto<IEnumerable<GetDireccionUbicaciones>>> GetDireccionUbicacionesAsync()
+        {
+            try
+            {
+                var q_Resultados = _unitOfWork.av_PersRefUbis.GetUbicacionesTelefono();
+                var data = await (
+                                    from s in q_Resultados
+                                    select new GetDireccionUbicaciones
+                                    {
+                                        nId_PersRefUbi = s.nId_PersRefUbi,
+                                        cNombre_PersRefUbi = s.cNombre_PersRefUbi,
+                                        cSigla_PersRefUbi = s.cSigla_PersRefUbi,
+                                        bEstado = s.bEstado,
+                                        nGestionMovil = s.nGestionMovil ?? 0
+                                    }
+                    ).ToListAsync();
+
+                return ResultListaDto<IEnumerable<GetDireccionUbicaciones>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                return ResultListaDto<IEnumerable<GetDireccionUbicaciones>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
     }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -44,41 +45,54 @@ namespace GesMgmt.WebAPI.Controllers
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Departamentos de Ubigeo")]
-        [HttpGet("GetUbigeoDepartamentos")]
-        [ProducesResponseType(typeof(ResultDto<GetUbigeoDepartamentos>), StatusCodes.Status200OK)]
+        [HttpGet("GetDireccionDepartamentos")]
+        [ProducesResponseType(typeof(ResultDto<GetDireccionDepartamentos>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUbigeoDepartamentosAsync()
         {
-            _Logger.LogInfo($"GetUbigeoDepartamentos|Begin|GetUbigeoDepartamentosAsync|request:");
-            var result = await _direccionService.GetUbigeoDepartamentosAsync();
-            _Logger.LogInfo($"GetUbigeoDepartamentos|End|GetUbigeoDepartamentosAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetDireccionDepartamentos|Begin|GetDireccionDepartamentosAsync|request:");
+            var result = await _direccionService.GetDireccionDepartamentosAsync();
+            _Logger.LogInfo($"GetDireccionDepartamentos|End|GetDireccionDepartamentosAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Obtener Dirección")]
-        [HttpGet("GetUbigeoProvincias")]
-        [ProducesResponseType(typeof(ResultDto<GetUbigeoProvincias>), StatusCodes.Status200OK)]
+        [HttpGet("GetDireccionProvincias")]
+        [ProducesResponseType(typeof(ResultDto<GetDireccionProvincias>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUbigeoProvinciasAsync([FromHeader] int nId_Departamento)
+        public async Task<IActionResult> GetDireccionProvinciasAsync([FromHeader] int nId_Departamento)
         {
-            _Logger.LogInfo($"GetUbigeoProvincias|Begin|GetUbigeoProvinciasAsync|request:{nId_Departamento}");
-            var result = await _direccionService.GetUbigeoProvinciasAsync(nId_Departamento);
-            _Logger.LogInfo($"GetUbigeoProvinciasAsync|End|GetUbigeoProvinciasAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetDireccionProvincias|Begin|GetDireccionProvinciasAsync|request:{nId_Departamento}");
+            var result = await _direccionService.GetDireccionProvinciasAsync(nId_Departamento);
+            _Logger.LogInfo($"GetDireccionProvincias|End|GetDireccionProvinciasAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Distritos por Provincias y Departamentos de Ubigeo")]
-        [HttpGet("GetUbigeoDistritos")]
-        [ProducesResponseType(typeof(ResultDto<GetUbigeoDistritos>), StatusCodes.Status200OK)]
+        [HttpGet("GetDireccionDistritos")]
+        [ProducesResponseType(typeof(ResultDto<GetDireccionDistritos>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUbigeoDistritosAsync([FromHeader] int nId_Departamento, int nId_Provincia)
+        public async Task<IActionResult> GetDireccionDistritosAsync([FromHeader] int nId_Departamento, int nId_Provincia)
         {
-            _Logger.LogInfo($"GetUbigeoDistritos|Begin|GetUbigeoDistritosAsync|request:{nId_Departamento}");
-            var result = await _direccionService.GetUbigeoDistritosAsync(nId_Departamento, nId_Provincia);
-            _Logger.LogInfo($"GetUbigeoDistritos|End|GetUbigeoDistritosAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetDireccionDistritos|Begin|GetDireccionDistritosAsync|request:{nId_Departamento}");
+            var result = await _direccionService.GetDireccionDistritosAsync(nId_Departamento, nId_Provincia);
+            _Logger.LogInfo($"GetDireccionDistritos|End|GetDireccionDistritosAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Ubicaciones de Direcciones")]
+        [HttpGet("GetDireccionUbicaciones")]
+        [ProducesResponseType(typeof(ResultDto<GetDireccionUbicaciones>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDireccionUbicacionesAsync()
+        {
+            _Logger.LogInfo($"GetDireccionUbicaciones|Begin|GetDireccionUbicacionesAsync|request:");
+            var result = await _direccionService.GetDireccionUbicacionesAsync();
+            _Logger.LogInfo($"GetDireccionUbicaciones|End|GetDireccionUbicacionesAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
     }
