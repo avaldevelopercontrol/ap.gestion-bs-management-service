@@ -15,5 +15,13 @@ namespace GesMgmt.Domain.Constants
         public const string RESULTADO_REQUERIDO = "005";
         public const string OPERADOR_TELEFONICO_REQUERIDO = "006";
         public const string MESSAGE_CODE_NOT_FOUND = "001";
+
+        public const string DIRECCION_LENGTH_ZERO = "009";
+        public const string DIRECCION_LENGTH_LARGE = "010";
+        public const string DIRECCION_DEPARTAMENTO_REQUERIDO = "011";
+        public const string DIRECCION_PROVINCIA_REQUERIDO = "012";
+        public const string DIRECCION_DISTRITO_REQUERIDO = "013";
+        public const string DIRECCION_UBICACION_REQUERIDO = "014";
+
     }
 }

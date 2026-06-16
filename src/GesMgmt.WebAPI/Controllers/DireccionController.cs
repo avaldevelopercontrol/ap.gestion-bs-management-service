@@ -7,7 +7,9 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
+using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
 using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
@@ -42,6 +44,30 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _direccionService.GetDireccionByIdDireccionAsync(nId_PersDirecc);
             _Logger.LogInfo($"GetDireccionByIdDireccion|End|GetDireccionByIdDireccionAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(ResultDto<CreateDireccionResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateDireccionAsync([FromBody] CreateDireccionRequestDto direccionDto)
+        {
+            _Logger.LogInfo($"CreateDireccion|Begin|CreateDireccionAsync|request: {JsonSerializer.Serialize(direccionDto)}");
+            var result = await _direccionService.CreateDireccionAsync(direccionDto);
+            _Logger.LogInfo($"CreateDireccion|End|CreateDireccionAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(ResultDto<EditDireccionResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditDireccionAsync([FromBody] EditDireccionRequestDto direccionDto)
+        {
+            _Logger.LogInfo($"EditDireccion|Begin|EditDireccionAsync|request: {JsonSerializer.Serialize(direccionDto)}");
+            var result = await _direccionService.EditDireccionAsync(direccionDto);
+            _Logger.LogInfo($"EditDireccion|End|EditDireccionAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
         }
 
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Departamentos de Ubigeo")]

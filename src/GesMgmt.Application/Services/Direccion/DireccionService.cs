@@ -1,14 +1,13 @@
 ﻿using GesMgmt.Application.DTOs;
-using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Direccion;
-using GesMgmt.Application.Validators.Gestion;
+using GesMgmt.Application.Validators.Direccion;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
-using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.Application.Services.Direccion
 {
@@ -81,6 +80,129 @@ namespace GesMgmt.Application.Services.Direccion
             catch (Exception ex)
             {
                 return ResultDto<GetDireccionAsync>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+
+        public async Task<ResultDto<CreateDireccionResponseDto>> CreateDireccionAsync(CreateDireccionRequestDto direccionCreateDto)
+        {
+            CreateDireccionRequestValidator validator = new CreateDireccionRequestValidator(_unitOfWork, _validationMessageService, direccionCreateDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_PersDirecc persDirecc = new av_PersDirecc
+                {
+                    nId_PersDeudor = direccionCreateDto.nId_PersDeudor ?? 0,
+                    cDirecc_Nomb = direccionCreateDto.cDirecc_Nomb,
+                    nId_ubigeo = direccionCreateDto.nId_Distrito != 0
+                                ? direccionCreateDto.nId_Distrito
+                                : direccionCreateDto.nId_Provincia != 0
+                                ? direccionCreateDto.nId_Provincia
+                                : direccionCreateDto.nId_Departamento != 0
+                                ? direccionCreateDto.nId_Departamento
+                                : 0,
+                    nId_PersRefUbi = direccionCreateDto.nId_PersRefUbi,
+                    cDirecc_Coment = direccionCreateDto.cDirecc_Coment,
+                    bEstado = direccionCreateDto.bEstado,
+                    bOrigen_Base = direccionCreateDto.bOrigen_Base,
+                    cTipoCoDeudor = direccionCreateDto.cTipoCoDeudor,
+                    dFec_Actualizacion = DateTime.Now,
+                    nId_Cliente = direccionCreateDto.nId_Cliente,
+                    nid_CalifDirecc = direccionCreateDto.nid_CalifDirecc,
+                    nid_usuarioUpd = direccionCreateDto.nid_usuarioUpd,
+                };
+                var direccionCreate = await _unitOfWork.av_PersDireccs.AddAsync(persDirecc);
+                await _unitOfWork.SaveChangesAsync();
+
+                CreateDireccionResponseDto responseDto = new CreateDireccionResponseDto
+                {
+                    nId_PersDeudor = direccionCreate.nId_PersDeudor,
+                    nId_PersDirecc = direccionCreate.nId_PersDirecc,
+                    nId_Ubigeo = direccionCreate.nId_ubigeo
+                };
+
+                ResultDto<CreateDireccionResponseDto> response = ResultDto<CreateDireccionResponseDto>
+                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<CreateDireccionResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+
+        public async Task<ResultDto<EditDireccionResponseDto>> EditDireccionAsync(EditDireccionRequestDto direccionEditDto)
+        {
+            EditDireccionRequestValidator validator = new EditDireccionRequestValidator(_unitOfWork, _validationMessageService, direccionEditDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            // Iniciar Transacción y ejecutar actualización (común para ambos casos)
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_PersDirecc persDirecc = new av_PersDirecc
+                {
+                    nId_PersDeudor = direccionEditDto.nId_PersDeudor ?? 0,
+                    cDirecc_Nomb = direccionEditDto.cDirecc_Nomb,
+                    nId_ubigeo = direccionEditDto.nId_Distrito != 0
+                                ? direccionEditDto.nId_Distrito
+                                : direccionEditDto.nId_Provincia != 0
+                                ? direccionEditDto.nId_Provincia
+                                : direccionEditDto.nId_Departamento != 0
+                                ? direccionEditDto.nId_Departamento
+                                : 0,
+                    nId_PersRefUbi = direccionEditDto.nId_PersRefUbi,
+                    cDirecc_Coment = direccionEditDto.cDirecc_Coment,
+                    bEstado = direccionEditDto.bEstado,
+                    bOrigen_Base = direccionEditDto.bOrigen_Base,
+                    cTipoCoDeudor = direccionEditDto.cTipoCoDeudor,
+                    dFec_Actualizacion = DateTime.Now,
+                    nId_Cliente = direccionEditDto.nId_Cliente,
+                    nid_CalifDirecc = direccionEditDto.nid_CalifDirecc,
+                    nid_usuarioUpd = direccionEditDto.nid_usuarioUpd,
+                };
+                var direccionCreate = await _unitOfWork.av_PersDireccs.UpdateAsync(persDirecc);
+                await _unitOfWork.SaveChangesAsync();
+
+                EditDireccionResponseDto responseDto = new EditDireccionResponseDto
+                {
+                    nId_PersDeudor = direccionCreate.nId_PersDeudor,
+                    nId_PersDirecc = direccionCreate.nId_PersDirecc,
+                    nId_Ubigeo = direccionCreate.nId_ubigeo
+                };
+
+                ResultDto<EditDireccionResponseDto> response = ResultDto<EditDireccionResponseDto>
+                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return response;
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 

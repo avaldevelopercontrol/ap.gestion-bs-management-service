@@ -11,7 +11,6 @@ namespace GesMgmt.Application.DTOs.Direccion
             public int nId_PersDirecc { get; set; }
             public int? nId_PersDeudor { get; set; }
             public string? cDirecc_Nomb { get; set; }
-            public int? nId_ubigeo { get; set; }
             public int? nId_PersRefUbi { get; set; }
             public string? cDirecc_Coment { get; set; }
             public bool? bEstado { get; set; }
@@ -21,6 +20,9 @@ namespace GesMgmt.Application.DTOs.Direccion
             public int? nId_Cliente { get; set; }
             public int? nid_CalifDirecc { get; set; }
             public int? nid_usuarioUpd { get; set; }
+            public int? nId_Departamento { get; set; }
+            public int? nId_Provincia { get; set; }
+            public int? nId_Distrito { get; set; }
         }
 
         public class EditDireccionRequestDto
@@ -28,7 +30,6 @@ namespace GesMgmt.Application.DTOs.Direccion
             public int nId_PersDirecc { get; set; }
             public int? nId_PersDeudor { get; set; }
             public string? cDirecc_Nomb { get; set; }
-            public int? nId_ubigeo { get; set; }
             public int? nId_PersRefUbi { get; set; }
             public string? cDirecc_Coment { get; set; }
             public bool? bEstado { get; set; }
@@ -38,6 +39,9 @@ namespace GesMgmt.Application.DTOs.Direccion
             public int? nId_Cliente { get; set; }
             public int? nid_CalifDirecc { get; set; }
             public int? nid_usuarioUpd { get; set; }
+            public int? nId_Departamento { get; set; }
+            public int? nId_Provincia { get; set; }
+            public int? nId_Distrito { get; set; }
         }
     }
 }
