@@ -163,6 +163,7 @@ namespace GesMgmt.Application.Services.Direccion
             {
                 av_PersDirecc persDirecc = new av_PersDirecc
                 {
+                    nId_PersDirecc = direccionEditDto.nId_PersDirecc,
                     nId_PersDeudor = direccionEditDto.nId_PersDeudor ?? 0,
                     cDirecc_Nomb = direccionEditDto.cDirecc_Nomb,
                     nId_ubigeo = direccionEditDto.nId_Distrito != 0
@@ -199,10 +200,9 @@ namespace GesMgmt.Application.Services.Direccion
 
                 return response;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return null;
             }
         }
 

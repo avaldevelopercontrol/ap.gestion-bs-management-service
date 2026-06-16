@@ -17,6 +17,14 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.HasOne(pd => pd.av_PersDeudor)
                 .WithMany()
                 .HasForeignKey(pd => pd.nId_PersDeudor);
+
+            builder.HasOne(pd => pd.av_Cliente)
+                .WithMany()
+                .HasForeignKey(pd => pd.nId_Cliente);
+
+            builder.HasOne(pd => pd.av_PersRefUbi)
+                .WithMany()
+                .HasForeignKey(pd => pd.nId_PersRefUbi);
         }
     }
 }
