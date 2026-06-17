@@ -24,7 +24,7 @@ namespace GesMgmt.Application.DTOs.Gestion
         public int PageSize
         {
             get => _pageSize;
-            set => _pageSize = value > 50 ? 50 : value; // Máximo 50
+            set => _pageSize = value > 1000 ? 1000 : value; // Máximo 50
         }
 
     }

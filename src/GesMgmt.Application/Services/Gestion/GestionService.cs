@@ -471,7 +471,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                 var data = await (
                                     from pe in q_Telefono
-                                    
+
                                     join det in q_detalleTelefono
                                     on new
                                     {
@@ -485,7 +485,7 @@ namespace GesMgmt.Application.Services.Gestion
                                     }
                                     into detJoin
                                     from det in detJoin.DefaultIfEmpty()
-                                    
+
                                     join hrs in q_PerDeuGesHrs
                                     on pe.nId_PersDeudorGestionHrs equals hrs.nId_PersDeudorGestionHrs
                                     into hrsJoin
@@ -515,7 +515,7 @@ namespace GesMgmt.Application.Services.Gestion
                                         prioridad = pe.nTelef_Prioridad ?? 0,
                                         nroTelefono = pe.nTelef_Nro ?? "",
                                         horario = hrs.cNombren_PersDeudorGestionHrs ?? "",
-                                        referenciaUbicacion = refUbi.cNombre_PersRefUbi ?? "",
+                                        referenciaUbicacion = "", //refUbi.cNombre_PersRefUbi ?? "",
                                         estado = pto.cNombre_PersTelefOpe ?? "",
                                         fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
                                         fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",
