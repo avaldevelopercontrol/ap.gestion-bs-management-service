@@ -2,21 +2,24 @@
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
-    public class av_ClienteRepository : Iav_ClienteRepository
+    public class av_DivisionalRepository : Iav_DivisionalRepository
     {
         protected readonly AvalDbContext _context;
-        protected readonly DbSet<av_Cliente> _dbSet;
+        protected readonly DbSet<av_Divisional> _dbSet;
 
-        public av_ClienteRepository(AvalDbContext context)
+        public av_DivisionalRepository(AvalDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<av_Cliente>();
+            _dbSet = context.Set<av_Divisional>();
         }
 
-        public async Task<IQueryable<av_Cliente>> Query()
+        public async Task<IQueryable<av_Divisional>> Query()
         {
             return _dbSet.AsNoTracking();
         }

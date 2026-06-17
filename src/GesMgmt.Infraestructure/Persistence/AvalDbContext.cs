@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Infraestructure.Configurations;
-using Microsoft.Extensions.DependencyInjection;
-using System.Data;
-
 
 namespace GesMgmt.Infraestructure.Persistence
 {
@@ -15,6 +12,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_Cliente> av_Clientes { get; set; }
         public DbSet<av_Contrato> av_Contratos { get; set; }
         public DbSet<av_DetallePersTelef> av_DetallePersTelefs { get; set; }
+        public DbSet<av_Divisional> av_Divisionals { get; set; }
         public DbSet<av_DocxCobrarAdicional> av_DocxCobrars { get; set; }
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
@@ -25,6 +23,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_FuenteBusTel> av_FuenteBusTels { get; set; }
         public DbSet<av_MaeTabla> av_MaeTablas { get; set; }
         public DbSet<av_Moneda> av_Monedas { get; set; }
+        public DbSet<av_OficinaAval> av_OficinaAvals { get; set; }
         public DbSet<av_OpeCodCliOutEst> av_OpeCodCliOutEsts { get; set; }
         public DbSet<av_OpeCodCliOut> av_OpeCodCliOuts { get; set; }
         public DbSet<av_OperadorTelefonico> av_OperadorTelefonicos { get; set; }
@@ -39,7 +38,8 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_TipoGestion> av_TipoGestions { get; set; }
         public DbSet<av_Ubigeo> av_Ubigeos { get; set; }
         public DbSet<av_Usuario> av_Usuarios { get; set; }
-        
+        public DbSet<av_ZonaGeneral> av_ZonaGenerals { get; set; }
+
         public DbSet<ValidationMessage> ValidationMessages { get; set; }
 
         public AvalDbContext(DbContextOptions<AvalDbContext> options)
@@ -56,6 +56,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_ClienteConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContratoConfiguration());
             modelBuilder.ApplyConfiguration(new av_DetallePersTelefConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DivisionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarAdicionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeConfiguration());
@@ -66,6 +67,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_FuenteBusTelConfiguration());
             modelBuilder.ApplyConfiguration(new av_MaeTablaConfiguration());
             modelBuilder.ApplyConfiguration(new av_MonedaConfiguration());
+            modelBuilder.ApplyConfiguration(new av_OficinaAvalConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutEstConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutConfiguration());
             modelBuilder.ApplyConfiguration(new av_OperadorTelefonicoConfiguration());
@@ -80,6 +82,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_TipoGestionConfiguration());
             modelBuilder.ApplyConfiguration(new av_UbigeoConfiguration());
             modelBuilder.ApplyConfiguration(new av_UsuarioConfiguration());
+            modelBuilder.ApplyConfiguration(new av_ZonaGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new ValidationMessageConfiguration());
         }
     }

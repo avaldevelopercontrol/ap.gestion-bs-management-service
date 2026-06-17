@@ -1,16 +1,12 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Direccion;
-using GesMgmt.Application.Interfaces.Telefono;
-using GesMgmt.Application.Services.Telefono;
 using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
-using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
-using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {

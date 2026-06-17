@@ -1,5 +1,4 @@
-﻿using GesMgmt.Domain.Entities;
-
+﻿
 namespace GesMgmt.Domain.Interfaces
 {
     public interface IUnitOfWork : IDisposable
@@ -9,6 +8,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_CarteraRepository av_Carteras { get; }
         Iav_ClienteRepository av_Clientes { get; }
         Iav_ContratoRepository av_Contratos { get; }
+        Iav_DivisionalRepository av_Divisionals { get; }
         Iav_DetallePersTelefRepository av_DetallePersTelefs { get; }
         Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals { get; }
         Iav_DocxCobrarOpeRepository av_DocxCobrarOpes { get; }
@@ -20,6 +20,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_FuenteBusTelRepository av_FuenteBusTels { get; }
         Iav_MaeTablaRepository av_MaeTablas { get; }
         Iav_MonedaRepository av_Monedas { get; }
+        Iav_OficinaAvalRepository av_OficinaAvals { get; }
         Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts { get; }
         Iav_OpeCodCliOutRepository av_OpeCodCliOuts { get; }
         Iav_OperadorTelefonicoRepository av_OperadorTelefonicos { get;  }
@@ -34,6 +35,8 @@ namespace GesMgmt.Domain.Interfaces
         Iav_TipoGestionRepository av_TipoGestions { get; }
         Iav_UbigeoRepository av_Ubigeos { get; }
         Iav_UsuarioRepository av_Usuarios { get; }
+        Iav_ZonaGeneralRepository av_ZonaGenerals { get; }
+
         IValidationMessageRepository ValidationMessages { get; }
 
         Task<int> SaveChangesAsync();

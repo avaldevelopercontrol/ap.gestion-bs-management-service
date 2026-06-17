@@ -20,7 +20,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public async Task<IEnumerable<ValidationMessage>> GetMessages()
         {
             return await _dbSet.AsNoTracking()
-                .Where(m => m.Api == Const.RECURRENCE_API_MESSAGE)
+                .Where(m => m.Api == Const.GESTION_API_MESSAGE)
                 .ToListAsync();
         }
     }

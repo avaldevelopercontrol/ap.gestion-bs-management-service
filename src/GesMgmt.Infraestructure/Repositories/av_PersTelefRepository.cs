@@ -7,7 +7,7 @@ namespace GesMgmt.Infraestructure.Repositories
 {
     public class av_PersTelefRepository : Iav_PersTelefRepository
     {
-        protected readonly AvalDbContext _context;
+        protected readonly AvalDbContext  _context;
         protected readonly DbSet<av_PersTelef> _dbSet;
 
         public av_PersTelefRepository(AvalDbContext context)

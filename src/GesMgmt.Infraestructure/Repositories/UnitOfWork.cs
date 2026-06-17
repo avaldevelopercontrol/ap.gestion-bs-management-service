@@ -18,6 +18,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_ClienteRepository? _av_Clientes;
         private Iav_ContratoRepository? _av_Contratos;
         private Iav_DetallePersTelefRepository _av_DetallePersTelefs;
+        private Iav_DivisionalRepository _av_Divisionals;
         private Iav_DocxCobrarAdicionalRepository? _av_DocxCobrarOpeAdicionals;
         private Iav_DocxCobrarOpeEstRepository? _av_DocxCobrarOpeEsts;
         private Iav_DocxCobrarOpeRepository? _av_DocxCobrarOpes;
@@ -28,6 +29,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_FuenteBusTelRepository? _av_FuenteBusTels;
         private Iav_MaeTablaRepository? _av_MaeTablas;
         private Iav_MonedaRepository? _av_Monedas;
+        private Iav_OficinaAvalRepository? _av_OficinaAvals;
         private Iav_OpeCodCliOutEstRepository? _av_OpeCodCliOutEsts;
         private Iav_OpeCodCliOutRepository? _av_OpeCodCliOuts;
         private Iav_OperadorTelefonicoRepository? _av_OperadorTelefonicos;
@@ -42,6 +44,8 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_TipoGestionRepository? _av_TipoGestions;
         private Iav_UbigeoRepository? _av_Ubigeos;
         private Iav_UsuarioRepository? _av_Usuarios;
+        private Iav_ZonaGeneralRepository? _av_ZonaGenerals;
+
         private IValidationMessageRepository? _validationMessages;
         #endregion
 
@@ -60,6 +64,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_ClienteRepository av_Clientes => _av_Clientes ??= new av_ClienteRepository(_context);
         public Iav_ContratoRepository av_Contratos => _av_Contratos ??= new av_ContratoRepository(_context);
         public Iav_DetallePersTelefRepository av_DetallePersTelefs => _av_DetallePersTelefs ??= new av_DetallePersTelefRepository(_context);
+        public Iav_DivisionalRepository av_Divisionals => _av_Divisionals ??= new av_DivisionalRepository(_context);
         public Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals => _av_DocxCobrarOpeAdicionals ??= new av_DocxCobrarAdicionalRepository(_context);
         public Iav_DocxCobrarOpeEstRepository av_DocxCobrarOpeEsts => _av_DocxCobrarOpeEsts ??= new av_DocxCobrarOpeEstRepository(_context);
         public Iav_DocxCobrarOpeRepository av_DocxCobrarOpes => _av_DocxCobrarOpes ??= new av_DocxCobrarOpeRepository(_context);
@@ -70,6 +75,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_FuenteBusTelRepository av_FuenteBusTels => _av_FuenteBusTels ??= new av_FuenteBusTelRepository(_context);
         public Iav_MaeTablaRepository av_MaeTablas => _av_MaeTablas ??= new av_MaeTablaRepository(_context);
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
+        public Iav_OficinaAvalRepository av_OficinaAvals => _av_OficinaAvals ??= new av_OficinaAvalRepository(_context);
         public Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts => _av_OpeCodCliOutEsts ??= new av_OpeCodCliOutEstRepository(_context);
         public Iav_OpeCodCliOutRepository av_OpeCodCliOuts => _av_OpeCodCliOuts ??= new av_OpeCodCliOutRepository(_context);
         public Iav_OperadorTelefonicoRepository av_OperadorTelefonicos => _av_OperadorTelefonicos ??= new av_OperadorTelefonicoRepository(_context);
@@ -84,6 +90,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
         public Iav_UbigeoRepository av_Ubigeos => _av_Ubigeos ??= new av_UbigeoRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
+        public Iav_ZonaGeneralRepository av_ZonaGenerals => _av_ZonaGenerals ??= new av_ZonaGeneralRepository(_context);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
         #endregion
 

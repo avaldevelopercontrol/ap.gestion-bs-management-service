@@ -8,7 +8,7 @@
         public const string SUBSCRIPTIONSTATUS_CACHE_KEY = "SUBSCRIPTIONSTATUS_CACHE";
         public const string CARD_BRANDS_CACHE_KEY = "CARD_BRANDS_CACHE";
 
-        public const string RECURRENCE_API_MESSAGE = "Recurrence";
+        public const string GESTION_API_MESSAGE = "Gestion";
 
         public const int DEFAULT_INSTALMENT_PLAN = 12;
         public const int DEFAULT_MAX_INSTALMENT_PLAN = 99;
