@@ -25,6 +25,40 @@ namespace GesMgmt.Application.Services.Gestion
         }
 
         #region "Listado de Gestiones"
+        public async Task<ResultDto<GetGestionZonaCartCampResponseDto>> GetGestionZonaCarteraCampannaAsync(GetGestionZonaCartCampRequestDto gestionZonaCartCamp)
+        {
+            GetGestionZonaCartCampRequestValidator validator = new GetGestionZonaCartCampRequestValidator(_unitOfWork, _validationMessageService, gestionZonaCartCamp);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+                var zonaCartera = await _unitOfWork.av_ZonaCarteras.GetZonaCarteraByIdClienteAsync(gestionZonaCartCamp.nId_Cliente);
+                var cartera = await _unitOfWork.av_Carteras.GetCarteraByIdClienteIdCarteraAsync(gestionZonaCartCamp.nId_Cliente, gestionZonaCartCamp.nId_Cartera);
+
+                var data = new GetGestionZonaCartCampResponseDto
+                {
+                    Zona = zonaCartera.zona,
+                    Ciudad = zonaCartera.region ?? "",
+                    cCar_Nombre = cartera?.cCar_Nombre ?? "",
+                    cCampanna = cartera?.cCampanna ?? ""
+                };
+
+                var response = ResultDto<GetGestionZonaCartCampResponseDto>.Success(data, "200", "OK", "OK", 200);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultDto<GetGestionZonaCartCampResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+
         public async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeResponseDto>>> GetGestionDocumentosCabeceraAsync(GetGestionCabeRequestDto gestionCabeceraDto)
         {
             GetGestionCabeRequestValidator validator = new GetGestionCabeRequestValidator(_unitOfWork, _validationMessageService, gestionCabeceraDto);

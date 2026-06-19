@@ -8,7 +8,7 @@ namespace GesMgmt.Domain.Entities
     {
         public int nId_Contrato { get; set; }
         public int nId_Cliente { get; set; }
-        public ICollection<av_Cliente> av_Clientes { get; set; }
+        public av_Cliente av_Cliente { get; set; }
         public DateTime? dCon_FecIniOpe { get; set; }
         public DateTime? dCon_FecFinOpe { get; set; }
         public bool? bEstado { get; set; }

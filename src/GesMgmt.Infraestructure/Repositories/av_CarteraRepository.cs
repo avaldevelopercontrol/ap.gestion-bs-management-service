@@ -20,5 +20,13 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public async Task<av_Cartera> GetCarteraByIdClienteIdCarteraAsync(int nId_Cliente, int nId_Cartera)
+        {
+            return await _dbSet
+                .Include(d => d.av_Cliente)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nId_Cliente == nId_Cliente && s.nId_Cartera == nId_Cartera);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using GesMgmt.Domain.Interfaces;
+﻿using GesMgmt.Domain.Entities;
+using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
@@ -40,10 +41,12 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_PersTelefOpeDetalleRepository? _av_PersTelefOpeDetalles;
         private Iav_PersTelefOpeRepository? _av_PersTelefOpes;
         private Iav_PersTelefRepository? _av_PersTelefs;
+        private Iav_SubZonaGeneralRepository? _av_SubZonaGenerals;
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
         private Iav_TipoGestionRepository? _av_TipoGestions;
         private Iav_UbigeoRepository? _av_Ubigeos;
         private Iav_UsuarioRepository? _av_Usuarios;
+        private Iav_ZonaCarteraRepository? _av_ZonaCarteras;
         private Iav_ZonaGeneralRepository? _av_ZonaGenerals;
 
         private IValidationMessageRepository? _validationMessages;
@@ -86,10 +89,12 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles => _av_PersTelefOpeDetalles ??= new av_PersTelefOpeDetalleRepository(_context);
         public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);
         public Iav_PersTelefRepository av_PersTelefs => _av_PersTelefs ??= new av_PersTelefRepository(_context);
+        public Iav_SubZonaGeneralRepository av_SubZonaGenerals => _av_SubZonaGenerals ??= new av_SubZonaGeneralRepository(_context);
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
         public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
         public Iav_UbigeoRepository av_Ubigeos => _av_Ubigeos ??= new av_UbigeoRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
+        public Iav_ZonaCarteraRepository av_ZonaCarteras => _av_ZonaCarteras ??= new av_ZonaCarteraRepository(_context);
         public Iav_ZonaGeneralRepository av_ZonaGenerals => _av_ZonaGenerals ??= new av_ZonaGeneralRepository(_context);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
         #endregion

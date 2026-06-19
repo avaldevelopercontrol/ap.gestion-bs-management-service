@@ -31,10 +31,12 @@ namespace GesMgmt.Domain.Interfaces
         Iav_PersTelefOpeRepository av_PersTelefOpes { get; }
         Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles { get; }
         Iav_PersTelefRepository av_PersTelefs { get; }
+        Iav_SubZonaGeneralRepository av_SubZonaGenerals { get; }
         Iav_TablaCampoGeneralRepository av_TablaCampoGenerals { get; }
         Iav_TipoGestionRepository av_TipoGestions { get; }
         Iav_UbigeoRepository av_Ubigeos { get; }
         Iav_UsuarioRepository av_Usuarios { get; }
+        Iav_ZonaCarteraRepository av_ZonaCarteras { get; }
         Iav_ZonaGeneralRepository av_ZonaGenerals { get; }
 
         IValidationMessageRepository ValidationMessages { get; }

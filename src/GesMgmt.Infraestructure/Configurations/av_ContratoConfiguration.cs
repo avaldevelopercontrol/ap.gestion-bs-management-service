@@ -13,6 +13,10 @@ namespace GesMgmt.Infraestructure.Configurations
         {
             builder.ToTable("av_Contrato", "dbo");
             builder.HasKey(con => con.nId_Contrato);
+
+            builder.HasOne(car => car.av_Cliente)
+                .WithMany()
+                .HasForeignKey(car => car.nId_Cliente);
         }
     }
 }

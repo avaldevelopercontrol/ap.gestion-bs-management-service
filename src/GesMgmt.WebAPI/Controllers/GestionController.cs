@@ -30,6 +30,19 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Información Zona - Cartera - Campanna")]
+        [HttpGet("GetGestionZonaCarteraCampanna")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionZonaCartCampResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionZonaCarteraCampannaAsync([FromQuery] GetGestionZonaCartCampRequestDto gestionZonaCartCamp)
+        {
+            _Logger.LogInfo($"GetGestionZonaCarteraCampanna|Begin|GetGestionZonaCarteraCampannaAsync|request: {JsonSerializer.Serialize(gestionZonaCartCamp)}");
+            var result = await _gestionService.GetGestionZonaCarteraCampannaAsync(gestionZonaCartCamp);
+            _Logger.LogInfo($"GetGestionZonaCarteraCampanna|End|GetGestionZonaCarteraCampannaAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Documentos Cabecera")]
         [HttpGet("GetGestionDocumentosCabecera")]
         [ProducesResponseType(typeof(ResultDto<GetGestionCabeResponseDto>), StatusCodes.Status200OK)]

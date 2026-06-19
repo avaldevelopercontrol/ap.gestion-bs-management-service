@@ -8,8 +8,9 @@ namespace GesMgmt.Domain.Entities
     {
         public int nId_Cartera { get; set; }
         public int nId_Cliente { get; set; }
+        public av_Cliente av_Cliente { get; set; }
         public int nId_Contrato { get; set; }
-        public ICollection<av_Contrato> av_Contratos { get; set; }
+        public av_Contrato av_Contrato { get; set; }
         public string? cCar_Nombre { get; set; }
         public DateTime? dFecIngreso { get; set; }
         public DateTime? dFecCargaBD { get; set; }

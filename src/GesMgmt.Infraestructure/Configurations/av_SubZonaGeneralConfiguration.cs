@@ -14,9 +14,9 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.ToTable("av_SubZonaGeneral", "dbo");
             builder.HasKey(pd => pd.nId_SubZonaGen);
 
-            builder.HasOne(pd => pd.av_ZonaGeneral)
-               .WithMany()
-               .HasForeignKey(pd => pd.nId_ZonaGen);
+            //builder.HasOne(pd => pd.av_ZonaGeneral)
+            //   .WithMany()
+            //   .HasForeignKey(pd => pd.nId_ZonaGen);
         }
     }
 }
