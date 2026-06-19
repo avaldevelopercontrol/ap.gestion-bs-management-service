@@ -7,12 +7,8 @@ using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using static GesMgmt.Application.DTOs.Gestion.GetGestionRequestDto;
-using static GesMgmt.Application.DTOs.Gestion.GetGestionResponseDto;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Net.WebRequestMethods;
+using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
 namespace GesMgmt.Application.Services.Gestion
 {
@@ -62,7 +58,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
         }
 
-        public async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeResponseDto>>> GetGestionDocumentosCabeceraAsync(GetGestionCabeRequestDto gestionCabeceraDto)
+        public async Task<ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>> GetGestionDocumentosCabeceraAsync(GetGestionCabeceraRequestDto gestionCabeceraDto)
         {
             GetGestionCabeRequestValidator validator = new GetGestionCabeRequestValidator(_unitOfWork, _validationMessageService, gestionCabeceraDto);
 
@@ -85,7 +81,7 @@ namespace GesMgmt.Application.Services.Gestion
                 var query = _unitOfWork.av_CabPantallaCobs.GetCabeceraGestionesAsync(filter);
 
                 var data = await query
-                    .Select(s => new GetGestionCabeResponseDto
+                    .Select(s => new GetGestionCabeceraResponseDto
                     {
                         idCabeceraPantalla = s.nId_CabPantalla,
                         tituloCabeceraPantalla = s.cTitulo,
@@ -100,17 +96,17 @@ namespace GesMgmt.Application.Services.Gestion
                     })
                     .ToListAsync();
 
-                var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultListCabeceraDto<IEnumerable<GetGestionCabeResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionDocuResponseDto>>> GetGestionDocumentosAsync(GetGestionDocuRequestDto gestionDto)
+        public async Task<ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>> GetGestionDocumentosAsync(GetGestionDocumentoRequestDto gestionDto)
         {
             GetGestionDocuRequestValidator validator = new GetGestionDocuRequestValidator(_unitOfWork, _validationMessageService, gestionDto);
 
@@ -176,7 +172,7 @@ namespace GesMgmt.Application.Services.Gestion
                                     on s.nId_DocxCobrar equals ug.nId_DocxCobrar
                                     into ugJoin
                                     from ug in ugJoin.DefaultIfEmpty()
-                                    select new GetGestionDocuResponseDto
+                                    select new GetGestionDocumentoResponseDto
                                     {
                                         nId_DocxCobrar = s.nId_DocxCobrar,
                                         mejorStatus = s.mej_status ?? 0,
@@ -245,7 +241,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                 var totalRecords = await q_Doc.CountAsync();
 
-                var response = ResultListDto<IEnumerable<GetGestionDocuResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionDto.PageNumber;
@@ -256,7 +252,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionDocuResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
 
@@ -266,7 +262,7 @@ namespace GesMgmt.Application.Services.Gestion
                 System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        public async Task<ResultDto<GetGestionCabeAdicResponseDto>> GetGestionDocumentosAdicionalesCabeceraAsync(GetGestionCabeAdicRequestDto gestionCabeceraAdicionalDto)
+        public async Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> GetGestionDocumentosAdicionalesCabeceraAsync(GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto)
         {
             GetGestionCabeAdicRequestValidator validator = new GetGestionCabeAdicRequestValidator(_unitOfWork, _validationMessageService, gestionCabeceraAdicionalDto);
 
@@ -289,7 +285,7 @@ namespace GesMgmt.Application.Services.Gestion
                 var query = _unitOfWork.av_TablaCampoGenerals.GetCabeceraGestionesAdicionalAsync(filter);
 
                 var data = await query
-               .Select(s => new GetGestionCabeAdicResponseDto
+               .Select(s => new GetGestionCabeceraAdicionalResponseDto
                {
                    idCab = s.id_cab,
                    recibo = s.cabAdicional01,
@@ -300,16 +296,16 @@ namespace GesMgmt.Application.Services.Gestion
                    codigoCliente = s.cabAdicional10
                }).FirstOrDefaultAsync();
 
-                var response = ResultDto<GetGestionCabeAdicResponseDto>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(data, "200", "OK", "OK", 200);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionCabeAdicResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionAdicResponseDto>>> GetGestionDocumentosAdicionalesAsync(GetGestionAdicRequestDto gestionAdicionalDto)
+        public async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> GetGestionDocumentosAdicionalesAsync(GetGestionAdicionalRequestDto gestionAdicionalDto)
         {
             GetGestionAdicRequestValidator validator = new GetGestionAdicRequestValidator(_unitOfWork, _validationMessageService, gestionAdicionalDto);
 
@@ -338,7 +334,7 @@ namespace GesMgmt.Application.Services.Gestion
                     //.OrderBy(s => s.SuscriptionId)
                     .Skip((gestionAdicionalDto.PageNumber - 1) * gestionAdicionalDto.PageSize)
                     .Take(gestionAdicionalDto.PageSize)
-                    .Select(s => new GetGestionAdicResponseDto
+                    .Select(s => new GetGestionAdicionalResponseDto
                     {
                         nId_DocxCobrarAd = s.nId_DocxCobrarAd,
                         nId_DocxCobrar = s.nId_DocxCobrar,
@@ -355,7 +351,7 @@ namespace GesMgmt.Application.Services.Gestion
                     })
                     .ToListAsync();
 
-                var response = ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionAdicionalDto.PageNumber;
@@ -366,13 +362,13 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion
 
         #region "Deudor"
-        public async Task<ResultDto<GetGestionDeudResponseDto>> GetGestionDeudorAsync(GetGestionDeudRequestDto gestionDeudorDto)
+        public async Task<ResultDto<GetGestionDeudorResponseDto>> GetGestionDeudorAsync(GetGestionDeudorRequestDto gestionDeudorDto)
         {
             GetGestionDeudRequestValidator validator = new GetGestionDeudRequestValidator(_unitOfWork, _validationMessageService, gestionDeudorDto);
 
@@ -427,7 +423,7 @@ namespace GesMgmt.Application.Services.Gestion
                 var data = await (
                                     from d in q_Deudor
                                     where d.nId_PersDeudor == gestionDeudorDto.nId_Persdeudor
-                                    select new GetGestionDeudResponseDto
+                                    select new GetGestionDeudorResponseDto
                                     {
                                         nId_PersDeudor = d.nId_PersDeudor,
                                         dni = d.cPers_DNI,
@@ -467,18 +463,18 @@ namespace GesMgmt.Application.Services.Gestion
                                         
                                     }).FirstOrDefaultAsync();
 
-                var response = ResultDto<GetGestionDeudResponseDto>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultDto<GetGestionDeudorResponseDto>.Success(data, "200", "OK", "OK", 200);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionDeudResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionDeudorResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion
 
         #region "Telefonos"
-        public async Task<ResultListDto<IEnumerable<GetGestionTeleResponseDto>>> GetGestionTelefonosAsync(GetGestionTeleRequestDto gestionTelefonoDto)
+        public async Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> GetGestionTelefonosAsync(GetGestionTelefonoRequestDto gestionTelefonoDto)
         {
             GetGestionTeleRequestValidator validator = new GetGestionTeleRequestValidator(_unitOfWork, _validationMessageService, gestionTelefonoDto);
 
@@ -546,7 +542,7 @@ namespace GesMgmt.Application.Services.Gestion
                                     into fuJoin
                                     from fu in fuJoin.DefaultIfEmpty()
 
-                                    select new GetGestionTeleResponseDto
+                                    select new GetGestionTelefonoResponseDto
                                     {
                                         nId_PersTelef = pe.nId_PersTelef,
                                         prioridad = pe.nTelef_Prioridad ?? 0,
@@ -577,7 +573,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                 int totalRecords = q_Telefono.Count();
 
-                var response = ResultListDto<IEnumerable<GetGestionTeleResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionTelefonoDto.PageNumber;
@@ -588,13 +584,13 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionTeleResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion
 
         #region "Direcciones"
-        public async Task<ResultListDto<IEnumerable<GetGestionDireResponseDto>>> GetGestionDireccionesAsync(GetGestionDireRequestDto gestionDireccionDto)
+        public async Task<ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>> GetGestionDireccionesAsync(GetGestionDireccionRequestDto gestionDireccionDto)
         {
             GetGestionDireRequestValidator validator = new GetGestionDireRequestValidator(_unitOfWork, _validationMessageService, gestionDireccionDto);
 
@@ -631,7 +627,7 @@ namespace GesMgmt.Application.Services.Gestion
                                     into avalJoin
                                     from aval in avalJoin.DefaultIfEmpty()
 
-                                    select new GetGestionDireResponseDto
+                                    select new GetGestionDireccionResponseDto
                                     {
                                         nId_PersDirecc = pe.nId_PersDirecc,
                                         direccion = pe.cDirecc_Nomb ?? "",
@@ -651,7 +647,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                 int totalRecords = q_PerDir.Count();
 
-                var response = ResultListDto<IEnumerable<GetGestionDireResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionDireccionDto.PageNumber;
@@ -662,13 +658,13 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionDireResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion
 
         #region "Gestiones Anteriores Cartera"
-        public async Task<ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>> GetGestionGestionesCarteraDeudorAsync(GetGestionGestCartDeudRequestDto gestionCarteraDeudorDto)
+        public async Task<ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>> GetGestionGestionesCarteraDeudorAsync(GetGestionGestionesCarteraDeudorRequestDto gestionCarteraDeudorDto)
         {
             GetGestionGestCartDeudValidator validator = new GetGestionGestCartDeudValidator(_unitOfWork, _validationMessageService, gestionCarteraDeudorDto);
 
@@ -701,7 +697,7 @@ namespace GesMgmt.Application.Services.Gestion
                                     on s.nId_OpeCodCliOut equals d.nId_OpeCodCliOut into dg
                                     from d in dg.DefaultIfEmpty()
 
-                                    select new GetGestionGestCartDeudResponseDto
+                                    select new GetGestionGestionesCarteraDeudorResponseDto
                                     {
                                         nId_DocxCobrarOpe = s.nId_DocxCobrarOpe,
                                         nro = 0,
@@ -729,7 +725,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                 int totalRecords = q_Doc.Count();
 
-                var response = ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionCarteraDeudorDto.PageNumber;
@@ -740,7 +736,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion
@@ -786,6 +782,7 @@ namespace GesMgmt.Application.Services.Gestion
                                         nro = 0,
                                         cliente = cli.cCli_Nombre,
                                         cartera = car.cCar_Nombre,
+                                        campanna = car.cCampanna,
                                         fecha = s.dDocCobOpe_FecIni.HasValue ? FormatearFecha(s.dDocCobOpe_FecIni) : "",
                                         gestor = s.av_Usuario.cUsr_Login ?? "",
                                         documento = s.av_DocxCobrar.cDoc_Numero ?? "",
@@ -829,7 +826,7 @@ namespace GesMgmt.Application.Services.Gestion
         #endregion
 
         #region "Gestiones Estados Anteriores Cartera"
-        public async Task<ResultListDto<IEnumerable<GetGestionEstaGestCartDeudResponseDto>>> GetGestionEstadosGestionesCarteraDeudorAsync(GetGestionEstaGestCartDeudRequestDto gestionEstadosCarteraDeudorDto)
+        public async Task<ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>> GetGestionEstadosGestionesCarteraDeudorAsync(GetGestionEstadoGestionCarteraDeudorRequestDto gestionEstadosCarteraDeudorDto)
         {
             GetGestionEstaGestiCartDeudValidator validator = new GetGestionEstaGestiCartDeudValidator(_unitOfWork, _validationMessageService, gestionEstadosCarteraDeudorDto);
 
@@ -860,7 +857,7 @@ namespace GesMgmt.Application.Services.Gestion
                                     on s.nId_OpeCodCliOut equals d.nId_OpeCodCliOut into dg
                                     from d in dg.DefaultIfEmpty()
 
-                                    select new GetGestionEstaGestCartDeudResponseDto
+                                    select new GetGestionEstadoGestionCarteraDeudorResponseDto
                                     {
                                         nId_DocxCobrarOpe = s.nId_DocxCobrarOpe,
                                         nro = 0,
@@ -888,7 +885,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                 int totalRecords = q_GesEst.Count();
 
-                var response = ResultListDto<IEnumerable<GetGestionEstaGestCartDeudResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionEstadosCarteraDeudorDto.PageNumber;
@@ -899,7 +896,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionEstaGestCartDeudResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion
@@ -945,6 +942,7 @@ namespace GesMgmt.Application.Services.Gestion
                                         nro = 0,
                                         cliente = cli.cCli_Nombre,
                                         cartera = car.cCar_Nombre,
+                                        campanna = car.cCampanna,
                                         fecha = s.dDocCobOpe_FecIni.HasValue ? FormatearFecha(s.dDocCobOpe_FecIni) : "",
                                         gestor = s.av_Usuario.cUsr_Login ?? "",
                                         documento = s.av_DocxCobrar.cDoc_Numero ?? "",

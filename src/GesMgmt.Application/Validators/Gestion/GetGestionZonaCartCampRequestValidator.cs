@@ -3,9 +3,6 @@ using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GesMgmt.Application.Validators.Gestion
 {

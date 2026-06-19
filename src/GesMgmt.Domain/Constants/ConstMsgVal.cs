@@ -1,5 +1,4 @@
-﻿using System.Threading;
-
+﻿
 namespace GesMgmt.Domain.Constants
 {
     // Constantes de Mensajes de Validacion

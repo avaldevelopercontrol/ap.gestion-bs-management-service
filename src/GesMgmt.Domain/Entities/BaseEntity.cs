@@ -1,4 +1,5 @@
-﻿namespace GesMgmt.Domain.Entities
+﻿
+namespace GesMgmt.Domain.Entities
 {
     public abstract class BaseEntity
     {

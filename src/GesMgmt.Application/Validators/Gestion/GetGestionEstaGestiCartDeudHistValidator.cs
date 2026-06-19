@@ -1,13 +1,9 @@
 ﻿using GesMgmt.Application.DTOs;
-using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static GesMgmt.Application.DTOs.Gestion.GetGestionRequestDto;
-using static GesMgmt.Application.DTOs.Gestion.GetGestionResponseDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
 namespace GesMgmt.Application.Validators.Gestion
 {

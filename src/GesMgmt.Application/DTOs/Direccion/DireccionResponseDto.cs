@@ -1,8 +1,4 @@
-﻿using GesMgmt.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace GesMgmt.Application.DTOs.Direccion
 {
     public class DireccionResponseDto

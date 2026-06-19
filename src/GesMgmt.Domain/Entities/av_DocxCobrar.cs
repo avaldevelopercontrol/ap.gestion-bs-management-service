@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿
 namespace GesMgmt.Domain.Entities
 {
     public class av_DocxCobrar

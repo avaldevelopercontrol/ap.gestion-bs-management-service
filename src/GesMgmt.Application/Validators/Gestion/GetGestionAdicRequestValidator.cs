@@ -3,9 +3,8 @@ using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
 namespace GesMgmt.Application.Validators.Gestion
 {
@@ -14,12 +13,12 @@ namespace GesMgmt.Application.Validators.Gestion
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetGestionAdicRequestDto _requestDto;
+        private GetGestionAdicionalRequestDto _requestDto;
 
         public GetGestionAdicRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetGestionAdicRequestDto requestDto)
+                GetGestionAdicionalRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -27,7 +26,7 @@ namespace GesMgmt.Application.Validators.Gestion
             _requestDto = requestDto;
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionAdicResponseDto>>> Validate()
+        public async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -37,17 +36,17 @@ namespace GesMgmt.Application.Validators.Gestion
                 return validationResultDefault;
             }
             #endregion
-            return ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultListDto<IEnumerable<GetGestionAdicResponseDto>>> ValidateDefault()
+        private async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> ValidateDefault()
         {
-            return ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionAdicResponseDto>>> ValidateSearchResult(int rows)
+        public async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> ValidateSearchResult(int rows)
         {
-            return ResultListDto<IEnumerable<GetGestionAdicResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
     }

@@ -1,4 +1,5 @@
-﻿namespace GesMgmt.Domain.Constants
+﻿
+namespace GesMgmt.Domain.Constants
 {
     public class Const
     {

@@ -1,4 +1,5 @@
-﻿namespace GesMgmt.Application.Utils
+﻿
+namespace GesMgmt.Application.Utils
 {
     public class DateUtils
     {

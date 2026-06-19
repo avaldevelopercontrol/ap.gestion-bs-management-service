@@ -1,7 +1,4 @@
 ﻿using GesMgmt.Application.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
 

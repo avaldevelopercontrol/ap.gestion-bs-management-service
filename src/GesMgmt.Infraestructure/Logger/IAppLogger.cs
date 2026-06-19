@@ -1,4 +1,5 @@
-﻿namespace GesMgmt.Infraestructure.Logger
+﻿
+namespace GesMgmt.Infraestructure.Logger
 {
     public interface IAppLogger
     {

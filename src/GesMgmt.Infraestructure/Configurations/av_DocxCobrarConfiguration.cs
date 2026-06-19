@@ -1,7 +1,6 @@
 ﻿using GesMgmt.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using static Dapper.SqlMapper;
 
 namespace GesMgmt.Infraestructure.Configurations
 {

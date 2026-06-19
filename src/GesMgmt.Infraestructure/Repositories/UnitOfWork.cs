@@ -1,5 +1,4 @@
-﻿using GesMgmt.Domain.Entities;
-using GesMgmt.Domain.Interfaces;
+﻿using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;

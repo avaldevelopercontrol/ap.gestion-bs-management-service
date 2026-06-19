@@ -1,4 +1,5 @@
-﻿namespace GesMgmt.Application.DTOs
+﻿
+namespace GesMgmt.Application.DTOs
 {
     // Result Pattern
     public class ResultDto<T>
