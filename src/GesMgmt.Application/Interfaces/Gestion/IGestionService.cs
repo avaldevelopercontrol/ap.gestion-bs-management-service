@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.DTOs.Gestion;
-using GesMgmt.Domain.Entities;
+using static GesMgmt.Application.DTOs.Gestion.GetGestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GetGestionResponseDto;
 
 namespace GesMgmt.Application.Interfaces.Gestion
 {
@@ -14,7 +15,9 @@ namespace GesMgmt.Application.Interfaces.Gestion
         Task<ResultDto<GetGestionDeudResponseDto>> GetGestionDeudorAsync(GetGestionDeudRequestDto gestionDeudorDto);
         Task<ResultListDto<IEnumerable<GetGestionTeleResponseDto>>> GetGestionTelefonosAsync(GetGestionTeleRequestDto gestionTelefonoDto);
         Task<ResultListDto<IEnumerable<GetGestionDireResponseDto>>> GetGestionDireccionesAsync(GetGestionDireRequestDto gestionDireccionDto);
+        Task<ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>> GetGestionGestionesCarteraDeudorHistoricasAsync(GestionCarteraDeudorHistoricaRequestDto gestionCarteraDeudorHisDto);
         Task<ResultListDto<IEnumerable<GetGestionGestCartDeudResponseDto>>> GetGestionGestionesCarteraDeudorAsync(GetGestionGestCartDeudRequestDto gestionCarteraDeudorDto);
         Task<ResultListDto<IEnumerable<GetGestionEstaGestCartDeudResponseDto>>> GetGestionEstadosGestionesCarteraDeudorAsync(GetGestionEstaGestCartDeudRequestDto gestionEstadosCarteraDeudorDto);
+        Task<ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>> GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(GestionCarteraDeudorEstadoHistoricaRequestDto gestionEstadosCarteraDeudorHistoricoDto);
     }
 }

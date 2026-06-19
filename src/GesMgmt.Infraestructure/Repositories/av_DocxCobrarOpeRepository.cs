@@ -46,5 +46,18 @@ namespace GesMgmt.Infraestructure.Repositories
             }
             return query;
         }
+
+        public IQueryable<av_DocxCobrarOpe?> GetGestionesCarteraDeudorHistoricas(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            return _dbSet
+                        .Include(dc => dc.av_DocxCobrar)
+                        .Include(tg => tg.av_TipoGestion)
+                        .Include(u => u.av_Cliente)
+                        .Where(s => s.nId_Cliente == nId_Cliente  &&
+                            s.nId_Cartera != nId_Cartera &&
+                            s.nId_PersDeudor == nId_PersDeudor &&
+                            s.bEstado == true)
+                        .AsNoTracking();
+        }
     }
 }

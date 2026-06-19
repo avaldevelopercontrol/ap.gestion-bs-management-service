@@ -8,6 +8,9 @@ using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
+using static GesMgmt.Application.DTOs.Gestion.GetGestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GetGestionResponseDto;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.WebRequestMethods;
 
@@ -742,10 +745,93 @@ namespace GesMgmt.Application.Services.Gestion
         }
         #endregion
 
+        #region "Gestiones Anteriores Historicas Cartera"
+        public async Task<ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>> GetGestionGestionesCarteraDeudorHistoricasAsync(GestionCarteraDeudorHistoricaRequestDto gestionCarteraDeudorHisDto)
+        {
+            GetGestionGestCartDeudHistValidator validator = new GetGestionGestCartDeudHistValidator(_unitOfWork, _validationMessageService, gestionCarteraDeudorHisDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+                var q_Doc = _unitOfWork.av_DocxCobrarOpes.GetGestionesCarteraDeudorHistoricas(gestionCarteraDeudorHisDto.nId_Cliente, gestionCarteraDeudorHisDto.nId_Cartera, gestionCarteraDeudorHisDto.nId_PersDeudor);
+                var q_DesGes = await _unitOfWork.av_OpeCodCliOuts.Query();
+                var q_cli = await _unitOfWork.av_Clientes.Query();
+                var q_car = await _unitOfWork.av_Carteras.Query();
+
+                var data = await (
+                                    from s in q_Doc
+
+                                    join d in q_DesGes
+                                    on s.nId_OpeCodCliOut equals d.nId_OpeCodCliOut into dg
+                                    from d in dg.DefaultIfEmpty()
+
+                                    join cli in q_cli
+                                    on s.nId_Cliente equals cli.nId_Cliente into dc
+                                    from cli in dc.DefaultIfEmpty()
+
+                                    join car in q_car
+                                    on s.nId_Cartera equals car.nId_Cartera into dcar
+                                    from car in dcar.DefaultIfEmpty()
+
+                                    select new GestionCarteraDeudorHistoricaResponseDto
+                                    {
+                                        nId_DocxCobrarOpe = s.nId_DocxCobrarOpe,
+                                        nro = 0,
+                                        cliente = cli.cCli_Nombre,
+                                        cartera = car.cCar_Nombre,
+                                        fecha = s.dDocCobOpe_FecIni.HasValue ? FormatearFecha(s.dDocCobOpe_FecIni) : "",
+                                        gestor = s.av_Usuario.cUsr_Login ?? "",
+                                        documento = s.av_DocxCobrar.cDoc_Numero ?? "",
+                                        operacion = s.av_TipoGestion.cNomTipoGestion ?? "",
+                                        resultado = d.cNombre_OpeCodCliOut ?? "",
+                                        comentario = (s.cDocOpeCobOut_Descr + " Nro Telef: " + s.nTelef_Nro ?? "") +
+                                                    (s.monto_comp > 0 ? " Compromiso de Pago " + s.monto_comp.ToString() : "") +
+                                                    (s.monto_compDolares > 0 ? " Compromiso de Pago $ US " + s.monto_compDolares.ToString() : "") +
+                                                    (s.dFechCompromisoPago.HasValue && s.dFechCompromisoPago.Value.Date != new DateTime(1900, 1, 1) ? " Fecha Comp.: " + s.dFechCompromisoPago.Value.ToString("dd/MM/yyyy") : "")
+                                    }
+                    )
+                    .OrderByDescending(x => x.nId_DocxCobrarOpe) // si fecha es string NO es recomendable
+                    .Skip((gestionCarteraDeudorHisDto.PageNumber - 1) * gestionCarteraDeudorHisDto.PageSize)
+                    .Take(gestionCarteraDeudorHisDto.PageSize)
+                    .ToListAsync();
+
+                int correlativo = (gestionCarteraDeudorHisDto.PageNumber - 1) * gestionCarteraDeudorHisDto.PageSize + 1;
+
+                foreach (var item in data)
+                {
+                    item.nro = correlativo++;
+                }
+
+                int totalRecords = q_Doc.Count();
+
+                var response = ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = gestionCarteraDeudorHisDto.PageNumber;
+                response.PageSize = gestionCarteraDeudorHisDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionCarteraDeudorHisDto.PageSize);
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
         #region "Gestiones Estados Anteriores Cartera"
         public async Task<ResultListDto<IEnumerable<GetGestionEstaGestCartDeudResponseDto>>> GetGestionEstadosGestionesCarteraDeudorAsync(GetGestionEstaGestCartDeudRequestDto gestionEstadosCarteraDeudorDto)
         {
-            GetGestionEstaGestiCartDeudorValidator validator = new GetGestionEstaGestiCartDeudorValidator(_unitOfWork, _validationMessageService, gestionEstadosCarteraDeudorDto);
+            GetGestionEstaGestiCartDeudValidator validator = new GetGestionEstaGestiCartDeudValidator(_unitOfWork, _validationMessageService, gestionEstadosCarteraDeudorDto);
 
             // Validaciones
             var validationResult = await validator.Validate();
@@ -814,6 +900,88 @@ namespace GesMgmt.Application.Services.Gestion
             catch (Exception ex)
             {
                 return ResultListDto<IEnumerable<GetGestionEstaGestCartDeudResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Gestiones Estados Anteriores Historicas Cartera"
+        public async Task<ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>> GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(GestionCarteraDeudorEstadoHistoricaRequestDto gestionEstadosCarteraDeudorHistoricoDto)
+        {
+            GetGestionEstaGestiCartDeudHistValidator validator = new GetGestionEstaGestiCartDeudHistValidator(_unitOfWork, _validationMessageService, gestionEstadosCarteraDeudorHistoricoDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+                var q_GesEst = _unitOfWork.av_DocxCobrarOpeEsts.GetGestionesEstadoCarteraDeudorHistoricas(gestionEstadosCarteraDeudorHistoricoDto.nId_Cliente, gestionEstadosCarteraDeudorHistoricoDto.nId_Cartera, gestionEstadosCarteraDeudorHistoricoDto.nId_PersDeudor);
+                var q_DesGesEst = await _unitOfWork.av_OpeCodCliOutEsts.Query();
+                var q_cli = await _unitOfWork.av_Clientes.Query();
+                var q_car = await _unitOfWork.av_Carteras.Query();
+
+                var data = await (
+                                    from s in q_GesEst
+
+                                    join d in q_DesGesEst
+                                    on s.nId_OpeCodCliOut equals d.nId_OpeCodCliOut into dg
+                                    from d in dg.DefaultIfEmpty()
+
+                                    join cli in q_cli
+                                    on s.nId_Cliente equals cli.nId_Cliente into dc
+                                    from cli in dc.DefaultIfEmpty()
+
+                                    join car in q_car
+                                    on s.nId_Cartera equals car.nId_Cartera into dcar
+                                    from car in dcar.DefaultIfEmpty()
+
+                                    select new GestionCarteraDeudorEstadoHistoricaResponseDto
+                                    {
+                                        nId_DocxCobrarOpe = s.nId_DocxCobrarOpe,
+                                        nro = 0,
+                                        cliente = cli.cCli_Nombre,
+                                        cartera = car.cCar_Nombre,
+                                        fecha = s.dDocCobOpe_FecIni.HasValue ? FormatearFecha(s.dDocCobOpe_FecIni) : "",
+                                        gestor = s.av_Usuario.cUsr_Login ?? "",
+                                        documento = s.av_DocxCobrar.cDoc_Numero ?? "",
+                                        operacion = s.av_TipoGestion.cNomTipoGestion ?? "",
+                                        resultado = d.cNombre_OpeCodCliOut ?? "",
+                                        comentario = (s.cDocOpeCobOut_Descr) +
+                                                    (s.monto_comp > 0 ? " Compromiso de Pago " + s.monto_comp.ToString() : "") +
+                                                    (s.monto_compDolares > 0 ? " Compromiso de Pago $ US " + s.monto_compDolares.ToString() : "") +
+                                                    (s.dFechCompromisoPago.HasValue && s.dFechCompromisoPago.Value.Date != new DateTime(1900, 1, 1) ? " Fecha Comp.: " + s.dFechCompromisoPago.Value.ToString("dd/MM/yyyy") : "")
+                                    }
+                    )
+                    .Skip((gestionEstadosCarteraDeudorHistoricoDto.PageNumber - 1) * gestionEstadosCarteraDeudorHistoricoDto.PageSize)
+                    .Take(gestionEstadosCarteraDeudorHistoricoDto.PageSize)
+                    .ToListAsync();
+
+                int correlativo = (gestionEstadosCarteraDeudorHistoricoDto.PageNumber - 1) * gestionEstadosCarteraDeudorHistoricoDto.PageSize + 1;
+
+                foreach (var item in data)
+                {
+                    item.nro = correlativo++;
+                }
+
+                int totalRecords = q_GesEst.Count();
+
+                var response = ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = gestionEstadosCarteraDeudorHistoricoDto.PageNumber;
+                response.PageSize = gestionEstadosCarteraDeudorHistoricoDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionEstadosCarteraDeudorHistoricoDto.PageSize);
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
+﻿
 namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GetGestionDocuResponseDto

@@ -9,14 +9,14 @@ using System.Text;
 
 namespace GesMgmt.Application.Validators.Gestion
 {
-    public class GetGestionEstaGestiCartDeudorValidator
+    public class GetGestionEstaGestiCartDeudValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
         private GetGestionEstaGestCartDeudRequestDto _requestDto;
 
-        public GetGestionEstaGestiCartDeudorValidator(
+        public GetGestionEstaGestiCartDeudValidator(
             IUnitOfWork unitOfWork,
             IValidationMessageService validationMessageService,
             GetGestionEstaGestCartDeudRequestDto requestDto)

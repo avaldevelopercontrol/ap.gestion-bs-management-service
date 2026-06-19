@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GesMgmt.Application.DTOs;
+﻿using GesMgmt.Application.DTOs;
+using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
+using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Application.Utils;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Infraestructure.Logger;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using GesMgmt.Application.DTOs.Gestion;
-using GesMgmt.Application.Interfaces.Gestion;
+using static GesMgmt.Application.DTOs.Gestion.GetGestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GetGestionResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -147,6 +149,19 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Historicas")]
+        [HttpGet("GetGestionGestionesCarteraDeudorHistoricas")]
+        [ProducesResponseType(typeof(ResultDto<GestionCarteraDeudorHistoricaResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionGestionesCarteraDeudorHistoricasAsync([FromQuery] GestionCarteraDeudorHistoricaRequestDto gestionCarteraDeudorDto)
+        {
+            _Logger.LogInfo($"GetGestionGestionesCarteraDeudorHistoricas|Begin|GetGestionGestionesCarteraDeudorHistoricasAsync|request: {JsonSerializer.Serialize(gestionCarteraDeudorDto)}");
+            var result = await _gestionService.GetGestionGestionesCarteraDeudorHistoricasAsync(gestionCarteraDeudorDto);
+            _Logger.LogInfo($"GetGestionGestionesCarteraDeudorHistoricas|End|GetGestionGestionesCarteraDeudorHistoricasAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Estado de Gestiones")]
         [HttpGet("GetGestionEstadosGestionesCarteraDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetGestionEstaGestCartDeudResponseDto>), StatusCodes.Status200OK)]
@@ -157,6 +172,19 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudor|Begin|GetGestionEstadosGestionesCarteraDeudorAsync|request: {JsonSerializer.Serialize(gestionEstadoCarteraDeudorDto)}");
             var result = await _gestionService.GetGestionEstadosGestionesCarteraDeudorAsync(gestionEstadoCarteraDeudorDto);
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudor|End|GetGestionEstadosGestionesCarteraDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Estado de Gestiones Historicas")]
+        [HttpGet("GetGestionEstadosGestionesCarteraDeudorHistorica")]
+        [ProducesResponseType(typeof(ResultDto<GestionCarteraDeudorEstadoHistoricaResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionEstadosGestionesCarteraDeudorHistoricaAsync([FromQuery] GestionCarteraDeudorEstadoHistoricaRequestDto gestionEstadoCarteraDeudorHistoricaDto)
+        {
+            _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudorHistorica|Begin|GetGestionEstadosGestionesCarteraDeudorHistoricaAsync|request: {JsonSerializer.Serialize(gestionEstadoCarteraDeudorHistoricaDto)}");
+            var result = await _gestionService.GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(gestionEstadoCarteraDeudorHistoricaDto);
+            _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudorHistorica|End|GetGestionEstadosGestionesCarteraDeudorHistoricaAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
     }

@@ -24,7 +24,6 @@ namespace GesMgmt.Infraestructure.Repositories
         public IQueryable<av_DocxCobrarOpeEst> GetGestionesEstadoCarteraDeudor(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
         {
             var query = _dbSet
-                //.Include(dc => dc.av_DocxCobrar)
                 .Include(tg => tg.av_TipoGestion)
                 .Include(tg => tg.av_Usuario)
                 .Include(tg => tg.av_OpeCodCliOutEst)
@@ -41,6 +40,19 @@ namespace GesMgmt.Infraestructure.Repositories
                 query = query.Where(s => s.nId_PersDeudor == nId_PersDeudor);
 
             return query;
+        }
+
+        public IQueryable<av_DocxCobrarOpeEst> GetGestionesEstadoCarteraDeudorHistoricas(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            return _dbSet
+                        .Include(tg => tg.av_TipoGestion)
+                        .Include(tg => tg.av_Usuario)
+                        .Include(tg => tg.av_OpeCodCliOutEst)
+                        .Where(s => s.nId_Cliente == nId_Cliente &&
+                            s.nId_Cartera != nId_Cartera &&
+                            s.nId_PersDeudor == nId_PersDeudor &&
+                            s.bEstado == true)
+                        .AsNoTracking();
         }
     }
 }
