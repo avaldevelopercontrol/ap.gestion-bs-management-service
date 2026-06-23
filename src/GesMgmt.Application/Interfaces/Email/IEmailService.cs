@@ -11,5 +11,8 @@ namespace GesMgmt.Application.Interfaces.Email
     {
         Task<ResultListDto<IEnumerable<GetEmailsPersDeudorResponseDto>>> GetEmailsByIdDeudorAsync(GetEmailsPersDeudorRequestDto gestionTelefonoDto);
         Task<ResultDto<GetPersEmailsResponseDto>> GetEmailsByIdEmailPersAsync(int nId_PersEmail);
+        Task<ResultDto<CreateEmailResponseDto>> CreateEmailAsync(CreateEmailRequestDto emailCreateDto);
+        Task<ResultDto<EditEmailResponseDto>> EditEmailAsync(EditEmailRequestDto emailEditDto);
+        Task<ResultListaDto<IEnumerable<GetStatus>>> GetStatusAsync();
     }
 }

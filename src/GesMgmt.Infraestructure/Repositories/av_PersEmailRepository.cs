@@ -36,5 +36,17 @@ namespace GesMgmt.Infraestructure.Repositories
                 .AsNoTracking()
                 .Where(x => x.nId_PersEmail == nId_PersEmail);
         }
+
+        public async Task<av_PersEmail> AddAsync(av_PersEmail av_PersEmail)
+        {
+            await _dbSet.AddAsync(av_PersEmail);
+            return av_PersEmail;
+        }
+
+        public async Task<av_PersEmail> UpdateAsync(av_PersEmail av_PersEmail)
+        {
+            _dbSet.Update(av_PersEmail);
+            return av_PersEmail;
+        }
     }
 }

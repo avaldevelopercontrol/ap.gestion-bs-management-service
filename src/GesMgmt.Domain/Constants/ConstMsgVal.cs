@@ -22,5 +22,12 @@ namespace GesMgmt.Domain.Constants
         public const string DIRECCION_DISTRITO_REQUERIDO = "013";
         public const string DIRECCION_UBICACION_REQUERIDO = "014";
 
+        public const string EMAIL_LENGTH_ZERO = "015";
+        public const string EMAIL_LENGTH_LARGE = "016";
+        public const string EMAIL_FORMAT = "017";
+        public const string EMAIL_LENGTH_ZERO_STATE = "018";
+        public const string EMAIL_LENGTH_ZERO_STATUS = "019";
+        public const string EMAIL_STATE_STATUS_01 = "020";
+        public const string EMAIL_STATE_STATUS_02 = "021";
     }
 }

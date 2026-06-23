@@ -5,6 +5,8 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
+using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
+using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
 using static GesMgmt.Application.DTOs.Email.EmailRequestDto;
 using static GesMgmt.Application.DTOs.Email.EmailResponseDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
@@ -58,5 +60,41 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        [ProducesResponseType(typeof(ResultDto<CreateEmailResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateEmailAsync([FromBody] CreateEmailRequestDto emailDto)
+        {
+            _Logger.LogInfo($"CreateEmail|Begin|CreateEmailAsync|request: {JsonSerializer.Serialize(emailDto)}");
+            var result = await _emailService.CreateEmailAsync(emailDto);
+            _Logger.LogInfo($"CreateEmail|End|CreateEmailAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(ResultDto<EditEmailResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditDireccionAsync([FromBody] EditEmailRequestDto emailDto)
+        {
+            _Logger.LogInfo($"EditEmail|Begin|EditEmailAsync|request: {JsonSerializer.Serialize(emailDto)}");
+            var result = await _emailService.EditEmailAsync(emailDto);
+            _Logger.LogInfo($"EditEmail|End|EditEmailAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Status")]
+        [HttpGet("GetStatus")]
+        [ProducesResponseType(typeof(ResultDto<GetStatus>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetStatusAsync()
+        {
+            _Logger.LogInfo($"GetStatus|Begin|GetStatusAsync|request:");
+            var result = await _emailService.GetStatusAsync();
+            _Logger.LogInfo($"GetStatus|End|GetStatusAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
     }
 }

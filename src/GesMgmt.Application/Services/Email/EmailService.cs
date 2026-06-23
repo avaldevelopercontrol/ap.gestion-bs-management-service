@@ -1,7 +1,9 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Email;
+using GesMgmt.Application.Validators.Email;
 using GesMgmt.Domain.Constants;
+using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
@@ -117,5 +119,144 @@ namespace GesMgmt.Application.Services.Email
             }
         }
 
+        #region "Grabar Email"
+        public async Task<ResultDto<CreateEmailResponseDto>> CreateEmailAsync(CreateEmailRequestDto emailCreateDto)
+        {
+            CreateEmailRequestValidator validator = new CreateEmailRequestValidator(_unitOfWork, _validationMessageService, emailCreateDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_PersEmail persemail = new av_PersEmail
+                {
+                    nId_PersDeudor = emailCreateDto.nId_PersDeudor,
+                    cPers_Email = emailCreateDto.cPers_Email,
+                    bEstado = emailCreateDto.bEstado,
+                    cEmail_Coment = emailCreateDto.cEmail_Coment,
+                    cEmail_Contacto = emailCreateDto.cEmail_Contacto,
+                    nId_Cliente = emailCreateDto.nId_Cliente,
+                    bBaseCliente = emailCreateDto.bBaseCliente,
+                    nId_UsuarioAct = emailCreateDto.nId_UsuarioAct,
+                    dFecRegistro = DateTime.Now,
+                    dFecActualizacion = DateTime.Now,
+                    nEmail_Prioridad = emailCreateDto.nEmail_Prioridad,
+                    nId_PersEmailOpe = emailCreateDto.nId_PersEmailOpe
+                };
+                var emailCreate = await _unitOfWork.av_PersEmails.AddAsync(persemail);
+                await _unitOfWork.SaveChangesAsync();
+
+                CreateEmailResponseDto responseDto = new CreateEmailResponseDto
+                {
+                    nId_PersEmail = emailCreate.nId_PersEmail,
+                    nId_PersDeudor = emailCreate.nId_PersDeudor,
+                    cPers_Email = emailCreate.cPers_Email
+                };
+
+                ResultDto<CreateEmailResponseDto> response = ResultDto<CreateEmailResponseDto>
+                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<CreateEmailResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Editar Email"
+        public async Task<ResultDto<EditEmailResponseDto>> EditEmailAsync(EditEmailRequestDto emailEditDto)
+        {
+            EditEmailRequestValidator validator = new EditEmailRequestValidator(_unitOfWork, _validationMessageService, emailEditDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_PersEmail persemail = new av_PersEmail
+                {
+                    nId_PersEmail = emailEditDto.nId_PersEmail,
+                    nId_PersDeudor = emailEditDto.nId_PersDeudor,
+                    cPers_Email = emailEditDto.cPers_Email,
+                    bEstado = emailEditDto.bEstado,
+                    cEmail_Coment = emailEditDto.cEmail_Coment,
+                    cEmail_Contacto = emailEditDto.cEmail_Contacto,
+                    nId_Cliente = emailEditDto.nId_Cliente,
+                    bBaseCliente = emailEditDto.bBaseCliente,
+                    nId_UsuarioAct = emailEditDto.nId_UsuarioAct,
+                    dFecRegistro = DateTime.Now,
+                    dFecActualizacion = DateTime.Now,
+                    nEmail_Prioridad = emailEditDto.nEmail_Prioridad,
+                    nId_PersEmailOpe = emailEditDto.nId_PersEmailOpe
+                };
+                var emailEdit = await _unitOfWork.av_PersEmails.UpdateAsync(persemail);
+                await _unitOfWork.SaveChangesAsync();
+
+                EditEmailResponseDto responseDto = new EditEmailResponseDto
+                {
+                    nId_PersEmail = emailEdit.nId_PersEmail,
+                    nId_PersDeudor = emailEdit.nId_PersDeudor,
+                    cPers_Email = emailEdit.cPers_Email
+                };
+
+                ResultDto<EditEmailResponseDto> response = ResultDto<EditEmailResponseDto>
+                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<EditEmailResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Listado de Status"
+        public async Task<ResultListaDto<IEnumerable<GetStatus>>> GetStatusAsync()
+        {
+            try
+            {
+                var q_Status = await _unitOfWork.av_PersEmailOpes.Query();
+                var data = await (
+                                    from s in q_Status
+                                    orderby s.cNombre_PersEmailOpe
+                                    select new GetStatus
+                                    {
+                                        nId_PersTelefOpe = s.nId_PersEmailOpe,
+                                        cNombre_PersTelefOpe = s.cNombre_PersEmailOpe
+                                    }
+                    ).ToListAsync();
+
+                return ResultListaDto<IEnumerable<GetStatus>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                return ResultListaDto<IEnumerable<GetStatus>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
     }
 }

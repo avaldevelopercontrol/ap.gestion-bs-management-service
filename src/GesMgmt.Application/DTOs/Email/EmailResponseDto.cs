@@ -41,5 +41,25 @@ namespace GesMgmt.Application.DTOs.Email
             public DateTime? dFecBaseCliente { get; set; }
             public int? nId_PersEmailOpe { get; set; }
         }
+
+        public class CreateEmailResponseDto
+        {
+            public int nId_PersEmail { get; set; }
+            public int? nId_PersDeudor { get; set; }
+            public string? cPers_Email { get; set; }
+        }
+
+        public class EditEmailResponseDto
+        {
+            public int nId_PersEmail { get; set; }
+            public int? nId_PersDeudor { get; set; }
+            public string? cPers_Email { get; set; }
+        }
+
+        public class GetStatus
+        {
+            public int nId_PersTelefOpe { get; set; }
+            public string? cNombre_PersTelefOpe { get; set; }
+        }
     }
 }
