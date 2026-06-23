@@ -1,9 +1,11 @@
 ﻿using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Direccion;
+using GesMgmt.Application.Interfaces.Email;
 using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Application.Interfaces.Telefono;
 using GesMgmt.Application.Services;
 using GesMgmt.Application.Services.Direccion;
+using GesMgmt.Application.Services.Email;
 using GesMgmt.Application.Services.Gestion;
 using GesMgmt.Application.Services.Telefono;
 using GesMgmt.Domain.Interfaces;
@@ -38,6 +40,7 @@ namespace GesMgmt.Infraestructure
             services.AddScoped<IGestionService, GestionService>();
             services.AddScoped<ITelefonoService, TelefonoService>();
             services.AddScoped<IDireccionService, DireccionService>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IValidationMessageService, ValidationMessageService>();
 
             // Logger

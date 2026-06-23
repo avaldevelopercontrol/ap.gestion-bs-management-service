@@ -24,7 +24,7 @@ namespace GesMgmt.Application.Services.Gestion
         }
 
         #region "Listado de Gestiones"
-        public async Task<ResultDto<GetGestionZonaCartCampResponseDto>> GetGestionZonaCarteraCampannaAsync(GetGestionZonaCartCampRequestDto gestionZonaCartCamp)
+        public async Task<ResultDto<GetGestionZonaCarteraCampannaResponseDto>> GetGestionZonaCarteraCampannaAsync(GetGestionZonaCarteraCampannaRequestDto gestionZonaCartCamp)
         {
             GetGestionZonaCartCampRequestValidator validator = new GetGestionZonaCartCampRequestValidator(_unitOfWork, _validationMessageService, gestionZonaCartCamp);
 
@@ -41,7 +41,7 @@ namespace GesMgmt.Application.Services.Gestion
                 var zonaCartera = await _unitOfWork.av_ZonaCarteras.GetZonaCarteraByIdClienteAsync(gestionZonaCartCamp.nId_Cliente);
                 var cartera = await _unitOfWork.av_Carteras.GetCarteraByIdClienteIdCarteraAsync(gestionZonaCartCamp.nId_Cliente, gestionZonaCartCamp.nId_Cartera);
 
-                var data = new GetGestionZonaCartCampResponseDto
+                var data = new GetGestionZonaCarteraCampannaResponseDto
                 {
                     Zona = zonaCartera.zona,
                     Ciudad = zonaCartera.region ?? "",
@@ -49,12 +49,12 @@ namespace GesMgmt.Application.Services.Gestion
                     cCampanna = cartera?.cCampanna ?? ""
                 };
 
-                var response = ResultDto<GetGestionZonaCartCampResponseDto>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultDto<GetGestionZonaCarteraCampannaResponseDto>.Success(data, "200", "OK", "OK", 200);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionZonaCartCampResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionZonaCarteraCampannaResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
 
@@ -980,6 +980,57 @@ namespace GesMgmt.Application.Services.Gestion
             catch (Exception ex)
             {
                 return ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Gestiones Agendas por Deudor"
+        public async Task<ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>> GetGestionAgendasDeudorAsync(GetGestionAgendaRequestDto gestionAgendaDto)
+        {
+            GetGestionAgendaRequestValidator validator = new GetGestionAgendaRequestValidator(_unitOfWork, _validationMessageService, gestionAgendaDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+                var q_Agenda = _unitOfWork.av_Agendas.GetGestionAgendasDeudor(gestionAgendaDto.nId_Cliente, gestionAgendaDto.nId_Cartera, gestionAgendaDto.nId_Persdeudor, gestionAgendaDto.nId_PerfilUsuario);
+
+                var data = await (
+                                    from s in q_Agenda
+                                    select new GetGestionAgendaResponseDto
+                                    {
+                                        fechaNuevaGestion = s.dFechNuevaGestion,
+                                        tiempoVencido = "",
+                                        cartera = s.Cartera,
+                                        deudor = s.Nombre,
+                                        respuestaOEstado = s.cRespuestaOpe,
+                                        usuario = s.cUsr_Login,
+                                    }
+                    )
+                    .Skip((gestionAgendaDto.PageNumber - 1) * gestionAgendaDto.PageSize)
+                    .Take(gestionAgendaDto.PageSize)
+                    .ToListAsync();
+
+                int totalRecords = q_Agenda.Count();
+
+                var response = ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = gestionAgendaDto.PageNumber;
+                response.PageSize = gestionAgendaDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionAgendaDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion

@@ -1,5 +1,8 @@
-﻿using GesMgmt.Domain.Interfaces;
+﻿using GesMgmt.Domain.Entities;
+using GesMgmt.Domain.Interfaces;
+using GesMgmt.Infraestructure.Configurations;
 using GesMgmt.Infraestructure.Persistence;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -26,6 +29,8 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_DocxCobrarRepository? _av_DocxCobrars;
         private Iav_DocxPagoRepository? _av_DocxPagos;
         private Iav_EstadoAsteriskAvalRepository? _av_EstadoAsteriskAvals;
+        private Iav_EstadoEnvioEmailGenRepository? _av_EstadoEnvioEmailGens;
+        private Iav_EstadoEnvioEmailErrorRepository? _av_EstadoEnvioEmailErrors;
         private Iav_FuenteBusTelRepository? _av_FuenteBusTels;
         private Iav_MaeTablaRepository? _av_MaeTablas;
         private Iav_MonedaRepository? _av_Monedas;
@@ -36,6 +41,8 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrss;
         private Iav_PersDeudorRepository? _av_PersDeudors;
         private Iav_PersDireccRepository? _av_PersDireccs;
+        private Iav_PersEmailRepository? _av_PersEmails;
+        private Iav_PersEmailOpeRepository? _av_PersEmailOpes;
         private Iav_PersRefUbiRepository? _av_PersRefUbis;
         private Iav_PersTelefOpeDetalleRepository? _av_PersTelefOpeDetalles;
         private Iav_PersTelefOpeRepository? _av_PersTelefOpes;
@@ -74,6 +81,8 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_DocxCobrarRepository av_DocxCobrars => _av_DocxCobrars ??= new av_DocxCobrarRepository(_context);
         public Iav_DocxPagoRepository av_DocxPagos => _av_DocxPagos ??= new av_DocxPagoRepository(_context);
         public Iav_EstadoAsteriskAvalRepository av_EstadoAsteriskAvals => _av_EstadoAsteriskAvals ??= new av_EstadoAsteriskAvalRepository(_context);
+        public Iav_EstadoEnvioEmailGenRepository av_EstadoEnvioEmailGens => _av_EstadoEnvioEmailGens ??= new av_EstadoEnvioEmailGenRepository(_context);
+        public Iav_EstadoEnvioEmailErrorRepository av_EstadoEnvioEmailErrors => _av_EstadoEnvioEmailErrors ??= new av_EstadoEnvioEmailErrorRepository(_context);
         public Iav_FuenteBusTelRepository av_FuenteBusTels => _av_FuenteBusTels ??= new av_FuenteBusTelRepository(_context);
         public Iav_MaeTablaRepository av_MaeTablas => _av_MaeTablas ??= new av_MaeTablaRepository(_context);
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
@@ -82,8 +91,10 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_OpeCodCliOutRepository av_OpeCodCliOuts => _av_OpeCodCliOuts ??= new av_OpeCodCliOutRepository(_context);
         public Iav_OperadorTelefonicoRepository av_OperadorTelefonicos => _av_OperadorTelefonicos ??= new av_OperadorTelefonicoRepository(_context);
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
-        public Iav_PersDireccRepository av_PersDireccs => _av_PersDireccs ??= new av_PersDireccRepository(_context);
         public Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss => _av_PersDeudorGestionHrss ??= new av_PersDeudorGestionHrsRepository(_context);
+        public Iav_PersDireccRepository av_PersDireccs => _av_PersDireccs ??= new av_PersDireccRepository(_context);
+        public Iav_PersEmailRepository av_PersEmails => _av_PersEmails ??= new av_PersEmailRepository(_context);
+        public Iav_PersEmailOpeRepository av_PersEmailOpes => _av_PersEmailOpes ??= new av_PersEmailOpeRepository(_context);
         public Iav_PersRefUbiRepository av_PersRefUbis => _av_PersRefUbis ??= new av_PersRefUbiRepository(_context);
         public Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles => _av_PersTelefOpeDetalles ??= new av_PersTelefOpeDetalleRepository(_context);
         public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);

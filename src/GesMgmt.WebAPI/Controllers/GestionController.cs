@@ -1,5 +1,4 @@
 ﻿using GesMgmt.Application.DTOs;
-using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Infraestructure.Logger;
@@ -32,10 +31,10 @@ namespace GesMgmt.WebAPI.Controllers
 
         [SwaggerOperation(Summary = "[API]: Endpoint Obtener Información Zona - Cartera - Campanna")]
         [HttpGet("GetGestionZonaCarteraCampanna")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionZonaCartCampResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<GetGestionZonaCarteraCampannaResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGestionZonaCarteraCampannaAsync([FromQuery] GetGestionZonaCartCampRequestDto gestionZonaCartCamp)
+        public async Task<IActionResult> GetGestionZonaCarteraCampannaAsync([FromQuery] GetGestionZonaCarteraCampannaRequestDto gestionZonaCartCamp)
         {
             _Logger.LogInfo($"GetGestionZonaCarteraCampanna|Begin|GetGestionZonaCarteraCampannaAsync|request: {JsonSerializer.Serialize(gestionZonaCartCamp)}");
             var result = await _gestionService.GetGestionZonaCarteraCampannaAsync(gestionZonaCartCamp);
@@ -183,6 +182,19 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudorHistorica|Begin|GetGestionEstadosGestionesCarteraDeudorHistoricaAsync|request: {JsonSerializer.Serialize(gestionEstadoCarteraDeudorHistoricaDto)}");
             var result = await _gestionService.GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(gestionEstadoCarteraDeudorHistoricaDto);
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudorHistorica|End|GetGestionEstadosGestionesCarteraDeudorHistoricaAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Agendadas")]
+        [HttpGet("GetGestionAgendasDeudor")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionAgendaResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionAgendasDeudorAsync([FromQuery] GetGestionAgendaRequestDto gestionAgendaDto)
+        {
+            _Logger.LogInfo($"GetGestionAgendasDeudor|Begin|GetGestionAgendasDeudorAsync|request: {JsonSerializer.Serialize(gestionAgendaDto)}");
+            var result = await _gestionService.GetGestionAgendasDeudorAsync(gestionAgendaDto);
+            _Logger.LogInfo($"GetGestionAgendasDeudor|End|GetGestionAgendasDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
     }

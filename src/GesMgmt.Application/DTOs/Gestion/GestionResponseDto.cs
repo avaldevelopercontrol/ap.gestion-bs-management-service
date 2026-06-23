@@ -3,6 +3,25 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionResponseDto
     {
+        public class GetGestionAgendaResponseDto
+        {
+            public int nid_agenda { get; set; }
+            public DateTime? fechaNuevaGestion { get; set; }
+            public string tiempoVencido { get; set; }
+            public string? cartera { get; set; }
+            public string? deudor { get; set; }
+            public string? respuestaOEstado { get; set; }
+            public string? usuario { get; set; }
+        }
+
+        public class GetGestionZonaCarteraCampannaResponseDto
+        {
+            public string Zona { get; set; }
+            public string Ciudad { get; set; }
+            public string cCar_Nombre { get; set; }
+            public string cCampanna { get; set; }
+        }
+
         public class GetGestionTelefonoResponseDto
         {
             public int nId_PersTelef { get; set; }

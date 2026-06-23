@@ -17,6 +17,8 @@ namespace GesMgmt.Domain.Interfaces
         Iav_DocxCobrarRepository av_DocxCobrars { get; }
         Iav_DocxPagoRepository av_DocxPagos { get; }
         Iav_EstadoAsteriskAvalRepository av_EstadoAsteriskAvals { get; }
+        Iav_EstadoEnvioEmailGenRepository av_EstadoEnvioEmailGens { get; }
+        Iav_EstadoEnvioEmailErrorRepository av_EstadoEnvioEmailErrors { get; }
         Iav_FuenteBusTelRepository av_FuenteBusTels { get; }
         Iav_MaeTablaRepository av_MaeTablas { get; }
         Iav_MonedaRepository av_Monedas { get; }
@@ -27,6 +29,8 @@ namespace GesMgmt.Domain.Interfaces
         Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss { get; }
         Iav_PersDeudorRepository av_PersDeudors { get; }
         Iav_PersDireccRepository av_PersDireccs { get; }
+        Iav_PersEmailRepository av_PersEmails { get; }
+        Iav_PersEmailOpeRepository av_PersEmailOpes { get; }
         Iav_PersRefUbiRepository av_PersRefUbis { get; }
         Iav_PersTelefOpeRepository av_PersTelefOpes { get; }
         Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles { get; }

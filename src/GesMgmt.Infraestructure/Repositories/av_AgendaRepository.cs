@@ -20,5 +20,16 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public IQueryable<av_Agenda?> GetGestionAgendasDeudor(int nId_Cliente, int nId_Cartera, int nId_PersDeudor, int? nId_PerfilUsuario)
+        {
+            return _dbSet
+           .AsNoTracking()
+           .Where(s =>
+                s.nid_Cliente == nId_Cliente &&
+                s.nid_Cartera == nId_Cartera &&
+                s.nid_PersDeudor == nId_PersDeudor
+           );
+        }
     }
 }
