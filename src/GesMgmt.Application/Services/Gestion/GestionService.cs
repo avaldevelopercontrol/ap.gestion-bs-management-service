@@ -184,6 +184,7 @@ namespace GesMgmt.Application.Services.Gestion
                                         nId_Cartera = s.nId_Cartera,
                                         ///**** FIN DE LOS CAMPOS RESERVADOS******************/
                                         nro = 0, // este campo se llenará después
+                                        tramo = dcp.cDocParam04 ?? "SIN-TRAMO",
                                         numeroDocumento = s.cDoc_Numero,
                                         estado = s.bEstado == 1 ? "ACTIVO" : "INACTIVO",
                                         fechaVencimiento = s.dDoc_FecVenc.HasValue ? FormatearFecha(s.dDoc_FecVenc) : "",
@@ -1034,5 +1035,78 @@ namespace GesMgmt.Application.Services.Gestion
             }
         }
         #endregion
+
+        #region "Gestiones Pagos por Deudor"
+        public async Task<ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>> GetGestionPagosDeudorAsync(GetGestionPagosRequestDto gestionPagosDto)
+        {
+            GetGestionPagoRequestValidator validator = new GetGestionPagoRequestValidator(_unitOfWork, _validationMessageService, gestionPagosDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+                var q_Pagos = _unitOfWork.av_DocxPagos.GetPagosByIdDeudorAsync(gestionPagosDto.nId_Cliente, gestionPagosDto.nId_Cartera, gestionPagosDto.nId_Persdeudor);
+
+                var data = await (
+                                    from s in q_Pagos
+                                    select new GetGestionPagosResponsetDto
+                                    {
+                                        nro = 0,
+                                        codigoCliente = s.cPers_CodCliente,
+                                        nroDocumento = s.cDoc_Numero,
+                                        fechaPago = s.dDoc_FecPago.ToString("dd/MM/yyyy") ?? "",
+                                        montoPago = s.nDoc_ImpPago,
+                                        moneda = s.nId_MonPago == 2 ? "DOLARES" : "SOLES",
+                                        zona = "",
+                                        notaCredito = ObtenerNotaCredito(s.nId_Cliente, s.cDoc_Param02, s.nDoc_ImpParam01),
+                                        marca = s.cMarca ?? ""
+                                    }
+                    )
+                    .Skip((gestionPagosDto.PageNumber - 1) * gestionPagosDto.PageSize)
+                    .Take(gestionPagosDto.PageSize)
+                    .ToListAsync();
+
+                int correlativo = (gestionPagosDto.PageNumber - 1) * gestionPagosDto.PageSize + 1;
+
+                foreach (var item in data)
+                {
+                    item.nro = correlativo++;
+                }
+
+                int totalRecords = data.Count();
+
+                var response = ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = gestionPagosDto.PageNumber;
+                response.PageSize = gestionPagosDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionPagosDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        private static string ObtenerNotaCredito(int cliente, string? param02, decimal? impParam01)
+        {
+            if (cliente == 136)
+            {
+                return decimal.TryParse(param02, out decimal valor)
+                    ? valor.ToString("N2")
+                    : param02 ?? "";
+            }
+            return impParam01?.ToString() ?? "";
+        }
+
     }
 }

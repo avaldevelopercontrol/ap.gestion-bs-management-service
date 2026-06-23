@@ -197,5 +197,18 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionAgendasDeudor|End|GetGestionAgendasDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Pagos")]
+        [HttpGet("GetGestionPagosDeudor")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionPagosResponsetDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionPagosDeudorAsync([FromQuery] GetGestionPagosRequestDto gestionPagoDto)
+        {
+            _Logger.LogInfo($"GetGestionPagosDeudor|Begin|GetGestionPagosDeudorAsync|request: {JsonSerializer.Serialize(gestionPagoDto)}");
+            var result = await _gestionService.GetGestionPagosDeudorAsync(gestionPagoDto);
+            _Logger.LogInfo($"GetGestionPagosDeudor|End|GetGestionPagosDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
     }
 }

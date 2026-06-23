@@ -3,6 +3,20 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionResponseDto
     {
+
+        public class GetGestionPagosResponsetDto
+        {
+            public int nro { get; set; }
+            public string? codigoCliente { get; set; }
+            public string? nroDocumento { get; set; }
+            public string? fechaPago { get; set; }
+            public decimal? montoPago { get; set; }
+            public string? moneda { get; set; }
+            public string? zona { get; set; }
+            public string? notaCredito { get; set; }
+            public string? marca { get; set; }
+        }
+
         public class GetGestionAgendaResponseDto
         {
             public int nid_agenda { get; set; }
@@ -77,6 +91,7 @@ namespace GesMgmt.Application.DTOs.Gestion
             //-- Campos adicionales para la gestión
             //-- 95 CLARO
             public int nro { get; set; }
+            public string? tramo { get; set; }
             public string? numeroDocumento { get; set; }
             public string? estado { get; set; }
             public string? fechaVencimiento { get; set; }

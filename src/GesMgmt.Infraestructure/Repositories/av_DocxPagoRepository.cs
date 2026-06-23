@@ -20,5 +20,14 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public IQueryable<av_DocxPago?> GetPagosByIdDeudorAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            return _dbSet
+                        .Where(s => s.nId_Cliente == nId_Cliente &&
+                            s.nId_Cartera == nId_Cartera &&
+                            s.nId_PersDeudor == nId_PersDeudor)
+                        .AsNoTracking();
+        }
     }
 }
