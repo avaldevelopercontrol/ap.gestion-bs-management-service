@@ -23,18 +23,11 @@ namespace GesMgmt.Infraestructure.Repositories
 
         public IQueryable<av_CabPantallaCob> GetCabeceraGestionesAsync(av_CabPantallaCob av_CabPantallaCob)
         {
-            var query = _dbSet
+            return _dbSet
                 .AsNoTracking()
-                .AsQueryable();
-
-            if (av_CabPantallaCob.nId_Cliente > 0)
-                query = query.Where(s => s.nId_Cliente == av_CabPantallaCob.nId_Cliente);
-
-            if (av_CabPantallaCob.nId_Contrato > 0)
-                query = query.Where(s => s.nId_Contrato == av_CabPantallaCob.nId_Contrato);
-
-            return query.OrderBy(s => s.nOrden);
+                .Where(d => d.nId_Cliente == av_CabPantallaCob.nId_Cliente
+                       && d.nId_Contrato == av_CabPantallaCob.nId_Contrato)
+                .OrderBy(s => s.nOrden);
         }
-
     }
 }

@@ -30,6 +30,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_OpeCodCliOut> av_OpeCodCliOuts { get; set; }
         public DbSet<av_OperadorTelefonico> av_OperadorTelefonicos { get; set; }
         public DbSet<av_PersDeudor> av_PersDeudors { get; set; }
+        public DbSet<av_PersDeudorParam> av_PersDeudorParams { get; set; }
         public DbSet<av_PersDirecc> av_PersDireccs { get; set; }
         public DbSet<av_PersDeudorGestionHrs> av_PersDeudorGestionHrs { get; set; }
         public DbSet<av_PersDeudorInfoParamDefCab> av_PersDeudorInfoParamDefCabs { get; set; }
@@ -81,6 +82,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutConfiguration());
             modelBuilder.ApplyConfiguration(new av_OperadorTelefonicoConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorConfiguration());
+            modelBuilder.ApplyConfiguration(new av_PersDeudorParamConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDireccConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorGestionHrsConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorInfoParamDefCabConfiguration());

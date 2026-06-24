@@ -23,12 +23,11 @@ namespace GesMgmt.Infraestructure.Repositories
 
         public async Task<av_PersDirecc> GetDireccionByIdDireccionAsync(int nId_PersDirecc)
         {
-            var query = await _dbSet
-                .Include(d => d.av_Cliente)
-                .Include(tel => tel.av_PersDeudor)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.nId_PersDirecc == nId_PersDirecc);
-            return query;
+            return await _dbSet
+                 .Include(d => d.av_Cliente)
+                 .Include(tel => tel.av_PersDeudor)
+                 .AsNoTracking()
+                 .FirstOrDefaultAsync(s => s.nId_PersDirecc == nId_PersDirecc);
         }
 
         public IQueryable<av_PersDirecc> GetDireccionByIdDireccion(int nId_PersDirecc)

@@ -96,6 +96,20 @@ namespace GesMgmt.Application.Services.Gestion
                     })
                     .ToListAsync();
 
+                data.Add(new GetGestionCabeceraResponseDto
+                {
+                    idCabeceraPantalla = 999,
+                    tituloCabeceraPantalla = "Tramo",
+                    tipoDato = "VARCHAR",
+                    operaTotal = false,
+                    compromiso = false,
+                    orden = 0,
+                    pantalla = 3,
+                    alineacionHtml = "",
+                    nId_Contrato = 182,
+                    nId_Cliente = 95
+                });
+
                 var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
                 return response;

@@ -30,6 +30,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_PersDeudorInfoParamDefCabRepository av_PersDeudorInfoParamDefCabs { get; }
         Iav_PersDeudorInfoParamRepository av_PersDeudorInfoParams { get; }
         Iav_PersDeudorRepository av_PersDeudors { get; }
+        Iav_PersDeudorParamRepository av_PersDeudorParams { get; }
         Iav_PersDireccRepository av_PersDireccs { get; }
         Iav_PersEmailRepository av_PersEmails { get; }
         Iav_PersEmailOpeRepository av_PersEmailOpes { get; }

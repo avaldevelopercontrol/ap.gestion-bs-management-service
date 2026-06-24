@@ -23,19 +23,12 @@ namespace GesMgmt.Infraestructure.Repositories
 
         public IQueryable<av_DetallePersTelef> GetDetalleTelefonosAsync(av_DetallePersTelef av_DetallePersTelef)
         {
-            var query = _dbSet
+            return _dbSet
                 .Include(dettel => dettel.av_Cliente)
                 .Include(dettel => dettel.av_PersTelef)
                 .AsNoTracking()
-                .AsQueryable();
-
-            if (av_DetallePersTelef.nId_Cliente > 0)
-                query = query.Where(dettel => dettel.nId_Cliente == av_DetallePersTelef.nId_Cliente);
-
-            if (av_DetallePersTelef.nId_PersTelef > 0)
-                query = query.Where(dettel => dettel.nId_PersTelef == av_DetallePersTelef.nId_PersTelef);
-
-            return query;
+                .Where(d => d.nId_Cliente == av_DetallePersTelef.nId_Cliente
+                       && d.nId_PersTelef == av_DetallePersTelef.nId_PersTelef);
         }
 
         public async Task<av_DetallePersTelef> GetDetalleTelefonoSearchAsync(int nId_Cliente, int nId_PersTelef)
