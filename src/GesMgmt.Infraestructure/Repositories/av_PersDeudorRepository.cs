@@ -20,5 +20,12 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public async Task<av_PersDeudor> GetDeudorByIdDeudorAsync(int nId_PersDeudor)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.nId_PersDeudor == nId_PersDeudor);
+        }
     }
 }

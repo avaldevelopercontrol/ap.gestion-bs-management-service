@@ -8,43 +8,44 @@ namespace GesMgmt.Infraestructure.Repositories
     public class av_DocxCobrarRepository : Iav_DocxCobrarRepository
     {
         protected readonly AvalDbContext _context;
-        protected readonly DbSet<av_DocxCobrar> _db_av_DocxCobrar;
-        protected readonly DbSet<av_DocxCobrarOpe> _db_av_DocxCobrarOpe;
+        protected readonly DbSet<av_DocxCobrar> _dbSet;
 
         public av_DocxCobrarRepository(AvalDbContext context)
         {
             _context = context;
-            _db_av_DocxCobrar = context.Set<av_DocxCobrar>();
-            _db_av_DocxCobrarOpe = context.Set<av_DocxCobrarOpe>();
+            _dbSet = context.Set<av_DocxCobrar>();
         }
 
         public async Task<IQueryable<av_DocxCobrar>> Query()
         {
-            return _db_av_DocxCobrar.AsNoTracking();
+            return _dbSet.AsNoTracking();
         }
 
         public IQueryable<av_DocxCobrar> GetGestionesAsync(av_DocxCobrar av_DocxCobrar)
         {
-
-            var query = _db_av_DocxCobrar
+            return _dbSet
                 .Include(c => c.av_Cartera)
                 .Include(d => d.av_PersDeudor)
                 .Include(m => m.av_Moneda)
                 .Include(u => u.av_Usuario)
                 .AsNoTracking()
-                .AsQueryable();
-
-            if (av_DocxCobrar.nId_Cliente > 0)
-                query = query.Where(s => s.nId_Cliente == av_DocxCobrar.nId_Cliente);
-
-            if (av_DocxCobrar.nId_Cartera > 0)
-                query = query.Where(s => s.nId_Cartera == av_DocxCobrar.nId_Cartera);
-
-            if (av_DocxCobrar.nId_PersDeudor > 0)
-                query = query.Where(s => s.nId_PersDeudor == av_DocxCobrar.nId_PersDeudor);
-
-            return query;
+                .Where(d => d.nId_Cliente == av_DocxCobrar.nId_Cliente
+                       && d.nId_Cartera == av_DocxCobrar.nId_Cartera
+                       && d.nId_PersDeudor == av_DocxCobrar.nId_PersDeudor);
         }
 
+        public IQueryable<av_DocxCobrar> GetDocumentosxCobrarActivosAsync(av_DocxCobrar av_DocxCobrar)
+        {
+            return _dbSet
+                .Include(c => c.av_Cartera)
+                .Include(d => d.av_PersDeudor)
+                .Include(m => m.av_Moneda)
+                .Include(u => u.av_Usuario)
+                .AsNoTracking()
+                .Where(d => d.nId_Cliente == av_DocxCobrar.nId_Cliente
+                       && d.nId_Cartera == av_DocxCobrar.nId_Cartera
+                       && d.nId_PersDeudor == av_DocxCobrar.nId_PersDeudor
+                       && d.bEstado == 1);
+        }
     }
 }

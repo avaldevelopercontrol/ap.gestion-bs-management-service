@@ -23,15 +23,13 @@ namespace GesMgmt.Infraestructure.Repositories
 
         public async Task<av_ZonaCartera> GetZonaCarteraByIdClienteAsync(int nId_Cliente)
         {
-            var query = await _dbSet
+            return await _dbSet
                 .Include(d => d.av_Divisional)
-                //.Include(d => d.av_Cliente)
                 .Include(d => d.av_OficinaAval)
                 .Include(d => d.av_Usuario)
                 .Include(d => d.av_SubZonaGeneral)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.nid_cliente == nId_Cliente);
-            return query;
         }
     }
 }

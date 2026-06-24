@@ -110,7 +110,7 @@ namespace GesMgmt.Application.Services.Gestion
                     nId_Cliente = 95
                 });
 
-                var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data.OrderBy(x => x.orden).ToList(), "200", "OK", "OK", 200);
 
                 return response;
             }
