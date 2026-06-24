@@ -3,6 +3,16 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionRequestDto
     {
+        public class GetGestionInformacionDeudorParamRequestDto
+        {
+            public int nId_Persdeudor { get; set; }
+        }
+
+        public class GetGestionInformacionDeudorRequestDto
+        {
+            public bool? bTipo_Cabecera { get; set; }
+        }
+
         public class GetGestionPagosRequestDto
         {
             public int nId_Cliente { get; set; }

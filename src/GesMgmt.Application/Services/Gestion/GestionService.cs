@@ -1108,5 +1108,206 @@ namespace GesMgmt.Application.Services.Gestion
             return impParam01?.ToString() ?? "";
         }
 
+        #region "Gestion - Información Deudor"
+        public async Task<ResultDto<GetGestionInformacionDeudorRespondeDto>> GetGetGestionInformacionDeudorAsync(GetGestionInformacionDeudorRequestDto gestionInformacionDeudorDto)
+        {
+            try
+            {
+                var query = await _unitOfWork.av_PersDeudorInfoParamDefCabs.GetPersDeudorInfoParamDefCabAsync(gestionInformacionDeudorDto.bTipo_Cabecera.Value);
+
+                var data = new GetGestionInformacionDeudorRespondeDto
+                {
+                    cNombre_Param01 = query.cNombre_Param01 ?? "",
+                    cNombre_Param02 = query.cNombre_Param02 ?? "",
+                    cNombre_Param03 = query.cNombre_Param03 ?? "",
+                    cNombre_Param04 = query.cNombre_Param04 ?? "",
+                    cNombre_Param05 = query.cNombre_Param05 ?? "",
+                    cNombre_Param06 = query.cNombre_Param06 ?? "",
+                    cNombre_Param07 = query.cNombre_Param07 ?? "",
+                    cNombre_Param08 = query.cNombre_Param08 ?? "",
+                    cNombre_Param09 = query.cNombre_Param09 ?? "",
+                    cNombre_Param10 = query.cNombre_Param10 ?? "",
+                    cNombre_Param11 = query.cNombre_Param11 ?? "",
+                    cNombre_Param12 = query.cNombre_Param12 ?? "",
+                    cNombre_Param13 = query.cNombre_Param13 ?? "",
+                    cNombre_Param14 = query.cNombre_Param14 ?? "",
+                    cNombre_Param15 = query.cNombre_Param15 ?? "",
+                    cNombre_Param16 = query.cNombre_Param16 ?? "",
+                    cNombre_Param17 = query.cNombre_Param17 ?? "",
+                    cNombre_Param18 = query.cNombre_Param18 ?? "",
+                    cNombre_Param19 = query.cNombre_Param19 ?? "",
+                    cNombre_Param20 = query.cNombre_Param20 ?? "",
+                    cNombre_Param21 = query.cNombre_Param21 ?? "",
+                    cNombre_Param22 = query.cNombre_Param22 ?? "",
+                    cNombre_Param23 = query.cNombre_Param23 ?? "",
+                    cNombre_Param24 = query.cNombre_Param24 ?? "",
+                    cNombre_Param25 = query.cNombre_Param25 ?? "",
+                    cNombre_Param26 = query.cNombre_Param26 ?? "",
+                    cNombre_Param27 = query.cNombre_Param27 ?? "",
+                    cNombre_Param28 = query.cNombre_Param28 ?? "",
+                    cNombre_Param29 = query.cNombre_Param29 ?? "",
+                    cNombre_Param30 = query.cNombre_Param30 ?? "",
+                    cNombre_Param31 = query.cNombre_Param31 ?? "",
+                    cNombre_Param32 = query.cNombre_Param32 ?? "",
+                    cNombre_Param33 = query.cNombre_Param33 ?? "",
+                    cNombre_Param34 = query.cNombre_Param34 ?? "",
+                    cNombre_Param35 = query.cNombre_Param35 ?? "",
+                    cNombre_Param36 = query.cNombre_Param36 ?? "",
+                    cNombre_Param37 = query.cNombre_Param37 ?? "",
+                    cNombre_Param38 = query.cNombre_Param38 ?? "",
+                    cNombre_Param39 = query.cNombre_Param39 ?? "",
+                    cNombre_Param40 = query.cNombre_Param40 ?? "",
+                    cNombre_Param41 = query.cNombre_Param41 ?? "",
+                    cNombre_Param42 = query.cNombre_Param42 ?? "",
+                    cNombre_Param43 = query.cNombre_Param43 ?? "",
+                    cNombre_Param44 = query.cNombre_Param44 ?? "",
+                    cNombre_Param45 = query.cNombre_Param45 ?? "",
+                    cNombre_Param46 = query.cNombre_Param46 ?? "",
+                    cNombre_Param47 = query.cNombre_Param47 ?? "",
+                    cNombre_Param48 = query.cNombre_Param48 ?? "",
+                    cNombre_Param49 = query.cNombre_Param49 ?? "",
+                    cNombre_Param50 = query.cNombre_Param50 ?? "",
+                    cNombre_Param51 = query.cNombre_Param51 ?? "",
+                    cNombre_Param52 = query.cNombre_Param52 ?? "",
+                    cNombre_Param53 = query.cNombre_Param53 ?? "",
+                    cNombre_Param54 = query.cNombre_Param54 ?? "",
+                    cNombre_Param55 = query.cNombre_Param55 ?? "",
+                    cNombre_Param56 = query.cNombre_Param56 ?? "",
+                    cNombre_Param57 = query.cNombre_Param57 ?? "",
+                    cNombre_Param58 = query.cNombre_Param58 ?? "",
+                    cNombre_Param59 = query.cNombre_Param59 ?? "",
+                    cNombre_Param60 = query.cNombre_Param60 ?? "",
+                    cNombre_Param61 = query.cNombre_Param61 ?? "",
+                    cNombre_Param62 = query.cNombre_Param62 ?? "",
+                    cNombre_Param63 = query.cNombre_Param63 ?? "",
+                    cNombre_Param64 = query.cNombre_Param64 ?? "",
+                    cNombre_Param65 = query.cNombre_Param65 ?? "",
+                    cNombre_Param66 = query.cNombre_Param66 ?? "",
+                    cNombre_Param67 = query.cNombre_Param67 ?? "",
+                    cNombre_Param68 = query.cNombre_Param68 ?? "",
+                    cNombre_Param69 = query.cNombre_Param69 ?? "",
+                    cNombre_Param70 = query.cNombre_Param70 ?? "",
+                    cNombre_Param71 = query.cNombre_Param71 ?? "",
+                    cNombre_Param72 = query.cNombre_Param72 ?? "",
+                    cNombre_Param73 = query.cNombre_Param73 ?? "",
+                    cNombre_Param74 = query.cNombre_Param74 ?? "",
+                    cNombre_Param75 = query.cNombre_Param75 ?? "",
+                    cNombre_Param76 = query.cNombre_Param76 ?? "",
+                    cNombre_Param77 = query.cNombre_Param77 ?? "",
+                    cNombre_Param78 = query.cNombre_Param78 ?? "",
+                    cNombre_Param79 = query.cNombre_Param79 ?? "",
+                    cNombre_Param80 = query.cNombre_Param80 ?? "",
+                };
+
+                var response = ResultDto<GetGestionInformacionDeudorRespondeDto>.Success(data, "200", "OK", "OK", 200);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultDto<GetGestionInformacionDeudorRespondeDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Gestion - Información Deudor Param"
+        public async Task<ResultDto<GetGestionInformacionDeudorParamRespondeDto>> GetGetGestionInformacionDeudorParamAsync(GetGestionInformacionDeudorParamRequestDto gestionInformacionDeudorParamDto)
+        {
+            try
+            {
+                var query = await _unitOfWork.av_PersDeudorInfoParams.GetGetGestionInformacionDeudorParamAsync(gestionInformacionDeudorParamDto.nId_Persdeudor);
+
+                var data = new GetGestionInformacionDeudorParamRespondeDto
+                {
+                    cPersInf_Param01 = query.cPersInf_Param01 ?? "",
+                    cPersInf_Param02 = query.cPersInf_Param02 ?? "",
+                    cPersInf_Param03 = query.cPersInf_Param03 ?? "",
+                    cPersInf_Param04 = query.cPersInf_Param04 ?? "",
+                    cPersInf_Param05 = query.cPersInf_Param05 ?? "",
+                    cPersInf_Param06 = query.cPersInf_Param06 ?? "",
+                    cPersInf_Param07 = query.cPersInf_Param07 ?? "",
+                    cPersInf_Param08 = query.cPersInf_Param08 ?? "",
+                    cPersInf_Param09 = query.cPersInf_Param09 ?? "",
+                    cPersInf_Param10 = query.cPersInf_Param10 ?? "",
+                    cPersInf_Param11 = query.cPersInf_Param11 ?? "",
+                    cPersInf_Param12 = query.cPersInf_Param12 ?? "",
+                    cPersInf_Param13 = query.cPersInf_Param13 ?? "",
+                    cPersInf_Param14 = query.cPersInf_Param14 ?? "",
+                    cPersInf_Param15 = query.cPersInf_Param15 ?? "",
+                    cPersInf_Param16 = query.cPersInf_Param16 ?? "",
+                    cPersInf_Param17 = query.cPersInf_Param17 ?? "",
+                    cPersInf_Param18 = query.cPersInf_Param18 ?? "",
+                    cPersInf_Param19 = query.cPersInf_Param19 ?? "",
+                    cPersInf_Param20 = query.cPersInf_Param20 ?? "",
+                    cPersInf_Param21 = query.cPersInf_Param21 ?? "",
+                    cPersInf_Param22 = query.cPersInf_Param22 ?? "",
+                    cPersInf_Param23 = query.cPersInf_Param23 ?? "",
+                    cPersInf_Param24 = query.cPersInf_Param24 ?? "",
+                    cPersInf_Param25 = query.cPersInf_Param25 ?? "",
+                    cPersInf_Param26 = query.cPersInf_Param26 ?? "",
+                    cPersInf_Param27 = query.cPersInf_Param27 ?? "",
+                    cPersInf_Param28 = query.cPersInf_Param28 ?? "",
+                    cPersInf_Param29 = query.cPersInf_Param29 ?? "",
+                    cPersInf_Param30 = query.cPersInf_Param30 ?? "",
+                    cPersInf_Param31 = query.cPersInf_Param31 ?? "",
+                    cPersInf_Param32 = query.cPersInf_Param32 ?? "",
+                    cPersInf_Param33 = query.cPersInf_Param33 ?? "",
+                    cPersInf_Param34 = query.cPersInf_Param34 ?? "",
+                    cPersInf_Param35 = query.cPersInf_Param35 ?? "",
+                    cPersInf_Param36 = query.cPersInf_Param36 ?? "",
+                    cPersInf_Param37 = query.cPersInf_Param37 ?? "",
+                    cPersInf_Param38 = query.cPersInf_Param38 ?? "",
+                    cPersInf_Param39 = query.cPersInf_Param39 ?? "",
+                    cPersInf_Param40 = query.cPersInf_Param40 ?? "",
+                    cPersInf_Param41 = query.cPersInf_Param41 ?? "",
+                    cPersInf_Param42 = query.cPersInf_Param42 ?? "",
+                    cPersInf_Param43 = query.cPersInf_Param43 ?? "",
+                    cPersInf_Param44 = query.cPersInf_Param44 ?? "",
+                    cPersInf_Param45 = query.cPersInf_Param45 ?? "",
+                    cPersInf_Param46 = query.cPersInf_Param46 ?? "",
+                    cPersInf_Param47 = query.cPersInf_Param47 ?? "",
+                    cPersInf_Param48 = query.cPersInf_Param48 ?? "",
+                    cPersInf_Param49 = query.cPersInf_Param49 ?? "",
+                    cPersInf_Param50 = query.cPersInf_Param50 ?? "",
+                    cPersInf_Param51 = query.cPersInf_Param51 ?? "",
+                    cPersInf_Param52 = query.cPersInf_Param52 ?? "",
+                    cPersInf_Param53 = query.cPersInf_Param53 ?? "",
+                    cPersInf_Param54 = query.cPersInf_Param54 ?? "",
+                    cPersInf_Param55 = query.cPersInf_Param55 ?? "",
+                    cPersInf_Param56 = query.cPersInf_Param56 ?? "",
+                    cPersInf_Param57 = query.cPersInf_Param57 ?? "",
+                    cPersInf_Param58 = query.cPersInf_Param58 ?? "",
+                    cPersInf_Param59 = query.cPersInf_Param59 ?? "",
+                    cPersInf_Param60 = query.cPersInf_Param60 ?? "",
+                    cPersInf_Param61 = query.cPersInf_Param61 ?? "",
+                    cPersInf_Param62 = query.cPersInf_Param62 ?? "",
+                    cPersInf_Param63 = query.cPersInf_Param63 ?? "",
+                    cPersInf_Param64 = query.cPersInf_Param64 ?? "",
+                    cPersInf_Param65 = query.cPersInf_Param65 ?? "",
+                    cPersInf_Param66 = query.cPersInf_Param66 ?? "",
+                    cPersInf_Param67 = query.cPersInf_Param67 ?? "",
+                    cPersInf_Param68 = query.cPersInf_Param68 ?? "",
+                    cPersInf_Param69 = query.cPersInf_Param69 ?? "",
+                    cPersInf_Param70 = query.cPersInf_Param70 ?? "",
+                    cPersInf_Param71 = query.cPersInf_Param71 ?? "",
+                    cPersInf_Param72 = query.cPersInf_Param72 ?? "",
+                    cPersInf_Param73 = query.cPersInf_Param73 ?? "",
+                    cPersInf_Param74 = query.cPersInf_Param74 ?? "",
+                    cPersInf_Param75 = query.cPersInf_Param75 ?? "",
+                    cPersInf_Param76 = query.cPersInf_Param76 ?? "",
+                    cPersInf_Param77 = query.cPersInf_Param77 ?? "",
+                    cPersInf_Param78 = query.cPersInf_Param78 ?? "",
+                    cPersInf_Param79 = query.cPersInf_Param79 ?? "",
+                    cPersInf_Param80 = query.cPersInf_Param80 ?? ""
+                };
+
+                var response = ResultDto<GetGestionInformacionDeudorParamRespondeDto>.Success(data, "200", "OK", "OK", 200);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultDto<GetGestionInformacionDeudorParamRespondeDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
     }
 }

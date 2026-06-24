@@ -210,5 +210,31 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionPagosDeudor|End|GetGestionPagosDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor")]
+        [HttpGet("GetGetGestionInformacionDeudor")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionInformacionDeudorRespondeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGetGestionInformacionDeudorAsync([FromQuery] GetGestionInformacionDeudorRequestDto gestionInfoDeudor)
+        {
+            _Logger.LogInfo($"GetGetGestionInformacionDeudor|Begin|GetGetGestionInformacionDeudorAsync|request: {JsonSerializer.Serialize(gestionInfoDeudor)}");
+            var result = await _gestionService.GetGetGestionInformacionDeudorAsync(gestionInfoDeudor);
+            _Logger.LogInfo($"GetGetGestionInformacionDeudor|End|GetGetGestionInformacionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor Param")]
+        [HttpGet("GetGetGestionInformacionDeudorParam")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionInformacionDeudorParamRespondeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGetGestionInformacionDeudorParamAsync([FromQuery] GetGestionInformacionDeudorParamRequestDto gestionInfoDeudorParam)
+        {
+            _Logger.LogInfo($"GetGetGestionInformacionDeudorParam|Begin|GetGetGestionInformacionDeudorParamAsync|request: {JsonSerializer.Serialize(gestionInfoDeudorParam)}");
+            var result = await _gestionService.GetGetGestionInformacionDeudorParamAsync(gestionInfoDeudorParam);
+            _Logger.LogInfo($"GetGetGestionInformacionDeudorParam|End|GetGetGestionInformacionDeudorParamAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
     }
 }

@@ -32,6 +32,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_PersDeudor> av_PersDeudors { get; set; }
         public DbSet<av_PersDirecc> av_PersDireccs { get; set; }
         public DbSet<av_PersDeudorGestionHrs> av_PersDeudorGestionHrs { get; set; }
+        public DbSet<av_PersDeudorInfoParamDefCab> av_PersDeudorInfoParamDefCabs { get; set; }
         public DbSet<av_PersEmail> av_PersEmails { get; set; }
         public DbSet<av_PersEmailOpe> av_PersEmailOpes { get; set; }
         public DbSet<av_PersRefUbi> av_PersRefUbis { get; set; }
@@ -82,6 +83,8 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_PersDeudorConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDireccConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorGestionHrsConfiguration());
+            modelBuilder.ApplyConfiguration(new av_PersDeudorInfoParamDefCabConfiguration());
+            modelBuilder.ApplyConfiguration(new av_PersDeudorInfoParamConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersEmailConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersEmailOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersRefUbiConfiguration());

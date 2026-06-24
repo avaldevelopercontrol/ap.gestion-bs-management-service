@@ -27,6 +27,8 @@ namespace GesMgmt.Domain.Interfaces
         Iav_OpeCodCliOutRepository av_OpeCodCliOuts { get; }
         Iav_OperadorTelefonicoRepository av_OperadorTelefonicos { get;  }
         Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss { get; }
+        Iav_PersDeudorInfoParamDefCabRepository av_PersDeudorInfoParamDefCabs { get; }
+        Iav_PersDeudorInfoParamRepository av_PersDeudorInfoParams { get; }
         Iav_PersDeudorRepository av_PersDeudors { get; }
         Iav_PersDireccRepository av_PersDireccs { get; }
         Iav_PersEmailRepository av_PersEmails { get; }
