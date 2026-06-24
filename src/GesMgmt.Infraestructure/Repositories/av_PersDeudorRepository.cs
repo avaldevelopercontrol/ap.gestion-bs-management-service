@@ -27,5 +27,22 @@ namespace GesMgmt.Infraestructure.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.nId_PersDeudor == nId_PersDeudor);
         }
+
+        public async Task<av_PersDeudor> GetDeudorByDniRucAsync(string letra, string valor)
+        {
+            if (letra == "R")
+            {
+                return await _dbSet
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.cPers_RUC == valor);
+            }
+            if (letra == "D")
+            {
+                return await _dbSet
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.cPers_DNI == valor);
+            }
+            return null;
+        }
     }
 }

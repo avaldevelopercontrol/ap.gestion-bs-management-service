@@ -197,8 +197,8 @@ namespace GesMgmt.Application.Services.Gestion
                                         nId_Estrategia = s.nid_estrategia ?? 0,
                                         nId_Cartera = s.nId_Cartera,
                                         ///**** FIN DE LOS CAMPOS RESERVADOS******************/
-                                        nro = 0, // este campo se llenará después
                                         tramo = dcp.cDocParam04 ?? "SIN-TRAMO",
+                                        nro = 0, // este campo se llenará después
                                         numeroDocumento = s.cDoc_Numero,
                                         estado = s.bEstado == 1 ? "ACTIVO" : "INACTIVO",
                                         fechaVencimiento = s.dDoc_FecVenc.HasValue ? FormatearFecha(s.dDoc_FecVenc) : "",

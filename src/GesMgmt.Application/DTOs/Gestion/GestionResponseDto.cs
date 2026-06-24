@@ -258,8 +258,8 @@ namespace GesMgmt.Application.DTOs.Gestion
 
             //-- Campos adicionales para la gestión
             //-- 95 CLARO
-            public int nro { get; set; }
             public string? tramo { get; set; }
+            public int nro { get; set; }
             public string? numeroDocumento { get; set; }
             public string? estado { get; set; }
             public string? fechaVencimiento { get; set; }
