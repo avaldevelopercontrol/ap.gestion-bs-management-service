@@ -28,19 +28,19 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.nId_PersDeudor == nId_PersDeudor);
         }
 
-        public async Task<av_PersDeudor> GetDeudorByDniRucAsync(string letra, string valor)
+        public IQueryable<av_PersDeudor?> GetDeudorByDniRucAsync(string letra, string valor)
         {
             if (letra == "R")
             {
-                return await _dbSet
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(s => s.cPers_RUC == valor);
+                return _dbSet
+                .Where(s => s.cPers_RUC == valor)
+                .AsNoTracking();
             }
             if (letra == "D")
             {
-                return await _dbSet
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(s => s.cPers_DNI == valor);
+                return _dbSet
+                .Where(s => s.cPers_DNI == valor)
+                .AsNoTracking();
             }
             return null;
         }

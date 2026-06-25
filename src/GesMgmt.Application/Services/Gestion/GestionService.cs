@@ -12,7 +12,7 @@ using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
 namespace GesMgmt.Application.Services.Gestion
 {
-    public class GestionService: IGestionService
+    public class GestionService : IGestionService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;

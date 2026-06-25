@@ -31,5 +31,16 @@ namespace GesMgmt.Infraestructure.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.nid_cliente == nId_Cliente);
         }
+
+        public IQueryable<av_ZonaCartera?> GetZonasCarterasByIdClienteAsync(int nId_Cliente)
+        {
+            return _dbSet
+                .Include(d => d.av_Divisional)
+                .Include(d => d.av_OficinaAval)
+                .Include(d => d.av_Usuario)
+                .Include(d => d.av_SubZonaGeneral)
+                .Where(s => s.nid_cliente == nId_Cliente)
+                .AsNoTracking();
+        }
     }
 }

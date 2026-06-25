@@ -34,7 +34,7 @@ namespace GesMgmt.Infraestructure.Repositories
                        && d.nId_PersDeudor == av_DocxCobrar.nId_PersDeudor);
         }
 
-        public IQueryable<av_DocxCobrar> GetDocumentosxCobrarActivosAsync(av_DocxCobrar av_DocxCobrar)
+        public IQueryable<av_DocxCobrar> GetDocumentosxCobrarActivosAsync(int nId_Cliente, int nId_PersDeudor)
         {
             return _dbSet
                 .Include(c => c.av_Cartera)
@@ -42,9 +42,8 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Include(m => m.av_Moneda)
                 .Include(u => u.av_Usuario)
                 .AsNoTracking()
-                .Where(d => d.nId_Cliente == av_DocxCobrar.nId_Cliente
-                       && d.nId_Cartera == av_DocxCobrar.nId_Cartera
-                       && d.nId_PersDeudor == av_DocxCobrar.nId_PersDeudor
+                .Where(d => d.nId_Cliente == nId_Cliente
+                       && d.nId_PersDeudor == nId_PersDeudor
                        && d.bEstado == 1);
         }
     }

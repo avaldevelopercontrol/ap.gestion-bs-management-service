@@ -20,5 +20,22 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public IQueryable<av_OpeCodCliOut> GetTipificacionByIdAsync(int nId_Cliente, int nId_OpeCodCliOut)
+        {
+            return _dbSet
+                .Where(s => s.nId_Cliente == nId_Cliente
+                    && s.nId_OpeCodCliOut == nId_OpeCodCliOut)
+                .AsNoTracking();
+        }
+
+        public async Task<av_OpeCodCliOut?> GetTipificacionById2Async(int nId_Cliente, int nId_OpeCodCliOut)
+        {
+            return await _dbSet
+                .Where(s => s.nId_Cliente == nId_Cliente
+                    && s.nId_OpeCodCliOut == nId_OpeCodCliOut)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+        }
     }
 }

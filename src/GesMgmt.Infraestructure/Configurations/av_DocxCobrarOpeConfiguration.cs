@@ -26,6 +26,10 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.HasOne(dco => dco.av_TipoGestion)
                 .WithMany()
                 .HasForeignKey(dc => dc.nId_TipoGestion);
+
+            builder.HasOne(dco => dco.av_OpeCodCliOut)
+                .WithMany()
+                .HasForeignKey(dc => dc.nId_OpeCodCliOut);
         }
     }
 }

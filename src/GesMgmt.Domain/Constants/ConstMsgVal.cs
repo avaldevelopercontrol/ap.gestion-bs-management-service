@@ -29,5 +29,8 @@ namespace GesMgmt.Domain.Constants
         public const string EMAIL_LENGTH_ZERO_STATUS = "019";
         public const string EMAIL_STATE_STATUS_01 = "020";
         public const string EMAIL_STATE_STATUS_02 = "021";
+
+        public const string BUSCAR_LENGTH_ZERO = "022";
+        public const string BUSCAR_LENGTH_ONE = "023";
     }
 }

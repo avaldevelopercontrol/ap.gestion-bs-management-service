@@ -20,7 +20,7 @@ namespace GesMgmt.Domain.Entities
         public int? nDoc_NroLote { get; set; }
         public string? cDocOpeCobOut_Descr { get; set; }
         public int? nId_Cliente { get; set; }
-        public av_Cliente? av_Cliente { get; set; }
+        //public av_Cliente? av_Cliente { get; set; }
         public int? nId_Contrato { get; set; }
         public int? nId_Cartera { get; set; }
         public int nId_PersDeudor { get; set; }

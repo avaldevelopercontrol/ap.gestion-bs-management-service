@@ -26,7 +26,7 @@ namespace GesMgmt.Infraestructure.Repositories
             var query = _dbSet
                 .Include(dc => dc.av_DocxCobrar)
                 .Include(tg => tg.av_TipoGestion)
-                .Include(u => u.av_Cliente)
+                //.Include(u => u.av_Cliente)
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -52,12 +52,41 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet
                         .Include(dc => dc.av_DocxCobrar)
                         .Include(tg => tg.av_TipoGestion)
-                        .Include(u => u.av_Cliente)
+                        //.Include(u => u.av_Cliente)
                         .Where(s => s.nId_Cliente == nId_Cliente  &&
                             s.nId_Cartera != nId_Cartera &&
                             s.nId_PersDeudor == nId_PersDeudor &&
                             s.bEstado == true)
                         .AsNoTracking();
+        }
+
+        public async Task<av_DocxCobrarOpe?> GetDeudorUltimaGestionTipoAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor, int nId_TipoGestion)
+        {
+            return await _dbSet
+                .Include(dc => dc.av_DocxCobrar)
+                .Include(tg => tg.av_TipoGestion)
+                .Where(s => s.nId_Cliente == nId_Cliente
+                    && s.nId_Cartera == nId_Cartera
+                    && s.nId_PersDeudor == nId_PersDeudor
+                    && s.bEstado == true
+                    && s.nId_TipoGestion == nId_TipoGestion)
+                .OrderByDescending(s => s.dDocCobOpe_FecIni)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+        }
+
+        public IQueryable<av_DocxCobrarOpe> GetDeudorUltimaGestionCampoAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            return _dbSet
+                .Include(dc => dc.av_DocxCobrar)
+                .Include(tg => tg.av_TipoGestion)
+                .Where(s => s.nId_Cliente == nId_Cliente
+                    && s.nId_Cartera == nId_Cartera
+                    && s.nId_PersDeudor == nId_PersDeudor
+                    && s.bEstado == true
+                    && s.nId_TipoGestion == 2)
+                .OrderByDescending(s => s.dDocCobOpe_FecIni)
+                .AsNoTracking();
         }
     }
 }

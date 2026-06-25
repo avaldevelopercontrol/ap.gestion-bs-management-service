@@ -6,5 +6,6 @@ namespace GesMgmt.Domain.Interfaces
     {
         Task<IQueryable<av_Cartera>> Query();
         Task<av_Cartera> GetCarteraByIdClienteIdCarteraAsync(int nId_Cliente, int nId_Cartera);
+        IQueryable<av_Cartera?> GetCarterasByIdClienteAsync(int nId_Cliente);
     }
 }
