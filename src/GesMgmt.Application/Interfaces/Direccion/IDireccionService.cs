@@ -6,6 +6,7 @@ namespace GesMgmt.Application.Interfaces.Direccion
 {
     public interface IDireccionService
     {
+        Task<ResultListDto<IEnumerable<GetDireccionesResponseDto>>> GetDireccionesAsync(GetDireccionesRequestDto gestionDireccionDto);
         Task<ResultDto<GetDireccionAsync>> GetDireccionByIdDireccionAsync(int nId_PersDirecc);
         Task<ResultDto<CreateDireccionResponseDto>> CreateDireccionAsync(CreateDireccionRequestDto direccionCreateDto);
         Task<ResultDto<EditDireccionResponseDto>> EditDireccionAsync(EditDireccionRequestDto direccionEditDto);

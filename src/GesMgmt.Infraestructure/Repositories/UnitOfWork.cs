@@ -1,8 +1,6 @@
 ﻿using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
-using GesMgmt.Infraestructure.Configurations;
 using GesMgmt.Infraestructure.Persistence;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -24,6 +22,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_DivisionalRepository _av_Divisionals;
         private Iav_DocxCobrarAdicionalRepository? _av_DocxCobrarOpeAdicionals;
         private Iav_DocxCobrarOpeEstRepository? _av_DocxCobrarOpeEsts;
+        private Iav_DocxCobrarOpeGesRepository? _av_DocxCobrarOpeGess;
         private Iav_DocxCobrarOpeRepository? _av_DocxCobrarOpes;
         private Iav_DocxCobrarParamRepository? _av_DocxCobrarParams;
         private Iav_DocxCobrarRepository? _av_DocxCobrars;
@@ -37,7 +36,9 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_OficinaAvalRepository? _av_OficinaAvals;
         private Iav_OpeCodCliOutEstRepository? _av_OpeCodCliOutEsts;
         private Iav_OpeCodCliOutRepository? _av_OpeCodCliOuts;
+        private Iav_OpeCodInRepository? _av_OpeCodIns;
         private Iav_OperadorTelefonicoRepository? _av_OperadorTelefonicos;
+        private Iav_OpeTipoRepository? _av_OpeTipos;
         private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrss;
         private Iav_PersDeudorInfoParamDefCabRepository? _av_PersDeudorInfoParamDefCabs;
         private Iav_PersDeudorInfoParamRepository? _av_PersDeudorInfoParams;
@@ -79,6 +80,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_DivisionalRepository av_Divisionals => _av_Divisionals ??= new av_DivisionalRepository(_context);
         public Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals => _av_DocxCobrarOpeAdicionals ??= new av_DocxCobrarAdicionalRepository(_context);
         public Iav_DocxCobrarOpeEstRepository av_DocxCobrarOpeEsts => _av_DocxCobrarOpeEsts ??= new av_DocxCobrarOpeEstRepository(_context);
+        public Iav_DocxCobrarOpeGesRepository av_DocxCobrarOpeGess => _av_DocxCobrarOpeGess ??= new av_DocxCobrarOpeGesRepository(_context);
         public Iav_DocxCobrarOpeRepository av_DocxCobrarOpes => _av_DocxCobrarOpes ??= new av_DocxCobrarOpeRepository(_context);
         public Iav_DocxCobrarParamRepository av_DocxCobrarParams => _av_DocxCobrarParams ??= new av_DocxCobrarParamRepository(_context);
         public Iav_DocxCobrarRepository av_DocxCobrars => _av_DocxCobrars ??= new av_DocxCobrarRepository(_context);
@@ -92,7 +94,9 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_OficinaAvalRepository av_OficinaAvals => _av_OficinaAvals ??= new av_OficinaAvalRepository(_context);
         public Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts => _av_OpeCodCliOutEsts ??= new av_OpeCodCliOutEstRepository(_context);
         public Iav_OpeCodCliOutRepository av_OpeCodCliOuts => _av_OpeCodCliOuts ??= new av_OpeCodCliOutRepository(_context);
+        public Iav_OpeCodInRepository av_OpeCodIns => _av_OpeCodIns ??= new av_OpeCodInRepository(_context);
         public Iav_OperadorTelefonicoRepository av_OperadorTelefonicos => _av_OperadorTelefonicos ??= new av_OperadorTelefonicoRepository(_context);
+        public Iav_OpeTipoRepository av_OpeTipos => _av_OpeTipos ??= new av_OpeTipoRepository(_context);
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
         public Iav_PersDeudorParamRepository av_PersDeudorParams => _av_PersDeudorParams ??= new av_PersDeudorParamRepository(_context);
         public Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss => _av_PersDeudorGestionHrss ??= new av_PersDeudorGestionHrsRepository(_context);

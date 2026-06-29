@@ -5,6 +5,8 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
+using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
 using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
@@ -29,6 +31,33 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
+        /// <summary>
+        /// Obtiene el listado de TELÉFONOS cargados del deudor.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de TELÉFONOS cargados del deudor.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de TELÉFONOS cargados del deudor.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado de Telefonos")]
+        [HttpGet("GetTelefonos")]
+        [ProducesResponseType(typeof(ResultDto<GetTelefonosResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetTelefonosAsync([FromQuery] GetTelefonosRequestDto gestionTelefonoDto)
+        {
+            _Logger.LogInfo($"GetTelefonos|Begin|GetTelefonosAsync|request: {JsonSerializer.Serialize(gestionTelefonoDto)}");
+            var result = await _telefonoService.GetTelefonosAsync(gestionTelefonoDto);
+            _Logger.LogInfo($"GetTelefonos|End|GetTelefonosAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene el TELÉFONO por ID TELEFONO.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el TELÉFONO por ID TELEFONO.
+        /// </remarks>
+        /// <response code="200">Obtiene el TELÉFONO por ID TELEFONO.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Telefono Por Id")]
         //[HttpGet("GetTelefonoByIdTelefono")]
         [HttpGet("{nId_PersTelef}")]
@@ -43,6 +72,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Crear TELÉFONO por DEUDOR.
+        /// </summary>
+        /// <remarks>
+        /// Crear TELÉFONO por DEUDOR.
+        /// </remarks>
+        /// <response code="200">Crear TELÉFONO por DEUDOR.</response>
         [HttpPost]
         [ProducesResponseType(typeof(ResultDto<CreateTelefonoResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -55,6 +91,13 @@ namespace GesMgmt.WebAPI.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        /// <summary>
+        /// Editar TELÉFONO por DEUDOR.
+        /// </summary>
+        /// <remarks>
+        /// Editar TELÉFONO por DEUDOR.
+        /// </remarks>
+        /// <response code="200">Editar TELÉFONO por DEUDOR.</response>
         [HttpPut]
         [ProducesResponseType(typeof(ResultDto<EditTelefonoResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -67,6 +110,13 @@ namespace GesMgmt.WebAPI.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de RESULTADOS.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de RESULTADOS.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de RESULTADOS.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Resultados de Telefono")]
         [HttpGet("GetTelefonoResultados")]
         [ProducesResponseType(typeof(ResultDto<GetTelefonoResultados>), StatusCodes.Status200OK)]
@@ -80,6 +130,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de OPERADORES.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de OPERADORES.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de OPERADORES.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Operadores de Telefono")]
         [HttpGet("GetTelefonoOperadores")]
         [ProducesResponseType(typeof(ResultDto<GetTelefonoOperadores>), StatusCodes.Status200OK)]
@@ -93,7 +150,14 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Operadores de Telefono")]
+        /// <summary>
+        /// Obtiene el listado de UBICACIONES.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de UBICACIONES.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de UBICACIONES.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Ubicaciones de Telefono")]
         [HttpGet("GetTelefonoUbicaciones")]
         [ProducesResponseType(typeof(ResultDto<GetTelefonoUbicaciones>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -106,6 +170,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de HORARIO DE GESTIÓN.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de HORARIO DE GESTIÓN.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de HORARIO DE GESTIÓN.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Horario de Gestion de Telefono")]
         [HttpGet("GetTelefonoHorarioGestion")]
         [ProducesResponseType(typeof(ResultDto<GetTelefonoHorarioGestion>), StatusCodes.Status200OK)]
@@ -119,7 +190,14 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Horario de Gestion de Telefono")]
+        /// <summary>
+        /// Obtiene el listado de FUENTE DE BUSQUEDA.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de FUENTE DE BUSQUEDA.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de FUENTE DE BUSQUEDA.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Fuentes de Búsqueda de Telefono")]
         [HttpGet("GetTelefonoFuenteBusqueda")]
         [ProducesResponseType(typeof(ResultDto<GetTelefonoFuenteBusqueda>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]

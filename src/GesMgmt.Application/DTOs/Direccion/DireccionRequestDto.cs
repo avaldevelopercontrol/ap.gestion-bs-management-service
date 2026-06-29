@@ -3,6 +3,22 @@ namespace GesMgmt.Application.DTOs.Direccion
 {
     public class DireccionRequestDto
     {
+        public class GetDireccionesRequestDto
+        {
+            public int nId_Cliente { get; set; } //ID_CLIENTE
+            public int nId_Persdeudor { get; set; } //ID_DEUDOR
+
+            // 🔹 PAGINACIÓN
+            public int PageNumber { get; set; } = 1;
+            private int _pageSize = 10;
+
+            public int PageSize
+            {
+                get => _pageSize;
+                set => _pageSize = value > 1000 ? 1000 : value; // Máximo 50
+            }
+        }
+
         public class CreateDireccionRequestDto
         {
             public int nId_PersDirecc { get; set; }

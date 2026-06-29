@@ -6,6 +6,7 @@ namespace GesMgmt.Application.Interfaces.Telefono
 {
     public interface ITelefonoService
     {
+        Task<ResultListDto<IEnumerable<GetTelefonosResponseDto>>> GetTelefonosAsync(GetTelefonosRequestDto gestionTelefonosDto);
         Task<ResultDto<GetTelefonoAsync>> GetTelefonoByIdTelefonoAsync(int nId_PersTelef);
         Task<ResultListaDto<IEnumerable<GetTelefonoResultados>>> GetTelefonoResultadosAsync();
         Task<ResultListaDto<IEnumerable<GetTelefonoOperadores>>> GetTelefonoOperadoresAsync();

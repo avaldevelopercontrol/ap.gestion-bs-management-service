@@ -3,6 +3,17 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionResponseDto
     {
+        public class CreateGestionOpeGesResponseDto
+        {
+            public int? nId_DocxCobrarOpe { get; set; }
+            public int? nId_Cliente { get; set; }
+            public int? nId_Contrato { get; set; }
+            public int? nId_Cartera { get; set; }
+            public int nId_DocxCobrar { get; set; }
+            public int nId_PersDeudor { get; set; }
+            public int? nId_Usuario { get; set; }
+        }
+
         public class GetGestionInformacionDeudorParamRespondeDto
         {
             public string? cPersInf_Param01 { get; set; }
@@ -204,22 +215,7 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string cCampanna { get; set; }
         }
 
-        public class GetGestionTelefonoResponseDto
-        {
-            public int nId_PersTelef { get; set; }
-            public int? prioridad { get; set; }
-            public string? nroTelefono { get; set; }
-            public string? horario { get; set; }
-            public string? referenciaUbicacion { get; set; }
-            public string? estado { get; set; }
-            public string? fechaEstado { get; set; }
-            public string? fechaBase { get; set; }
-            public string? contactados { get; set; }
-            public int? noContactados { get; set; }
-            public int? cantidadIvr { get; set; }
-            public string? fuente { get; set; }
-            public string? ordenSearch { get; set; }
-        }
+        
 
         public class GetGestionGestionesCarteraDeudorResponseDto
         {
@@ -278,16 +274,6 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string? fechaStatusDocumento { get; set; }
             public string? gestorCall { get; set; }
             public string? bajaProvabilidad { get; set; }
-        }
-
-        public class GetGestionDireccionResponseDto
-        {
-            public int nId_PersDirecc { get; set; }
-            public string? direccion { get; set; }
-            public string? referenciaUbicacion { get; set; }
-            public string? tipoDeudor { get; set; }
-            public string? nombre { get; set; }
-            public string? estado { get; set; }
         }
 
         public class GetGestionDeudorResponseDto

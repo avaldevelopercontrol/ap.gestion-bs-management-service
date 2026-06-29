@@ -4,6 +4,22 @@ namespace GesMgmt.Application.DTOs.Telefono
 {
     public class TelefonoResponseDto
     {
+        public class GetTelefonosResponseDto
+        {
+            public int nId_PersTelef { get; set; }
+            public int? prioridad { get; set; }
+            public string? nroTelefono { get; set; }
+            public string? horario { get; set; }
+            public string? referenciaUbicacion { get; set; }
+            public string? estado { get; set; }
+            public string? fechaEstado { get; set; }
+            public string? fechaBase { get; set; }
+            public string? contactados { get; set; }
+            public int? noContactados { get; set; }
+            public int? cantidadIvr { get; set; }
+            public string? fuente { get; set; }
+            public string? ordenSearch { get; set; }
+        }
         public class GetTelefonoResultados
         {
             public int nId_PersTelefOpe { get; set; }

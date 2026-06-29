@@ -22,6 +22,80 @@ namespace GesMgmt.Application.Services.Direccion
             _validationMessageService = validationMessageService;
         }
 
+        #region "Direcciones"
+        public async Task<ResultListDto<IEnumerable<GetDireccionesResponseDto>>> GetDireccionesAsync(GetDireccionesRequestDto DireccionesDto)
+        {
+            GetDireccionRequestValidator validator = new GetDireccionRequestValidator(_unitOfWork, _validationMessageService, DireccionesDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+                var filter = new av_PersDirecc
+                {
+                    nId_Cliente = DireccionesDto.nId_Cliente,
+                    nId_PersDeudor = DireccionesDto.nId_Persdeudor
+                };
+
+                var q_PerDir = _unitOfWork.av_PersDireccs.GetGestionesDireccionesAsync(filter);
+                var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
+                var q_PersDeudor = await _unitOfWork.av_PersDeudors.Query();
+
+                var data = await (
+                                    from pe in q_PerDir
+
+                                    join refUbi in q_PerRefUbi
+                                    on pe.nId_PersRefUbi equals refUbi.nId_PersRefUbi
+                                    into refUbiJoin
+                                    from refUbi in refUbiJoin.DefaultIfEmpty()
+
+                                    join deu in q_PersDeudor
+                                    on pe.nId_PersDeudor equals deu.nId_PersDeudor
+                                    into avalJoin
+                                    from aval in avalJoin.DefaultIfEmpty()
+
+                                    select new GetDireccionesResponseDto
+                                    {
+                                        nId_PersDirecc = pe.nId_PersDirecc,
+                                        direccion = pe.cDirecc_Nomb ?? "",
+                                        referenciaUbicacion = refUbi.cNombre_PersRefUbi ?? "",
+                                        tipoDeudor = pe.cTipoCoDeudor ?? "",
+                                        nombre = pe.nId_PersTitDeudor == null
+                                                ? ""
+                                                : (pe.cTipoCoDeudor ?? "") == "AVAL"
+                                                    ? (aval != null ? aval.cNomCompleto : "")
+                                                    : "",
+                                        estado = pe.bEstado_Activo == true ? "OK" : ""
+                                    }
+                                )
+                                .Skip((DireccionesDto.PageNumber - 1) * DireccionesDto.PageSize)
+                                .Take(DireccionesDto.PageSize)
+                                .ToListAsync();
+
+                int totalRecords = q_PerDir.Count();
+
+                var response = ResultListDto<IEnumerable<GetDireccionesResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = DireccionesDto.PageNumber;
+                response.PageSize = DireccionesDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / DireccionesDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetDireccionesResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
         public async Task<ResultDto<GetDireccionAsync>> GetDireccionByIdDireccionAsync(int nId_PersDirecc)
         {
             try

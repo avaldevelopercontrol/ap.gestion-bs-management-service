@@ -13,15 +13,15 @@ namespace GesMgmt.Application.Interfaces.Gestion
         Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> GetGestionDocumentosAdicionalesCabeceraAsync(GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto);
         Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> GetGestionDocumentosAdicionalesAsync(GetGestionAdicionalRequestDto gestionAdicionalDto);
         Task<ResultDto<GetGestionDeudorResponseDto>> GetGestionDeudorAsync(GetGestionDeudorRequestDto gestionDeudorDto);
-        Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> GetGestionTelefonosAsync(GetGestionTelefonoRequestDto gestionTelefonoDto);
-        Task<ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>> GetGestionDireccionesAsync(GetGestionDireccionRequestDto gestionDireccionDto);
+        
         Task<ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>> GetGestionGestionesCarteraDeudorHistoricasAsync(GestionCarteraDeudorHistoricaRequestDto gestionCarteraDeudorHisDto);
         Task<ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>> GetGestionGestionesCarteraDeudorAsync(GetGestionGestionesCarteraDeudorRequestDto gestionCarteraDeudorDto);
         Task<ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>> GetGestionEstadosGestionesCarteraDeudorAsync(GetGestionEstadoGestionCarteraDeudorRequestDto gestionEstadosCarteraDeudorDto);
         Task<ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>> GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(GestionCarteraDeudorEstadoHistoricaRequestDto gestionEstadosCarteraDeudorHistoricoDto);
         Task<ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>> GetGestionAgendasDeudorAsync(GetGestionAgendaRequestDto gestionAgendaDto);
         Task<ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>> GetGestionPagosDeudorAsync(GetGestionPagosRequestDto gestionPagosDto);
-        Task<ResultDto<GetGestionInformacionDeudorRespondeDto>> GetGetGestionInformacionDeudorAsync(GetGestionInformacionDeudorRequestDto gestionInformacionDeudorDto);
-        Task<ResultDto<GetGestionInformacionDeudorParamRespondeDto>> GetGetGestionInformacionDeudorParamAsync(GetGestionInformacionDeudorParamRequestDto gestionInformacionDeudorParamDto);
+        Task<ResultDto<GetGestionInformacionDeudorRespondeDto>> GetGestionInformacionDeudorAsync(GetGestionInformacionDeudorRequestDto gestionInformacionDeudorDto);
+        Task<ResultDto<GetGestionInformacionDeudorParamRespondeDto>> GetGestionInformacionDeudorParamAsync(GetGestionInformacionDeudorParamRequestDto gestionInformacionDeudorParamDto);
+        Task<ResultDto<CreateGestionOpeGesResponseDto>> CreateGestionOpeGesAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto);
     }
 }

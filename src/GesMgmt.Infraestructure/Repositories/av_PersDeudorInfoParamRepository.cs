@@ -21,7 +21,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public async Task<av_PersDeudorInfoParam> GetGetGestionInformacionDeudorParamAsync(int nId_PersDeudor)
+        public async Task<av_PersDeudorInfoParam> GetGestionInformacionDeudorParamAsync(int nId_PersDeudor)
         {
             return await _dbSet
                 .AsNoTracking()

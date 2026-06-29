@@ -5,13 +5,8 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
-using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
 using static GesMgmt.Application.DTOs.Email.EmailRequestDto;
 using static GesMgmt.Application.DTOs.Email.EmailResponseDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
-using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -34,6 +29,13 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
+        /// <summary>
+        /// Obtiene el listado de EMAILS, del Deudor BOTÓN +EMAIL.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de EMAILS, del Deudor +EMAIL.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de EMAILS, del Deudor +EMAIL.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Email Por Id")]
         [HttpGet("{nId_PersEmails}")]
         [ProducesResponseType(typeof(ResultDto<GetPersEmailsResponseDto>), StatusCodes.Status200OK)]
@@ -47,6 +49,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de EMAILS.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de EMAILS.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de EMAILS.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Emails de Deudor")]
         [HttpGet("GetEmailsByIdDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetEmailsPersDeudorResponseDto>), StatusCodes.Status200OK)]
@@ -60,6 +69,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Crear registro de EMAILS por IDDEUDOR.
+        /// </summary>
+        /// <remarks>
+        /// Crear registro de EMAILS por IDDEUDOR.
+        /// </remarks>
+        /// <response code="200">Crear registro de EMAILS por IDDEUDOR.</response>
         [HttpPost]
         [ProducesResponseType(typeof(ResultDto<CreateEmailResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -72,6 +88,13 @@ namespace GesMgmt.WebAPI.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        /// <summary>
+        /// Editar registro de EMAILS por IDDEUDOR.
+        /// </summary>
+        /// <remarks>
+        /// Editar registro de EMAILS por IDDEUDOR.
+        /// </remarks>
+        /// <response code="200">Editar registro de EMAILS por IDDEUDOR.</response>
         [HttpPut]
         [ProducesResponseType(typeof(ResultDto<EditEmailResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -84,6 +107,13 @@ namespace GesMgmt.WebAPI.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de Status.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Status.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Status.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Status")]
         [HttpGet("GetStatus")]
         [ProducesResponseType(typeof(ResultDto<GetStatus>), StatusCodes.Status200OK)]

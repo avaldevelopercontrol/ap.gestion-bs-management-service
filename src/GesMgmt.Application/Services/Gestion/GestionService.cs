@@ -1,5 +1,4 @@
 ﻿using GesMgmt.Application.DTOs;
-using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Application.Validators.Gestion;
@@ -49,12 +48,12 @@ namespace GesMgmt.Application.Services.Gestion
                     cCampanna = cartera?.cCampanna ?? ""
                 };
 
-                var response = ResultDto<GetGestionZonaCarteraCampannaResponseDto>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultDto<GetGestionZonaCarteraCampannaResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionZonaCarteraCampannaResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionZonaCarteraCampannaResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
 
@@ -110,20 +109,20 @@ namespace GesMgmt.Application.Services.Gestion
                     nId_Cliente = 95
                 });
 
-                var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data.OrderBy(x => x.orden).ToList(), "200", "OK", "OK", 200);
+                var response = ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Success(data.OrderBy(x => x.orden).ToList(), Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
 
         public async Task<ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>> GetGestionDocumentosAsync(GetGestionDocumentoRequestDto gestionDto)
         {
             GetGestionDocuRequestValidator validator = new GetGestionDocuRequestValidator(_unitOfWork, _validationMessageService, gestionDto);
-
+            int totalRecords = 1;
             // Validaciones
             var validationResult = await validator.Validate();
 
@@ -175,7 +174,11 @@ namespace GesMgmt.Application.Services.Gestion
                                                 nId_OpeCodOut = (int?)op.nId_OpeCodCliOut
                                             };
 
-                var data = await (
+                IEnumerable<GetGestionDocumentoResponseDto> data = Enumerable.Empty<GetGestionDocumentoResponseDto>();
+
+                if (q_Doc != null)
+                {
+                    data = await (
                                     from s in q_Doc
                                     join dcp in q_dcp
                                         on new { nId_DocxCobrar = s.nId_DocxCobrar, nId_Cartera = (int?)s.nId_Cartera }
@@ -247,16 +250,15 @@ namespace GesMgmt.Application.Services.Gestion
                                 .Take(gestionDto.PageSize)
                                 .ToListAsync();
 
-                int correlativo = (gestionDto.PageNumber - 1) * gestionDto.PageSize + 1;
+                    int correlativo = (gestionDto.PageNumber - 1) * gestionDto.PageSize + 1;
 
-                foreach (var item in data)
-                {
-                    item.nro = correlativo++;
+                    foreach (var item in data)
+                    {
+                        item.nro = correlativo++;
+                    }
+                    totalRecords = await q_Doc.CountAsync();
                 }
-
-                var totalRecords = await q_Doc.CountAsync();
-
-                var response = ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionDto.PageNumber;
@@ -267,7 +269,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
 
@@ -298,32 +300,35 @@ namespace GesMgmt.Application.Services.Gestion
             try
             {
                 var query = _unitOfWork.av_TablaCampoGenerals.GetCabeceraGestionesAdicionalAsync(filter);
+                GetGestionCabeceraAdicionalResponseDto data = new GetGestionCabeceraAdicionalResponseDto();
+                if (query != null)
+                {
+                    data = await query
+                       .Select(s => new GetGestionCabeceraAdicionalResponseDto
+                       {
+                           idCab = s.id_cab,
+                           recibo = s.cabAdicional01,
+                           telefono = s.cabAdicional02,
+                           servicio = s.cabAdicional03,
+                           estadoServicio = s.cabAdicional04,
+                           motivo = s.cabAdicional05,
+                           codigoCliente = s.cabAdicional10
+                       }).FirstOrDefaultAsync();
+                }
 
-                var data = await query
-               .Select(s => new GetGestionCabeceraAdicionalResponseDto
-               {
-                   idCab = s.id_cab,
-                   recibo = s.cabAdicional01,
-                   telefono = s.cabAdicional02,
-                   servicio = s.cabAdicional03,
-                   estadoServicio = s.cabAdicional04,
-                   motivo = s.cabAdicional05,
-                   codigoCliente = s.cabAdicional10
-               }).FirstOrDefaultAsync();
-
-                var response = ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultDto<GetGestionCabeceraAdicionalResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
 
         public async Task<ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>> GetGestionDocumentosAdicionalesAsync(GetGestionAdicionalRequestDto gestionAdicionalDto)
         {
             GetGestionAdicRequestValidator validator = new GetGestionAdicRequestValidator(_unitOfWork, _validationMessageService, gestionAdicionalDto);
-
+            int totalRecords = 1;
             // Validaciones
             var validationResult = await validator.Validate();
 
@@ -342,31 +347,36 @@ namespace GesMgmt.Application.Services.Gestion
             try
             {
                 var q_DocAd = _unitOfWork.av_DocxCobrarAdicionals.GetGestionesAdicionalesAsync(filter);
-                // 🔹 TOTAL DE REGISTROS
-                var totalRecords = await q_DocAd.CountAsync();
-                // 🔹 PAGINADO
-                var data = await q_DocAd
-                    //.OrderBy(s => s.SuscriptionId)
-                    .Skip((gestionAdicionalDto.PageNumber - 1) * gestionAdicionalDto.PageSize)
-                    .Take(gestionAdicionalDto.PageSize)
-                    .Select(s => new GetGestionAdicionalResponseDto
-                    {
-                        nId_DocxCobrarAd = s.nId_DocxCobrarAd,
-                        nId_DocxCobrar = s.nId_DocxCobrar,
-                        nId_PersDeudor = s.nId_PersDeudor,
-                        nId_Cartera = s.nId_Cartera,
-                        nId_Cliente = s.nId_Cliente,
-                        //
-                        recibo = s.adParam01 ?? "",
-                        telefono = s.adParam02 ?? "",
-                        servicio = s.adParam03 ?? "",
-                        estadoServicio = s.adParam04 ?? "",
-                        motivo = s.adParam05 ?? "",
-                        codigoCliente = s.adParam10 ?? ""
-                    })
-                    .ToListAsync();
+                IEnumerable<GetGestionAdicionalResponseDto> data = Enumerable.Empty<GetGestionAdicionalResponseDto>();
 
-                var response = ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                if (q_DocAd != null)
+                {
+                    // 🔹 TOTAL DE REGISTROS
+                    totalRecords = await q_DocAd.CountAsync();
+                    // 🔹 PAGINADO
+                    data = await q_DocAd
+                        //.OrderBy(s => s.SuscriptionId)
+                        .Skip((gestionAdicionalDto.PageNumber - 1) * gestionAdicionalDto.PageSize)
+                        .Take(gestionAdicionalDto.PageSize)
+                        .Select(s => new GetGestionAdicionalResponseDto
+                        {
+                            nId_DocxCobrarAd = s.nId_DocxCobrarAd,
+                            nId_DocxCobrar = s.nId_DocxCobrar,
+                            nId_PersDeudor = s.nId_PersDeudor,
+                            nId_Cartera = s.nId_Cartera,
+                            nId_Cliente = s.nId_Cliente,
+                            //
+                            recibo = s.adParam01 ?? "",
+                            telefono = s.adParam02 ?? "",
+                            servicio = s.adParam03 ?? "",
+                            estadoServicio = s.adParam04 ?? "",
+                            motivo = s.adParam05 ?? "",
+                            codigoCliente = s.adParam10 ?? ""
+                        })
+                        .ToListAsync();
+                }
+
+                var response = ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionAdicionalDto.PageNumber;
@@ -377,7 +387,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -435,7 +445,10 @@ namespace GesMgmt.Application.Services.Gestion
                                             dp.cDocParam162
                                         };
 
-                var data = await (
+                GetGestionDeudorResponseDto data = new GetGestionDeudorResponseDto();
+                if (q_Deudor != null)
+                {
+                    data = await (
                                     from d in q_Deudor
                                     where d.nId_PersDeudor == gestionDeudorDto.nId_Persdeudor
                                     select new GetGestionDeudorResponseDto
@@ -475,205 +488,15 @@ namespace GesMgmt.Application.Services.Gestion
                                         clienteConSinPe = docParamsQuery.Max(x => x.cDocParam162) ?? ""
                                         // Se llena después
                                         //nGra_Instruccion = d.nGra_Instruccion.ToString(),
-                                        
+
                                     }).FirstOrDefaultAsync();
-
-                var response = ResultDto<GetGestionDeudorResponseDto>.Success(data, "200", "OK", "OK", 200);
+                }
+                var response = ResultDto<GetGestionDeudorResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionDeudorResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
-            }
-        }
-        #endregion
-
-        #region "Telefonos"
-        public async Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> GetGestionTelefonosAsync(GetGestionTelefonoRequestDto gestionTelefonoDto)
-        {
-            GetGestionTeleRequestValidator validator = new GetGestionTeleRequestValidator(_unitOfWork, _validationMessageService, gestionTelefonoDto);
-
-            // Validaciones
-            var validationResult = await validator.Validate();
-
-            if (validationResult.Code != Const.SUCCESS_CODE)
-            {
-                return validationResult;
-            }
-
-            try
-            {
-
-                var filter = new av_PersTelef
-                {
-                    nId_PersDeudor = gestionTelefonoDto.nId_Persdeudor
-                };
-
-                var q_Telefono = _unitOfWork.av_PersTelefs.GetTelefonosAsync(filter);
-                var totalContactados = await q_Telefono.SumAsync(x => x.ncontactados ?? 0);
-                var q_detalleTelefono = await _unitOfWork.av_DetallePersTelefs.Query();
-                var q_PerDeuGesHrs = await _unitOfWork.av_PersDeudorGestionHrss.Query();
-                var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
-                var q_PerTelOpe = await _unitOfWork.av_PersTelefOpes.Query();
-                var q_fuBusTel = await _unitOfWork.av_FuenteBusTels.Query();
-
-                var data = await (
-                                    from pe in q_Telefono
-
-                                    join det in q_detalleTelefono
-                                    on new
-                                    {
-                                        pe.nId_PersTelef,
-                                        nId_Cliente = gestionTelefonoDto.nId_Cliente
-                                    }
-                                    equals new
-                                    {
-                                        det.nId_PersTelef,
-                                        det.nId_Cliente
-                                    }
-                                    into detJoin
-                                    from det in detJoin.DefaultIfEmpty()
-
-                                    join hrs in q_PerDeuGesHrs
-                                    on pe.nId_PersDeudorGestionHrs equals hrs.nId_PersDeudorGestionHrs
-                                    into hrsJoin
-                                    from hrs in hrsJoin.DefaultIfEmpty()
-
-                                    join refUbi in q_PerRefUbi
-                                    on pe.nId_PersRefUbi equals refUbi.nId_PersRefUbi
-                                    into refUbiJoin
-                                    from refUbi in refUbiJoin.DefaultIfEmpty()
-
-                                    join pto in q_PerTelOpe
-                                    on pe.nId_PersTelefOpe equals pto.nId_PersTelefOpe
-                                    into ptoJoin
-                                    from pto in ptoJoin.DefaultIfEmpty()
-
-                                    join fu in q_fuBusTel
-                                        on (det != null && det.nId_Fuente.HasValue
-                                                ? det.nId_Fuente
-                                                : pe.nId_Fuente)
-                                    equals fu.nId_Fuente
-                                    into fuJoin
-                                    from fu in fuJoin.DefaultIfEmpty()
-
-                                    select new GetGestionTelefonoResponseDto
-                                    {
-                                        nId_PersTelef = pe.nId_PersTelef,
-                                        prioridad = pe.nTelef_Prioridad ?? 0,
-                                        nroTelefono = pe.nTelef_Nro ?? "",
-                                        horario = hrs.cNombren_PersDeudorGestionHrs ?? "",
-                                        referenciaUbicacion = "", //refUbi.cNombre_PersRefUbi ?? "",
-                                        estado = pto.cNombre_PersTelefOpe ?? "",
-                                        fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
-                                        fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",
-                                        contactados = det.nId_Cliente == 95
-                                                    ? (
-                                                        totalContactados == 0
-                                                            ? "0%"
-                                                            : (((pe.ncontactados ?? 0) * 100m / totalContactados)
-                                                                .ToString("0.00") + "%")
-                                                      )
-                                                    : (pe.ncontactados ?? 0).ToString(),
-                                        noContactados = pe.nNoContactados ?? 0,
-                                        cantidadIvr = pe.nCant_Ivr ?? 0,
-                                        fuente = fu.cDescripcion ?? "",
-                                        ordenSearch = ""
-                                    }
-                                )
-                                .Skip((gestionTelefonoDto.PageNumber - 1) * gestionTelefonoDto.PageSize)
-                                .Take(gestionTelefonoDto.PageSize)
-                                .ToListAsync();
-
-
-                int totalRecords = q_Telefono.Count();
-
-                var response = ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Success(data, "200", "OK", "OK", 200);
-
-                response.TotalRecords = totalRecords;
-                response.PageNumber = gestionTelefonoDto.PageNumber;
-                response.PageSize = gestionTelefonoDto.PageSize;
-                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionTelefonoDto.PageSize);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
-            }
-        }
-        #endregion
-
-        #region "Direcciones"
-        public async Task<ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>> GetGestionDireccionesAsync(GetGestionDireccionRequestDto gestionDireccionDto)
-        {
-            GetGestionDireRequestValidator validator = new GetGestionDireRequestValidator(_unitOfWork, _validationMessageService, gestionDireccionDto);
-
-            // Validaciones
-            var validationResult = await validator.Validate();
-
-            if (validationResult.Code != Const.SUCCESS_CODE)
-            {
-                return validationResult;
-            }
-
-            try
-            {
-                var filter = new av_PersDirecc
-                {
-                    nId_Cliente = gestionDireccionDto.nId_Cliente,
-                    nId_PersDeudor = gestionDireccionDto.nId_Persdeudor
-                };
-
-                var q_PerDir = _unitOfWork.av_PersDireccs.GetGestionesDireccionesAsync(filter);
-                var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
-                var q_PersDeudor = await _unitOfWork.av_PersDeudors.Query();
-
-                var data = await (
-                                    from pe in q_PerDir
-                                    
-                                    join refUbi in q_PerRefUbi
-                                    on pe.nId_PersRefUbi equals refUbi.nId_PersRefUbi
-                                    into refUbiJoin
-                                    from refUbi in refUbiJoin.DefaultIfEmpty()
-
-                                    join deu in q_PersDeudor
-                                    on pe.nId_PersDeudor equals deu.nId_PersDeudor
-                                    into avalJoin
-                                    from aval in avalJoin.DefaultIfEmpty()
-
-                                    select new GetGestionDireccionResponseDto
-                                    {
-                                        nId_PersDirecc = pe.nId_PersDirecc,
-                                        direccion = pe.cDirecc_Nomb ?? "",
-                                        referenciaUbicacion = refUbi.cNombre_PersRefUbi ?? "",
-                                        tipoDeudor = pe.cTipoCoDeudor ?? "",
-                                        nombre = pe.nId_PersTitDeudor == null
-                                                ? ""
-                                                : (pe.cTipoCoDeudor ?? "") == "AVAL"
-                                                    ? (aval != null ? aval.cNomCompleto : "")
-                                                    : "",
-                                        estado = pe.bEstado_Activo == true ? "OK" : ""
-                                    }
-                                )
-                                .Skip((gestionDireccionDto.PageNumber - 1) * gestionDireccionDto.PageSize)
-                                .Take(gestionDireccionDto.PageSize)
-                                .ToListAsync();
-
-                int totalRecords = q_PerDir.Count();
-
-                var response = ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>.Success(data, "200", "OK", "OK", 200);
-
-                response.TotalRecords = totalRecords;
-                response.PageNumber = gestionDireccionDto.PageNumber;
-                response.PageSize = gestionDireccionDto.PageSize;
-                response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionDireccionDto.PageSize);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return ResultListDto<IEnumerable<GetGestionDireccionResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionDeudorResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -682,7 +505,7 @@ namespace GesMgmt.Application.Services.Gestion
         public async Task<ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>> GetGestionGestionesCarteraDeudorAsync(GetGestionGestionesCarteraDeudorRequestDto gestionCarteraDeudorDto)
         {
             GetGestionGestCartDeudValidator validator = new GetGestionGestCartDeudValidator(_unitOfWork, _validationMessageService, gestionCarteraDeudorDto);
-
+            int totalRecords = 1;
             // Validaciones
             var validationResult = await validator.Validate();
 
@@ -705,7 +528,10 @@ namespace GesMgmt.Application.Services.Gestion
                 var q_DesGes = await _unitOfWork.av_OpeCodCliOuts.Query();
                 var q_DesGes2 = await _unitOfWork.av_OpeCodCliOuts.Query();
 
-                var data = await (
+                IEnumerable<GetGestionGestionesCarteraDeudorResponseDto> data = Enumerable.Empty<GetGestionGestionesCarteraDeudorResponseDto>();
+                if (q_Doc != null)
+                {
+                    data = await (
                                     from s in q_Doc
 
                                     join d in q_DesGes
@@ -731,16 +557,17 @@ namespace GesMgmt.Application.Services.Gestion
                     .Take(gestionCarteraDeudorDto.PageSize)
                     .ToListAsync();
 
-                int correlativo = (gestionCarteraDeudorDto.PageNumber - 1) * gestionCarteraDeudorDto.PageSize + 1;
+                    int correlativo = (gestionCarteraDeudorDto.PageNumber - 1) * gestionCarteraDeudorDto.PageSize + 1;
 
-                foreach (var item in data)
-                {
-                    item.nro = correlativo++;
+                    foreach (var item in data)
+                    {
+                        item.nro = correlativo++;
+                    }
+
+                    totalRecords = q_Doc.Count();
                 }
 
-                int totalRecords = q_Doc.Count();
-
-                var response = ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionCarteraDeudorDto.PageNumber;
@@ -751,7 +578,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -760,7 +587,7 @@ namespace GesMgmt.Application.Services.Gestion
         public async Task<ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>> GetGestionGestionesCarteraDeudorHistoricasAsync(GestionCarteraDeudorHistoricaRequestDto gestionCarteraDeudorHisDto)
         {
             GetGestionGestCartDeudHistValidator validator = new GetGestionGestCartDeudHistValidator(_unitOfWork, _validationMessageService, gestionCarteraDeudorHisDto);
-
+            int totalRecords = 1;
             // Validaciones
             var validationResult = await validator.Validate();
 
@@ -776,7 +603,11 @@ namespace GesMgmt.Application.Services.Gestion
                 var q_cli = await _unitOfWork.av_Clientes.Query();
                 var q_car = await _unitOfWork.av_Carteras.Query();
 
-                var data = await (
+                IEnumerable<GestionCarteraDeudorHistoricaResponseDto> data = Enumerable.Empty<GestionCarteraDeudorHistoricaResponseDto>();
+
+                if (q_Doc != null)
+                {
+                    data = await (
                                     from s in q_Doc
 
                                     join d in q_DesGes
@@ -814,16 +645,17 @@ namespace GesMgmt.Application.Services.Gestion
                     .Take(gestionCarteraDeudorHisDto.PageSize)
                     .ToListAsync();
 
-                int correlativo = (gestionCarteraDeudorHisDto.PageNumber - 1) * gestionCarteraDeudorHisDto.PageSize + 1;
+                    int correlativo = (gestionCarteraDeudorHisDto.PageNumber - 1) * gestionCarteraDeudorHisDto.PageSize + 1;
 
-                foreach (var item in data)
-                {
-                    item.nro = correlativo++;
+                    foreach (var item in data)
+                    {
+                        item.nro = correlativo++;
+                    }
+
+                    totalRecords = q_Doc.Count();
                 }
 
-                int totalRecords = q_Doc.Count();
-
-                var response = ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionCarteraDeudorHisDto.PageNumber;
@@ -831,11 +663,10 @@ namespace GesMgmt.Application.Services.Gestion
                 response.TotalPages = (int)Math.Ceiling((double)totalRecords / gestionCarteraDeudorHisDto.PageSize);
 
                 return response;
-
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -844,7 +675,7 @@ namespace GesMgmt.Application.Services.Gestion
         public async Task<ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>> GetGestionEstadosGestionesCarteraDeudorAsync(GetGestionEstadoGestionCarteraDeudorRequestDto gestionEstadosCarteraDeudorDto)
         {
             GetGestionEstaGestiCartDeudValidator validator = new GetGestionEstaGestiCartDeudValidator(_unitOfWork, _validationMessageService, gestionEstadosCarteraDeudorDto);
-
+            int totalRecords = 1;
             // Validaciones
             var validationResult = await validator.Validate();
 
@@ -865,7 +696,10 @@ namespace GesMgmt.Application.Services.Gestion
                 var q_GesEst = _unitOfWork.av_DocxCobrarOpeEsts.GetGestionesEstadoCarteraDeudor(filterdc.nId_Cliente.Value, filterdc.nId_Cartera, filterdc.nId_PersDeudor);
                 var q_DesGesEst = await _unitOfWork.av_OpeCodCliOutEsts.Query();
 
-                var data = await (
+                IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto> data = Enumerable.Empty<GetGestionEstadoGestionCarteraDeudorResponseDto>();
+                if (q_GesEst != null)
+                {
+                    data = await (
                                     from s in q_GesEst
 
                                     join d in q_DesGesEst
@@ -891,16 +725,17 @@ namespace GesMgmt.Application.Services.Gestion
                     .Take(gestionEstadosCarteraDeudorDto.PageSize)
                     .ToListAsync();
 
-                int correlativo = (gestionEstadosCarteraDeudorDto.PageNumber - 1) * gestionEstadosCarteraDeudorDto.PageSize + 1;
+                    int correlativo = (gestionEstadosCarteraDeudorDto.PageNumber - 1) * gestionEstadosCarteraDeudorDto.PageSize + 1;
 
-                foreach (var item in data)
-                {
-                    item.nro = correlativo++;
+                    foreach (var item in data)
+                    {
+                        item.nro = correlativo++;
+                    }
+
+                    totalRecords = q_GesEst.Count();
                 }
 
-                int totalRecords = q_GesEst.Count();
-
-                var response = ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionEstadosCarteraDeudorDto.PageNumber;
@@ -911,7 +746,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -920,7 +755,7 @@ namespace GesMgmt.Application.Services.Gestion
         public async Task<ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>> GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(GestionCarteraDeudorEstadoHistoricaRequestDto gestionEstadosCarteraDeudorHistoricoDto)
         {
             GetGestionEstaGestiCartDeudHistValidator validator = new GetGestionEstaGestiCartDeudHistValidator(_unitOfWork, _validationMessageService, gestionEstadosCarteraDeudorHistoricoDto);
-
+            int totalRecords = 1;
             // Validaciones
             var validationResult = await validator.Validate();
 
@@ -936,7 +771,10 @@ namespace GesMgmt.Application.Services.Gestion
                 var q_cli = await _unitOfWork.av_Clientes.Query();
                 var q_car = await _unitOfWork.av_Carteras.Query();
 
-                var data = await (
+                IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto> data = Enumerable.Empty<GestionCarteraDeudorEstadoHistoricaResponseDto>();
+                if (q_GesEst != null)
+                {
+                    data = await (
                                     from s in q_GesEst
 
                                     join d in q_DesGesEst
@@ -973,16 +811,17 @@ namespace GesMgmt.Application.Services.Gestion
                     .Take(gestionEstadosCarteraDeudorHistoricoDto.PageSize)
                     .ToListAsync();
 
-                int correlativo = (gestionEstadosCarteraDeudorHistoricoDto.PageNumber - 1) * gestionEstadosCarteraDeudorHistoricoDto.PageSize + 1;
+                    int correlativo = (gestionEstadosCarteraDeudorHistoricoDto.PageNumber - 1) * gestionEstadosCarteraDeudorHistoricoDto.PageSize + 1;
 
-                foreach (var item in data)
-                {
-                    item.nro = correlativo++;
+                    foreach (var item in data)
+                    {
+                        item.nro = correlativo++;
+                    }
+
+                    totalRecords = q_GesEst.Count();
                 }
 
-                int totalRecords = q_GesEst.Count();
-
-                var response = ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionEstadosCarteraDeudorHistoricoDto.PageNumber;
@@ -994,7 +833,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -1006,7 +845,7 @@ namespace GesMgmt.Application.Services.Gestion
 
             // Validaciones
             var validationResult = await validator.Validate();
-
+            int totalRecords = 1;
             if (validationResult.Code != Const.SUCCESS_CODE)
             {
                 return validationResult;
@@ -1016,7 +855,10 @@ namespace GesMgmt.Application.Services.Gestion
             {
                 var q_Agenda = _unitOfWork.av_Agendas.GetGestionAgendasDeudor(gestionAgendaDto.nId_Cliente, gestionAgendaDto.nId_Cartera, gestionAgendaDto.nId_Persdeudor, gestionAgendaDto.nId_PerfilUsuario);
 
-                var data = await (
+                IEnumerable<GetGestionAgendaResponseDto> data = Enumerable.Empty<GetGestionAgendaResponseDto>();
+                if (q_Agenda != null)
+                {
+                    data = await (
                                     from s in q_Agenda
                                     select new GetGestionAgendaResponseDto
                                     {
@@ -1032,9 +874,10 @@ namespace GesMgmt.Application.Services.Gestion
                     .Take(gestionAgendaDto.PageSize)
                     .ToListAsync();
 
-                int totalRecords = q_Agenda.Count();
+                    totalRecords = q_Agenda.Count();
+                }
 
-                var response = ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionAgendaDto.PageNumber;
@@ -1045,7 +888,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -1054,7 +897,7 @@ namespace GesMgmt.Application.Services.Gestion
         public async Task<ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>> GetGestionPagosDeudorAsync(GetGestionPagosRequestDto gestionPagosDto)
         {
             GetGestionPagoRequestValidator validator = new GetGestionPagoRequestValidator(_unitOfWork, _validationMessageService, gestionPagosDto);
-
+            int totalRecords = 1;
             // Validaciones
             var validationResult = await validator.Validate();
 
@@ -1067,7 +910,10 @@ namespace GesMgmt.Application.Services.Gestion
             {
                 var q_Pagos = _unitOfWork.av_DocxPagos.GetPagosByIdDeudorAsync(gestionPagosDto.nId_Cliente, gestionPagosDto.nId_Cartera, gestionPagosDto.nId_Persdeudor);
 
-                var data = await (
+                IEnumerable<GetGestionPagosResponsetDto> data = Enumerable.Empty<GetGestionPagosResponsetDto>();
+                if (q_Pagos != null)
+                {
+                    data = await (
                                     from s in q_Pagos
                                     select new GetGestionPagosResponsetDto
                                     {
@@ -1086,16 +932,17 @@ namespace GesMgmt.Application.Services.Gestion
                     .Take(gestionPagosDto.PageSize)
                     .ToListAsync();
 
-                int correlativo = (gestionPagosDto.PageNumber - 1) * gestionPagosDto.PageSize + 1;
+                    int correlativo = (gestionPagosDto.PageNumber - 1) * gestionPagosDto.PageSize + 1;
 
-                foreach (var item in data)
-                {
-                    item.nro = correlativo++;
+                    foreach (var item in data)
+                    {
+                        item.nro = correlativo++;
+                    }
+
+                    totalRecords = data.Count();
                 }
 
-                int totalRecords = data.Count();
-
-                var response = ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = gestionPagosDto.PageNumber;
@@ -1106,7 +953,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
-                return ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
@@ -1123,203 +970,413 @@ namespace GesMgmt.Application.Services.Gestion
         }
 
         #region "Gestion - Información Deudor"
-        public async Task<ResultDto<GetGestionInformacionDeudorRespondeDto>> GetGetGestionInformacionDeudorAsync(GetGestionInformacionDeudorRequestDto gestionInformacionDeudorDto)
+        public async Task<ResultDto<GetGestionInformacionDeudorRespondeDto>> GetGestionInformacionDeudorAsync(GetGestionInformacionDeudorRequestDto gestionInformacionDeudorDto)
         {
             try
             {
                 var query = await _unitOfWork.av_PersDeudorInfoParamDefCabs.GetPersDeudorInfoParamDefCabAsync(gestionInformacionDeudorDto.bTipo_Cabecera.Value);
-
-                var data = new GetGestionInformacionDeudorRespondeDto
+                var data = new GetGestionInformacionDeudorRespondeDto();
+                if (query != null) 
                 {
-                    cNombre_Param01 = query.cNombre_Param01 ?? "",
-                    cNombre_Param02 = query.cNombre_Param02 ?? "",
-                    cNombre_Param03 = query.cNombre_Param03 ?? "",
-                    cNombre_Param04 = query.cNombre_Param04 ?? "",
-                    cNombre_Param05 = query.cNombre_Param05 ?? "",
-                    cNombre_Param06 = query.cNombre_Param06 ?? "",
-                    cNombre_Param07 = query.cNombre_Param07 ?? "",
-                    cNombre_Param08 = query.cNombre_Param08 ?? "",
-                    cNombre_Param09 = query.cNombre_Param09 ?? "",
-                    cNombre_Param10 = query.cNombre_Param10 ?? "",
-                    cNombre_Param11 = query.cNombre_Param11 ?? "",
-                    cNombre_Param12 = query.cNombre_Param12 ?? "",
-                    cNombre_Param13 = query.cNombre_Param13 ?? "",
-                    cNombre_Param14 = query.cNombre_Param14 ?? "",
-                    cNombre_Param15 = query.cNombre_Param15 ?? "",
-                    cNombre_Param16 = query.cNombre_Param16 ?? "",
-                    cNombre_Param17 = query.cNombre_Param17 ?? "",
-                    cNombre_Param18 = query.cNombre_Param18 ?? "",
-                    cNombre_Param19 = query.cNombre_Param19 ?? "",
-                    cNombre_Param20 = query.cNombre_Param20 ?? "",
-                    cNombre_Param21 = query.cNombre_Param21 ?? "",
-                    cNombre_Param22 = query.cNombre_Param22 ?? "",
-                    cNombre_Param23 = query.cNombre_Param23 ?? "",
-                    cNombre_Param24 = query.cNombre_Param24 ?? "",
-                    cNombre_Param25 = query.cNombre_Param25 ?? "",
-                    cNombre_Param26 = query.cNombre_Param26 ?? "",
-                    cNombre_Param27 = query.cNombre_Param27 ?? "",
-                    cNombre_Param28 = query.cNombre_Param28 ?? "",
-                    cNombre_Param29 = query.cNombre_Param29 ?? "",
-                    cNombre_Param30 = query.cNombre_Param30 ?? "",
-                    cNombre_Param31 = query.cNombre_Param31 ?? "",
-                    cNombre_Param32 = query.cNombre_Param32 ?? "",
-                    cNombre_Param33 = query.cNombre_Param33 ?? "",
-                    cNombre_Param34 = query.cNombre_Param34 ?? "",
-                    cNombre_Param35 = query.cNombre_Param35 ?? "",
-                    cNombre_Param36 = query.cNombre_Param36 ?? "",
-                    cNombre_Param37 = query.cNombre_Param37 ?? "",
-                    cNombre_Param38 = query.cNombre_Param38 ?? "",
-                    cNombre_Param39 = query.cNombre_Param39 ?? "",
-                    cNombre_Param40 = query.cNombre_Param40 ?? "",
-                    cNombre_Param41 = query.cNombre_Param41 ?? "",
-                    cNombre_Param42 = query.cNombre_Param42 ?? "",
-                    cNombre_Param43 = query.cNombre_Param43 ?? "",
-                    cNombre_Param44 = query.cNombre_Param44 ?? "",
-                    cNombre_Param45 = query.cNombre_Param45 ?? "",
-                    cNombre_Param46 = query.cNombre_Param46 ?? "",
-                    cNombre_Param47 = query.cNombre_Param47 ?? "",
-                    cNombre_Param48 = query.cNombre_Param48 ?? "",
-                    cNombre_Param49 = query.cNombre_Param49 ?? "",
-                    cNombre_Param50 = query.cNombre_Param50 ?? "",
-                    cNombre_Param51 = query.cNombre_Param51 ?? "",
-                    cNombre_Param52 = query.cNombre_Param52 ?? "",
-                    cNombre_Param53 = query.cNombre_Param53 ?? "",
-                    cNombre_Param54 = query.cNombre_Param54 ?? "",
-                    cNombre_Param55 = query.cNombre_Param55 ?? "",
-                    cNombre_Param56 = query.cNombre_Param56 ?? "",
-                    cNombre_Param57 = query.cNombre_Param57 ?? "",
-                    cNombre_Param58 = query.cNombre_Param58 ?? "",
-                    cNombre_Param59 = query.cNombre_Param59 ?? "",
-                    cNombre_Param60 = query.cNombre_Param60 ?? "",
-                    cNombre_Param61 = query.cNombre_Param61 ?? "",
-                    cNombre_Param62 = query.cNombre_Param62 ?? "",
-                    cNombre_Param63 = query.cNombre_Param63 ?? "",
-                    cNombre_Param64 = query.cNombre_Param64 ?? "",
-                    cNombre_Param65 = query.cNombre_Param65 ?? "",
-                    cNombre_Param66 = query.cNombre_Param66 ?? "",
-                    cNombre_Param67 = query.cNombre_Param67 ?? "",
-                    cNombre_Param68 = query.cNombre_Param68 ?? "",
-                    cNombre_Param69 = query.cNombre_Param69 ?? "",
-                    cNombre_Param70 = query.cNombre_Param70 ?? "",
-                    cNombre_Param71 = query.cNombre_Param71 ?? "",
-                    cNombre_Param72 = query.cNombre_Param72 ?? "",
-                    cNombre_Param73 = query.cNombre_Param73 ?? "",
-                    cNombre_Param74 = query.cNombre_Param74 ?? "",
-                    cNombre_Param75 = query.cNombre_Param75 ?? "",
-                    cNombre_Param76 = query.cNombre_Param76 ?? "",
-                    cNombre_Param77 = query.cNombre_Param77 ?? "",
-                    cNombre_Param78 = query.cNombre_Param78 ?? "",
-                    cNombre_Param79 = query.cNombre_Param79 ?? "",
-                    cNombre_Param80 = query.cNombre_Param80 ?? "",
-                };
-
-                var response = ResultDto<GetGestionInformacionDeudorRespondeDto>.Success(data, "200", "OK", "OK", 200);
+                    data = new GetGestionInformacionDeudorRespondeDto
+                    {
+                        cNombre_Param01 = query.cNombre_Param01 ?? "",
+                        cNombre_Param02 = query.cNombre_Param02 ?? "",
+                        cNombre_Param03 = query.cNombre_Param03 ?? "",
+                        cNombre_Param04 = query.cNombre_Param04 ?? "",
+                        cNombre_Param05 = query.cNombre_Param05 ?? "",
+                        cNombre_Param06 = query.cNombre_Param06 ?? "",
+                        cNombre_Param07 = query.cNombre_Param07 ?? "",
+                        cNombre_Param08 = query.cNombre_Param08 ?? "",
+                        cNombre_Param09 = query.cNombre_Param09 ?? "",
+                        cNombre_Param10 = query.cNombre_Param10 ?? "",
+                        cNombre_Param11 = query.cNombre_Param11 ?? "",
+                        cNombre_Param12 = query.cNombre_Param12 ?? "",
+                        cNombre_Param13 = query.cNombre_Param13 ?? "",
+                        cNombre_Param14 = query.cNombre_Param14 ?? "",
+                        cNombre_Param15 = query.cNombre_Param15 ?? "",
+                        cNombre_Param16 = query.cNombre_Param16 ?? "",
+                        cNombre_Param17 = query.cNombre_Param17 ?? "",
+                        cNombre_Param18 = query.cNombre_Param18 ?? "",
+                        cNombre_Param19 = query.cNombre_Param19 ?? "",
+                        cNombre_Param20 = query.cNombre_Param20 ?? "",
+                        cNombre_Param21 = query.cNombre_Param21 ?? "",
+                        cNombre_Param22 = query.cNombre_Param22 ?? "",
+                        cNombre_Param23 = query.cNombre_Param23 ?? "",
+                        cNombre_Param24 = query.cNombre_Param24 ?? "",
+                        cNombre_Param25 = query.cNombre_Param25 ?? "",
+                        cNombre_Param26 = query.cNombre_Param26 ?? "",
+                        cNombre_Param27 = query.cNombre_Param27 ?? "",
+                        cNombre_Param28 = query.cNombre_Param28 ?? "",
+                        cNombre_Param29 = query.cNombre_Param29 ?? "",
+                        cNombre_Param30 = query.cNombre_Param30 ?? "",
+                        cNombre_Param31 = query.cNombre_Param31 ?? "",
+                        cNombre_Param32 = query.cNombre_Param32 ?? "",
+                        cNombre_Param33 = query.cNombre_Param33 ?? "",
+                        cNombre_Param34 = query.cNombre_Param34 ?? "",
+                        cNombre_Param35 = query.cNombre_Param35 ?? "",
+                        cNombre_Param36 = query.cNombre_Param36 ?? "",
+                        cNombre_Param37 = query.cNombre_Param37 ?? "",
+                        cNombre_Param38 = query.cNombre_Param38 ?? "",
+                        cNombre_Param39 = query.cNombre_Param39 ?? "",
+                        cNombre_Param40 = query.cNombre_Param40 ?? "",
+                        cNombre_Param41 = query.cNombre_Param41 ?? "",
+                        cNombre_Param42 = query.cNombre_Param42 ?? "",
+                        cNombre_Param43 = query.cNombre_Param43 ?? "",
+                        cNombre_Param44 = query.cNombre_Param44 ?? "",
+                        cNombre_Param45 = query.cNombre_Param45 ?? "",
+                        cNombre_Param46 = query.cNombre_Param46 ?? "",
+                        cNombre_Param47 = query.cNombre_Param47 ?? "",
+                        cNombre_Param48 = query.cNombre_Param48 ?? "",
+                        cNombre_Param49 = query.cNombre_Param49 ?? "",
+                        cNombre_Param50 = query.cNombre_Param50 ?? "",
+                        cNombre_Param51 = query.cNombre_Param51 ?? "",
+                        cNombre_Param52 = query.cNombre_Param52 ?? "",
+                        cNombre_Param53 = query.cNombre_Param53 ?? "",
+                        cNombre_Param54 = query.cNombre_Param54 ?? "",
+                        cNombre_Param55 = query.cNombre_Param55 ?? "",
+                        cNombre_Param56 = query.cNombre_Param56 ?? "",
+                        cNombre_Param57 = query.cNombre_Param57 ?? "",
+                        cNombre_Param58 = query.cNombre_Param58 ?? "",
+                        cNombre_Param59 = query.cNombre_Param59 ?? "",
+                        cNombre_Param60 = query.cNombre_Param60 ?? "",
+                        cNombre_Param61 = query.cNombre_Param61 ?? "",
+                        cNombre_Param62 = query.cNombre_Param62 ?? "",
+                        cNombre_Param63 = query.cNombre_Param63 ?? "",
+                        cNombre_Param64 = query.cNombre_Param64 ?? "",
+                        cNombre_Param65 = query.cNombre_Param65 ?? "",
+                        cNombre_Param66 = query.cNombre_Param66 ?? "",
+                        cNombre_Param67 = query.cNombre_Param67 ?? "",
+                        cNombre_Param68 = query.cNombre_Param68 ?? "",
+                        cNombre_Param69 = query.cNombre_Param69 ?? "",
+                        cNombre_Param70 = query.cNombre_Param70 ?? "",
+                        cNombre_Param71 = query.cNombre_Param71 ?? "",
+                        cNombre_Param72 = query.cNombre_Param72 ?? "",
+                        cNombre_Param73 = query.cNombre_Param73 ?? "",
+                        cNombre_Param74 = query.cNombre_Param74 ?? "",
+                        cNombre_Param75 = query.cNombre_Param75 ?? "",
+                        cNombre_Param76 = query.cNombre_Param76 ?? "",
+                        cNombre_Param77 = query.cNombre_Param77 ?? "",
+                        cNombre_Param78 = query.cNombre_Param78 ?? "",
+                        cNombre_Param79 = query.cNombre_Param79 ?? "",
+                        cNombre_Param80 = query.cNombre_Param80 ?? "",
+                    };
+                }
+                var response = ResultDto<GetGestionInformacionDeudorRespondeDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionInformacionDeudorRespondeDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionInformacionDeudorRespondeDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
 
         #region "Gestion - Información Deudor Param"
-        public async Task<ResultDto<GetGestionInformacionDeudorParamRespondeDto>> GetGetGestionInformacionDeudorParamAsync(GetGestionInformacionDeudorParamRequestDto gestionInformacionDeudorParamDto)
+        public async Task<ResultDto<GetGestionInformacionDeudorParamRespondeDto>> GetGestionInformacionDeudorParamAsync(GetGestionInformacionDeudorParamRequestDto gestionInformacionDeudorParamDto)
         {
             try
             {
-                var query = await _unitOfWork.av_PersDeudorInfoParams.GetGetGestionInformacionDeudorParamAsync(gestionInformacionDeudorParamDto.nId_Persdeudor);
+                var query = await _unitOfWork.av_PersDeudorInfoParams.GetGestionInformacionDeudorParamAsync(gestionInformacionDeudorParamDto.nId_Persdeudor);
 
-                var data = new GetGestionInformacionDeudorParamRespondeDto
+                var data = new GetGestionInformacionDeudorParamRespondeDto();
+                
+                if (query != null)
                 {
-                    cPersInf_Param01 = query.cPersInf_Param01 ?? "",
-                    cPersInf_Param02 = query.cPersInf_Param02 ?? "",
-                    cPersInf_Param03 = query.cPersInf_Param03 ?? "",
-                    cPersInf_Param04 = query.cPersInf_Param04 ?? "",
-                    cPersInf_Param05 = query.cPersInf_Param05 ?? "",
-                    cPersInf_Param06 = query.cPersInf_Param06 ?? "",
-                    cPersInf_Param07 = query.cPersInf_Param07 ?? "",
-                    cPersInf_Param08 = query.cPersInf_Param08 ?? "",
-                    cPersInf_Param09 = query.cPersInf_Param09 ?? "",
-                    cPersInf_Param10 = query.cPersInf_Param10 ?? "",
-                    cPersInf_Param11 = query.cPersInf_Param11 ?? "",
-                    cPersInf_Param12 = query.cPersInf_Param12 ?? "",
-                    cPersInf_Param13 = query.cPersInf_Param13 ?? "",
-                    cPersInf_Param14 = query.cPersInf_Param14 ?? "",
-                    cPersInf_Param15 = query.cPersInf_Param15 ?? "",
-                    cPersInf_Param16 = query.cPersInf_Param16 ?? "",
-                    cPersInf_Param17 = query.cPersInf_Param17 ?? "",
-                    cPersInf_Param18 = query.cPersInf_Param18 ?? "",
-                    cPersInf_Param19 = query.cPersInf_Param19 ?? "",
-                    cPersInf_Param20 = query.cPersInf_Param20 ?? "",
-                    cPersInf_Param21 = query.cPersInf_Param21 ?? "",
-                    cPersInf_Param22 = query.cPersInf_Param22 ?? "",
-                    cPersInf_Param23 = query.cPersInf_Param23 ?? "",
-                    cPersInf_Param24 = query.cPersInf_Param24 ?? "",
-                    cPersInf_Param25 = query.cPersInf_Param25 ?? "",
-                    cPersInf_Param26 = query.cPersInf_Param26 ?? "",
-                    cPersInf_Param27 = query.cPersInf_Param27 ?? "",
-                    cPersInf_Param28 = query.cPersInf_Param28 ?? "",
-                    cPersInf_Param29 = query.cPersInf_Param29 ?? "",
-                    cPersInf_Param30 = query.cPersInf_Param30 ?? "",
-                    cPersInf_Param31 = query.cPersInf_Param31 ?? "",
-                    cPersInf_Param32 = query.cPersInf_Param32 ?? "",
-                    cPersInf_Param33 = query.cPersInf_Param33 ?? "",
-                    cPersInf_Param34 = query.cPersInf_Param34 ?? "",
-                    cPersInf_Param35 = query.cPersInf_Param35 ?? "",
-                    cPersInf_Param36 = query.cPersInf_Param36 ?? "",
-                    cPersInf_Param37 = query.cPersInf_Param37 ?? "",
-                    cPersInf_Param38 = query.cPersInf_Param38 ?? "",
-                    cPersInf_Param39 = query.cPersInf_Param39 ?? "",
-                    cPersInf_Param40 = query.cPersInf_Param40 ?? "",
-                    cPersInf_Param41 = query.cPersInf_Param41 ?? "",
-                    cPersInf_Param42 = query.cPersInf_Param42 ?? "",
-                    cPersInf_Param43 = query.cPersInf_Param43 ?? "",
-                    cPersInf_Param44 = query.cPersInf_Param44 ?? "",
-                    cPersInf_Param45 = query.cPersInf_Param45 ?? "",
-                    cPersInf_Param46 = query.cPersInf_Param46 ?? "",
-                    cPersInf_Param47 = query.cPersInf_Param47 ?? "",
-                    cPersInf_Param48 = query.cPersInf_Param48 ?? "",
-                    cPersInf_Param49 = query.cPersInf_Param49 ?? "",
-                    cPersInf_Param50 = query.cPersInf_Param50 ?? "",
-                    cPersInf_Param51 = query.cPersInf_Param51 ?? "",
-                    cPersInf_Param52 = query.cPersInf_Param52 ?? "",
-                    cPersInf_Param53 = query.cPersInf_Param53 ?? "",
-                    cPersInf_Param54 = query.cPersInf_Param54 ?? "",
-                    cPersInf_Param55 = query.cPersInf_Param55 ?? "",
-                    cPersInf_Param56 = query.cPersInf_Param56 ?? "",
-                    cPersInf_Param57 = query.cPersInf_Param57 ?? "",
-                    cPersInf_Param58 = query.cPersInf_Param58 ?? "",
-                    cPersInf_Param59 = query.cPersInf_Param59 ?? "",
-                    cPersInf_Param60 = query.cPersInf_Param60 ?? "",
-                    cPersInf_Param61 = query.cPersInf_Param61 ?? "",
-                    cPersInf_Param62 = query.cPersInf_Param62 ?? "",
-                    cPersInf_Param63 = query.cPersInf_Param63 ?? "",
-                    cPersInf_Param64 = query.cPersInf_Param64 ?? "",
-                    cPersInf_Param65 = query.cPersInf_Param65 ?? "",
-                    cPersInf_Param66 = query.cPersInf_Param66 ?? "",
-                    cPersInf_Param67 = query.cPersInf_Param67 ?? "",
-                    cPersInf_Param68 = query.cPersInf_Param68 ?? "",
-                    cPersInf_Param69 = query.cPersInf_Param69 ?? "",
-                    cPersInf_Param70 = query.cPersInf_Param70 ?? "",
-                    cPersInf_Param71 = query.cPersInf_Param71 ?? "",
-                    cPersInf_Param72 = query.cPersInf_Param72 ?? "",
-                    cPersInf_Param73 = query.cPersInf_Param73 ?? "",
-                    cPersInf_Param74 = query.cPersInf_Param74 ?? "",
-                    cPersInf_Param75 = query.cPersInf_Param75 ?? "",
-                    cPersInf_Param76 = query.cPersInf_Param76 ?? "",
-                    cPersInf_Param77 = query.cPersInf_Param77 ?? "",
-                    cPersInf_Param78 = query.cPersInf_Param78 ?? "",
-                    cPersInf_Param79 = query.cPersInf_Param79 ?? "",
-                    cPersInf_Param80 = query.cPersInf_Param80 ?? ""
-                };
-
-                var response = ResultDto<GetGestionInformacionDeudorParamRespondeDto>.Success(data, "200", "OK", "OK", 200);
+                    data = new GetGestionInformacionDeudorParamRespondeDto
+                    {
+                        cPersInf_Param01 = query.cPersInf_Param01 ?? "",
+                        cPersInf_Param02 = query.cPersInf_Param02 ?? "",
+                        cPersInf_Param03 = query.cPersInf_Param03 ?? "",
+                        cPersInf_Param04 = query.cPersInf_Param04 ?? "",
+                        cPersInf_Param05 = query.cPersInf_Param05 ?? "",
+                        cPersInf_Param06 = query.cPersInf_Param06 ?? "",
+                        cPersInf_Param07 = query.cPersInf_Param07 ?? "",
+                        cPersInf_Param08 = query.cPersInf_Param08 ?? "",
+                        cPersInf_Param09 = query.cPersInf_Param09 ?? "",
+                        cPersInf_Param10 = query.cPersInf_Param10 ?? "",
+                        cPersInf_Param11 = query.cPersInf_Param11 ?? "",
+                        cPersInf_Param12 = query.cPersInf_Param12 ?? "",
+                        cPersInf_Param13 = query.cPersInf_Param13 ?? "",
+                        cPersInf_Param14 = query.cPersInf_Param14 ?? "",
+                        cPersInf_Param15 = query.cPersInf_Param15 ?? "",
+                        cPersInf_Param16 = query.cPersInf_Param16 ?? "",
+                        cPersInf_Param17 = query.cPersInf_Param17 ?? "",
+                        cPersInf_Param18 = query.cPersInf_Param18 ?? "",
+                        cPersInf_Param19 = query.cPersInf_Param19 ?? "",
+                        cPersInf_Param20 = query.cPersInf_Param20 ?? "",
+                        cPersInf_Param21 = query.cPersInf_Param21 ?? "",
+                        cPersInf_Param22 = query.cPersInf_Param22 ?? "",
+                        cPersInf_Param23 = query.cPersInf_Param23 ?? "",
+                        cPersInf_Param24 = query.cPersInf_Param24 ?? "",
+                        cPersInf_Param25 = query.cPersInf_Param25 ?? "",
+                        cPersInf_Param26 = query.cPersInf_Param26 ?? "",
+                        cPersInf_Param27 = query.cPersInf_Param27 ?? "",
+                        cPersInf_Param28 = query.cPersInf_Param28 ?? "",
+                        cPersInf_Param29 = query.cPersInf_Param29 ?? "",
+                        cPersInf_Param30 = query.cPersInf_Param30 ?? "",
+                        cPersInf_Param31 = query.cPersInf_Param31 ?? "",
+                        cPersInf_Param32 = query.cPersInf_Param32 ?? "",
+                        cPersInf_Param33 = query.cPersInf_Param33 ?? "",
+                        cPersInf_Param34 = query.cPersInf_Param34 ?? "",
+                        cPersInf_Param35 = query.cPersInf_Param35 ?? "",
+                        cPersInf_Param36 = query.cPersInf_Param36 ?? "",
+                        cPersInf_Param37 = query.cPersInf_Param37 ?? "",
+                        cPersInf_Param38 = query.cPersInf_Param38 ?? "",
+                        cPersInf_Param39 = query.cPersInf_Param39 ?? "",
+                        cPersInf_Param40 = query.cPersInf_Param40 ?? "",
+                        cPersInf_Param41 = query.cPersInf_Param41 ?? "",
+                        cPersInf_Param42 = query.cPersInf_Param42 ?? "",
+                        cPersInf_Param43 = query.cPersInf_Param43 ?? "",
+                        cPersInf_Param44 = query.cPersInf_Param44 ?? "",
+                        cPersInf_Param45 = query.cPersInf_Param45 ?? "",
+                        cPersInf_Param46 = query.cPersInf_Param46 ?? "",
+                        cPersInf_Param47 = query.cPersInf_Param47 ?? "",
+                        cPersInf_Param48 = query.cPersInf_Param48 ?? "",
+                        cPersInf_Param49 = query.cPersInf_Param49 ?? "",
+                        cPersInf_Param50 = query.cPersInf_Param50 ?? "",
+                        cPersInf_Param51 = query.cPersInf_Param51 ?? "",
+                        cPersInf_Param52 = query.cPersInf_Param52 ?? "",
+                        cPersInf_Param53 = query.cPersInf_Param53 ?? "",
+                        cPersInf_Param54 = query.cPersInf_Param54 ?? "",
+                        cPersInf_Param55 = query.cPersInf_Param55 ?? "",
+                        cPersInf_Param56 = query.cPersInf_Param56 ?? "",
+                        cPersInf_Param57 = query.cPersInf_Param57 ?? "",
+                        cPersInf_Param58 = query.cPersInf_Param58 ?? "",
+                        cPersInf_Param59 = query.cPersInf_Param59 ?? "",
+                        cPersInf_Param60 = query.cPersInf_Param60 ?? "",
+                        cPersInf_Param61 = query.cPersInf_Param61 ?? "",
+                        cPersInf_Param62 = query.cPersInf_Param62 ?? "",
+                        cPersInf_Param63 = query.cPersInf_Param63 ?? "",
+                        cPersInf_Param64 = query.cPersInf_Param64 ?? "",
+                        cPersInf_Param65 = query.cPersInf_Param65 ?? "",
+                        cPersInf_Param66 = query.cPersInf_Param66 ?? "",
+                        cPersInf_Param67 = query.cPersInf_Param67 ?? "",
+                        cPersInf_Param68 = query.cPersInf_Param68 ?? "",
+                        cPersInf_Param69 = query.cPersInf_Param69 ?? "",
+                        cPersInf_Param70 = query.cPersInf_Param70 ?? "",
+                        cPersInf_Param71 = query.cPersInf_Param71 ?? "",
+                        cPersInf_Param72 = query.cPersInf_Param72 ?? "",
+                        cPersInf_Param73 = query.cPersInf_Param73 ?? "",
+                        cPersInf_Param74 = query.cPersInf_Param74 ?? "",
+                        cPersInf_Param75 = query.cPersInf_Param75 ?? "",
+                        cPersInf_Param76 = query.cPersInf_Param76 ?? "",
+                        cPersInf_Param77 = query.cPersInf_Param77 ?? "",
+                        cPersInf_Param78 = query.cPersInf_Param78 ?? "",
+                        cPersInf_Param79 = query.cPersInf_Param79 ?? "",
+                        cPersInf_Param80 = query.cPersInf_Param80 ?? ""
+                    };
+                }
+                var response = ResultDto<GetGestionInformacionDeudorParamRespondeDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
                 return response;
             }
             catch (Exception ex)
             {
-                return ResultDto<GetGestionInformacionDeudorParamRespondeDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+                return ResultDto<GetGestionInformacionDeudorParamRespondeDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
+        #region "Guardar Deudor Gestion - SubGestion"
+        public async Task<ResultDto<CreateGestionOpeGesResponseDto>> CreateGestionOpeGesAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto)
+        {
+            CreateGestionRequestValidator validator = new CreateGestionRequestValidator(_unitOfWork, _validationMessageService, OpeGesCreateDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_DocxCobrarOpeGes doccobopeges = new av_DocxCobrarOpeGes
+                {
+                    nId_DocxCobrarOpe = null,
+                    nId_DocxCobrar = OpeGesCreateDto.nId_DocxCobrar,
+                    nId_OpeCodIn = 4, //llamada
+                    dDocCobOpe_FecIni = OpeGesCreateDto.dFechaInicioGestion,
+                    dDocCobOpe_FecFin = DateTime.Now,
+                    cDocOpeCobIn_Descr = "Acción Directa",
+                    nId_OpeCodCliOut = OpeGesCreateDto.nNP2.Value > 0
+                                        ? OpeGesCreateDto.nNP1.Value
+                                        : OpeGesCreateDto.nNP1 ?? 0,
+                    bEstado = true,
+                    nId_Usuario = OpeGesCreateDto.nASIGNARGESTOR == 0
+                                    ? OpeGesCreateDto.nId_Usuario
+                                    : OpeGesCreateDto.nASIGNARGESTOR,
+                    nId_Estrategia = null,
+                    nId_UsrLider = null,
+                    nDoc_NroLote = null,
+                    cDocOpeCobOut_Descr = OpeGesCreateDto.cOBSERVACION,
+                    nId_Cliente = OpeGesCreateDto.nId_Cliente,
+                    nId_Contrato = OpeGesCreateDto.nId_Contrato,
+                    nId_Cartera = OpeGesCreateDto.nId_Cartera,
+                    nId_PersDeudor = OpeGesCreateDto.nId_PersDeudor,
+                    bOpeEfectiva = false,
+                    dFechCompromisoPago = OpeGesCreateDto.dFECHACOMPROMISO,
+                    nId_OpeContacto = null,
+                    nId_OpeCodOut2 = null,
+                    nTelef_Nro = OpeGesCreateDto.cTELEFONO,
+                    monto_comp = OpeGesCreateDto.nMONTOSOLES,
+                    monto_compDolares = OpeGesCreateDto.nMONTODOLARES,
+                    cDocxCobOpeInconcert = false,
+                    nId_TipoGestion = OpeGesCreateDto.nTIPOGESTION,
+                    cusuar = OpeGesCreateDto.cSISTEMA,
+                    usu_reg = OpeGesCreateDto.nASIGNARGESTOR > 0
+                                ? OpeGesCreateDto.nId_Usuario
+                                : null,
+                    cnombreContacto = OpeGesCreateDto.cNOMBRECONTACTO,
+                    ccargoContacto = OpeGesCreateDto.cCARGO,
+                    nId_OpeCodOutNp2 = OpeGesCreateDto.nNP2 > 0
+                                        ? OpeGesCreateDto.nNP2
+                                        : null,
+                    nId_DocxCobrarParamOpe = null,
+                    nId_GestionDisp = 3,
+                    cID_Llamada = null,
+                    nId_OpeCodOutEst = OpeGesCreateDto.nESTADOGESTION,
+                    cPeriodo = string.Empty,
+                    cCorreo = string.Empty,
+                    nId_DocxCobrarOpe_orig = OpeGesCreateDto.nESTADOGESTIONCLARO,
+                    nId_OpeCodCliOutMotivoNoPago = OpeGesCreateDto.nMOTIVONOPAGO
+                };
+                var OpeGesCreate = await _unitOfWork.av_DocxCobrarOpeGess.AddAsync(doccobopeges);
+                await _unitOfWork.SaveChangesAsync();
+
+                CreateGestionOpeGesResponseDto responseDto = new CreateGestionOpeGesResponseDto
+                {
+                    nId_DocxCobrarOpe = OpeGesCreate.nId_DocxCobrarOpe,
+                    nId_Cliente = OpeGesCreate.nId_Cliente,
+                    nId_Contrato = OpeGesCreate.nId_Contrato,
+                    nId_Cartera = OpeGesCreate.nId_Cartera,
+                    nId_DocxCobrar = OpeGesCreate.nId_DocxCobrar,
+                    nId_PersDeudor = OpeGesCreate.nId_PersDeudor,
+                    nId_Usuario = OpeGesCreate.nId_Usuario
+                };
+
+                ResultDto<CreateGestionOpeGesResponseDto> response = ResultDto<CreateGestionOpeGesResponseDto>
+                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<CreateGestionOpeGesResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+
+        public async Task<ResultDto<CreateGestionOpeGesResponseDto>> CreateGestionOpeGesContratosAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto)
+        {
+            CreateGestionRequestValidator validator = new CreateGestionRequestValidator(_unitOfWork, _validationMessageService, OpeGesCreateDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+
+                var idsDocCobrar = OpeGesCreateDto.nId_DocxCobrars
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => int.Parse(x.Trim()));
+
+                var lista = new List<av_DocxCobrarOpeGes>();
+
+                foreach (var idDocCobrar in idsDocCobrar)
+                {
+                    lista.Add(new av_DocxCobrarOpeGes
+                    {
+                        nId_DocxCobrarOpe = null,
+                        nId_DocxCobrar = idDocCobrar,
+                        nId_OpeCodIn = 4,
+                        dDocCobOpe_FecIni = OpeGesCreateDto.dFechaInicioGestion,
+                        dDocCobOpe_FecFin = DateTime.Now,
+                        cDocOpeCobIn_Descr = "Acción Directa",
+                        nId_OpeCodCliOut = OpeGesCreateDto.nNP2.Value > 0
+                                        ? OpeGesCreateDto.nNP1.Value
+                                        : OpeGesCreateDto.nNP1 ?? 0,
+                        bEstado = true,
+                        nId_Usuario = OpeGesCreateDto.nASIGNARGESTOR == 0
+                                    ? OpeGesCreateDto.nId_Usuario
+                                    : OpeGesCreateDto.nASIGNARGESTOR,
+                        nId_Estrategia = null,
+                        nId_UsrLider = null,
+                        nDoc_NroLote = null,
+                        cDocOpeCobOut_Descr = OpeGesCreateDto.cOBSERVACION,
+                        nId_Cliente = OpeGesCreateDto.nId_Cliente,
+                        nId_Contrato = OpeGesCreateDto.nId_Contrato,
+                        nId_Cartera = OpeGesCreateDto.nId_Cartera,
+                        nId_PersDeudor = OpeGesCreateDto.nId_PersDeudor,
+                        bOpeEfectiva = false,
+                        dFechCompromisoPago = OpeGesCreateDto.dFECHACOMPROMISO,
+                        nId_OpeContacto = null,
+                        nId_OpeCodOut2 = null,
+                        nTelef_Nro = OpeGesCreateDto.cTELEFONO,
+                        monto_comp = OpeGesCreateDto.nMONTOSOLES,
+                        monto_compDolares = OpeGesCreateDto.nMONTODOLARES,
+                        cDocxCobOpeInconcert = false,
+                        nId_TipoGestion = OpeGesCreateDto.nTIPOGESTION,
+                        cusuar = OpeGesCreateDto.cSISTEMA,
+                        usu_reg = OpeGesCreateDto.nASIGNARGESTOR > 0
+                                ? OpeGesCreateDto.nId_Usuario
+                                : null,
+                        cnombreContacto = OpeGesCreateDto.cNOMBRECONTACTO,
+                        ccargoContacto = OpeGesCreateDto.cCARGO,
+                        nId_OpeCodOutNp2 = OpeGesCreateDto.nNP2 > 0
+                                        ? OpeGesCreateDto.nNP2
+                                        : null,
+                        nId_DocxCobrarParamOpe = null,
+                        nId_GestionDisp = 3,
+                        cID_Llamada = null,
+                        nId_OpeCodOutEst = OpeGesCreateDto.nESTADOGESTION,
+                        cPeriodo = string.Empty,
+                        cCorreo = string.Empty,
+                        nId_DocxCobrarOpe_orig = OpeGesCreateDto.nESTADOGESTIONCLARO,
+                        nId_OpeCodCliOutMotivoNoPago = OpeGesCreateDto.nMOTIVONOPAGO
+                    });
+                }
+
+                var OpeGesCreate = _unitOfWork.av_DocxCobrarOpeGess.AddRangeAsync(lista);
+                await _unitOfWork.SaveChangesAsync();
+
+                //var OpeGesCreate = await _unitOfWork.av_DocxCobrarOpeGess.AddAsync(doccobopeges);
+                //await _unitOfWork.SaveChangesAsync();
+
+                CreateGestionOpeGesResponseDto responseDto = new CreateGestionOpeGesResponseDto
+                {
+                    //nId_DocxCobrarOpe = OpeGesCreate.nId_DocxCobrarOpe,
+                    //nId_Cliente = OpeGesCreate.nId_Cliente,
+                    //nId_Contrato = OpeGesCreate.nId_Contrato,
+                    //nId_Cartera = OpeGesCreate.nId_Cartera,
+                    //nId_DocxCobrar = OpeGesCreate.nId_DocxCobrar,
+                    //nId_PersDeudor = OpeGesCreate.nId_PersDeudor,
+                    //nId_Usuario = OpeGesCreate.nId_Usuario
+                };
+
+                ResultDto<CreateGestionOpeGesResponseDto> response = ResultDto<CreateGestionOpeGesResponseDto>
+                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<CreateGestionOpeGesResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion

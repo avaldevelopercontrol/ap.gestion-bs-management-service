@@ -17,6 +17,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
         public DbSet<av_DocxCobrarOpeEst> av_DocxCobrarOpeEsts { get; set; }
+        public DbSet<av_DocxCobrarOpeGes> av_DocxCobrarOpeGess { get; set; }
         public DbSet<av_DocxCobrarParam> av_DocxCobrarParams { get; set; }
         public DbSet<av_DocxPago> av_DocxPagos { get; set; }
         public DbSet<av_EstadoAsteriskAval> av_EstadoAsteriskAvals { get; set; }
@@ -28,7 +29,9 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_OficinaAval> av_OficinaAvals { get; set; }
         public DbSet<av_OpeCodCliOutEst> av_OpeCodCliOutEsts { get; set; }
         public DbSet<av_OpeCodCliOut> av_OpeCodCliOuts { get; set; }
+        public DbSet<av_OpeCodIn> av_OpeCodIns { get; set; }
         public DbSet<av_OperadorTelefonico> av_OperadorTelefonicos { get; set; }
+        public DbSet<av_OpeTipo> av_OpeTipos { get; set; }
         public DbSet<av_PersDeudor> av_PersDeudors { get; set; }
         public DbSet<av_PersDeudorParam> av_PersDeudorParams { get; set; }
         public DbSet<av_PersDirecc> av_PersDireccs { get; set; }
@@ -69,6 +72,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_DocxCobrarAdicionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeEstConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeGesConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarParamConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxPagoConfiguration());
             modelBuilder.ApplyConfiguration(new av_EstadoAsteriskAvalConfiguration());
@@ -80,7 +84,9 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_OficinaAvalConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutEstConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutConfiguration());
+            modelBuilder.ApplyConfiguration(new av_OpeCodInConfiguration());
             modelBuilder.ApplyConfiguration(new av_OperadorTelefonicoConfiguration());
+            modelBuilder.ApplyConfiguration(new av_OpeTipoConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorParamConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDireccConfiguration());

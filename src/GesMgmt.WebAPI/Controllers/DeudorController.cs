@@ -29,6 +29,13 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
+        /// <summary>
+        /// Sirve para poder buscar al deudor para gestionar, se busca por la letra D=DNI o R=RUC.
+        /// </summary>
+        /// <remarks>
+        /// Sirve para poder buscar al deudor para gestionar, se busca por la letra D=DNI o R=RUC.
+        /// </remarks>
+        /// <response code="200">Sirve para poder buscar al deudor para gestionar, se busca por la letra D=DNI o R=RUC.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Deudores")]
         [HttpGet("GetDeudorAsync")]
         [ProducesResponseType(typeof(ResultDto<GetDeudorResponseDto>), StatusCodes.Status200OK)]

@@ -32,5 +32,18 @@ namespace GesMgmt.Domain.Constants
 
         public const string BUSCAR_LENGTH_ZERO = "022";
         public const string BUSCAR_LENGTH_ONE = "023";
+
+        public const string GESTION_SELECTED_ID = "024";
+        public const string GESTION_SELECTED_NP0 = "025";
+        public const string GESTION_SELECTED_NP1 = "026";
+        public const string GESTION_COMMITMENT_REQUIRED = "027";
+        public const string GESTION_COMMITMENT_AMOUNT_REQUIRED = "028";
+        public const string GESTION_MANAGEMENT_TYPE_REQUIRED = "029";
+        public const string GESTION_OBSERVATION_REQUIRED = "030";
+        public const string GESTION_OBSERVATION_LENGTH = "031";
+        public const string GESTION_STATUS_MANAGEMENT_REQUIRED = "032";
+        public const string GESTION_STATUS_MANAGEMENT_CLARO_REQUIRED = "033";
+        public const string GESTION_REASON_FOR_NO_PAYMENT = "034";
+
     }
 }

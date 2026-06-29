@@ -8,6 +8,6 @@ namespace GesMgmt.Domain.Interfaces
     public interface Iav_PersDeudorInfoParamRepository
     {
         Task<IQueryable<av_PersDeudorInfoParam>> Query();
-        Task<av_PersDeudorInfoParam> GetGetGestionInformacionDeudorParamAsync(int nId_PersDeudor);
+        Task<av_PersDeudorInfoParam> GetGestionInformacionDeudorParamAsync(int nId_PersDeudor);
     }
 }

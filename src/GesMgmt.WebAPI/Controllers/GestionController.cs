@@ -5,8 +5,12 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
+using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
+using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -29,6 +33,13 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
+        /// <summary>
+        /// Obtiene la información de ZONA / CARTERA / CAMPAÑA para la cabecera de la pantalla.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene la información de ZONA / CARTERA / CAMPAÑA para la cabecera de la pantalla.
+        /// </remarks>
+        /// <response code="200">Obtiene la información de ZONA / CARTERA / CAMPAÑA para la cabecera de la pantalla</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Obtener Información Zona - Cartera - Campanna")]
         [HttpGet("GetGestionZonaCarteraCampanna")]
         [ProducesResponseType(typeof(ResultDto<GetGestionZonaCarteraCampannaResponseDto>), StatusCodes.Status200OK)]
@@ -42,6 +53,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado que se usa para armar la cabecera de las gestiones de Documentos por cobrar, ordenado por la columna ORDEN.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado que se usa para armar la cabecera de las gestiones de Documentos por cobrar, ordenado por la columna ORDEN.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado que se usa para armar la cabecera de las gestiones de Documentos por cobrar, ordenado por la columna ORDEN.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Documentos Cabecera")]
         [HttpGet("GetGestionDocumentosCabecera")]
         [ProducesResponseType(typeof(ResultDto<GetGestionCabeceraResponseDto>), StatusCodes.Status200OK)]
@@ -55,6 +73,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de documentos por cobrar av_docxobrar.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de documentos por cobrar av_docxobrar.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de documentos por cobrar av_docxobrar.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Documentos")]
         [HttpGet("GetGestionDocumentos")]
         [ProducesResponseType(typeof(ResultDto<GetGestionDocumentoResponseDto>), StatusCodes.Status200OK)]
@@ -68,7 +93,14 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Gestiones Deudores")]
+        /// <summary>
+        /// Obtiene la información del deudor de la cabecera de la pantalla gestión.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene la información del deudor de la cabecera de la pantalla gestión.
+        /// </remarks>
+        /// <response code="200">Obtiene la información del deudor de la cabecera de la pantalla gestión.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Gestion Deudor")]
         [HttpGet("GetGestionDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetGestionDeudorResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -81,6 +113,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado con las columnas para la cabecera de DATOS ADICIONALES.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado con las columnas para la cabecera de DATOS ADICIONALES.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado con las columnas para la cabecera de DATOS ADICIONALES.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Cabecera Gestiones Documentos Adicionales")]
         [HttpGet("GetGestionDocumentosAdicionalesCabecera")]
         [ProducesResponseType(typeof(ResultDto<GetGestionCabeceraAdicionalResponseDto>), StatusCodes.Status200OK)]
@@ -94,6 +133,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de DATOS ADICIONALES.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de DATOS ADICIONALES.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado con las columnas para la cabecera de DATOS ADICIONALES.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Documentos Adicionales")]
         [HttpGet("GetGestionDocumentosAdicionales")]
         [ProducesResponseType(typeof(ResultDto<GetGestionAdicionalResponseDto>), StatusCodes.Status200OK)]
@@ -106,33 +152,14 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionDocumentosAdicionales|End|GetGestionDocumentosAdicionalesAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
-
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Telefonos")]
-        [HttpGet("GetGestionTelefonos")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionTelefonoResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGestionTelefonosAsync([FromQuery] GetGestionTelefonoRequestDto gestionTelefonoDto)
-        {
-            _Logger.LogInfo($"GetGestionTelefonos|Begin|GetGestionTelefonosAsync|request: {JsonSerializer.Serialize(gestionTelefonoDto)}");
-            var result = await _gestionService.GetGestionTelefonosAsync(gestionTelefonoDto);
-            _Logger.LogInfo($"GetGestionTelefonos|End|GetGestionTelefonosAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
-        }
-
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Direcciones")]
-        [HttpGet("GetGestionDirecciones")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionDireccionResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGestionesDireccionAsync([FromQuery] GetGestionDireccionRequestDto gestionDireccionDto)
-        {
-            _Logger.LogInfo($"GetGestionDirecciones|Begin|GetGestionDireccionesAsync|request: {JsonSerializer.Serialize(gestionDireccionDto)}");
-            var result = await _gestionService.GetGestionDireccionesAsync(gestionDireccionDto);
-            _Logger.LogInfo($"GetGestionDirecciones|End|GetGestionDireccionesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
-        }
-
+        
+        /// <summary>
+        /// Obtiene el listado de GESTIONES del deudor.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de GESTIONES del deudor.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de GESTIONES del deudor.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones")]
         [HttpGet("GetGestionGestionesCarteraDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetGestionGestionesCarteraDeudorResponseDto>), StatusCodes.Status200OK)]
@@ -146,6 +173,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de GESTIONES HISTÓRICAS del deudor.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de GESTIONES HISTÓRICAS del deudor.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de GESTIONES HISTÓRICAS del deudor.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Historicas")]
         [HttpGet("GetGestionGestionesCarteraDeudorHistoricas")]
         [ProducesResponseType(typeof(ResultDto<GestionCarteraDeudorHistoricaResponseDto>), StatusCodes.Status200OK)]
@@ -159,6 +193,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de ESTADO DE GESTIÓN REALIZADA del deudor.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de ESTADO DE GESTIÓN REALIZADA del deudor.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de ESTADO DE GESTIÓN REALIZADA del deudor.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Estado de Gestiones")]
         [HttpGet("GetGestionEstadosGestionesCarteraDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetGestionEstadoGestionCarteraDeudorResponseDto>), StatusCodes.Status200OK)]
@@ -172,6 +213,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de ESTADO DE GESTIÓN HISTORICA REALIZADA del deudor.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de ESTADO DE GESTIÓN HISTORICA REALIZADA del deudor.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de ESTADO DE GESTIÓN HISTORICA REALIZADA del deudor.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Estado de Gestiones Historicas")]
         [HttpGet("GetGestionEstadosGestionesCarteraDeudorHistorica")]
         [ProducesResponseType(typeof(ResultDto<GestionCarteraDeudorEstadoHistoricaResponseDto>), StatusCodes.Status200OK)]
@@ -185,6 +233,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de AGENDAS, botón +AGENDAS.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de AGENDAS, botón +AGENDAS.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de AGENDAS, BOTÓN +AGENDAS.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Agendadas")]
         [HttpGet("GetGestionAgendasDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetGestionAgendaResponseDto>), StatusCodes.Status200OK)]
@@ -198,6 +253,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de PAGOS, BOTÓN +PAGOS.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de PAGOS, BOTÓN +PAGOS.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de PAGOS, BOTÓN +PAGOS.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Pagos")]
         [HttpGet("GetGestionPagosDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetGestionPagosResponsetDto>), StatusCodes.Status200OK)]
@@ -211,30 +273,56 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor")]
-        [HttpGet("GetGetGestionInformacionDeudor")]
+        [HttpGet("GetGestionInformacionDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetGestionInformacionDeudorRespondeDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGetGestionInformacionDeudorAsync([FromQuery] GetGestionInformacionDeudorRequestDto gestionInfoDeudor)
+        public async Task<IActionResult> GetGestionInformacionDeudorAsync([FromQuery] GetGestionInformacionDeudorRequestDto gestionInfoDeudor)
         {
-            _Logger.LogInfo($"GetGetGestionInformacionDeudor|Begin|GetGetGestionInformacionDeudorAsync|request: {JsonSerializer.Serialize(gestionInfoDeudor)}");
-            var result = await _gestionService.GetGetGestionInformacionDeudorAsync(gestionInfoDeudor);
-            _Logger.LogInfo($"GetGetGestionInformacionDeudor|End|GetGetGestionInformacionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionInformacionDeudor|Begin|GetGestionInformacionDeudorAsync|request: {JsonSerializer.Serialize(gestionInfoDeudor)}");
+            var result = await _gestionService.GetGestionInformacionDeudorAsync(gestionInfoDeudor);
+            _Logger.LogInfo($"GetGestionInformacionDeudor|End|GetGestionInformacionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / Tercer registro de la lista.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / Tercer registro de la lista.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / Tercer registro de la lista.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor Param")]
-        [HttpGet("GetGetGestionInformacionDeudorParam")]
+        [HttpGet("GetGestionInformacionDeudorParam")]
         [ProducesResponseType(typeof(ResultDto<GetGestionInformacionDeudorParamRespondeDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGetGestionInformacionDeudorParamAsync([FromQuery] GetGestionInformacionDeudorParamRequestDto gestionInfoDeudorParam)
+        public async Task<IActionResult> GetGestionInformacionDeudorParamAsync([FromQuery] GetGestionInformacionDeudorParamRequestDto gestionInfoDeudorParam)
         {
-            _Logger.LogInfo($"GetGetGestionInformacionDeudorParam|Begin|GetGetGestionInformacionDeudorParamAsync|request: {JsonSerializer.Serialize(gestionInfoDeudorParam)}");
-            var result = await _gestionService.GetGetGestionInformacionDeudorParamAsync(gestionInfoDeudorParam);
-            _Logger.LogInfo($"GetGetGestionInformacionDeudorParam|End|GetGetGestionInformacionDeudorParamAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"GetGestionInformacionDeudorParam|Begin|GetGestionInformacionDeudorParamAsync|request: {JsonSerializer.Serialize(gestionInfoDeudorParam)}");
+            var result = await _gestionService.GetGestionInformacionDeudorParamAsync(gestionInfoDeudorParam);
+            _Logger.LogInfo($"GetGestionInformacionDeudorParam|End|GetGestionInformacionDeudorParamAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
+        }
+
+        [HttpPost("CreateGestionOpeGes")]
+        [ProducesResponseType(typeof(ResultDto<CreateGestionOpeGesResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateGestionOpeGesAsync([FromBody] CreateGestionOpeGesRequestDto gestionOpeGesDto)
+        {
+            _Logger.LogInfo($"CreateGestionOpeGes|Begin|CreateGestionOpeGesAsync|request: {JsonSerializer.Serialize(gestionOpeGesDto)}");
+            var result = await _gestionService.CreateGestionOpeGesAsync(gestionOpeGesDto);
+            _Logger.LogInfo($"CreateGestionOpeGes|End|CreateGestionOpeGesAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

@@ -22,6 +22,122 @@ namespace GesMgmt.Application.Services.Telefono
             _validationMessageService = validationMessageService;
         }
 
+        #region "Telefonos"
+        public async Task<ResultListDto<IEnumerable<GetTelefonosResponseDto>>> GetTelefonosAsync(GetTelefonosRequestDto TelefonosDto)
+        {
+            GetTelefonoRequestValidator validator = new GetTelefonoRequestValidator(_unitOfWork, _validationMessageService, TelefonosDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            try
+            {
+
+                var filter = new av_PersTelef
+                {
+                    nId_PersDeudor = TelefonosDto.nId_Persdeudor
+                };
+
+                var q_Telefono = _unitOfWork.av_PersTelefs.GetTelefonosAsync(filter);
+                var totalContactados = await q_Telefono.SumAsync(x => x.ncontactados ?? 0);
+                var q_detalleTelefono = await _unitOfWork.av_DetallePersTelefs.Query();
+                var q_PerDeuGesHrs = await _unitOfWork.av_PersDeudorGestionHrss.Query();
+                var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
+                var q_PerTelOpe = await _unitOfWork.av_PersTelefOpes.Query();
+                var q_fuBusTel = await _unitOfWork.av_FuenteBusTels.Query();
+
+                var data = await (
+                                    from pe in q_Telefono
+
+                                    join det in q_detalleTelefono
+                                    on new
+                                    {
+                                        pe.nId_PersTelef,
+                                        nId_Cliente = TelefonosDto.nId_Cliente
+                                    }
+                                    equals new
+                                    {
+                                        det.nId_PersTelef,
+                                        det.nId_Cliente
+                                    }
+                                    into detJoin
+                                    from det in detJoin.DefaultIfEmpty()
+
+                                    join hrs in q_PerDeuGesHrs
+                                    on pe.nId_PersDeudorGestionHrs equals hrs.nId_PersDeudorGestionHrs
+                                    into hrsJoin
+                                    from hrs in hrsJoin.DefaultIfEmpty()
+
+                                    join refUbi in q_PerRefUbi
+                                    on pe.nId_PersRefUbi equals refUbi.nId_PersRefUbi
+                                    into refUbiJoin
+                                    from refUbi in refUbiJoin.DefaultIfEmpty()
+
+                                    join pto in q_PerTelOpe
+                                    on pe.nId_PersTelefOpe equals pto.nId_PersTelefOpe
+                                    into ptoJoin
+                                    from pto in ptoJoin.DefaultIfEmpty()
+
+                                    join fu in q_fuBusTel
+                                        on (det != null && det.nId_Fuente.HasValue
+                                                ? det.nId_Fuente
+                                                : pe.nId_Fuente)
+                                    equals fu.nId_Fuente
+                                    into fuJoin
+                                    from fu in fuJoin.DefaultIfEmpty()
+
+                                    select new GetTelefonosResponseDto
+                                    {
+                                        nId_PersTelef = pe.nId_PersTelef,
+                                        prioridad = pe.nTelef_Prioridad ?? 0,
+                                        nroTelefono = pe.nTelef_Nro ?? "",
+                                        horario = hrs.cNombren_PersDeudorGestionHrs ?? "",
+                                        referenciaUbicacion = "", //refUbi.cNombre_PersRefUbi ?? "",
+                                        estado = pto.cNombre_PersTelefOpe ?? "",
+                                        fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
+                                        fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",
+                                        contactados = det.nId_Cliente == 95
+                                                    ? (
+                                                        totalContactados == 0
+                                                            ? "0%"
+                                                            : (((pe.ncontactados ?? 0) * 100m / totalContactados)
+                                                                .ToString("0.00") + "%")
+                                                      )
+                                                    : (pe.ncontactados ?? 0).ToString(),
+                                        noContactados = pe.nNoContactados ?? 0,
+                                        cantidadIvr = pe.nCant_Ivr ?? 0,
+                                        fuente = fu.cDescripcion ?? "",
+                                        ordenSearch = ""
+                                    }
+                                )
+                                .Skip((TelefonosDto.PageNumber - 1) * TelefonosDto.PageSize)
+                                .Take(TelefonosDto.PageSize)
+                                .ToListAsync();
+
+
+                int totalRecords = q_Telefono.Count();
+
+                var response = ResultListDto<IEnumerable<GetTelefonosResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = TelefonosDto.PageNumber;
+                response.PageSize = TelefonosDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / TelefonosDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetTelefonosResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
         #region "Obtener Registro de Telefono"
         public async Task<ResultDto<GetTelefonoAsync>> GetTelefonoByIdTelefonoAsync(int nId_PersTelef)
         {

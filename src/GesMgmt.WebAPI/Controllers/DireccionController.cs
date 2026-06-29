@@ -7,6 +7,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -29,7 +31,34 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Provincias por Departamento de Ubigeo")]
+        /// <summary>
+        /// Obtiene el listado de DIRECCIONES cargados del deudor.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de DIRECCIONES cargados del deudor.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de DIRECCIONES cargados del deudor.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene el listado de DIRECCIONES cargados del deudor")]
+        [HttpGet("GetDirecciones")]
+        [ProducesResponseType(typeof(ResultDto<GetDireccionesResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDireccionesAsync([FromQuery] GetDireccionesRequestDto gestionDireccionDto)
+        {
+            _Logger.LogInfo($"GetDirecciones|Begin|GetDireccionesAsync|request: {JsonSerializer.Serialize(gestionDireccionDto)}");
+            var result = await _direccionService.GetDireccionesAsync(gestionDireccionDto);
+            _Logger.LogInfo($"GetDirecciones|End|GetDireccionesAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene la DIRECCIÓN del deudor por ID DIRECCIÓN.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene la DIRECCIÓN del deudor por ID DIRECCIÓN.
+        /// </remarks>
+        /// <response code="200">Obtiene la DIRECCIÓN del deudor por ID DIRECCIÓN.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene la DIRECCIÓN del deudor por ID DIRECCIÓN")]
         [HttpGet("{nId_PersDirecc}")]
         [ProducesResponseType(typeof(ResultDto<GetDireccionAsync>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -42,6 +71,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Crear DIRECCIÓN por IdDeudor.
+        /// </summary>
+        /// <remarks>
+        /// Crear DIRECCIÓN por IdDeudor.
+        /// </remarks>
+        /// <response code="200">Crear DIRECCIÓN por IdDeudor.</response>
         [HttpPost]
         [ProducesResponseType(typeof(ResultDto<CreateDireccionResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -54,6 +90,13 @@ namespace GesMgmt.WebAPI.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        /// <summary>
+        /// Editar DIRECCIÓN por IdDeudor.
+        /// </summary>
+        /// <remarks>
+        /// Editar DIRECCIÓN por IdDeudor.
+        /// </remarks>
+        /// <response code="200">Editar DIRECCIÓN por IdDeudor.</response>
         [HttpPut]
         [ProducesResponseType(typeof(ResultDto<EditDireccionResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -66,6 +109,13 @@ namespace GesMgmt.WebAPI.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de Departamentos de Ubigeo.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Departamentos de Ubigeo.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Departamentos de Ubigeo.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Departamentos de Ubigeo")]
         [HttpGet("GetDireccionDepartamentos")]
         [ProducesResponseType(typeof(ResultDto<GetDireccionDepartamentos>), StatusCodes.Status200OK)]
@@ -79,7 +129,14 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
-        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Dirección")]
+        /// <summary>
+        /// Obtiene el listado de Porvincia por Departamento de Ubigeo.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Porvincia por Departamento de Ubigeo.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Porvincia por Departamento de Ubigeo.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene el listado de Porvincia por Departamento de Ubigeo")]
         [HttpGet("GetDireccionProvincias")]
         [ProducesResponseType(typeof(ResultDto<GetDireccionProvincias>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -92,6 +149,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de Distrito por Porvincia, por Departamento de Ubigeo.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Distrito por Porvincia, por Departamento de Ubigeo.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Distrito por Porvincia, por Departamento de Ubigeo.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Distritos por Provincias y Departamentos de Ubigeo")]
         [HttpGet("GetDireccionDistritos")]
         [ProducesResponseType(typeof(ResultDto<GetDireccionDistritos>), StatusCodes.Status200OK)]
@@ -105,6 +169,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el listado de Ubicaciones de Direcciones.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Ubicaciones de Direcciones.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Ubicaciones de Direcciones.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Ubicaciones de Direcciones")]
         [HttpGet("GetDireccionUbicaciones")]
         [ProducesResponseType(typeof(ResultDto<GetDireccionUbicaciones>), StatusCodes.Status200OK)]

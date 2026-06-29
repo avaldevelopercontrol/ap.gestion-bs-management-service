@@ -2,22 +2,22 @@
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
-using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
-namespace GesMgmt.Application.Validators.Gestion
+namespace GesMgmt.Application.Validators.Telefono
 {
-    public class GetGestionTeleRequestValidator
+    public class GetTelefonoRequestValidator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
-        private GetGestionTelefonoRequestDto _requestDto;
+        private GetTelefonosRequestDto _requestDto;
 
-        public GetGestionTeleRequestValidator(
+        public GetTelefonoRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetGestionTelefonoRequestDto requestDto)
+                GetTelefonosRequestDto requestDto)
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -25,7 +25,7 @@ namespace GesMgmt.Application.Validators.Gestion
             _requestDto = requestDto;
         }
 
-        public async Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> Validate()
+        public async Task<ResultListDto<IEnumerable<GetTelefonosResponseDto>>> Validate()
         {
             #region Default
             var validationResultDefault = await ValidateDefault();
@@ -35,12 +35,12 @@ namespace GesMgmt.Application.Validators.Gestion
                 return validationResultDefault;
             }
             #endregion
-            return ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetTelefonosResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>> ValidateDefault()
+        private async Task<ResultListDto<IEnumerable<GetTelefonosResponseDto>>> ValidateDefault()
         {
-            return ResultListDto<IEnumerable<GetGestionTelefonoResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultListDto<IEnumerable<GetTelefonosResponseDto>>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
     }
 }
