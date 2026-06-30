@@ -31,5 +31,21 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.nId_Usuario == nId_Usuario);
             return query;
         }
+
+        public async Task<av_Usuario> GetLoginUsuarioAsync(string cUsr_Login, string cUsr_Pass)
+        {
+            var query = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.cUsr_Login == cUsr_Login && s.cUsr_Pass == cUsr_Pass);
+            return query;
+        }
+
+        public async Task<av_Usuario> GetByUsuarioAsync(string cUsr_Login)
+        {
+            var query = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.cUsr_Login == cUsr_Login);
+            return query;
+        }
     }
 }

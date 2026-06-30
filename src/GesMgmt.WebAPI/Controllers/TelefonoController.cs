@@ -5,8 +5,6 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
 using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 

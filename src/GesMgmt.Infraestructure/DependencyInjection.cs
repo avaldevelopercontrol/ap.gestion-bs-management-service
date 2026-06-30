@@ -4,12 +4,14 @@ using GesMgmt.Application.Interfaces.Direccion;
 using GesMgmt.Application.Interfaces.Email;
 using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Application.Interfaces.Telefono;
+using GesMgmt.Application.Interfaces.Usuario;
 using GesMgmt.Application.Services;
 using GesMgmt.Application.Services.Deudor;
 using GesMgmt.Application.Services.Direccion;
 using GesMgmt.Application.Services.Email;
 using GesMgmt.Application.Services.Gestion;
 using GesMgmt.Application.Services.Telefono;
+using GesMgmt.Application.Services.Usuario;
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Logger;
 using GesMgmt.Infraestructure.Persistence;
@@ -39,11 +41,13 @@ namespace GesMgmt.Infraestructure
             services.AddScoped<IValidationMessageRepository, ValidationMessageRespository>();
 
             // Services
-            services.AddScoped<IGestionService, GestionService>();
-            services.AddScoped<ITelefonoService, TelefonoService>();
+            services.AddScoped<IDeudorService, DeudorService>();
             services.AddScoped<IDireccionService, DireccionService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IDeudorService, DeudorService>();
+            services.AddScoped<IGestionService, GestionService>();
+            services.AddScoped<ITelefonoService, TelefonoService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            
             services.AddScoped<IValidationMessageService, ValidationMessageService>();
 
             // Logger

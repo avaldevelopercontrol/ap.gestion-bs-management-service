@@ -45,5 +45,10 @@ namespace GesMgmt.Domain.Constants
         public const string GESTION_STATUS_MANAGEMENT_CLARO_REQUIRED = "033";
         public const string GESTION_REASON_FOR_NO_PAYMENT = "034";
 
+        public const string USUARIO_LOGIN_LENGTH = "035";
+        public const string USUARIO_PASS_LENGTH = "036";
+        public const string USUARIO_LOGIN_NO_EXIST = "037";
+        public const string USUARIO_LOGIN_INCORRECT = "038";
+
     }
 }

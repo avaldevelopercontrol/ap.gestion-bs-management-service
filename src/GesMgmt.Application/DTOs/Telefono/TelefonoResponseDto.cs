@@ -20,6 +20,7 @@ namespace GesMgmt.Application.DTOs.Telefono
             public string? fuente { get; set; }
             public string? ordenSearch { get; set; }
         }
+
         public class GetTelefonoResultados
         {
             public int nId_PersTelefOpe { get; set; }

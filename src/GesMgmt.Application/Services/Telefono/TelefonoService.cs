@@ -143,61 +143,53 @@ namespace GesMgmt.Application.Services.Telefono
         {
             try
             {
+                GetTelefonoAsync data = new GetTelefonoAsync();
                 var telefonoPers = await _unitOfWork.av_PersTelefs.GetTelefonoByIdTelefonoAsync(nId_PersTelef);
-                GetTelefonoAsync data = new GetTelefonoAsync
+                if (telefonoPers != null)
                 {
-                    nId_PersTelef = telefonoPers.nId_PersTelef,
-                    av_PersDeudor = new av_PersDeudor
+                    data = new GetTelefonoAsync
                     {
-                        nId_PersDeudor = telefonoPers.nId_PersDeudor.Value,
-                    },
-                    nTelef_Pre = telefonoPers.nTelef_Pre ?? "",
-                    nTelef_Nro = telefonoPers.nTelef_Nro ?? "",
-                    nTelef_Anexo = telefonoPers.nTelef_Anexo ?? "",
-                    nId_PersRefUbi = telefonoPers.nId_PersRefUbi ?? 0,
-                    //av_PersRefUbi = new av_PersRefUbi
-                    //{
-                    //    nId_PersRefUbi = telefonoPers.nId_PersRefUbi.Value
-                    //},
-                    cTelef_Coment = telefonoPers.cTelef_Coment ?? "",
-                    bEstado = telefonoPers.bEstado ?? false,
-                    nId_PersDirecc = telefonoPers.nId_PersDirecc ?? 0,
-                    nTelef_Prioridad = telefonoPers.nTelef_Prioridad ?? 0,
-                    nId_PersTelefOpe = telefonoPers.nId_PersTelefOpe ?? 0,
-                    //av_PersTelefOpe = new av_PersTelefOpe
-                    //{
-                    //    nId_PersTelefOpe = telefonoPers.nId_PersTelefOpe.Value
-                    //},
-                    nId_PersDeudorGestionHrs = telefonoPers.nId_PersDeudorGestionHrs ?? 0,
-                    //av_PersDeudorGestionHrs = new av_PersDeudorGestionHrs
-                    //{
-                    //    nId_PersDeudorGestionHrs = telefonoPers.nId_PersDeudorGestionHrs.Value
-                    //},
-                    dFecUlt_PerstelefOpe = telefonoPers.dFecUlt_PerstelefOpe.HasValue ? FormatearFecha(telefonoPers.dFecUlt_PerstelefOpe) : "",
-                    dFecCarga_PersTelef = telefonoPers.dFecCarga_PersTelef.HasValue ? FormatearFecha(telefonoPers.dFecCarga_PersTelef) : "",
-                    cDireccionTEMPORAL = telefonoPers.cDireccionTEMPORAL ?? "",
-                    ncontactados = telefonoPers.ncontactados ?? 0,
-                    baseTelef = telefonoPers.baseTelef ?? "",
-                    cbus = telefonoPers.cbus ?? "",
-                    nId_Fuente = telefonoPers.nId_Fuente ?? 0,
-                    nreferencia = telefonoPers.nreferencia ?? 0,
-                    nid_usuarioupd = telefonoPers.nid_usuarioupd ?? 0,
-                    nId_OperadorTelefonico = telefonoPers.nId_OperadorTelefonico ?? 0,
-                    nId_EstadoAstkProv = telefonoPers.nId_EstadoAstkProv ?? 0,
-                    dFec_EstadoAstkProv = telefonoPers.dFec_EstadoAstkProv.HasValue ? FormatearFecha(telefonoPers.dFec_EstadoAstkProv) : "",
-                    nId_TipoTelefono = telefonoPers.nId_TipoTelefono ?? 0,
-                    nNoContactados = telefonoPers.nNoContactados ?? 0,
-                    nCant_Ivr = telefonoPers.nCant_Ivr ?? 0,
-                    nOrden_Act = telefonoPers.nOrden_Act ?? 0,
-                    bReclamo = telefonoPers.bReclamo ?? false,
-                    c_osiptel = telefonoPers.c_osiptel ?? "",
-                    c_modalidad_osiptel = telefonoPers.c_modalidad_osiptel ?? "",
-                    c_operadora_osiptel = telefonoPers.c_operadora_osiptel ?? "",
-                    f_estado_osiptel = telefonoPers.f_estado_osiptel.HasValue ? FormatearFecha(telefonoPers.f_estado_osiptel) : "",
-                    Nombre = telefonoPers.Nombre ?? "",
-                    Contacto = telefonoPers.Contacto ?? "",
-                    Parentesco = telefonoPers.Parentesco ?? ""
-                };
+                        nId_PersTelef = telefonoPers.nId_PersTelef,
+                        av_PersDeudor = new av_PersDeudor
+                        {
+                            nId_PersDeudor = telefonoPers.nId_PersDeudor.Value,
+                        },
+                        nTelef_Pre = telefonoPers.nTelef_Pre ?? "",
+                        nTelef_Nro = telefonoPers.nTelef_Nro ?? "",
+                        nTelef_Anexo = telefonoPers.nTelef_Anexo ?? "",
+                        nId_PersRefUbi = telefonoPers.nId_PersRefUbi ?? 0,
+                        cTelef_Coment = telefonoPers.cTelef_Coment ?? "",
+                        bEstado = telefonoPers.bEstado ?? false,
+                        nId_PersDirecc = telefonoPers.nId_PersDirecc ?? 0,
+                        nTelef_Prioridad = telefonoPers.nTelef_Prioridad ?? 0,
+                        nId_PersTelefOpe = telefonoPers.nId_PersTelefOpe ?? 0,
+                        nId_PersDeudorGestionHrs = telefonoPers.nId_PersDeudorGestionHrs ?? 0,
+                        dFecUlt_PerstelefOpe = telefonoPers.dFecUlt_PerstelefOpe.HasValue ? FormatearFecha(telefonoPers.dFecUlt_PerstelefOpe) : "",
+                        dFecCarga_PersTelef = telefonoPers.dFecCarga_PersTelef.HasValue ? FormatearFecha(telefonoPers.dFecCarga_PersTelef) : "",
+                        cDireccionTEMPORAL = telefonoPers.cDireccionTEMPORAL ?? "",
+                        ncontactados = telefonoPers.ncontactados ?? 0,
+                        baseTelef = telefonoPers.baseTelef ?? "",
+                        cbus = telefonoPers.cbus ?? "",
+                        nId_Fuente = telefonoPers.nId_Fuente ?? 0,
+                        nreferencia = telefonoPers.nreferencia ?? 0,
+                        nid_usuarioupd = telefonoPers.nid_usuarioupd ?? 0,
+                        nId_OperadorTelefonico = telefonoPers.nId_OperadorTelefonico ?? 0,
+                        nId_EstadoAstkProv = telefonoPers.nId_EstadoAstkProv ?? 0,
+                        dFec_EstadoAstkProv = telefonoPers.dFec_EstadoAstkProv.HasValue ? FormatearFecha(telefonoPers.dFec_EstadoAstkProv) : "",
+                        nId_TipoTelefono = telefonoPers.nId_TipoTelefono ?? 0,
+                        nNoContactados = telefonoPers.nNoContactados ?? 0,
+                        nCant_Ivr = telefonoPers.nCant_Ivr ?? 0,
+                        nOrden_Act = telefonoPers.nOrden_Act ?? 0,
+                        bReclamo = telefonoPers.bReclamo ?? false,
+                        c_osiptel = telefonoPers.c_osiptel ?? "",
+                        c_modalidad_osiptel = telefonoPers.c_modalidad_osiptel ?? "",
+                        c_operadora_osiptel = telefonoPers.c_operadora_osiptel ?? "",
+                        f_estado_osiptel = telefonoPers.f_estado_osiptel.HasValue ? FormatearFecha(telefonoPers.f_estado_osiptel) : "",
+                        Nombre = telefonoPers.Nombre ?? "",
+                        Contacto = telefonoPers.Contacto ?? "",
+                        Parentesco = telefonoPers.Parentesco ?? ""
+                    };
+                }
                 return ResultDto<GetTelefonoAsync>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
