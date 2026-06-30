@@ -24,6 +24,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_EstadoEnvioEmailGen> av_EstadoEnvioEmailGens { get; set; }
         public DbSet<av_EstadoEnvioEmailError> av_EstadoEnvioEmailErrors { get; set; }
         public DbSet<av_FuenteBusTel> av_FuenteBusTels { get; set; }
+        public DbSet<av_Grupo> av_Grupos { get; set; }
         public DbSet<av_MaeTabla> av_MaeTablas { get; set; }
         public DbSet<av_Moneda> av_Monedas { get; set; }
         public DbSet<av_OficinaAval> av_OficinaAvals { get; set; }
@@ -78,6 +79,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_EstadoAsteriskAvalConfiguration());
             modelBuilder.ApplyConfiguration(new av_EstadoEnvioEmailGenConfiguration());
             modelBuilder.ApplyConfiguration(new av_EstadoEnvioEmailErrorConfiguration());
+            modelBuilder.ApplyConfiguration(new av_GrupoConfiguration());
             modelBuilder.ApplyConfiguration(new av_FuenteBusTelConfiguration());
             modelBuilder.ApplyConfiguration(new av_MaeTablaConfiguration());
             modelBuilder.ApplyConfiguration(new av_MonedaConfiguration());
@@ -103,6 +105,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_TablaCampoGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_TipoGestionConfiguration());
             modelBuilder.ApplyConfiguration(new av_UbigeoConfiguration());
+            modelBuilder.ApplyConfiguration(new av_UGrupoConfiguration());
             modelBuilder.ApplyConfiguration(new av_UsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new av_ZonaCarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ZonaGeneralConfiguration());

@@ -1,5 +1,4 @@
-﻿using GesMgmt.Domain.Entities;
-using GesMgmt.Domain.Interfaces;
+﻿using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
@@ -31,6 +30,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_EstadoEnvioEmailGenRepository? _av_EstadoEnvioEmailGens;
         private Iav_EstadoEnvioEmailErrorRepository? _av_EstadoEnvioEmailErrors;
         private Iav_FuenteBusTelRepository? _av_FuenteBusTels;
+        private Iav_GrupoRepository? _av_Grupos;
         private Iav_MaeTablaRepository? _av_MaeTablas;
         private Iav_MonedaRepository? _av_Monedas;
         private Iav_OficinaAvalRepository? _av_OficinaAvals;
@@ -55,6 +55,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
         private Iav_TipoGestionRepository? _av_TipoGestions;
         private Iav_UbigeoRepository? _av_Ubigeos;
+        private Iav_UGrupoRepository? _av_UGrupos;
         private Iav_UsuarioRepository? _av_Usuarios;
         private Iav_ZonaCarteraRepository? _av_ZonaCarteras;
         private Iav_ZonaGeneralRepository? _av_ZonaGenerals;
@@ -89,6 +90,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_EstadoEnvioEmailGenRepository av_EstadoEnvioEmailGens => _av_EstadoEnvioEmailGens ??= new av_EstadoEnvioEmailGenRepository(_context);
         public Iav_EstadoEnvioEmailErrorRepository av_EstadoEnvioEmailErrors => _av_EstadoEnvioEmailErrors ??= new av_EstadoEnvioEmailErrorRepository(_context);
         public Iav_FuenteBusTelRepository av_FuenteBusTels => _av_FuenteBusTels ??= new av_FuenteBusTelRepository(_context);
+        public Iav_GrupoRepository av_Grupos => _av_Grupos ??= new av_GrupoRepository(_context);
         public Iav_MaeTablaRepository av_MaeTablas => _av_MaeTablas ??= new av_MaeTablaRepository(_context);
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
         public Iav_OficinaAvalRepository av_OficinaAvals => _av_OficinaAvals ??= new av_OficinaAvalRepository(_context);
@@ -113,6 +115,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
         public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
         public Iav_UbigeoRepository av_Ubigeos => _av_Ubigeos ??= new av_UbigeoRepository(_context);
+        public Iav_UGrupoRepository av_UGrupos => _av_UGrupos ??= new av_UGrupoRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
         public Iav_ZonaCarteraRepository av_ZonaCarteras => _av_ZonaCarteras ??= new av_ZonaCarteraRepository(_context);
         public Iav_ZonaGeneralRepository av_ZonaGenerals => _av_ZonaGenerals ??= new av_ZonaGeneralRepository(_context);

@@ -1288,7 +1288,7 @@ namespace GesMgmt.Application.Services.Gestion
 
             try
             {
-
+                //'10, 20, 100, 102'
                 var idsDocCobrar = OpeGesCreateDto.nId_DocxCobrars
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => int.Parse(x.Trim()));

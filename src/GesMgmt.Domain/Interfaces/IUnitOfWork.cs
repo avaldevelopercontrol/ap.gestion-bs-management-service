@@ -21,6 +21,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_EstadoEnvioEmailGenRepository av_EstadoEnvioEmailGens { get; }
         Iav_EstadoEnvioEmailErrorRepository av_EstadoEnvioEmailErrors { get; }
         Iav_FuenteBusTelRepository av_FuenteBusTels { get; }
+        Iav_GrupoRepository av_Grupos { get; }
         Iav_MaeTablaRepository av_MaeTablas { get; }
         Iav_MonedaRepository av_Monedas { get; }
         Iav_OficinaAvalRepository av_OficinaAvals { get; }
@@ -45,6 +46,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_TablaCampoGeneralRepository av_TablaCampoGenerals { get; }
         Iav_TipoGestionRepository av_TipoGestions { get; }
         Iav_UbigeoRepository av_Ubigeos { get; }
+        Iav_UGrupoRepository av_UGrupos { get; }
         Iav_UsuarioRepository av_Usuarios { get; }
         Iav_ZonaCarteraRepository av_ZonaCarteras { get; }
         Iav_ZonaGeneralRepository av_ZonaGenerals { get; }
