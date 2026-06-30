@@ -3,6 +3,13 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionResponseDto
     {
+
+        public class GetGestionTipoGestionResponseDto
+        {
+            public int nId_TipoGestion { get; set; }
+            public string cNomTipoGestion{ get; set; }
+        }
+
         public class CreateGestionOpeGesResponseDto
         {
             public int? nId_DocxCobrarOpe { get; set; }

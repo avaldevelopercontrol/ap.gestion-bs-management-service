@@ -1380,5 +1380,33 @@ namespace GesMgmt.Application.Services.Gestion
             }
         }
         #endregion
+
+        #region "Tipo de Gestión"
+        public async Task<ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>> GetGestionTipoGestionAsync()
+        {
+            try
+            {
+                var q_TipGes = await _unitOfWork.av_TipoGestions.Query();
+                
+                var    data = await (
+                                    from s in q_TipGes
+                                    select new GetGestionTipoGestionResponseDto
+                                    {
+                                        nId_TipoGestion = s.nId_TipoGestion,
+                                        cNomTipoGestion = s.cNomTipoGestion
+                                    }
+                    )
+                    .ToListAsync();
+
+                var response = ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
     }
 }

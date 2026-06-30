@@ -313,6 +313,26 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el Listado de Tipo de Gestiones.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Listado Tipo de Gestiones.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Listado Tipo de Gestiones.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Tipo de Gestiones")]
+        [HttpGet("GetGestionTipoGestion")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionDocumentoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionTipoGestionAsync()
+        {
+            _Logger.LogInfo($"GetGestionTipoGestion|Begin|GetGestionTipoGestionAsync|request:");
+            var result = await _gestionService.GetGestionTipoGestionAsync();
+            _Logger.LogInfo($"GetGestionTipoGestion|End|GetGestionTipoGestionAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
         [HttpPost("CreateGestionOpeGes")]
         [ProducesResponseType(typeof(ResultDto<CreateGestionOpeGesResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
