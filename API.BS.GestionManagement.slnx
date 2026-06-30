@@ -6,6 +6,9 @@
     <Project Path="src/GesMgmt.Application/GesMgmt.Application.csproj" />
     <Project Path="src/GesMgmt.Domain/GesMgmt.Domain.csproj" />
   </Folder>
+  <Folder Name="/Elementos de la solución/">
+    <File Path=".gitignore" />
+  </Folder>
   <Folder Name="/Infraestructure/">
     <Project Path="src/GesMgmt.Infraestructure/GesMgmt.Infraestructure.csproj" />
   </Folder>
