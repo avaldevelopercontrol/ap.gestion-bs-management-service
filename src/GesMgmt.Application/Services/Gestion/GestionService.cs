@@ -1396,6 +1396,7 @@ namespace GesMgmt.Application.Services.Gestion
                                         cNomTipoGestion = s.cNomTipoGestion
                                     }
                     )
+                    .OrderBy(s => s.cNomTipoGestion)
                     .ToListAsync();
 
                 var response = ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
@@ -1405,6 +1406,35 @@ namespace GesMgmt.Application.Services.Gestion
             catch (Exception ex)
             {
                 return ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
+        #region "Tipo de Gestión"
+        public async Task<ResultListDto<IEnumerable<GetGestionEstadoGestionResponseDto>>> GetGestionEstadoGestionAsync(GetGestionEstadoGestionRequestDto estadoGestionDto)
+        {
+            try
+            {
+                var q_TipGes = await _unitOfWork.av_OpeCodCliOutEsts.EstadoGestionByIdClienteAsync(estadoGestionDto.nId_Cliente);
+
+                var data = await (
+                                    from s in q_TipGes
+                                    select new GetGestionEstadoGestionResponseDto
+                                    {
+                                        nId_OpeCodCliOut = s.nId_OpeCodCliOut,
+                                        cNombre_OpeCodCliOut = s.cNombre_OpeCodCliOut + "(" + s.nId_OpeCodCliOut.ToString() + ")"
+                                    }
+                    )
+                    .OrderBy(s => s.cNombre_OpeCodCliOut)
+                    .ToListAsync();
+
+                var response = ResultListDto<IEnumerable<GetGestionEstadoGestionResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionEstadoGestionResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion

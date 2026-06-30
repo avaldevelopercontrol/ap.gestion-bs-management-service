@@ -20,5 +20,12 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public async Task<IQueryable<av_OpeCodCliOutEst>> EstadoGestionByIdClienteAsync(int nId_Cliente)
+        {
+            return _dbSet
+                        .Where(s => s.nId_Cliente == nId_Cliente && s.bEstado == true)
+                        .AsNoTracking();
+        }
     }
 }

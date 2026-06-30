@@ -322,7 +322,7 @@ namespace GesMgmt.WebAPI.Controllers
         /// <response code="200">Obtiene el listado de Listado Tipo de Gestiones.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Tipo de Gestiones")]
         [HttpGet("GetGestionTipoGestion")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionDocumentoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<GetGestionTipoGestionResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetGestionTipoGestionAsync()
@@ -330,6 +330,26 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionTipoGestion|Begin|GetGestionTipoGestionAsync|request:");
             var result = await _gestionService.GetGestionTipoGestionAsync();
             _Logger.LogInfo($"GetGestionTipoGestion|End|GetGestionTipoGestionAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene el Listado de Estado de Gestiones.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Listado Estado de Gestiones.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Listado Estado de Gestiones.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Estado de Gestiones")]
+        [HttpGet("GetGestionEstadoGestion")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionEstadoGestionResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionEstadoGestionAsync([FromQuery] GetGestionEstadoGestionRequestDto gestionEstadoDto)
+        {
+            _Logger.LogInfo($"GetGestionEstadoGestion|Begin|GetGestionEstadoGestionAsync|request: {JsonSerializer.Serialize(gestionEstadoDto)}");
+            var result = await _gestionService.GetGestionEstadoGestionAsync(gestionEstadoDto);
+            _Logger.LogInfo($"GetGestionEstadoGestion|End|GetGestionEstadoGestionAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 

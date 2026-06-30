@@ -4,6 +4,12 @@ namespace GesMgmt.Application.DTOs.Gestion
     public class GestionResponseDto
     {
 
+        public class GetGestionEstadoGestionResponseDto
+        {
+            public int nId_OpeCodCliOut { get; set; }
+            public string cNombre_OpeCodCliOut { get; set; }
+        }
+
         public class GetGestionTipoGestionResponseDto
         {
             public int nId_TipoGestion { get; set; }
@@ -221,8 +227,6 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string cCar_Nombre { get; set; }
             public string cCampanna { get; set; }
         }
-
-        
 
         public class GetGestionGestionesCarteraDeudorResponseDto
         {

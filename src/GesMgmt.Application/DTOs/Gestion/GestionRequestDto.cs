@@ -5,6 +5,12 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionRequestDto
     {
+
+        public class GetGestionEstadoGestionRequestDto
+        {
+            public int nId_Cliente { get; set; }
+        }
+
         public class CreateGestionOpeGesRequestDto
         {
             public int? nId_DocxCobrarOpe { get; set; }
