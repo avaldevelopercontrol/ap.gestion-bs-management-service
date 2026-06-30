@@ -37,5 +37,32 @@ namespace GesMgmt.Infraestructure.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
+
+        public IQueryable<av_OpeCodCliOut> GetGestionPaletaRespuestaAsync(int nId_Cliente, int nId_Contrato, int nNivelPaleta, int? nId_SupOpeCodCliOut, int nId_TipoGestion)
+        {
+            var query = _dbSet.Where(s =>
+                s.nId_Cliente == nId_Cliente &&
+                (s.nId_Contrato == null || s.nId_Contrato == nId_Contrato) &&
+                s.nNivelPaleta == nNivelPaleta &&
+                s.bEstado == true);
+
+            if (nNivelPaleta == 2 && (nId_SupOpeCodCliOut ?? 0) == 0)
+            {
+                query = query.Where(s => (s.nId_SupOpeCodCliOut ?? 0) == 0);
+            }
+            else if ((nId_SupOpeCodCliOut ?? 0) > 0)
+            {
+                query = query.Where(s => s.nId_SupOpeCodCliOut == nId_SupOpeCodCliOut);
+            }
+
+            if (nId_TipoGestion != 3)
+            {
+                query = query.Where(s =>
+                    (s.nId_TipoGestion ?? 3) == nId_TipoGestion ||
+                    (s.nId_TipoGestion ?? 3) == 3);
+            }
+
+            return query.AsNoTracking();
+        }
     }
 }

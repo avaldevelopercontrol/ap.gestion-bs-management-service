@@ -24,5 +24,6 @@ namespace GesMgmt.Application.Interfaces.Gestion
         Task<ResultDto<CreateGestionOpeGesResponseDto>> CreateGestionOpeGesAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto);
         Task<ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>> GetGestionTipoGestionAsync();
         Task<ResultListDto<IEnumerable<GetGestionEstadoGestionResponseDto>>> GetGestionEstadoGestionAsync(GetGestionEstadoGestionRequestDto estadoGestionDto);
+        Task<ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>> GetGestionPaletaRespuestaAsync(GetGestionPaletaRespuestaRequestDto paletaGestionDto);
     }
 }

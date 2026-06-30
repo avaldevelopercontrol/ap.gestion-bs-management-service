@@ -1438,5 +1438,38 @@ namespace GesMgmt.Application.Services.Gestion
             }
         }
         #endregion
+
+        #region "Paleta Respuesta"
+        public async Task<ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>> GetGestionPaletaRespuestaAsync(GetGestionPaletaRespuestaRequestDto paletaGestionDto)
+        {
+            try
+            {
+                var q_PalGes = _unitOfWork.av_OpeCodCliOuts.GetGestionPaletaRespuestaAsync(paletaGestionDto.nId_Cliente, 
+                                                                                        paletaGestionDto.nId_Contrato, 
+                                                                                        paletaGestionDto.nNivelPaleta, 
+                                                                                        paletaGestionDto.nId_SupOpeCodCliOut, 
+                                                                                        paletaGestionDto.nId_TipoGestion);
+
+                var data = await (
+                                    from s in q_PalGes
+                                    select new GetGestionPaletaRespuestaResponseDto
+                                    {
+                                        nId_OpeCodCliOut = s.nId_OpeCodCliOut,
+                                        cNombre_OpeCodCliOut = s.cNombre_OpeCodCliOut + "(" + s.nId_OpeCodCliOut.ToString() + ")"
+                                    }
+                    )
+                    .OrderBy(s => s.cNombre_OpeCodCliOut)
+                    .ToListAsync();
+
+                var response = ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
     }
 }

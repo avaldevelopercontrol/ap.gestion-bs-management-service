@@ -25,6 +25,7 @@ namespace GesMgmt.Application.DTOs.Deudor
             public string? FechaUltimaGestionCAMPO { get; set; }
             public string? UltimaGestionCAMPO { get; set; }
             public int? cantidadGestionCAMPO { get; set; }
+            public string? FechaPromesa { get; set; }
             public string mejorStatus { get; set; }
         }
     }

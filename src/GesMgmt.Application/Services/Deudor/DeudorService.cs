@@ -94,7 +94,9 @@ namespace GesMgmt.Application.Services.Deudor
                             deudor = g.Key.cNomCompleto,
                             importe = g.Key.nImpTotal,
                             saldo = g.Key.nSaldoTotal,
-                            FechaUltimaGestionCALL = ""
+                            FechaUltimaGestionCALL = "",
+                            FechaPromesa = "",
+                            mejorStatus = ""
                         })
                         .Skip((deudorDto.PageNumber - 1) * deudorDto.PageSize)
                         .Take(deudorDto.PageSize)

@@ -6,6 +6,15 @@ namespace GesMgmt.Application.DTOs.Gestion
     public class GestionRequestDto
     {
 
+        public class GetGestionPaletaRespuestaRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Contrato { get; set; }
+            public int nNivelPaleta { get; set; }
+            public int? nId_SupOpeCodCliOut { get; set; }
+            public int nId_TipoGestion { get; set; }
+        }
+
         public class GetGestionEstadoGestionRequestDto
         {
             public int nId_Cliente { get; set; }

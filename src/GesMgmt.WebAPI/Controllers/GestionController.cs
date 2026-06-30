@@ -353,6 +353,26 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Obtiene el Listado Paleta de Respuesta.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Listado Paleta de Respuesta.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Listado Paleta de Respuesta.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Paleta de Respuesta")]
+        [HttpGet("GetGestionPaletaRespuesta")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionPaletaRespuestaResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionPaletaRespuesAsync([FromQuery] GetGestionPaletaRespuestaRequestDto gestionPaletaDto)
+        {
+            _Logger.LogInfo($"GetGestionPaletaRespuesta|Begin|GetGestionPaletaRespuestaAsync|request: {JsonSerializer.Serialize(gestionPaletaDto)}");
+            var result = await _gestionService.GetGestionPaletaRespuestaAsync(gestionPaletaDto);
+            _Logger.LogInfo($"GetGestionPaletaRespuesta|End|GetGestionPaletaRespuestaAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
         [HttpPost("CreateGestionOpeGes")]
         [ProducesResponseType(typeof(ResultDto<CreateGestionOpeGesResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
@@ -364,5 +384,6 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"CreateGestionOpeGes|End|CreateGestionOpeGesAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
+
     }
 }
