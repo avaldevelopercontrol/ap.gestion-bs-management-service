@@ -1458,9 +1458,17 @@ namespace GesMgmt.Application.Services.Gestion
                                         cNombre_OpeCodCliOut = s.cNombre_OpeCodCliOut + "(" + s.nId_OpeCodCliOut.ToString() + ")"
                                     }
                     )
-                    .OrderByDescending(s => s.cNombre_OpeCodCliOut)
+                    .OrderBy(s => s.cNombre_OpeCodCliOut)
                     .ToListAsync();
 
+                if (paletaGestionDto.nId_SupOpeCodCliOut > 0)
+                {
+                    data.Add(new GetGestionPaletaRespuestaResponseDto
+                    {
+                        nId_OpeCodCliOut = 0,
+                        cNombre_OpeCodCliOut = "SIN DATO",
+                    });
+                }
                 var response = ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 return response;
