@@ -19,13 +19,13 @@ namespace GesMgmt.Application.DTOs.Deudor
             public string? deudor { get; set; }
             public decimal? importe { get; set; }
             public decimal? saldo { get; set; }
-            public string? FechaUltimaGestionCALL { get; set; }
-            public string? UltimaGestionCALL { get; set; }
+            public string? fechaUltimaGestionCALL { get; set; }
+            public string? ultimaGestionCALL { get; set; }
             public int? cantidadGestionCALL { get; set; }
-            public string? FechaUltimaGestionCAMPO { get; set; }
-            public string? UltimaGestionCAMPO { get; set; }
+            public string? fechaUltimaGestionCAMPO { get; set; }
+            public string? ultimaGestionCAMPO { get; set; }
             public int? cantidadGestionCAMPO { get; set; }
-            public string? FechaPromesa { get; set; }
+            public string? fechaPromesa { get; set; }
             public string mejorStatus { get; set; }
         }
     }

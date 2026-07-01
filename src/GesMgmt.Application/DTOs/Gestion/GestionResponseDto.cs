@@ -4,6 +4,18 @@ namespace GesMgmt.Application.DTOs.Gestion
     public class GestionResponseDto
     {
 
+        public class GetGestionMotivoNoPagoResponseDto
+        {
+            public int nId_MotivoNoPago { get; set; }
+            public string cNombreMotivoNoPago { get; set; }
+        }
+
+        public class GetGestionEstadoGestionClaroResponseDto
+        {
+            public int nId_OpeCodCliOut { get; set; }
+            public string cNombre_OpeCodCliOut { get; set; }
+        }
+
         public class GetGestionPaletaRespuestaResponseDto
         {
             public int nId_OpeCodCliOut { get; set; }

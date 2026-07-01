@@ -6,6 +6,19 @@ namespace GesMgmt.Application.DTOs.Gestion
     public class GestionRequestDto
     {
 
+        public class GetGestionMotivoNoPagoRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Cartera { get; set; }
+        }
+
+        public class GetGestionEstadoGestionClaroRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Cartera { get; set; }
+            //public string GOB_EMP { get; set; }
+        }
+
         public class GetGestionPaletaRespuestaRequestDto
         {
             public int nId_Cliente { get; set; }

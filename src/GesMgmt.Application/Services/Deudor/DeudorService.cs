@@ -5,6 +5,7 @@ using GesMgmt.Application.Validators.Deudor;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using static GesMgmt.Application.DTOs.Deudor.DeudorRequestDto;
 using static GesMgmt.Application.DTOs.Deudor.DeudorResponseDto;
 
@@ -52,6 +53,7 @@ namespace GesMgmt.Application.Services.Deudor
                     var q_car = _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
                     var q_deupar = _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
 
+
                     var data = (
                         from dc in q_dxc
                         join zc in q_zc
@@ -94,8 +96,8 @@ namespace GesMgmt.Application.Services.Deudor
                             deudor = g.Key.cNomCompleto,
                             importe = g.Key.nImpTotal,
                             saldo = g.Key.nSaldoTotal,
-                            FechaUltimaGestionCALL = "",
-                            FechaPromesa = "",
+                            fechaUltimaGestionCALL = "",
+                            fechaPromesa = "",
                             mejorStatus = ""
                         })
                         .Skip((deudorDto.PageNumber - 1) * deudorDto.PageSize)
@@ -122,13 +124,16 @@ namespace GesMgmt.Application.Services.Deudor
 
                         item.nro = correlativo++;
                         
-                        item.FechaUltimaGestionCALL = FormatearFecha(q_tipificaCall?.dDocCobOpe_FecIni ?? null) ?? "";
-                        item.UltimaGestionCALL = q_tipificaCall_des?.cNombre_OpeCodCliOut ?? "";
+                        item.fechaUltimaGestionCALL = FormatearFecha(q_tipificaCall?.dDocCobOpe_FecIni ?? null) ?? "";
+                        item.ultimaGestionCALL = q_tipificaCall_des?.cNombre_OpeCodCliOut ?? "";
                         item.cantidadGestionCALL = 0;
 
-                        item.FechaUltimaGestionCAMPO = FormatearFecha(q_tipificaCampo?.dDocCobOpe_FecIni ?? null) ?? "";
-                        item.UltimaGestionCAMPO = q_tipificaCampo_des?.cNombre_OpeCodCliOut ?? "";
+                        item.fechaUltimaGestionCAMPO = FormatearFecha(q_tipificaCampo?.dDocCobOpe_FecIni ?? null) ?? "";
+                        item.ultimaGestionCAMPO = q_tipificaCampo_des?.cNombre_OpeCodCliOut ?? "";
                         item.cantidadGestionCAMPO = 0;
+
+                        item.fechaPromesa = FormatearFecha(q_tipificaCall.dFechCompromisoPago ?? null) ?? "";
+                        item.mejorStatus = await MejorStatus(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor);
                     }
 
                     var totalRecords = data.Count();
@@ -149,6 +154,7 @@ namespace GesMgmt.Application.Services.Deudor
             }
         }
 
+        #region "Eventos Privador"
         private Task<av_DocxCobrarOpe?> Tipificacion(int nId_Cliente, int nId_Cartera, int nId_PersDeudor, int nId_TipoGestion)
         {
             return _unitOfWork.av_DocxCobrarOpes.GetDeudorUltimaGestionTipoAsync(nId_Cliente, nId_Cartera, nId_PersDeudor, nId_TipoGestion);
@@ -168,5 +174,17 @@ namespace GesMgmt.Application.Services.Deudor
             }
             return null;
         }
+
+        private async Task<string> MejorStatus(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            string valor = string.Empty;
+            var mejorgestionuno = await _unitOfWork.av_DocxCobrarOpes.GetGestionMejorGestionAsync(nId_Cliente, nId_Cartera, nId_PersDeudor);
+            if (mejorgestionuno == null)
+                return valor;
+
+            valor = mejorgestionuno.av_OpeCodCliOut.cNombre_OpeCodCliOut ?? "";
+            return valor;
+        }
+        #endregion
     }
 }

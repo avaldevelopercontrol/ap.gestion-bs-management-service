@@ -24,6 +24,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_GrupoRepository av_Grupos { get; }
         Iav_MaeTablaRepository av_MaeTablas { get; }
         Iav_MonedaRepository av_Monedas { get; }
+        Iav_MotivoNoPagoRepository av_MotivoNoPagos { get; }
         Iav_OficinaAvalRepository av_OficinaAvals { get; }
         Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts { get; }
         Iav_OpeCodCliOutRepository av_OpeCodCliOuts { get; }

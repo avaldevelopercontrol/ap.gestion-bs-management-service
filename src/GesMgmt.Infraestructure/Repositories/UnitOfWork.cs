@@ -33,6 +33,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_GrupoRepository? _av_Grupos;
         private Iav_MaeTablaRepository? _av_MaeTablas;
         private Iav_MonedaRepository? _av_Monedas;
+        private Iav_MotivoNoPagoRepository? _av_MotivoNoPagos;
         private Iav_OficinaAvalRepository? _av_OficinaAvals;
         private Iav_OpeCodCliOutEstRepository? _av_OpeCodCliOutEsts;
         private Iav_OpeCodCliOutRepository? _av_OpeCodCliOuts;
@@ -93,6 +94,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_GrupoRepository av_Grupos => _av_Grupos ??= new av_GrupoRepository(_context);
         public Iav_MaeTablaRepository av_MaeTablas => _av_MaeTablas ??= new av_MaeTablaRepository(_context);
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
+        public Iav_MotivoNoPagoRepository av_MotivoNoPagos => _av_MotivoNoPagos ??= new av_MotivoNoPagoRepository(_context);
         public Iav_OficinaAvalRepository av_OficinaAvals => _av_OficinaAvals ??= new av_OficinaAvalRepository(_context);
         public Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts => _av_OpeCodCliOutEsts ??= new av_OpeCodCliOutEstRepository(_context);
         public Iav_OpeCodCliOutRepository av_OpeCodCliOuts => _av_OpeCodCliOuts ??= new av_OpeCodCliOutRepository(_context);

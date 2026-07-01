@@ -1458,7 +1458,7 @@ namespace GesMgmt.Application.Services.Gestion
                                         cNombre_OpeCodCliOut = s.cNombre_OpeCodCliOut + "(" + s.nId_OpeCodCliOut.ToString() + ")"
                                     }
                     )
-                    .OrderBy(s => s.cNombre_OpeCodCliOut)
+                    .OrderByDescending(s => s.cNombre_OpeCodCliOut)
                     .ToListAsync();
 
                 var response = ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
@@ -1468,6 +1468,77 @@ namespace GesMgmt.Application.Services.Gestion
             catch (Exception ex)
             {
                 return ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
+        #region "Estado Gestion Claro"
+        public async Task<ResultListDto<IEnumerable<GetGestionEstadoGestionClaroResponseDto>>> GetGestionEstadoGestionClaroAsync(GetGestionEstadoGestionClaroRequestDto estadoGestionClaroDto)
+        {
+            try
+            {
+                var q_car = await _unitOfWork.av_Carteras.GetCarteraByIdClienteIdCarteraAsync(estadoGestionClaroDto.nId_Cliente, estadoGestionClaroDto.nId_Cartera);
+                var q_estgescla = await _unitOfWork.av_OpeCodCliOutEsts.EstadoGestionByIdClienteAsync(estadoGestionClaroDto.nId_Cliente);
+
+                var data = await (from est in q_estgescla
+                                  where est.bEstado == true
+                                        && (est.bIsClient ?? false) == true
+                                        && (
+                                            q_car.cTipoCar == "GOB"
+                                                ? est.cParam04 == q_car.cTipoCar
+                                                : est.cParam04 != q_car.cTipoCar
+                                         )
+                                        && est.nId_Cliente == q_car.nId_Cliente
+                                  orderby est.cNombre_OpeCodCliOut
+                                  select new GetGestionEstadoGestionClaroResponseDto
+                                  {
+                                        nId_OpeCodCliOut = est.nId_OpeCodCliOut,
+                                        cNombre_OpeCodCliOut = est.cNombre_OpeCodCliOut + " (" + est.nId_OpeCodCliOut + ")"
+                                  }
+
+                    ).ToListAsync();
+            
+                var response = ResultListDto<IEnumerable<GetGestionEstadoGestionClaroResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionEstadoGestionClaroResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
+        #region "Motivo No Pago"
+        public async Task<ResultListDto<IEnumerable<GetGestionMotivoNoPagoResponseDto>>> GetGestionMotivoNoPagoAsync(GetGestionMotivoNoPagoRequestDto motivoNoPagoDto)
+        {
+            try
+            {
+                var q_car = await _unitOfWork.av_Carteras.GetCarteraByIdClienteIdCarteraAsync(motivoNoPagoDto.nId_Cliente, motivoNoPagoDto.nId_Cartera);
+                var q_motnopag = await _unitOfWork.av_MotivoNoPagos.MotivoNoPagoByIdClienteAsync(motivoNoPagoDto.nId_Cliente);
+
+                var data = await (from est in q_motnopag
+                                  where est.bEstado == true
+                                        && (
+                                            q_car.cTipoCar == "GOB"
+                                                ? est.cTipoEmpresa == q_car.cTipoCar
+                                                : est.cTipoEmpresa != q_car.cTipoCar
+                                         )
+                                        && est.nId_Cliente == q_car.nId_Cliente
+                                  orderby est.cNombreMotivoNoPago
+                                  select new GetGestionMotivoNoPagoResponseDto
+                                  {
+                                      nId_MotivoNoPago = est.nId_MotivoNoPago,
+                                      cNombreMotivoNoPago = est.cNombreMotivoNoPago + " (" + est.nId_MotivoNoPago + ")"
+                                  }
+
+                    ).ToListAsync();
+
+                var response = ResultListDto<IEnumerable<GetGestionMotivoNoPagoResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetGestionMotivoNoPagoResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion

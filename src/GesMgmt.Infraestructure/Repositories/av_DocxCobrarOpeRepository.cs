@@ -75,18 +75,34 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public IQueryable<av_DocxCobrarOpe> GetDeudorUltimaGestionCampoAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        public async Task<av_DocxCobrarOpe?> GetGestionMejorGestionAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
         {
-            return _dbSet
+            return await _dbSet
                 .Include(dc => dc.av_DocxCobrar)
                 .Include(tg => tg.av_TipoGestion)
-                .Where(s => s.nId_Cliente == nId_Cliente
-                    && s.nId_Cartera == nId_Cartera
-                    && s.nId_PersDeudor == nId_PersDeudor
-                    && s.bEstado == true
-                    && s.nId_TipoGestion == 2)
-                .OrderByDescending(s => s.dDocCobOpe_FecIni)
-                .AsNoTracking();
+                .Include(pg => pg.av_OpeCodCliOut)
+                .Where(s =>
+                    s.nId_Cliente == nId_Cliente &&
+                    s.nId_Cartera == nId_Cartera &&
+                    s.nId_PersDeudor == nId_PersDeudor &&
+                    s.bEstado == true)
+                //.OrderByDescending(s => s.av_OpeCodCliOut.nPeso)
+                .OrderBy(g => g.av_OpeCodCliOut.nPeso) // Menor peso primero
+                .FirstOrDefaultAsync();
+        }
+
+        public IQueryable<av_DocxCobrarOpe?> GetGestionListarGestionesAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            return _dbSet
+                        .Include(dc => dc.av_DocxCobrar)
+                        .Include(tg => tg.av_TipoGestion)
+                        .Include(pg => pg.av_OpeCodCliOut)
+                        .Where(s => 
+                            s.nId_Cliente == nId_Cliente &&
+                            s.nId_Cartera == nId_Cartera &&
+                            s.nId_PersDeudor == nId_PersDeudor &&
+                            s.bEstado == true)
+                        .AsNoTracking();
         }
     }
 }

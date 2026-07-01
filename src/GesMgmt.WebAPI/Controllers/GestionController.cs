@@ -357,9 +357,9 @@ namespace GesMgmt.WebAPI.Controllers
         /// Obtiene el Listado Paleta de Respuesta.
         /// </summary>
         /// <remarks>
-        /// Obtiene el listado de Listado Paleta de Respuesta.
+        /// Obtiene el Listado de Paleta de Respuesta.
         /// </remarks>
-        /// <response code="200">Obtiene el listado de Listado Paleta de Respuesta.</response>
+        /// <response code="200">Obtiene el Listado de Paleta de Respuesta.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Paleta de Respuesta")]
         [HttpGet("GetGestionPaletaRespuesta")]
         [ProducesResponseType(typeof(ResultDto<GetGestionPaletaRespuestaResponseDto>), StatusCodes.Status200OK)]
@@ -370,6 +370,46 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionPaletaRespuesta|Begin|GetGestionPaletaRespuestaAsync|request: {JsonSerializer.Serialize(gestionPaletaDto)}");
             var result = await _gestionService.GetGestionPaletaRespuestaAsync(gestionPaletaDto);
             _Logger.LogInfo($"GetGestionPaletaRespuesta|End|GetGestionPaletaRespuestaAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene el Listado Estado Gestion Claro.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Estado Gestion Claro.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Estado Gestion Claro.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Paleta de Estado Gestion Claro")]
+        [HttpGet("GetGestionEstadoGestionClaro")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionEstadoGestionClaroResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionEstadoGestionClaroAsync([FromQuery] GetGestionEstadoGestionClaroRequestDto estadoGestionClaroDto)
+        {
+            _Logger.LogInfo($"GetGestionEstadoGestionClaro|Begin|GetGestionEstadoGestionClaroAsync|request: {JsonSerializer.Serialize(estadoGestionClaroDto)}");
+            var result = await _gestionService.GetGestionEstadoGestionClaroAsync(estadoGestionClaroDto);
+            _Logger.LogInfo($"GetGestionEstadoGestionClaro|End|GetGestionEstadoGestionClaroAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene el Listado de Motivo No Pago.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de Motivo No Pago.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de Motivo No Pago.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Paleta de Motivo No Pago")]
+        [HttpGet("GetGestionMotivoNoPago")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionMotivoNoPagoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionMotivoNoPagoAsync([FromQuery] GetGestionMotivoNoPagoRequestDto motivoNoPagoDto)
+        {
+            _Logger.LogInfo($"GetGestionMotivoNoPago|Begin|GetGestionMotivoNoPagoAsync|request: {JsonSerializer.Serialize(motivoNoPagoDto)}");
+            var result = await _gestionService.GetGestionMotivoNoPagoAsync(motivoNoPagoDto);
+            _Logger.LogInfo($"GetGestionMotivoNoPago|End|GetGestionMotivoNoPagoAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
 
