@@ -4,6 +4,7 @@ using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
 using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
@@ -413,15 +414,15 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("CreateGestionOpeGes")]
-        [ProducesResponseType(typeof(ResultDto<CreateGestionOpeGesResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateGestionOpeGesAsync([FromBody] CreateGestionOpeGesRequestDto gestionOpeGesDto)
+        [HttpPost("CreateGestionOpeGesContratos")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateGestionOpeGesContratosAsync([FromBody] CreateGestionOpeGesRequestDto gestionOpeGesDto)
         {
-            _Logger.LogInfo($"CreateGestionOpeGes|Begin|CreateGestionOpeGesAsync|request: {JsonSerializer.Serialize(gestionOpeGesDto)}");
-            var result = await _gestionService.CreateGestionOpeGesAsync(gestionOpeGesDto);
-            _Logger.LogInfo($"CreateGestionOpeGes|End|CreateGestionOpeGesAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"CreateGestionOpeGesContratos|Begin|CreateGestionOpeGesContratosAsync|request: {JsonSerializer.Serialize(gestionOpeGesDto)}");
+            var result = await _gestionService.CreateGestionOpeGesContratosAsync(gestionOpeGesDto);
+            _Logger.LogInfo($"CreateGestionOpeGesContratos|End|CreateGestionOpeGesContratosAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
 

@@ -1178,101 +1178,7 @@ namespace GesMgmt.Application.Services.Gestion
         #endregion
 
         #region "Guardar Deudor Gestion - SubGestion"
-        public async Task<ResultDto<CreateGestionOpeGesResponseDto>> CreateGestionOpeGesAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto)
-        {
-            CreateGestionRequestValidator validator = new CreateGestionRequestValidator(_unitOfWork, _validationMessageService, OpeGesCreateDto);
-
-            // Validaciones
-            var validationResult = await validator.Validate();
-
-            if (validationResult.Code != Const.SUCCESS_CODE)
-            {
-                return validationResult;
-            }
-
-            await _unitOfWork.BeginTransactionAsync();
-
-            try
-            {
-                av_DocxCobrarOpeGes doccobopeges = new av_DocxCobrarOpeGes
-                {
-                    nId_DocxCobrarOpe = null,
-                    nId_DocxCobrar = OpeGesCreateDto.nId_DocxCobrar,
-                    nId_OpeCodIn = 4, //llamada
-                    dDocCobOpe_FecIni = OpeGesCreateDto.dFechaInicioGestion,
-                    dDocCobOpe_FecFin = DateTime.Now,
-                    cDocOpeCobIn_Descr = "Acción Directa",
-                    nId_OpeCodCliOut = OpeGesCreateDto.nNP2.Value > 0
-                                        ? OpeGesCreateDto.nNP1.Value
-                                        : OpeGesCreateDto.nNP1 ?? 0,
-                    bEstado = true,
-                    nId_Usuario = OpeGesCreateDto.nASIGNARGESTOR == 0
-                                    ? OpeGesCreateDto.nId_Usuario
-                                    : OpeGesCreateDto.nASIGNARGESTOR,
-                    nId_Estrategia = null,
-                    nId_UsrLider = null,
-                    nDoc_NroLote = null,
-                    cDocOpeCobOut_Descr = OpeGesCreateDto.cOBSERVACION,
-                    nId_Cliente = OpeGesCreateDto.nId_Cliente,
-                    nId_Contrato = OpeGesCreateDto.nId_Contrato,
-                    nId_Cartera = OpeGesCreateDto.nId_Cartera,
-                    nId_PersDeudor = OpeGesCreateDto.nId_PersDeudor,
-                    bOpeEfectiva = false,
-                    dFechCompromisoPago = OpeGesCreateDto.dFECHACOMPROMISO,
-                    nId_OpeContacto = null,
-                    nId_OpeCodOut2 = null,
-                    nTelef_Nro = OpeGesCreateDto.cTELEFONO,
-                    monto_comp = OpeGesCreateDto.nMONTOSOLES,
-                    monto_compDolares = OpeGesCreateDto.nMONTODOLARES,
-                    cDocxCobOpeInconcert = false,
-                    nId_TipoGestion = OpeGesCreateDto.nTIPOGESTION,
-                    cusuar = OpeGesCreateDto.cSISTEMA,
-                    usu_reg = OpeGesCreateDto.nASIGNARGESTOR > 0
-                                ? OpeGesCreateDto.nId_Usuario
-                                : null,
-                    cnombreContacto = OpeGesCreateDto.cNOMBRECONTACTO,
-                    ccargoContacto = OpeGesCreateDto.cCARGO,
-                    nId_OpeCodOutNp2 = OpeGesCreateDto.nNP2 > 0
-                                        ? OpeGesCreateDto.nNP2
-                                        : null,
-                    nId_DocxCobrarParamOpe = null,
-                    nId_GestionDisp = 3,
-                    cID_Llamada = null,
-                    nId_OpeCodOutEst = OpeGesCreateDto.nESTADOGESTION,
-                    cPeriodo = string.Empty,
-                    cCorreo = string.Empty,
-                    nId_DocxCobrarOpe_orig = OpeGesCreateDto.nESTADOGESTIONCLARO,
-                    nId_OpeCodCliOutMotivoNoPago = OpeGesCreateDto.nMOTIVONOPAGO
-                };
-                var OpeGesCreate = await _unitOfWork.av_DocxCobrarOpeGess.AddAsync(doccobopeges);
-                await _unitOfWork.SaveChangesAsync();
-
-                CreateGestionOpeGesResponseDto responseDto = new CreateGestionOpeGesResponseDto
-                {
-                    nId_DocxCobrarOpe = OpeGesCreate.nId_DocxCobrarOpe,
-                    nId_Cliente = OpeGesCreate.nId_Cliente,
-                    nId_Contrato = OpeGesCreate.nId_Contrato,
-                    nId_Cartera = OpeGesCreate.nId_Cartera,
-                    nId_DocxCobrar = OpeGesCreate.nId_DocxCobrar,
-                    nId_PersDeudor = OpeGesCreate.nId_PersDeudor,
-                    nId_Usuario = OpeGesCreate.nId_Usuario
-                };
-
-                ResultDto<CreateGestionOpeGesResponseDto> response = ResultDto<CreateGestionOpeGesResponseDto>
-                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-
-                await _unitOfWork.CommitTransactionAsync();
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                await _unitOfWork.RollbackTransactionAsync();
-                return ResultDto<CreateGestionOpeGesResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, Const.ERROR_REQUEST_CODE);
-            }
-        }
-
-        public async Task<ResultDto<CreateGestionOpeGesResponseDto>> CreateGestionOpeGesContratosAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto)
+        public async Task<ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>> CreateGestionOpeGesContratosAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto)
         {
             CreateGestionRequestValidator validator = new CreateGestionRequestValidator(_unitOfWork, _validationMessageService, OpeGesCreateDto);
 
@@ -1306,8 +1212,8 @@ namespace GesMgmt.Application.Services.Gestion
                         dDocCobOpe_FecFin = DateTime.Now,
                         cDocOpeCobIn_Descr = "Acción Directa",
                         nId_OpeCodCliOut = OpeGesCreateDto.nNP2.Value > 0
-                                        ? OpeGesCreateDto.nNP1.Value
-                                        : OpeGesCreateDto.nNP1 ?? 0,
+                                ? OpeGesCreateDto.nNP1.Value
+                                : OpeGesCreateDto.nNP1 ?? 0,
                         bEstado = true,
                         nId_Usuario = OpeGesCreateDto.nASIGNARGESTOR == 0
                                     ? OpeGesCreateDto.nId_Usuario
@@ -1336,8 +1242,8 @@ namespace GesMgmt.Application.Services.Gestion
                         cnombreContacto = OpeGesCreateDto.cNOMBRECONTACTO,
                         ccargoContacto = OpeGesCreateDto.cCARGO,
                         nId_OpeCodOutNp2 = OpeGesCreateDto.nNP2 > 0
-                                        ? OpeGesCreateDto.nNP2
-                                        : null,
+                                ? OpeGesCreateDto.nNP2
+                                : null,
                         nId_DocxCobrarParamOpe = null,
                         nId_GestionDisp = 3,
                         cID_Llamada = null,
@@ -1345,29 +1251,99 @@ namespace GesMgmt.Application.Services.Gestion
                         cPeriodo = string.Empty,
                         cCorreo = string.Empty,
                         nId_DocxCobrarOpe_orig = OpeGesCreateDto.nESTADOGESTIONCLARO,
-                        nId_OpeCodCliOutMotivoNoPago = OpeGesCreateDto.nMOTIVONOPAGO
+                        nId_OpeCodCliOutMotivoNoPago = OpeGesCreateDto.nMOTIVONOPAGO,
+                        dDoc_FecIngresoGes = DateTime.Now
                     });
                 }
 
-                var OpeGesCreate = _unitOfWork.av_DocxCobrarOpeGess.AddRangeAsync(lista);
+                var OpeGesCreate = await _unitOfWork.av_DocxCobrarOpeGess.AddRangeAsync(lista);
                 await _unitOfWork.SaveChangesAsync();
 
-                //var OpeGesCreate = await _unitOfWork.av_DocxCobrarOpeGess.AddAsync(doccobopeges);
-                //await _unitOfWork.SaveChangesAsync();
-
-                CreateGestionOpeGesResponseDto responseDto = new CreateGestionOpeGesResponseDto
+                //insertar en av_DocxCobrarOpe
+                // Validar que exista al menos un registro
+                av_DocxCobrarOpe? opeCreate = null;
+                if (OpeGesCreate != null && OpeGesCreate.Any())
                 {
-                    //nId_DocxCobrarOpe = OpeGesCreate.nId_DocxCobrarOpe,
-                    //nId_Cliente = OpeGesCreate.nId_Cliente,
-                    //nId_Contrato = OpeGesCreate.nId_Contrato,
-                    //nId_Cartera = OpeGesCreate.nId_Cartera,
-                    //nId_DocxCobrar = OpeGesCreate.nId_DocxCobrar,
-                    //nId_PersDeudor = OpeGesCreate.nId_PersDeudor,
-                    //nId_Usuario = OpeGesCreate.nId_Usuario
-                };
+                    var first = OpeGesCreate.FirstOrDefault();
+                    if (first != null)
+                    {
+                        av_DocxCobrarOpe dcOpe = new av_DocxCobrarOpe
+                        {
+                            nId_DocxCobrar = first.nId_DocxCobrar,
+                            nId_OpeCodIn = 4,
+                            dDocCobOpe_FecIni = first.dDocCobOpe_FecIni,
+                            dDocCobOpe_FecFin = DateTime.Now,
+                            cDocOpeCobIn_Descr = "Acción Directa",
+                            nId_OpeCodCliOut = first.nId_OpeCodCliOut,
+                            bEstado = true,
+                            nId_Usuario = first.nId_Usuario,
+                            nId_Estrategia = null,
+                            nId_UsrLider = null,
+                            nDoc_NroLote = null,
+                            cDocOpeCobOut_Descr = first.cDocOpeCobOut_Descr,
+                            nId_Cliente = first.nId_Cliente,
+                            nId_Contrato = first.nId_Contrato,
+                            nId_Cartera = first.nId_Cartera,
+                            nId_PersDeudor = first.nId_PersDeudor,
+                            bOpeEfectiva = false,
+                            dFechCompromisoPago = first.dFechCompromisoPago,
+                            nId_OpeContacto = null,
+                            nId_OpeCodOut2 = null,
+                            nTelef_Nro = first.nTelef_Nro,
+                            monto_comp = first.monto_comp,
+                            monto_compDolares = first.monto_compDolares,
+                            cDocxCobOpeInconcert = false,
+                            nId_TipoGestion = first.nId_TipoGestion,
+                            cusuar = first.cusuar,
+                            usu_reg = first.usu_reg,
+                            cnombreContacto = first.cnombreContacto,
+                            ccargoContacto = first.ccargoContacto,
+                            nId_OpeCodOutNp2 = first.nId_OpeCodOutNp2,
+                            nId_DocxCobrarParamOpe = null,
+                            nId_GestionDisp = 3,
+                            cID_Llamada = null,
+                            nId_OpeCodOutEst = first.nId_OpeCodOutEst,
+                            cPeriodo = string.Empty,
+                            cCorreo = string.Empty,
+                            nId_DocxCobrarOpe_orig = first.nId_DocxCobrarOpe_orig,
+                            nId_OpeCodCliOutMotivoNoPago = first.nId_OpeCodCliOutMotivoNoPago,
+                            dDoc_FecIngresoGes = DateTime.Now
+                        };
+                        opeCreate = await _unitOfWork.av_DocxCobrarOpes.AddAsync(dcOpe);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                }
 
-                ResultDto<CreateGestionOpeGesResponseDto> response = ResultDto<CreateGestionOpeGesResponseDto>
-                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                //Actualizar los dos registros con el mismo nId_DocxCobrarOpe
+                if (opeCreate != null)
+                {
+                    foreach (var item in OpeGesCreate)
+                    {
+                        item.nId_DocxCobrarOpe = opeCreate.nId_DocxCobrarOpe;
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                var listaSave = new List<CreateGestionOpeGesResponseDto>();
+                int nro = 0;
+                foreach (var item in OpeGesCreate)
+                {
+                    listaSave.Add(new CreateGestionOpeGesResponseDto
+                    {
+                        nro = ++nro,
+                        nId_DocxCobrarOpeGes = item.nId_DocxCobrarOpeGes,
+                        nId_DocxCobrarOpe = item.nId_DocxCobrarOpe,
+                        nId_Cliente = item.nId_Cliente,
+                        nId_Contrato = item.nId_Contrato,
+                        nId_Cartera = item.nId_Cartera,
+                        nId_DocxCobrar = item.nId_DocxCobrar,
+                        nId_PersDeudor = item.nId_PersDeudor,
+                        nId_Usuario = item.nId_Usuario
+                    });
+                }
+
+                var response = ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>.Success(listaSave, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 await _unitOfWork.CommitTransactionAsync();
 
@@ -1376,7 +1352,7 @@ namespace GesMgmt.Application.Services.Gestion
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackTransactionAsync();
-                return ResultDto<CreateGestionOpeGesResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, Const.ERROR_REQUEST_CODE);
+                return ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion

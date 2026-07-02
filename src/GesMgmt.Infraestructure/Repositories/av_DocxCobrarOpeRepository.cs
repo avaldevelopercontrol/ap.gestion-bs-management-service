@@ -104,5 +104,17 @@ namespace GesMgmt.Infraestructure.Repositories
                             s.bEstado == true)
                         .AsNoTracking();
         }
+
+        public async Task<av_DocxCobrarOpe> AddAsync(av_DocxCobrarOpe av_DocxCobrarOpe)
+        {
+            await _dbSet.AddAsync(av_DocxCobrarOpe);
+            return av_DocxCobrarOpe;
+        }
+
+        public async Task<av_DocxCobrarOpe> UpdateAsync(av_DocxCobrarOpe av_DocxCobrarOpe)
+        {
+            _dbSet.Update(av_DocxCobrarOpe);
+            return av_DocxCobrarOpe;
+        }
     }
 }

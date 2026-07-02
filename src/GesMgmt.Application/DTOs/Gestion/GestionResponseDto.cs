@@ -34,8 +34,21 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string cNomTipoGestion{ get; set; }
         }
 
+        public class CreateGestionOpeResponseDto
+        {
+            public int? nId_DocxCobrarOpe { get; set; }
+            public int? nId_Cliente { get; set; }
+            public int? nId_Contrato { get; set; }
+            public int? nId_Cartera { get; set; }
+            public int nId_DocxCobrar { get; set; }
+            public int nId_PersDeudor { get; set; }
+            public int? nId_Usuario { get; set; }
+        }
+
         public class CreateGestionOpeGesResponseDto
         {
+            public int? nro { get; set; }
+            public int? nId_DocxCobrarOpeGes { get; set; }
             public int? nId_DocxCobrarOpe { get; set; }
             public int? nId_Cliente { get; set; }
             public int? nId_Contrato { get; set; }
