@@ -73,5 +73,17 @@ namespace GesMgmt.Infraestructure.Repositories
             _dbSet.Update(av_PersTelef);
             return av_PersTelef;
         }
+
+        public async Task<IQueryable<av_PersTelef?>> GetDeudorByTelefonoAsync(string letra, string valor)
+        {
+            if (letra == "F")
+            {
+                return _dbSet
+                .Where(s => s.nTelef_Nro == valor)
+                .AsNoTracking();
+            }
+            return null;
+        }
+
     }
 }

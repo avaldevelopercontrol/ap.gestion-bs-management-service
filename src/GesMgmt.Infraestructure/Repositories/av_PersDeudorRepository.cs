@@ -28,7 +28,7 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.nId_PersDeudor == nId_PersDeudor);
         }
 
-        public IQueryable<av_PersDeudor?> GetDeudorByDniRucAsync(string letra, string valor)
+        public async Task<IQueryable<av_PersDeudor?>> GetDeudorByDniRucAsync(string letra, string valor)
         {
             if (letra == "R")
             {
@@ -43,6 +43,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 .AsNoTracking();
             }
             return null;
+        }
+
+        public async Task<IQueryable<av_PersDeudor?>> GetDeudoresByIdDeudorAsync(int nId_PersDeudor)
+        {
+            return _dbSet
+            .Where(s => s.nId_PersDeudor == nId_PersDeudor)
+            .AsNoTracking();
         }
     }
 }

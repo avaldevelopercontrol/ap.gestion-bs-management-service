@@ -32,7 +32,7 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.nid_cliente == nId_Cliente);
         }
 
-        public IQueryable<av_ZonaCartera?> GetZonasCarterasByIdClienteAsync(int nId_Cliente)
+        public async Task<IQueryable<av_ZonaCartera?>> GetZonasCarterasByIdClienteAsync(int nId_Cliente)
         {
             return _dbSet
                 .Include(d => d.av_Divisional)

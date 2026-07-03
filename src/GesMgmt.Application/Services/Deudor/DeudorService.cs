@@ -38,30 +38,32 @@ namespace GesMgmt.Application.Services.Deudor
             {
                 string letra = deudorDto.busqueda.Substring(0, 1);
                 string valor = deudorDto.busqueda.Substring(1);
-
-                var q_deu = _unitOfWork.av_PersDeudors.GetDeudorByDniRucAsync(letra, valor);
-                if (q_deu == null || !q_deu.Any())
+                int deudorId = 0;
+                if (letra == "F")
                 {
-                    return ResultListDto<IEnumerable<GetDeudorResponseDto>>.Failure("400", "No existe registro buscado.", "ERROR", 400);
-                }
-                else
-                {
-                    int deudorId = q_deu.FirstOrDefault().nId_PersDeudor;
+                    var q_deutel = await _unitOfWork.av_PersTelefs.GetDeudorByTelefonoAsync(letra, valor);
+                    if (q_deutel == null || !q_deutel.Any())
+                    {
+                        return ResultListDto<IEnumerable<GetDeudorResponseDto>>.Failure("400", "No existe registro buscado.", "ERROR", 400);
+                    }
+                    else
+                    {
+                        deudorId = q_deutel.FirstOrDefault().nId_PersDeudor.Value;
 
-                    var q_dxc = _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosAsync(deudorDto.nId_Cliente, deudorId);
-                    var q_zc = _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
-                    var q_car = _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
-                    var q_deupar = _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
+                        var q_deudor = await _unitOfWork.av_PersDeudors.Query(); //_unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(deudorId);
+                        var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosByIdClienteAsync(deudorDto.nId_Cliente); //_unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosAsync(deudorDto.nId_Cliente, deudorId);
+                        var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
 
-
-                    var data = (
+                        var data = (
                         from dc in q_dxc
                         join zc in q_zc
                             on dc.nId_Cliente equals zc.nid_cliente
                         join car in q_car
                             on new { dc.nId_Cartera, dc.nId_Cliente }
                             equals new { car.nId_Cartera, car.nId_Cliente }
-                        join deu in q_deu
+                        join deu in q_deudor
                             on dc.nId_PersDeudor equals deu.nId_PersDeudor
                         join pdp in q_deupar
                             on new { dc.nId_Cartera, dc.nId_PersDeudor }
@@ -104,48 +106,159 @@ namespace GesMgmt.Application.Services.Deudor
                         .Take(deudorDto.PageSize)
                         .ToList();
 
-                    int correlativo = (deudorDto.PageNumber - 1) * deudorDto.PageSize + 1;
+                        int correlativo = (deudorDto.PageNumber - 1) * deudorDto.PageSize + 1;
 
-                    foreach (var item in data)
-                    {
-                        var q_tipificaCall = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 1);
-                        av_OpeCodCliOut? q_tipificaCall_des = null;
-                        if (q_tipificaCall != null)
+                        foreach (var item in data)
                         {
-                            q_tipificaCall_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCall.nId_OpeCodCliOut);
+                            var q_tipificaCall = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 1);
+                            av_OpeCodCliOut? q_tipificaCall_des = null;
+                            if (q_tipificaCall != null)
+                            {
+                                q_tipificaCall_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCall.nId_OpeCodCliOut);
+                            }
+
+                            var q_tipificaCampo = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 2);
+                            av_OpeCodCliOut? q_tipificaCampo_des = null;
+                            if (q_tipificaCampo != null)
+                            {
+                                q_tipificaCampo_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCampo.nId_OpeCodCliOut);
+                            }
+
+                            item.nro = correlativo++;
+
+                            item.fechaUltimaGestionCALL = FormatearFecha(q_tipificaCall?.dDocCobOpe_FecIni ?? null) ?? "";
+                            item.ultimaGestionCALL = q_tipificaCall_des?.cNombre_OpeCodCliOut ?? "";
+                            item.cantidadGestionCALL = 0;
+
+                            item.fechaUltimaGestionCAMPO = FormatearFecha(q_tipificaCampo?.dDocCobOpe_FecIni ?? null) ?? "";
+                            item.ultimaGestionCAMPO = q_tipificaCampo_des?.cNombre_OpeCodCliOut ?? "";
+                            item.cantidadGestionCAMPO = 0;
+
+                            item.fechaPromesa = FormatearFecha(q_tipificaCall.dFechCompromisoPago ?? null) ?? "";
+                            item.mejorStatus = await MejorStatus(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor);
                         }
 
-                        var q_tipificaCampo = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 2);
-                        av_OpeCodCliOut? q_tipificaCampo_des = null;
-                        if (q_tipificaCampo != null)
-                        {
-                            q_tipificaCampo_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCampo.nId_OpeCodCliOut);
-                        }
+                        var totalRecords = data.Count();
 
-                        item.nro = correlativo++;
-                        
-                        item.fechaUltimaGestionCALL = FormatearFecha(q_tipificaCall?.dDocCobOpe_FecIni ?? null) ?? "";
-                        item.ultimaGestionCALL = q_tipificaCall_des?.cNombre_OpeCodCliOut ?? "";
-                        item.cantidadGestionCALL = 0;
+                        var response = ResultListDto<IEnumerable<GetDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
 
-                        item.fechaUltimaGestionCAMPO = FormatearFecha(q_tipificaCampo?.dDocCobOpe_FecIni ?? null) ?? "";
-                        item.ultimaGestionCAMPO = q_tipificaCampo_des?.cNombre_OpeCodCliOut ?? "";
-                        item.cantidadGestionCAMPO = 0;
+                        response.TotalRecords = totalRecords;
+                        response.PageNumber = deudorDto.PageNumber;
+                        response.PageSize = deudorDto.PageSize;
+                        response.TotalPages = (int)Math.Ceiling((double)totalRecords / deudorDto.PageSize);
 
-                        item.fechaPromesa = FormatearFecha(q_tipificaCall.dFechCompromisoPago ?? null) ?? "";
-                        item.mejorStatus = await MejorStatus(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor);
+                        return response;
                     }
+                }
+                else
+                {
+                    var q_deu = await _unitOfWork.av_PersDeudors.GetDeudorByDniRucAsync(letra, valor);
+                    if (q_deu == null || !q_deu.Any())
+                    {
+                        return ResultListDto<IEnumerable<GetDeudorResponseDto>>.Failure("400", "No existe registro buscado.", "ERROR", 400);
+                    }
+                    else
+                    {
+                        deudorId = q_deu.FirstOrDefault().nId_PersDeudor;
 
-                    var totalRecords = data.Count();
+                        var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosAsync(deudorDto.nId_Cliente, deudorId);
+                        var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
 
-                    var response = ResultListDto<IEnumerable<GetDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                        var data = (
+                            from dc in q_dxc
+                            join zc in q_zc
+                                on dc.nId_Cliente equals zc.nid_cliente
+                            join car in q_car
+                                on new { dc.nId_Cartera, dc.nId_Cliente }
+                                equals new { car.nId_Cartera, car.nId_Cliente }
+                            join deu in q_deu
+                                on dc.nId_PersDeudor equals deu.nId_PersDeudor
+                            join pdp in q_deupar
+                                on new { dc.nId_Cartera, dc.nId_PersDeudor }
+                                equals new { pdp.nId_Cartera, pdp.nId_PersDeudor }
+                            where dc.nId_Cartera == car.nId_Cartera
+                                  && dc.nId_PersDeudor == deudorId
+                                  && dc.bEstado == 1
+                            group new { dc, zc, car, deu, pdp } by new
+                            {
+                                zc.zona,
+                                car.cCampanna,
+                                dc.nId_Cliente,
+                                car.nId_Cartera,
+                                car.nId_Contrato,
+                                dc.nId_PersDeudor,
+                                car.cCar_Nombre,
+                                deu.cNomCompleto,
+                                pdp.nImpTotal,
+                                pdp.nSaldoTotal
+                            }
+                            into g
+                            select new GetDeudorResponseDto
+                            {
+                                nro = 0,
+                                nId_PersDeudor = deudorId,
+                                zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
+                                nId_Cliente = g.Key.nId_Cliente,
+                                nId_Contrato = g.Key.nId_Contrato,
+                                nId_Cartera = g.Key.nId_Cartera,
+                                cartera = g.Key.cCar_Nombre,
+                                codigoCliente = g.Max(x => x.dc.cPers_CodCliente),
+                                deudor = g.Key.cNomCompleto,
+                                importe = g.Key.nImpTotal,
+                                saldo = g.Key.nSaldoTotal,
+                                fechaUltimaGestionCALL = "",
+                                fechaPromesa = "",
+                                mejorStatus = ""
+                            })
+                            .Skip((deudorDto.PageNumber - 1) * deudorDto.PageSize)
+                            .Take(deudorDto.PageSize)
+                            .ToList();
 
-                    response.TotalRecords = totalRecords;
-                    response.PageNumber = deudorDto.PageNumber;
-                    response.PageSize = deudorDto.PageSize;
-                    response.TotalPages = (int)Math.Ceiling((double)totalRecords / deudorDto.PageSize);
+                        int correlativo = (deudorDto.PageNumber - 1) * deudorDto.PageSize + 1;
 
-                    return response;
+                        foreach (var item in data)
+                        {
+                            var q_tipificaCall = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 1);
+                            av_OpeCodCliOut? q_tipificaCall_des = null;
+                            if (q_tipificaCall != null)
+                            {
+                                q_tipificaCall_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCall.nId_OpeCodCliOut);
+                            }
+
+                            var q_tipificaCampo = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 2);
+                            av_OpeCodCliOut? q_tipificaCampo_des = null;
+                            if (q_tipificaCampo != null)
+                            {
+                                q_tipificaCampo_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCampo.nId_OpeCodCliOut);
+                            }
+
+                            item.nro = correlativo++;
+
+                            item.fechaUltimaGestionCALL = FormatearFecha(q_tipificaCall?.dDocCobOpe_FecIni ?? null) ?? "";
+                            item.ultimaGestionCALL = q_tipificaCall_des?.cNombre_OpeCodCliOut ?? "";
+                            item.cantidadGestionCALL = 0;
+
+                            item.fechaUltimaGestionCAMPO = FormatearFecha(q_tipificaCampo?.dDocCobOpe_FecIni ?? null) ?? "";
+                            item.ultimaGestionCAMPO = q_tipificaCampo_des?.cNombre_OpeCodCliOut ?? "";
+                            item.cantidadGestionCAMPO = 0;
+
+                            item.fechaPromesa = FormatearFecha(q_tipificaCall?.dFechCompromisoPago ?? null) ?? "";
+                            item.mejorStatus = await MejorStatus(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor);
+                        }
+
+                        var totalRecords = data.Count();
+
+                        var response = ResultListDto<IEnumerable<GetDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                        response.TotalRecords = totalRecords;
+                        response.PageNumber = deudorDto.PageNumber;
+                        response.PageSize = deudorDto.PageSize;
+                        response.TotalPages = (int)Math.Ceiling((double)totalRecords / deudorDto.PageSize);
+
+                        return response;
+                    }
                 }
             }
             catch (Exception ex)

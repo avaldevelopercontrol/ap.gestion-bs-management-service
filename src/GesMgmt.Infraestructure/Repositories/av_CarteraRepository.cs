@@ -29,7 +29,7 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.nId_Cliente == nId_Cliente && s.nId_Cartera == nId_Cartera);
         }
 
-        public IQueryable<av_Cartera?> GetCarterasByIdClienteAsync(int nId_Cliente)
+        public async Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteAsync(int nId_Cliente)
         {
             return _dbSet
                 .Include(d => d.av_Cliente)

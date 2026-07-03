@@ -21,7 +21,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public IQueryable<av_PersDeudorParam?> GetDeudorParamByIdDeudorAsync(int nId_PersDeudor)
+        public async Task<IQueryable<av_PersDeudorParam?>> GetDeudorParamByIdDeudorAsync(int nId_PersDeudor)
         {
             return _dbSet
                 .Where(s => s.nId_PersDeudor == nId_PersDeudor)
