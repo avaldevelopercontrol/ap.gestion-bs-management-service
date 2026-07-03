@@ -48,13 +48,13 @@ namespace GesMgmt.Application.Services.Deudor
                     }
                     else
                     {
-                        deudorId = q_deutel.FirstOrDefault().nId_PersDeudor.Value;
+                        //deudorId = q_deutel.FirstOrDefault().nId_PersDeudor.Value;
 
                         var q_deudor = await _unitOfWork.av_PersDeudors.Query(); //_unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(deudorId);
                         var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosByIdClienteAsync(deudorDto.nId_Cliente); //_unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosAsync(deudorDto.nId_Cliente, deudorId);
                         var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
-                        var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
+                        var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamAsync(); //_unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
 
                         var data = (
                         from dc in q_dxc
@@ -68,8 +68,10 @@ namespace GesMgmt.Application.Services.Deudor
                         join pdp in q_deupar
                             on new { dc.nId_Cartera, dc.nId_PersDeudor }
                             equals new { pdp.nId_Cartera, pdp.nId_PersDeudor }
+                        join dtel in q_deutel
+                            on dc.nId_PersDeudor equals dtel.nId_PersDeudor
                         where dc.nId_Cartera == car.nId_Cartera
-                              && dc.nId_PersDeudor == deudorId
+                              //&& dc.nId_PersDeudor == deudorId
                               && dc.bEstado == 1
                         group new { dc, zc, car, deu, pdp } by new
                         {
@@ -134,7 +136,7 @@ namespace GesMgmt.Application.Services.Deudor
                             item.ultimaGestionCAMPO = q_tipificaCampo_des?.cNombre_OpeCodCliOut ?? "";
                             item.cantidadGestionCAMPO = 0;
 
-                            item.fechaPromesa = FormatearFecha(q_tipificaCall.dFechCompromisoPago ?? null) ?? "";
+                            item.fechaPromesa = FormatearFecha(q_tipificaCall?.dFechCompromisoPago ?? null) ?? "";
                             item.mejorStatus = await MejorStatus(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor);
                         }
 

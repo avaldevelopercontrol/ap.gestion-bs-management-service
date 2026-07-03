@@ -27,5 +27,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(s => s.nId_PersDeudor == nId_PersDeudor)
                 .AsNoTracking();
         }
+
+        public async Task<IQueryable<av_PersDeudorParam?>> GetDeudorParamAsync()
+        {
+            return _dbSet
+                .Include(tg => tg.av_Cartera)
+                .Where(s => s.av_Cartera.bEstado == true)
+                .AsNoTracking();
+        }
     }
 }
