@@ -45,7 +45,7 @@ namespace GesMgmt.Application.Services.Usuario
                         nId_Usuario = validator.usuario.nId_Usuario,
                         cUsr_NroDoc = validator.usuario.cUsr_NroDoc,
                         cUsr_ApePat = validator.usuario.cUsr_ApePat ?? "",
-                        cUsr_ApeMat = validator.usuario.cUsr_ApePat ?? "",
+                        cUsr_ApeMat = validator.usuario.cUsr_ApeMat ?? "",
                         cUsr_Nombres = validator.usuario.cUsr_Nombres ?? "",
                         bSexo = validator.usuario.bSexo,
                         cUsr_Login = validator.usuario.cUsr_Login,

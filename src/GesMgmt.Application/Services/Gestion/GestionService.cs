@@ -1205,6 +1205,12 @@ namespace GesMgmt.Application.Services.Gestion
                 {
                     lista.Add(new av_DocxCobrarOpeGes
                     {
+                        nId_Cliente = OpeGesCreateDto.nId_Cliente,
+                        nId_Contrato = OpeGesCreateDto.nId_Contrato,
+                        nId_Cartera = OpeGesCreateDto.nId_Cartera,
+                        nId_Usuario = (OpeGesCreateDto.nASIGNARGESTOR ?? 0) > 0
+                                        ? OpeGesCreateDto.nASIGNARGESTOR.Value
+                                        : OpeGesCreateDto.nId_Usuario,
                         nId_DocxCobrarOpe = null,
                         nId_DocxCobrar = idDocCobrar,
                         nId_OpeCodIn = 4,
@@ -1212,19 +1218,13 @@ namespace GesMgmt.Application.Services.Gestion
                         dDocCobOpe_FecFin = DateTime.Now,
                         cDocOpeCobIn_Descr = "Acción Directa",
                         nId_OpeCodCliOut = OpeGesCreateDto.nNP2.Value > 0
-                                ? OpeGesCreateDto.nNP1.Value
-                                : OpeGesCreateDto.nNP1 ?? 0,
+                                            ? OpeGesCreateDto.nNP1.Value
+                                            : OpeGesCreateDto.nNP1 ?? 0,
                         bEstado = true,
-                        nId_Usuario = OpeGesCreateDto.nASIGNARGESTOR == 0
-                                    ? OpeGesCreateDto.nId_Usuario
-                                    : OpeGesCreateDto.nASIGNARGESTOR,
                         nId_Estrategia = null,
                         nId_UsrLider = null,
                         nDoc_NroLote = null,
                         cDocOpeCobOut_Descr = OpeGesCreateDto.cOBSERVACION,
-                        nId_Cliente = OpeGesCreateDto.nId_Cliente,
-                        nId_Contrato = OpeGesCreateDto.nId_Contrato,
-                        nId_Cartera = OpeGesCreateDto.nId_Cartera,
                         nId_PersDeudor = OpeGesCreateDto.nId_PersDeudor,
                         bOpeEfectiva = false,
                         dFechCompromisoPago = OpeGesCreateDto.dFECHACOMPROMISO,
@@ -1236,14 +1236,14 @@ namespace GesMgmt.Application.Services.Gestion
                         cDocxCobOpeInconcert = false,
                         nId_TipoGestion = OpeGesCreateDto.nTIPOGESTION,
                         cusuar = OpeGesCreateDto.cSISTEMA,
-                        usu_reg = OpeGesCreateDto.nASIGNARGESTOR > 0
-                                ? OpeGesCreateDto.nId_Usuario
-                                : null,
+                        usu_reg = (OpeGesCreateDto.nASIGNARGESTOR ?? 0) > 0
+                                    ? OpeGesCreateDto.nId_Usuario
+                                    : null,
                         cnombreContacto = OpeGesCreateDto.cNOMBRECONTACTO,
                         ccargoContacto = OpeGesCreateDto.cCARGO,
                         nId_OpeCodOutNp2 = OpeGesCreateDto.nNP2 > 0
-                                ? OpeGesCreateDto.nNP2
-                                : null,
+                                            ? OpeGesCreateDto.nNP2
+                                            : null,
                         nId_DocxCobrarParamOpe = null,
                         nId_GestionDisp = 3,
                         cID_Llamada = null,
