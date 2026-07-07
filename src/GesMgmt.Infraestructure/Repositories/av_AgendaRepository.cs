@@ -31,5 +31,11 @@ namespace GesMgmt.Infraestructure.Repositories
                 s.nid_PersDeudor == nId_PersDeudor
            );
         }
+
+        public async Task<av_Agenda> AddAsync(av_Agenda av_Agenda)
+        {
+            await _dbSet.AddAsync(av_Agenda);
+            return av_Agenda;
+        }
     }
 }

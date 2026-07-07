@@ -6,7 +6,6 @@ using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
 using static GesMgmt.Application.DTOs.Email.EmailRequestDto;
 using static GesMgmt.Application.DTOs.Email.EmailResponseDto;
 

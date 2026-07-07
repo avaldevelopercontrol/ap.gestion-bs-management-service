@@ -1,7 +1,7 @@
 ﻿
 namespace GesMgmt.Domain.Entities
 {
-    public class av_Usuario //: BaseEntity
+    public class av_Usuario
     {
         public int nId_Usuario { get; set; }
         public string cUsr_NroDoc { get; set; }
@@ -57,8 +57,5 @@ namespace GesMgmt.Domain.Entities
         public string? cEmailVerificacion_codigo { get; set; }
         public string? cUsr_EmailVerificacion { get; set; }
         public DateTime? dFechaHora_Codigo { get; set; }
-
-        //Relaciones de navegación
-        //public ICollection<av_DocxCobrar> av_DocxCobrars { get; set; }
     }
 }

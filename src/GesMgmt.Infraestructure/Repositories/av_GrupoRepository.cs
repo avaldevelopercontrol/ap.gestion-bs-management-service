@@ -20,5 +20,12 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public async Task<IQueryable<av_Grupo>> GetGruposByCliente(int nId_Cliente)
+        {
+            return _dbSet
+                .Where(g => g.nid_cliente == nId_Cliente)
+                .AsNoTracking();
+        }
     }
 }

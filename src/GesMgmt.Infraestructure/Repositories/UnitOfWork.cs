@@ -46,6 +46,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_PersDeudorRepository? _av_PersDeudors;
         private Iav_PersDeudorParamRepository? _av_PersDeudorParams;
         private Iav_PersDireccRepository? _av_PersDireccs;
+        private Iav_PerfilRepository? _av_Perfils;
         private Iav_PersEmailRepository? _av_PersEmails;
         private Iav_PersEmailOpeRepository? _av_PersEmailOpes;
         private Iav_PersRefUbiRepository? _av_PersRefUbis;
@@ -109,6 +110,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_PersDireccRepository av_PersDireccs => _av_PersDireccs ??= new av_PersDireccRepository(_context);
         public Iav_PersEmailRepository av_PersEmails => _av_PersEmails ??= new av_PersEmailRepository(_context);
         public Iav_PersEmailOpeRepository av_PersEmailOpes => _av_PersEmailOpes ??= new av_PersEmailOpeRepository(_context);
+        public Iav_PerfilRepository av_Perfils => _av_Perfils ??= new av_PerfilRepository(_context);
         public Iav_PersRefUbiRepository av_PersRefUbis => _av_PersRefUbis ??= new av_PersRefUbiRepository(_context);
         public Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles => _av_PersTelefOpeDetalles ??= new av_PersTelefOpeDetalleRepository(_context);
         public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);

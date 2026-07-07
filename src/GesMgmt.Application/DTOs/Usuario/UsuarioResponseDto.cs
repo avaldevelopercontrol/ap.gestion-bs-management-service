@@ -61,5 +61,14 @@ namespace GesMgmt.Application.DTOs.Usuario
             public DateTime? dFechaHora_Codigo { get; set; }
         }
 
+        public class GetUsuariosGrupoResponseDto
+        {
+            public int id { get; set; }
+            public string nombre { get; set; }
+            public string? perfil { get; set; }
+            public string login { get; set; }
+            public string? subZona { get; set; }
+            public string? codRecaudacion { get; set; }
+        }
     }
 }

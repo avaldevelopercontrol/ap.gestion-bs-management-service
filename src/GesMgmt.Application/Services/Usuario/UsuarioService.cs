@@ -6,6 +6,7 @@ using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using static GesMgmt.Application.DTOs.Deudor.DeudorResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 
@@ -86,6 +87,61 @@ namespace GesMgmt.Application.Services.Usuario
             catch (Exception ex)
             {
                 return ResultDto<GetUsuarioLoginResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Usuarios - UGrupos - Grupos"
+        public async Task<ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>> GetUsuariosGrupoAsync(GetUsuariosGrupoRequestDto usuarioGrupoDto)
+        {
+
+            var q_Usuario = await _unitOfWork.av_Usuarios.GetUsuariosActivos();
+            var q_Grupos = await _unitOfWork.av_Grupos.GetGruposByCliente(usuarioGrupoDto.nId_Cliente);
+            var q_UsuGru = await _unitOfWork.av_UGrupos.Query();
+            var q_Perfil = await _unitOfWork.av_Perfils.Query();
+            var q_SubZonGen = await _unitOfWork.av_SubZonaGenerals.Query();
+
+            List<GetUsuariosGrupoResponseDto> data = new();
+            try
+            {
+                data = (
+                    from us in q_Usuario
+                    join ug in q_UsuGru
+                        on us.nId_Usuario equals ug.nId_Usuario
+                    join g in q_Grupos
+                        on ug.nId_Grupo equals g.nId_Grupo
+                    join pf in q_Perfil
+                        on us.nid_perfil equals pf.nid_perfil
+                    join szg in q_SubZonGen
+                        on us.nId_SubZonaGen equals szg.nId_SubZonaGen
+                    orderby us.cUsr_ApePat
+                    select new GetUsuariosGrupoResponseDto
+                    {
+                        id = us.nId_Usuario,
+                        nombre = $"{us.cUsr_ApePat} {us.cUsr_ApeMat} {us.cUsr_Nombres}",
+                        perfil = pf.per_Nombre,
+                        login = us.cUsr_Login,
+                        subZona = szg.cSzgn_Nombre,
+                        codRecaudacion = us.cod_Recau
+                    })
+                    .Skip((usuarioGrupoDto.PageNumber - 1) * usuarioGrupoDto.PageSize)
+                    .Take(usuarioGrupoDto.PageSize)
+                    .ToList();
+
+                var totalRecords = data.Count();
+
+                var response = ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = usuarioGrupoDto.PageNumber;
+                response.PageSize = usuarioGrupoDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / usuarioGrupoDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion

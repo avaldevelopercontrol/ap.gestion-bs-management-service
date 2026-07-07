@@ -49,6 +49,11 @@ namespace GesMgmt.Domain.Constants
         public const string USUARIO_PASS_LENGTH = "036";
         public const string USUARIO_LOGIN_NO_EXIST = "037";
         public const string USUARIO_LOGIN_INCORRECT = "038";
+        public const string NOMBRE_AGENDA_REQUIRED = "039";
 
+        public const string NID_CLIENTE_REQUIRED = "040";
+        public const string NID_CARTERA_REQUIRED = "041";
+        public const string NID_PERSDEUDOR_REQUIRED = "042";
+        public const string NID_USUARIO_REQUIRED = "043";
     }
 }

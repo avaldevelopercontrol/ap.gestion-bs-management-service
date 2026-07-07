@@ -47,5 +47,12 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.cUsr_Login == cUsr_Login);
             return query;
         }
+
+        public async Task<IQueryable<av_Usuario>>GetUsuariosActivos()
+        {
+            return _dbSet
+                .Where(uc => uc.bEstado.Equals(true))
+                .AsNoTracking();
+        }
     }
 }

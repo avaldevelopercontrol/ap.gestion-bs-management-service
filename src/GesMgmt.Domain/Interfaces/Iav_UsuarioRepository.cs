@@ -8,5 +8,6 @@ namespace GesMgmt.Domain.Interfaces
         Task<av_Usuario> GetByIdAsync(int nId_Usuario);
         Task<av_Usuario> GetLoginUsuarioAsync(string cUsr_Login, string cUsr_Pass);
         Task<av_Usuario> GetByUsuarioAsync(string cUsr_Login);
+        Task<IQueryable<av_Usuario>> GetUsuariosActivos();
     }
 }

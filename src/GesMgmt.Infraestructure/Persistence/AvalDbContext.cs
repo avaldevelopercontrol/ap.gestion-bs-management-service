@@ -41,6 +41,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_PersDeudorInfoParamDefCab> av_PersDeudorInfoParamDefCabs { get; set; }
         public DbSet<av_PersEmail> av_PersEmails { get; set; }
         public DbSet<av_PersEmailOpe> av_PersEmailOpes { get; set; }
+        public DbSet<av_Perfil> av_Perfils { get; set; }
         public DbSet<av_PersRefUbi> av_PersRefUbis { get; set; }
         public DbSet<av_PersTelef> av_PersTelefs { get; set; }
         public DbSet<av_PersTelefOpeDetalle> av_PersTelefOpeDetalles { get; set; }
@@ -99,6 +100,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_PersDeudorInfoParamConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersEmailConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersEmailOpeConfiguration());
+            modelBuilder.ApplyConfiguration(new av_PerfilConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersRefUbiConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersTelefConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersTelefOpeDetalleConfiguration());

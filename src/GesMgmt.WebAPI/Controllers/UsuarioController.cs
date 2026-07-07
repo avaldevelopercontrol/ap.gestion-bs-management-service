@@ -48,5 +48,25 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetLoginUsuario|End|GetLoginUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
+
+        /// <summary>
+        /// Lista de Usuarios - UGrupos - Grupos
+        /// </summary>
+        /// <remarks>
+        /// Lista de Usuarios - UGrupos - Grupos.
+        /// </remarks>
+        /// <response code="200">Lista de Usuarios - UGrupos - Grupos.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Lista de Usuarios - UGrupos - Grupos")]
+        [HttpGet("GetUsuariosGrupo")]
+        [ProducesResponseType(typeof(ResultDto<GetUsuariosGrupoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUsuariosGrupoAsync([FromQuery] GetUsuariosGrupoRequestDto usuariosGrupoDto)
+        {
+            _Logger.LogInfo($"GetUsuariosGrupo|Begin|GetUsuariosGrupoAsync|request: {JsonSerializer.Serialize(usuariosGrupoDto)}");
+            var result = await _usuarioService.GetUsuariosGrupoAsync(usuariosGrupoDto);
+            _Logger.LogInfo($"GetUsuariosGrupo|End|GetUsuariosGrupoAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
     }
 }
