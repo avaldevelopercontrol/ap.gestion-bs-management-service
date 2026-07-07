@@ -6,6 +6,6 @@ namespace GesMgmt.Application.Interfaces.Agenda
 {
     public interface IAgendaService
     {
-        Task<ResultDto<CreateAgendaResponsetDto>> CreateAgendaAsync(CreateAgendaRequestDto agendaCreateDto);
+        Task<ResultDto<CreateAgendaResponseDto>> CreateAgendaAsync(CreateAgendaRequestDto agendaCreateDto);
     }
 }

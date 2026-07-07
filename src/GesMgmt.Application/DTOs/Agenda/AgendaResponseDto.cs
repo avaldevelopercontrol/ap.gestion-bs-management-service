@@ -6,7 +6,7 @@ namespace GesMgmt.Application.DTOs.Agenda
 {
     public class AgendaResponseDto
     {
-        public class CreateAgendaResponsetDto
+        public class CreateAgendaResponseDto
         {
             public int? nid_Cliente { get; set; }
             public int? nid_Cartera { get; set; }

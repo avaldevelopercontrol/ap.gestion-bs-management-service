@@ -22,7 +22,7 @@ namespace GesMgmt.Application.Services.Agenda
         }
 
         #region "Grabar Agenda"
-        public async Task<ResultDto<CreateAgendaResponsetDto>> CreateAgendaAsync(CreateAgendaRequestDto agendaCreateDto)
+        public async Task<ResultDto<CreateAgendaResponseDto>> CreateAgendaAsync(CreateAgendaRequestDto agendaCreateDto)
         {
             CreateAgendaRequestValidator validator = new CreateAgendaRequestValidator(_unitOfWork, _validationMessageService, agendaCreateDto);
 
@@ -56,7 +56,7 @@ namespace GesMgmt.Application.Services.Agenda
                 var agendaCreate = await _unitOfWork.av_Agendas.AddAsync(agenda);
                 await _unitOfWork.SaveChangesAsync();
 
-                CreateAgendaResponsetDto responseDto = new CreateAgendaResponsetDto
+                CreateAgendaResponseDto responseDto = new CreateAgendaResponseDto
                 {
                     nid_Cliente = agendaCreate.nid_Cliente,
                     nid_Cartera = agendaCreate.nid_Cartera,
@@ -64,7 +64,7 @@ namespace GesMgmt.Application.Services.Agenda
                     nid_PersDeudor = agendaCreate.nid_PersDeudor,
                 };
 
-                ResultDto<CreateAgendaResponsetDto> response = ResultDto<CreateAgendaResponsetDto>
+                ResultDto<CreateAgendaResponseDto> response = ResultDto<CreateAgendaResponseDto>
                                                    .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 await _unitOfWork.CommitTransactionAsync();
@@ -74,7 +74,7 @@ namespace GesMgmt.Application.Services.Agenda
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackTransactionAsync();
-                return ResultDto<CreateAgendaResponsetDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, 500);
+                return ResultDto<CreateAgendaResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, 500);
             }
         }
         #endregion

@@ -25,7 +25,7 @@ namespace GesMgmt.Application.Validators.Agenda
             _requestDto = requestDto;
         }
 
-        public async Task<ResultDto<CreateAgendaRespondetDto>> Validate()
+        public async Task<ResultDto<CreateAgendaResponseDto>> Validate()
         {
             var validationNombre = await ValidateNombre();
             if (validationNombre.Code != Const.SUCCESS_CODE)
@@ -56,77 +56,77 @@ namespace GesMgmt.Application.Validators.Agenda
             {
                 return validationnId_Usuario;
             }
-            return ResultDto<CreateAgendaRespondetDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<CreateAgendaResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<CreateAgendaRespondetDto>> ValidateNombre()
+        private async Task<ResultDto<CreateAgendaResponseDto>> ValidateNombre()
         {
             if (string.IsNullOrEmpty(_requestDto.Nombre))
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NOMBRE_AGENDA_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
-            return ResultDto<CreateAgendaRespondetDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<CreateAgendaResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<CreateAgendaRespondetDto>> ValidatenId_Cliente()
+        private async Task<ResultDto<CreateAgendaResponseDto>> ValidatenId_Cliente()
         {
             if (_requestDto.nid_Cliente == null)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_CLIENTE_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
             if (_requestDto.nid_Cliente == 0)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_CLIENTE_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
-            return ResultDto<CreateAgendaRespondetDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<CreateAgendaResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<CreateAgendaRespondetDto>> ValidatenId_Cartera()
+        private async Task<ResultDto<CreateAgendaResponseDto>> ValidatenId_Cartera()
         {
             if (_requestDto.nid_Cartera == null)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_CARTERA_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
             if (_requestDto.nid_Cartera == 0)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_CARTERA_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
-            return ResultDto<CreateAgendaRespondetDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<CreateAgendaResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<CreateAgendaRespondetDto>> ValidatenId_PersDeudor()
+        private async Task<ResultDto<CreateAgendaResponseDto>> ValidatenId_PersDeudor()
         {
             if (_requestDto.nid_PersDeudor == null)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_PERSDEUDOR_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
             if (_requestDto.nid_PersDeudor == 0)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_PERSDEUDOR_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
-            return ResultDto<CreateAgendaRespondetDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<CreateAgendaResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<CreateAgendaRespondetDto>> ValidatenId_Usuario()
+        private async Task<ResultDto<CreateAgendaResponseDto>> ValidatenId_Usuario()
         {
             if (_requestDto.nid_UsuOpe == null)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_USUARIO_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
             if (_requestDto.nid_UsuOpe == 0)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.NID_USUARIO_REQUIRED, "ESP");
-                return ResultDto<CreateAgendaRespondetDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+                return ResultDto<CreateAgendaResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
-            return ResultDto<CreateAgendaRespondetDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            return ResultDto<CreateAgendaResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
     }
 }
