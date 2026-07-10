@@ -19,7 +19,8 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_ContratoRepository? _av_Contratos;
         private Iav_DetallePersTelefRepository _av_DetallePersTelefs;
         private Iav_DivisionalRepository _av_Divisionals;
-        private Iav_DocxCobrarAdicionalRepository? _av_DocxCobrarOpeAdicionals;
+        private Iav_DocxCobrarAdicionalRepository? _av_DocxCobrarAdicionals;
+        private Iav_DocxCobrarCartaRepository? _av_DocxCobrarCartas;
         private Iav_DocxCobrarOpeEstRepository? _av_DocxCobrarOpeEsts;
         private Iav_DocxCobrarOpeGesRepository? _av_DocxCobrarOpeGess;
         private Iav_DocxCobrarOpeRepository? _av_DocxCobrarOpes;
@@ -81,7 +82,8 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_ContratoRepository av_Contratos => _av_Contratos ??= new av_ContratoRepository(_context);
         public Iav_DetallePersTelefRepository av_DetallePersTelefs => _av_DetallePersTelefs ??= new av_DetallePersTelefRepository(_context);
         public Iav_DivisionalRepository av_Divisionals => _av_Divisionals ??= new av_DivisionalRepository(_context);
-        public Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals => _av_DocxCobrarOpeAdicionals ??= new av_DocxCobrarAdicionalRepository(_context);
+        public Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals => _av_DocxCobrarAdicionals ??= new av_DocxCobrarAdicionalRepository(_context);
+        public Iav_DocxCobrarCartaRepository av_DocxCobrarCartas => _av_DocxCobrarCartas ??= new av_DocxCobrarCartaRepository(_context);
         public Iav_DocxCobrarOpeEstRepository av_DocxCobrarOpeEsts => _av_DocxCobrarOpeEsts ??= new av_DocxCobrarOpeEstRepository(_context);
         public Iav_DocxCobrarOpeGesRepository av_DocxCobrarOpeGess => _av_DocxCobrarOpeGess ??= new av_DocxCobrarOpeGesRepository(_context);
         public Iav_DocxCobrarOpeRepository av_DocxCobrarOpes => _av_DocxCobrarOpes ??= new av_DocxCobrarOpeRepository(_context);

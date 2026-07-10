@@ -11,6 +11,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_DivisionalRepository av_Divisionals { get; }
         Iav_DetallePersTelefRepository av_DetallePersTelefs { get; }
         Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals { get; }
+        Iav_DocxCobrarCartaRepository av_DocxCobrarCartas { get; }
         Iav_DocxCobrarOpeRepository av_DocxCobrarOpes { get; }
         Iav_DocxCobrarOpeEstRepository av_DocxCobrarOpeEsts { get; }
         Iav_DocxCobrarOpeGesRepository av_DocxCobrarOpeGess { get; }

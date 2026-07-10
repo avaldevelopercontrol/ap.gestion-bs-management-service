@@ -2,6 +2,7 @@
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Infraestructure.Logger;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
@@ -414,6 +415,32 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        //[SwaggerOperation(Summary = "[API]: Endpoint Listado Paleta de Motivo No Pago")]
+        //[HttpGet("GetGestionEstadoCuenta")]
+        //[ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> GetGestionEstadoCuentaAsync([FromQuery] GetGestionEstadoCuentaRequestDto estadoCuentaDto)
+        //{
+        //    _Logger.LogInfo($"GetGestionEstadoCuenta|Begin|GetGestionEstadoCuentaAsync|request: {JsonSerializer.Serialize(estadoCuentaDto)}");
+        //    var result = await _gestionService.GetGestionEstadoCuentaAsync(estadoCuentaDto);
+        //    _Logger.LogInfo($"GetGestionEstadoCuenta|End|GetGestionEstadoCuentaAsync|response: {JsonSerializer.Serialize(result)}");
+        //    return StatusCode(result.StatusCode, result);
+        //}
+
+        [SwaggerOperation(Summary = "[API]: Endpoint Para exportar el estado de cuenta")]
+        [HttpGet("ExportGestionEstadoCuenta")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaRequestDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ExportGestionEstadoCuentaAsync([FromQuery] GetGestionEstadoCuentaRequestDto estadoCuentaDto)
+        {
+            _Logger.LogInfo($"ExportGestionEstadoCuenta|Begin|ExportGestionEstadoCuentaAsync|request: {JsonSerializer.Serialize(estadoCuentaDto)}");
+            var excel = await _gestionService.ExportGestionEstadoCuentaAsync(estadoCuentaDto);
+            _Logger.LogInfo($"ExportGestionEstadoCuenta|End|ExportGestionEstadoCuentaAsync|response: {JsonSerializer.Serialize(excel)}");
+            return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"EstadoCuenta_{DateTime.Now:yyyyMMddHHmmss}.xlsx");
+        }
+
         [HttpPost("CreateGestionOpeGesContratos")]
         [ProducesResponseType(typeof(ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>), StatusCodes.Status400BadRequest)]
@@ -425,6 +452,5 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"CreateGestionOpeGesContratos|End|CreateGestionOpeGesContratosAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
-
     }
 }

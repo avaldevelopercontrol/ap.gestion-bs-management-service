@@ -21,7 +21,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public IQueryable<av_DocxCobrar> GetGestionesAsync(av_DocxCobrar av_DocxCobrar)
+        public async Task<IQueryable<av_DocxCobrar>> GetGestionesAsync(av_DocxCobrar av_DocxCobrar)
         {
             return _dbSet
                 .Include(c => c.av_Cartera)

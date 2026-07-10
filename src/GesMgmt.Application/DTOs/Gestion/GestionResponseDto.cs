@@ -3,6 +3,28 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionResponseDto
     {
+        public class GetGestionEstadoCuentaResponseDto
+        {
+            public int nId_DocxCobrar { get; set; }
+            public string? RUC { get; set; }
+            public string? CODIGO { get; set; }
+            public string? NRO_CUENTA { get; set; }
+            public string? TIPO_DOCUMENTO { get; set; }
+            public string? NUMERO_RECIBO { get; set; }
+            public string? FECHA_EMISION { get; set; }
+            public string? FECHA_VENCIMIENTO { get; set; }
+            public string? MONEDA { get; set; }
+            public string? MONTO_FACTURADO { get; set; }
+            public string? IMPORTE_PENDIENTE { get; set; }
+            public string? TIPO_SERVICIO { get; set; }
+            public string? ESTADO { get; set; }
+            public string? RAZON_SOCIAL { get; set; }
+            public string? TIPO_IDENTIFICACION { get; set; }
+            public string? MONTO_EN_DISPUTA { get; set; }
+            public string? TRAMO { get; set; }
+            public string? NRO_CONTRATO { get; set; }
+            public string? NRO_PROCESO { get; set; }
+        }
 
         public class GetGestionMotivoNoPagoResponseDto
         {

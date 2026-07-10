@@ -1,4 +1,5 @@
-﻿using GesMgmt.Application.DTOs;
+﻿using ClosedXML.Excel;
+using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Application.Validators.Gestion;
@@ -141,7 +142,7 @@ namespace GesMgmt.Application.Services.Gestion
             try
             {
                 var q_Dco = await _unitOfWork.av_DocxCobrarOpes.Query();
-                var q_Doc = _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
+                var q_Doc = await _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
                 var q_dcp = await _unitOfWork.av_DocxCobrarParams.Query();
 
                 var ultGestion =
@@ -1524,6 +1525,311 @@ namespace GesMgmt.Application.Services.Gestion
             {
                 return ResultListDto<IEnumerable<GetGestionMotivoNoPagoResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
+        }
+        #endregion
+
+        #region "Lista Estado de Cuenta"
+        //public async Task<ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>> GetGestionEstadoCuentaAsync(GetGestionEstadoCuentaRequestDto estadoCuentaDto)
+        //{
+        //    GetGestionEstadoCuentaRequestValidator validator = new GetGestionEstadoCuentaRequestValidator(_unitOfWork, _validationMessageService, estadoCuentaDto);
+        //    int totalRecords = 1;
+        //    // Validaciones
+        //    var validationResult = await validator.Validate();
+
+        //    if (validationResult.Code != Const.SUCCESS_CODE)
+        //    {
+        //        return validationResult;
+        //    }
+
+        //    var filterdc = new av_DocxCobrar
+        //    {
+        //        nId_Cliente = estadoCuentaDto.nId_Cliente,
+        //        nId_Cartera = estadoCuentaDto.nId_Cartera,
+        //        nId_PersDeudor = estadoCuentaDto.nId_Persdeudor
+        //    };
+
+        //    try
+        //    {
+        //        var q_DCar = await _unitOfWork.av_DocxCobrarCartas.Query();
+        //        var q_Doc = await _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
+        //        var q_dcp = await _unitOfWork.av_DocxCobrarParams.Query();
+
+        //        IEnumerable<GetGestionEstadoCuentaResponseDto> data = Enumerable.Empty<GetGestionEstadoCuentaResponseDto>();
+
+        //        //CARTAS
+        //        var q_Cartas =
+        //                        q_DCar
+        //                        .Where(x =>
+        //                            x.nId_Cliente == estadoCuentaDto.nId_Cliente &&
+        //                            x.nId_Cartera == estadoCuentaDto.nId_Cartera &&
+        //                            x.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor)
+        //                        .GroupBy(x => x.nId_DocxCobrar)
+        //                        .Select(g => g
+        //                            .OrderByDescending(x => x.dDocCobCarFecReg)
+        //                            .FirstOrDefault());
+
+        //        var query =
+        //                    from d in q_Doc
+        //                    join p in q_dcp
+        //                    on new { nId_DocxCobrar = d.nId_DocxCobrar, nId_Cartera = (int?)d.nId_Cartera, nId_Cliente = (int?)d.nId_Cliente }
+        //                    equals new { p.nId_DocxCobrar, p.nId_Cartera, p.nId_Cliente }
+        //        where d.nId_Cliente == estadoCuentaDto.nId_Cliente
+        //        && d.nId_Cartera == estadoCuentaDto.nId_Cartera
+        //        && d.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor
+        //        orderby d.dDoc_FecVenc
+        //        select new GetGestionEstadoCuentaResponseDto
+        //        {
+        //            // ESTE CAMPO ES SOLO PARA RELACIONAR LAS CARTAS
+        //            nId_DocxCobrar = d.nId_DocxCobrar,
+        //            RUC = p.cDocParam19,
+        //            CODIGO = p.cDocParam15,
+        //            NRO_CUENTA = p.cDocParam16,
+        //            TIPO_DOCUMENTO = p.cDocParam25,
+        //            NUMERO_RECIBO = p.cDocParam26,
+        //            FECHA_EMISION = d.dDoc_FecEmision.ToString(),
+        //            FECHA_VENCIMIENTO = d.dDoc_FecVenc.ToString(),
+        //            MONEDA = p.cDocParam30,
+        //            MONTO_FACTURADO = p.cDocParam31,
+        //            IMPORTE_PENDIENTE = d.nDoc_ImpSaldo.ToString(),
+        //            TIPO_SERVICIO = p.cDocParam29,
+        //            ESTADO = d.bEstado == 1 ? "ABIERTO" : d.bEstado == 0 ? "CERRADO" : "",
+        //            RAZON_SOCIAL = p.cDocParam17,
+        //            TIPO_IDENTIFICACION = p.cDocParam18,
+        //            MONTO_EN_DISPUTA = string.IsNullOrEmpty(d.cDoc_Coment) ? "NO" : d.cDoc_Coment,
+        //            TRAMO = p.cDocParam50.Substring(3),
+        //            NRO_CONTRATO = string.Empty,
+        //            NRO_PROCESO = string.Empty
+        //        };
+
+        //        data = await query
+        //            //.Skip((estadoCuentaDto.PageNumber - 1) * estadoCuentaDto.PageSize)
+        //            //.Take(estadoCuentaDto.PageSize)
+        //            .ToListAsync();
+
+        //        // =========================
+        //        // DOCUMENTOS DE LA PÁGINA
+        //        // =========================
+        //        var documentos = data
+        //            .Select(x => x.nId_DocxCobrar)
+        //            .ToList();
+
+        //        // =========================
+        //        // ÚLTIMA CARTA DE CADA DOCUMENTO
+        //        // =========================
+        //        var cartas = await q_DCar
+        //            .Where(x =>
+        //                x.nId_Cliente == estadoCuentaDto.nId_Cliente &&
+        //                x.nId_Cartera == estadoCuentaDto.nId_Cartera &&
+        //                x.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor &&
+        //                documentos.Contains(x.nId_DocxCobrar))
+        //            .GroupBy(x => x.nId_DocxCobrar)
+        //            .Select(g => g
+        //                .OrderByDescending(x => x.dDocCobCarFecReg)
+        //                .Select(x => new
+        //                {
+        //                    x.nId_DocxCobrar,
+        //                    x.cDocParam07,
+        //                    x.cDocParam08
+        //                })
+        //                .First())
+        //            .ToListAsync();
+
+        //        // =========================
+        //        // DICCIONARIO
+        //        // =========================
+        //        var dicCartas = cartas.ToDictionary(
+        //            x => x.nId_DocxCobrar,
+        //            x => x);
+
+        //        // =========================
+        //        // COMPLETAR EL RESULTADO
+        //        // =========================
+        //        foreach (var item in data)
+        //        {
+        //            if (dicCartas.TryGetValue(item.nId_DocxCobrar, out var carta))
+        //            {
+        //                item.NRO_CONTRATO = carta.cDocParam07;
+        //                item.NRO_PROCESO = carta.cDocParam08;
+        //            }
+        //        }
+
+        //        totalRecords = data.Count();
+
+        //        var response = ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+        //        response.TotalRecords = totalRecords;
+        //        response.PageNumber = estadoCuentaDto.PageNumber;
+        //        response.PageSize = estadoCuentaDto.PageSize;
+        //        response.TotalPages = (int)Math.Ceiling((double)totalRecords / estadoCuentaDto.PageSize);
+
+        //        return response;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+        //    }
+        //}
+
+        private async Task<List<GetGestionEstadoCuentaResponseDto>> ObtenerGestionEstadoCuentaAsync(GetGestionEstadoCuentaRequestDto estadoCuentaDto, bool paginar)
+        {
+            var filterdc = new av_DocxCobrar
+            {
+                nId_Cliente = estadoCuentaDto.nId_Cliente,
+                nId_Cartera = estadoCuentaDto.nId_Cartera,
+                nId_PersDeudor = estadoCuentaDto.nId_Persdeudor
+            };
+
+            var q_DCar = await _unitOfWork.av_DocxCobrarCartas.Query();
+            var q_Doc = await _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
+            var q_dcp = await _unitOfWork.av_DocxCobrarParams.Query();
+
+            var query =
+                from d in q_Doc
+                join p in q_dcp
+                on new
+                {
+                    nId_DocxCobrar = d.nId_DocxCobrar,
+                    nId_Cartera = (int?)d.nId_Cartera,
+                    nId_Cliente = (int?)d.nId_Cliente
+                }
+                equals new
+                {
+                    p.nId_DocxCobrar,
+                    p.nId_Cartera,
+                    p.nId_Cliente
+                }
+                where d.nId_Cliente == estadoCuentaDto.nId_Cliente
+                && d.nId_Cartera == estadoCuentaDto.nId_Cartera
+                && d.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor
+                orderby d.dDoc_FecVenc
+                select new GetGestionEstadoCuentaResponseDto
+                {
+                    nId_DocxCobrar = d.nId_DocxCobrar,
+                    RUC = p.cDocParam19,
+                    CODIGO = p.cDocParam15,
+                    NRO_CUENTA = p.cDocParam16,
+                    TIPO_DOCUMENTO = p.cDocParam25,
+                    NUMERO_RECIBO = p.cDocParam26,
+                    FECHA_EMISION = d.dDoc_FecEmision.Value.ToString("dd/MM/yyyy"),
+                    FECHA_VENCIMIENTO = d.dDoc_FecVenc.Value.ToString("dd/MM/yyyy"),
+                    MONEDA = p.cDocParam30,
+                    MONTO_FACTURADO = p.cDocParam31,
+                    IMPORTE_PENDIENTE = d.nDoc_ImpSaldo.ToString(),
+                    TIPO_SERVICIO = p.cDocParam29,
+                    ESTADO = d.bEstado == 1 ? "ABIERTO" : "CERRADO",
+                    RAZON_SOCIAL = p.cDocParam17,
+                    TIPO_IDENTIFICACION = p.cDocParam18,
+                    MONTO_EN_DISPUTA = string.IsNullOrEmpty(d.cDoc_Coment) ? "NO" : d.cDoc_Coment,
+                    TRAMO = p.cDocParam50.Substring(3),
+                    NRO_CONTRATO = "",
+                    NRO_PROCESO = ""
+                };
+
+            if (paginar)
+            {
+                query = query
+                    .Skip((estadoCuentaDto.PageNumber - 1) * estadoCuentaDto.PageSize)
+                    .Take(estadoCuentaDto.PageSize);
+            }
+
+            var data = await query.ToListAsync();
+
+            var documentos = data.Select(x => x.nId_DocxCobrar).ToList();
+
+            var cartas = await q_DCar
+                .Where(x =>
+                    x.nId_Cliente == estadoCuentaDto.nId_Cliente &&
+                    x.nId_Cartera == estadoCuentaDto.nId_Cartera &&
+                    x.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor &&
+                    documentos.Contains(x.nId_DocxCobrar))
+                .GroupBy(x => x.nId_DocxCobrar)
+                .Select(g => g
+                    .OrderByDescending(x => x.dDocCobCarFecReg)
+                    .Select(x => new
+                    {
+                        x.nId_DocxCobrar,
+                        x.cDocParam07,
+                        x.cDocParam08
+                    })
+                    .First())
+                .ToListAsync();
+
+            var dic = cartas.ToDictionary(x => x.nId_DocxCobrar);
+
+            foreach (var item in data)
+            {
+                if (dic.TryGetValue(item.nId_DocxCobrar, out var carta))
+                {
+                    item.NRO_CONTRATO = carta.cDocParam07;
+                    item.NRO_PROCESO = carta.cDocParam08;
+                }
+            }
+
+            return data;
+        }
+
+        public async Task<byte[]> ExportGestionEstadoCuentaAsync(GetGestionEstadoCuentaRequestDto dto)
+        {
+            var data = await ObtenerGestionEstadoCuentaAsync(dto, false);
+
+            using var workbook = new XLWorkbook();
+
+            var ws = workbook.Worksheets.Add("Estado Cuenta");
+
+            ws.Cell(1, 1).Value = "RUC";
+            ws.Cell(1, 2).Value = "CODIGO";
+            ws.Cell(1, 3).Value = "NRO CUENTA";
+            ws.Cell(1, 4).Value = "TIPO DOCUMENTO";
+            ws.Cell(1, 5).Value = "RECIBO";
+            ws.Cell(1, 6).Value = "F. EMISION";
+            ws.Cell(1, 7).Value = "F. VENCIMIENTO";
+            ws.Cell(1, 8).Value = "MONEDA";
+            ws.Cell(1, 9).Value = "MONTO";
+            ws.Cell(1, 10).Value = "SALDO";
+            ws.Cell(1, 11).Value = "SERVICIO";
+            ws.Cell(1, 12).Value = "ESTADO";
+            ws.Cell(1, 13).Value = "RAZON SOCIAL";
+            ws.Cell(1, 14).Value = "TIPO IDENTIFICACION";
+            ws.Cell(1, 15).Value = "MONTO DISPUTA";
+            ws.Cell(1, 16).Value = "TRAMO";
+            ws.Cell(1, 17).Value = "NRO CONTRATO";
+            ws.Cell(1, 18).Value = "NRO PROCESO";
+
+            ws.Row(1).Style.Font.Bold = true;
+
+            int fila = 2;
+
+            foreach (var item in data)
+            {
+                ws.Cell(fila, 1).Value = item.RUC;
+                ws.Cell(fila, 2).Value = item.CODIGO;
+                ws.Cell(fila, 3).Value = item.NRO_CUENTA;
+                ws.Cell(fila, 4).Value = item.TIPO_DOCUMENTO;
+                ws.Cell(fila, 5).Value = item.NUMERO_RECIBO;
+                ws.Cell(fila, 6).Value = item.FECHA_EMISION;
+                ws.Cell(fila, 7).Value = item.FECHA_VENCIMIENTO;
+                ws.Cell(fila, 8).Value = item.MONEDA;
+                ws.Cell(fila, 9).Value = item.MONTO_FACTURADO;
+                ws.Cell(fila, 10).Value = item.IMPORTE_PENDIENTE;
+                ws.Cell(fila, 11).Value = item.TIPO_SERVICIO;
+                ws.Cell(fila, 12).Value = item.ESTADO;
+                ws.Cell(fila, 13).Value = item.RAZON_SOCIAL;
+                ws.Cell(fila, 14).Value = item.TIPO_IDENTIFICACION;
+                ws.Cell(fila, 15).Value = item.MONTO_EN_DISPUTA;
+                ws.Cell(fila, 16).Value = item.TRAMO;
+                ws.Cell(fila, 17).Value = item.NRO_CONTRATO;
+                ws.Cell(fila, 18).Value = item.NRO_PROCESO;
+
+                fila++;
+            }
+
+            ws.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+
+            workbook.SaveAs(stream);
+
+            return stream.ToArray();
         }
         #endregion
     }

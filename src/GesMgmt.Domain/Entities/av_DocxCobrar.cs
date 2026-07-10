@@ -21,7 +21,7 @@ namespace GesMgmt.Domain.Entities
         //public DateTime? dDoc_FecIngreso { get; set; }
         //public int? nId_DocTipo { get; set; }
         public string? cDoc_Numero { get; set; }
-        //public DateTime? dDoc_FecEmision { get; set; }
+        public DateTime? dDoc_FecEmision { get; set; }
         public DateTime? dDoc_FecVenc { get; set; }
         public decimal? nDoc_ImpTotal { get; set; }
         //public decimal? nDoc_ImpInafecto { get; set; }

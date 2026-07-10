@@ -15,6 +15,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_Divisional> av_Divisionals { get; set; }
         public DbSet<av_DocxCobrarAdicional> av_DocxCobrars { get; set; }
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
+        public DbSet<av_DocxCobrarCarta> av_DocxCobrarCartas { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
         public DbSet<av_DocxCobrarOpeEst> av_DocxCobrarOpeEsts { get; set; }
         public DbSet<av_DocxCobrarOpeGes> av_DocxCobrarOpeGess { get; set; }
@@ -73,6 +74,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_DivisionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarAdicionalConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DocxCobrarCartaConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeEstConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeGesConfiguration());
