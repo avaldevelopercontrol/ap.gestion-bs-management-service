@@ -5,9 +5,9 @@ namespace GesMgmt.Domain.Entities
     {
         public int nId_Usuario { get; set; }
         public string cUsr_NroDoc { get; set; }
-        public string cUsr_ApePat { get; set; }
-        public string cUsr_ApeMat { get; set; }
-        public string cUsr_Nombres { get; set; }
+        public string? cUsr_ApePat { get; set; }
+        public string? cUsr_ApeMat { get; set; }
+        public string? cUsr_Nombres { get; set; }
         public int bSexo { get; set; }
         public string cUsr_Login { get; set; }
         public string cUsr_Pass { get; set; }

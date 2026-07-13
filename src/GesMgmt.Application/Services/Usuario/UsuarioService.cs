@@ -4,9 +4,6 @@ using GesMgmt.Application.Interfaces.Usuario;
 using GesMgmt.Application.Validators.Usuario;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
-using System.Security.Cryptography;
-using System.Text;
-using static GesMgmt.Application.DTOs.Deudor.DeudorResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 
@@ -22,6 +19,40 @@ namespace GesMgmt.Application.Services.Usuario
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
         }
+
+        #region "Listado de Usuarios"
+        public async Task<ResultListDto<IEnumerable<GetUsuariosListResponseDto>>> GetUsuariosListAsync()
+        {
+            var q_Usuarios = await _unitOfWork.av_Usuarios.Query();
+            var q_Perfil = await _unitOfWork.av_Perfils.Query();
+            List<GetUsuariosListResponseDto> data = new();
+            try
+            {
+                data = (
+                        from us in q_Usuarios
+                        join pf in q_Perfil
+                        on us.nid_perfil equals pf.nid_perfil
+                        select new GetUsuariosListResponseDto
+                        {
+                            id = us.nId_Usuario,
+                            nombres = $"{us.cUsr_ApePat} {us.cUsr_ApeMat} {us.cUsr_Nombres}",
+                            estado = us.bEstado ? "Activo" : "Inactivo",
+                            perfil = pf.per_Nombre ?? "",
+                            codigoRecurso = us.cod_Recau ?? "",
+                            login = us.cUsr_Login
+                        })
+                        .ToList();
+
+                var response = ResultListDto<IEnumerable<GetUsuariosListResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return ResultListDto<IEnumerable<GetUsuariosListResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
 
         #region "Login al New SISGES"
         public async Task<ResultDto<GetUsuarioLoginResponseDto>> GetLoginUsuarioAsync(GetUsuarioLoginRequestDto usuarioLoginDto)

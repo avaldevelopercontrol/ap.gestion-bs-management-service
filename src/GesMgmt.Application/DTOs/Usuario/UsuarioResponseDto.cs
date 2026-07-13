@@ -3,6 +3,16 @@ namespace GesMgmt.Application.DTOs.Usuario
 {
     public class UsuarioResponseDto
     {
+        public class GetUsuariosListResponseDto
+        {
+            public int id { get; set; }
+            public string nombres { get; set; }
+            public string estado { get; set; }
+            public string perfil { get; set; }
+            public string codigoRecurso { get; set; }
+            public string login { get; set; }
+        }
+
         public class GetUsuarioLoginResponseDto
         {
             public int nId_Usuario { get; set; }
