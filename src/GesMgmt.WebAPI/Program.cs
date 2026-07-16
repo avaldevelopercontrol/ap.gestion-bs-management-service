@@ -20,6 +20,21 @@ builder.Host.UseNLog();
 // Memoria cache
 builder.Services.AddMemoryCache();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://192.168.100.91:8080",
+                "http://localhost:8080",
+                "http://localhost:5173"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 //builder.Services.AddControllers();
 
 builder.Services.AddControllers()
@@ -66,6 +81,8 @@ var app = builder.Build();
 //}
 
 app.UseHttpsRedirection();
+
+app.UseCors("ReactPolicy");
 
 app.UseAuthorization();
 

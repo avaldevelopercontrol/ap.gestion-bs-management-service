@@ -54,5 +54,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(uc => uc.bEstado.Equals(true))
                 .AsNoTracking();
         }
+
+        public async Task<av_Usuario> GetByUsuarioByNroDocumentoAsync(string cUsr_NroDoc)
+        {
+            var query = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.cUsr_NroDoc == cUsr_NroDoc.Trim());
+            return query;
+        }
     }
 }

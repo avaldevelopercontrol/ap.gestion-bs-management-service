@@ -55,5 +55,18 @@ namespace GesMgmt.Domain.Constants
         public const string NID_CARTERA_REQUIRED = "041";
         public const string NID_PERSDEUDOR_REQUIRED = "042";
         public const string NID_USUARIO_REQUIRED = "043";
+
+        public const string NRODOC_REQUERIDO = "044";
+        public const string NRODOC_MENOR_LONGITUD = "045";
+        public const string NRODOC_MAYOR_LONGITUD = "046";
+        public const string NRODOC_EXISTE = "047";
+
+        public const string NOMBRES_REQUERIDO = "048";
+        public const string NOMBRES_MENOR_LONGITUD = "049";
+        public const string NOMBRES_MAYOR_LONGITUD = "050";
+
+        public const string APELLIDO_PATERNO_REQUERIDO = "051";
+        public const string APELLIDO_PATERNO_MENOR_LONGITUD = "052";
+        public const string APELLIDO_PATERNO_MAYOR_LONGITUD = "053";
     }
 }

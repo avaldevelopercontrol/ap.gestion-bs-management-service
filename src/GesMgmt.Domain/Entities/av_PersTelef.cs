@@ -10,7 +10,7 @@ namespace GesMgmt.Domain.Entities
         public string? nTelef_Nro { get; set; }
         public string? nTelef_Anexo { get; set; }
         public int? nId_PersRefUbi { get; set; }
-        //public av_PersRefUbi? av_PersRefUbi { get; set; }
+        public av_PersRefUbi? av_PersRefUbi { get; set; }
         public string? cTelef_Coment { get; set; }
         public int? nId_PersDirecc {  get; set; }
         public bool? bEstado { get; set; }

@@ -97,7 +97,7 @@ namespace GesMgmt.Application.Services.Telefono
                                         prioridad = pe.nTelef_Prioridad ?? 0,
                                         nroTelefono = pe.nTelef_Nro ?? "",
                                         horario = hrs.cNombren_PersDeudorGestionHrs ?? "",
-                                        referenciaUbicacion = "", //refUbi.cNombre_PersRefUbi ?? "",
+                                        referenciaUbicacion = refUbi.cNombre_PersRefUbi ??"",
                                         estado = pto.cNombre_PersTelefOpe ?? "",
                                         fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
                                         fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",
