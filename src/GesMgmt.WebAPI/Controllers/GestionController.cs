@@ -2,17 +2,11 @@
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Infraestructure.Logger;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
-using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
-using static GesMgmt.Application.DTOs.Telefono.TelefonoRequestDto;
-using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -415,19 +409,13 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
-        //[SwaggerOperation(Summary = "[API]: Endpoint Listado Paleta de Motivo No Pago")]
-        //[HttpGet("GetGestionEstadoCuenta")]
-        //[ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetGestionEstadoCuentaAsync([FromQuery] GetGestionEstadoCuentaRequestDto estadoCuentaDto)
-        //{
-        //    _Logger.LogInfo($"GetGestionEstadoCuenta|Begin|GetGestionEstadoCuentaAsync|request: {JsonSerializer.Serialize(estadoCuentaDto)}");
-        //    var result = await _gestionService.GetGestionEstadoCuentaAsync(estadoCuentaDto);
-        //    _Logger.LogInfo($"GetGestionEstadoCuenta|End|GetGestionEstadoCuentaAsync|response: {JsonSerializer.Serialize(result)}");
-        //    return StatusCode(result.StatusCode, result);
-        //}
-
+        /// <summary>
+        /// Para poder realizar la descarga del archivo excel de estado de cuenta.
+        /// </summary>
+        /// <remarks>
+        /// Para poder realizar la descarga del archivo excel de estado de cuenta.
+        /// </remarks>
+        /// <response code="200">Para poder realizar la descarga del archivo excel de estado de cuenta.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Para exportar el estado de cuenta")]
         [HttpGet("ExportGestionEstadoCuenta")]
         [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaRequestDto>>), StatusCodes.Status200OK)]
@@ -451,6 +439,26 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _gestionService.CreateGestionOpeGesContratosAsync(gestionOpeGesDto);
             _Logger.LogInfo($"CreateGestionOpeGesContratos|End|CreateGestionOpeGesContratosAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// Listado de Gestiones Diarias.
+        /// </summary>
+        /// <remarks>
+        /// Listado de Gestiones Diarias.
+        /// </remarks>
+        /// <response code="200">Listado de Gestiones Diarias.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado de Gestiones Diarias")]
+        [HttpGet("GetGestionToDay")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionToDayResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionToDayResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionToDayResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionToDayAsync([FromQuery] GetGestionToDayRequestDto gestionToDayDto)
+        {
+            _Logger.LogInfo($"GetGestionToDay|Begin|GetGestionToDayAsync|request: {JsonSerializer.Serialize(gestionToDayDto)}");
+            var result = await _gestionService.GetGestionToDayAsync(gestionToDayDto);
+            _Logger.LogInfo($"GetGestionToDay|End|GetGestionToDayAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
         }
     }
 }

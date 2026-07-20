@@ -2,6 +2,7 @@
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Agenda;
 using GesMgmt.Application.Validators.Agenda;
+using GesMgmt.Application.Logger;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
@@ -14,6 +15,7 @@ namespace GesMgmt.Application.Services.Agenda
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
+        private readonly IAppLogger _Logger;
 
         public AgendaService(IUnitOfWork unitOfWork, IValidationMessageService validationMessageService)
         {
@@ -73,6 +75,7 @@ namespace GesMgmt.Application.Services.Agenda
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"CreateAgenda|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<CreateAgendaResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, 500);
             }

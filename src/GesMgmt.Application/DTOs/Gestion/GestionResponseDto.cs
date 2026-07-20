@@ -3,6 +3,17 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionResponseDto
     {
+        public class GetGestionToDayResponseDto
+        {
+            public string? Hora { get; set; }
+            public int Total { get; set; }
+            public int Ges4 { get; set; }
+            public int Ges15 { get; set; }
+            public int Ges13 { get; set; }
+            public int Ges4b { get; set; }
+            public int Ges0 { get; set; }
+        }
+
         public class GetGestionEstadoCuentaResponseDto
         {
             public int nId_DocxCobrar { get; set; }

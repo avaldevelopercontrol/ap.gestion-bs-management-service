@@ -2,9 +2,6 @@
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GesMgmt.Infraestructure.Repositories
 {
@@ -22,6 +19,19 @@ namespace GesMgmt.Infraestructure.Repositories
         public async Task<IQueryable<av_UGrupo>> Query()
         {
             return _dbSet.AsNoTracking();
+        }
+
+        public async Task<av_UGrupo> AddAsync(av_UGrupo av_UGrupo)
+        {
+            await _dbSet.AddAsync(av_UGrupo);
+            return av_UGrupo;
+        }
+
+        public async Task<IQueryable<av_UGrupo>> GetUGruposActivo()
+        {
+            return _dbSet
+                .Where(ug => ug.bEstado == true)
+                .AsNoTracking();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Direccion;
+using GesMgmt.Application.Logger;
 using GesMgmt.Application.Validators.Direccion;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
@@ -15,6 +16,7 @@ namespace GesMgmt.Application.Services.Direccion
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
+        private readonly IAppLogger _Logger;
 
         public DireccionService(IUnitOfWork unitOfWork, IValidationMessageService validationMessageService)
         {
@@ -91,6 +93,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetDirecciones|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetDireccionesResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -153,6 +156,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetDireccionByIdDireccion|DatabaseError: {ex.Message}");
                 return ResultDto<GetDireccionAsync>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -213,6 +217,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"CreateDireccion|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<CreateDireccionResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
             }
@@ -276,7 +281,8 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
-                return null;
+                _Logger.LogError($"EditDireccion|DatabaseError: {ex.Message}");
+                return ResultDto<EditDireccionResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
             }
         }
 
@@ -299,6 +305,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetDireccionDepartamentos|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetDireccionDepartamentos>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -322,6 +329,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetDireccionProvincias|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetDireccionProvincias>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -345,6 +353,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetDireccionDistritos|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetDireccionDistritos>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -370,6 +379,7 @@ namespace GesMgmt.Application.Services.Direccion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetDireccionUbicaciones|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetDireccionUbicaciones>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }

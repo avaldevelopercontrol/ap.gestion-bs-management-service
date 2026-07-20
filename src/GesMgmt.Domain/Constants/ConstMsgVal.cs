@@ -68,5 +68,28 @@ namespace GesMgmt.Domain.Constants
         public const string APELLIDO_PATERNO_REQUERIDO = "051";
         public const string APELLIDO_PATERNO_MENOR_LONGITUD = "052";
         public const string APELLIDO_PATERNO_MAYOR_LONGITUD = "053";
+
+        public const string APELLIDO_MATERNO_REQUERIDO = "054";
+        public const string APELLIDO_MATERNO_MENOR_LONGITUD = "055";
+        public const string APELLIDO_MATERNO_MAYOR_LONGITUD = "056";
+
+        public const string DEPARTAMENTO_REQUERIDO = "057";
+        public const string SUBZONAL_REQUERIDO = "058";
+        public const string SEXO_REQUERIDO = "059";
+
+        public const string FECHA_NACIMIENTO_REQUERIDA = "060";
+        public const string FECHA_NACIMIENTO_MAYOR_A_HOY = "061";
+        public const string ANEXO_INCORRECTO = "062";
+        public const string ANEXO_FORMATO_INCORRECTO = "063";
+        public const string ANEXO_EXISTENTE = "064";
+        public const string LOGIN_REQUERIDO = "065";
+        public const string LOGIN_LONGITUD_MINIMA = "066";
+        public const string LOGIN_EXISTENTE = "067";
+        public const string CLAVE_REQUERIDA = "068";
+        public const string CLAVE_LONGITUD_MINIMA = "069";
+        public const string CLAVE_LONGITUD_MAXIMA = "070";
+        public const string CLAVE_MENSAJE_VALIDACION = "071";
+        public const string CLAVE_NUEVA_REQUERIDA = "072";
+
     }
 }

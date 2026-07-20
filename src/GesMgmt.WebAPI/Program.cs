@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NLog;
-using NLog.Web; 
+using NLog.Web;
 using GesMgmt.Infraestructure;
 using System.Text.Json.Serialization;
 

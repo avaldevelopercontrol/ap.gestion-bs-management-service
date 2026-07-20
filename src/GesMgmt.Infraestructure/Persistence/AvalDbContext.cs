@@ -10,6 +10,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_CabPantallaCob> av_CabPantallaCobs { get; set; }
         public DbSet<av_Cartera> av_Carteras { get; set; }
         public DbSet<av_Cliente> av_Clientes { get; set; }
+        public DbSet<av_ConfigSistema> av_ConfigSistemas { get; set; }
         public DbSet<av_Contrato> av_Contratos { get; set; }
         public DbSet<av_DetallePersTelef> av_DetallePersTelefs { get; set; }
         public DbSet<av_Divisional> av_Divisionals { get; set; }
@@ -69,6 +70,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_CabPantallaCobConfiguration());
             modelBuilder.ApplyConfiguration(new av_CarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ClienteConfiguration());
+            modelBuilder.ApplyConfiguration(new av_ConfigSistemaConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContratoConfiguration());
             modelBuilder.ApplyConfiguration(new av_DetallePersTelefConfiguration());
             modelBuilder.ApplyConfiguration(new av_DivisionalConfiguration());

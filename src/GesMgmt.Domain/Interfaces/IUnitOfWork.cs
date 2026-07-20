@@ -7,6 +7,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_CabPantallaCobRepository av_CabPantallaCobs { get; }
         Iav_CarteraRepository av_Carteras { get; }
         Iav_ClienteRepository av_Clientes { get; }
+        Iav_ConfigSistemaRepository av_ConfigSistemas { get; }
         Iav_ContratoRepository av_Contratos { get; }
         Iav_DivisionalRepository av_Divisionals { get; }
         Iav_DetallePersTelefRepository av_DetallePersTelefs { get; }

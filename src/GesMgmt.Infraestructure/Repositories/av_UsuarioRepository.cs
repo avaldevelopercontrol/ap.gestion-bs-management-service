@@ -62,5 +62,33 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.cUsr_NroDoc == cUsr_NroDoc.Trim());
             return query;
         }
+
+        public async Task<av_Usuario> GetByUsuarioByAnexoAsync(string cUsr_Anexo)
+        {
+            var query = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.cUsr_Anexo == cUsr_Anexo.Trim() && s.bEstado == true);
+            return query;
+        }
+
+        public async Task<av_Usuario> GetByUsuarioByLoginAsync(string cUsr_Login)
+        {
+            var query = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.cUsr_Login == cUsr_Login.Trim() && s.bEstado == true);
+            return query;
+        }
+
+        public async Task<av_Usuario> AddAsync(av_Usuario av_Usuario)
+        {
+            await _dbSet.AddAsync(av_Usuario);
+            return av_Usuario;
+        }
+
+        public async Task<av_Usuario> UpdateAsync(av_Usuario av_Usuario)
+        {
+            _dbSet.Update(av_Usuario);
+            return av_Usuario;
+        }
     }
 }

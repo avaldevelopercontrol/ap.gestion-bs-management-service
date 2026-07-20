@@ -2,6 +2,7 @@
 using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Gestion;
+using GesMgmt.Application.Logger;
 using GesMgmt.Application.Validators.Gestion;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
@@ -16,6 +17,7 @@ namespace GesMgmt.Application.Services.Gestion
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
+        private readonly IAppLogger _Logger;
 
         public GestionService(IUnitOfWork unitOfWork, IValidationMessageService validationMessageService)
         {
@@ -54,6 +56,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionZonaCarteraCampanna|DatabaseError: {ex.Message}");
                 return ResultDto<GetGestionZonaCarteraCampannaResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -116,6 +119,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionDocumentosCabecera|DatabaseError: {ex.Message}");
                 return ResultListCabeceraDto<IEnumerable<GetGestionCabeceraResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -270,6 +274,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionDocumentos|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -322,6 +327,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionDocumentosAdicionalesCabecera|DatabaseError: {ex.Message}");
                 return ResultDto<GetGestionCabeceraAdicionalResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -388,6 +394,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionDocumentosAdicionales|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionAdicionalResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -497,6 +504,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionDeudor|DatabaseError: {ex.Message}");
                 return ResultDto<GetGestionDeudorResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -579,6 +587,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionGestionesCarteraDeudor|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -667,6 +676,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionGestionesCarteraDeudorHistoricas|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GestionCarteraDeudorHistoricaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -747,6 +757,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionEstadosGestionesCarteraDeudor|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -834,6 +845,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionEstadosGestionesCarteraDeudorHistorica|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -889,6 +901,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionAgendasDeudor|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -954,6 +967,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionPagosDeudor|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -1068,6 +1082,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionInformacionDeudor|DatabaseError: {ex.Message}");
                 return ResultDto<GetGestionInformacionDeudorRespondeDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -1173,6 +1188,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionInformacionDeudorParam|DatabaseError: {ex.Message}");
                 return ResultDto<GetGestionInformacionDeudorParamRespondeDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -1216,7 +1232,7 @@ namespace GesMgmt.Application.Services.Gestion
                         nId_DocxCobrar = idDocCobrar,
                         nId_OpeCodIn = 4,
                         dDocCobOpe_FecIni = OpeGesCreateDto.dFechaInicioGestion,
-                        dDocCobOpe_FecFin = DateTime.Now,
+                        dDocCobOpe_FecFin = OpeGesCreateDto.dFechaFinGestion,
                         cDocOpeCobIn_Descr = "Acción Directa",
                         nId_OpeCodCliOut = OpeGesCreateDto.nNP2.Value > 0
                                             ? OpeGesCreateDto.nNP1.Value
@@ -1273,7 +1289,7 @@ namespace GesMgmt.Application.Services.Gestion
                             nId_DocxCobrar = first.nId_DocxCobrar,
                             nId_OpeCodIn = 4,
                             dDocCobOpe_FecIni = first.dDocCobOpe_FecIni,
-                            dDocCobOpe_FecFin = DateTime.Now,
+                            dDocCobOpe_FecFin = first.dDocCobOpe_FecFin,
                             cDocOpeCobIn_Descr = "Acción Directa",
                             nId_OpeCodCliOut = first.nId_OpeCodCliOut,
                             bEstado = true,
@@ -1328,6 +1344,7 @@ namespace GesMgmt.Application.Services.Gestion
 
                 var listaSave = new List<CreateGestionOpeGesResponseDto>();
                 int nro = 0;
+
                 foreach (var item in OpeGesCreate)
                 {
                     listaSave.Add(new CreateGestionOpeGesResponseDto
@@ -1352,6 +1369,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"CreateGestionOpeGesContratos|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, Const.ERROR_REQUEST_CODE);
             }
@@ -1382,6 +1400,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionTipoGestion|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -1411,6 +1430,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionEstadoGestion|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionEstadoGestionResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -1452,6 +1472,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionPaletaRespuesta|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -1488,6 +1509,7 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionEstadoGestionClaro|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionEstadoGestionClaroResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -1523,152 +1545,119 @@ namespace GesMgmt.Application.Services.Gestion
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetGestionMotivoNoPago|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionMotivoNoPagoResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion
 
-        #region "Lista Estado de Cuenta"
-        //public async Task<ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>> GetGestionEstadoCuentaAsync(GetGestionEstadoCuentaRequestDto estadoCuentaDto)
-        //{
-        //    GetGestionEstadoCuentaRequestValidator validator = new GetGestionEstadoCuentaRequestValidator(_unitOfWork, _validationMessageService, estadoCuentaDto);
-        //    int totalRecords = 1;
-        //    // Validaciones
-        //    var validationResult = await validator.Validate();
+        #region "Lista Gestion HOY"
+        public async Task<ResultListDto<IEnumerable<GetGestionToDayResponseDto>>>GetGestionToDayAsync(GetGestionToDayRequestDto gestionToDayDto)
+        {
+            try
+            {
+                var q_GesToDay = await _unitOfWork.av_DocxCobrarOpes.GetGestionesByIdUsuarioToDay(gestionToDayDto.nId_Cliente, gestionToDayDto.nId_Usuario);
+                var gestiones = await q_GesToDay.ToListAsync();
 
-        //    if (validationResult.Code != Const.SUCCESS_CODE)
-        //    {
-        //        return validationResult;
-        //    }
+                var q_Tmp = gestiones
+                    .GroupBy(x => new
+                    {
+                        x.nId_Cliente,
+                        x.nId_Cartera,
+                        x.nId_PersDeudor,
+                        x.dDocCobOpe_FecIni,
+                        x.cDocOpeCobOut_Descr,
+                        x.nTelef_Nro,
+                        x.nId_Usuario
+                    })
+                    .Select(g =>
+                        g.OrderBy(x => x.nId_DocxCobrarOpe)
+                         .First()
+                    )
+                    .Select(x => new
+                    {
+                        Hora = x.dDocCobOpe_FecIni.HasValue
+                            ? x.dDocCobOpe_FecIni.Value.Hour
+                            : 0,
 
-        //    var filterdc = new av_DocxCobrar
-        //    {
-        //        nId_Cliente = estadoCuentaDto.nId_Cliente,
-        //        nId_Cartera = estadoCuentaDto.nId_Cartera,
-        //        nId_PersDeudor = estadoCuentaDto.nId_Persdeudor
-        //    };
+                        Total = 1,
 
-        //    try
-        //    {
-        //        var q_DCar = await _unitOfWork.av_DocxCobrarCartas.Query();
-        //        var q_Doc = await _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
-        //        var q_dcp = await _unitOfWork.av_DocxCobrarParams.Query();
+                        TipoContact =
+                            x.av_OpeCodCliOut != null
+                                ? x.av_OpeCodCliOut.nId_OpeCodOut2 ?? 2
+                                : 2
+                    })
+                    .ToList();
 
-        //        IEnumerable<GetGestionEstadoCuentaResponseDto> data = Enumerable.Empty<GetGestionEstadoCuentaResponseDto>();
 
-        //        //CARTAS
-        //        var q_Cartas =
-        //                        q_DCar
-        //                        .Where(x =>
-        //                            x.nId_Cliente == estadoCuentaDto.nId_Cliente &&
-        //                            x.nId_Cartera == estadoCuentaDto.nId_Cartera &&
-        //                            x.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor)
-        //                        .GroupBy(x => x.nId_DocxCobrar)
-        //                        .Select(g => g
-        //                            .OrderByDescending(x => x.dDocCobCarFecReg)
-        //                            .FirstOrDefault());
 
-        //        var query =
-        //                    from d in q_Doc
-        //                    join p in q_dcp
-        //                    on new { nId_DocxCobrar = d.nId_DocxCobrar, nId_Cartera = (int?)d.nId_Cartera, nId_Cliente = (int?)d.nId_Cliente }
-        //                    equals new { p.nId_DocxCobrar, p.nId_Cartera, p.nId_Cliente }
-        //        where d.nId_Cliente == estadoCuentaDto.nId_Cliente
-        //        && d.nId_Cartera == estadoCuentaDto.nId_Cartera
-        //        && d.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor
-        //        orderby d.dDoc_FecVenc
-        //        select new GetGestionEstadoCuentaResponseDto
-        //        {
-        //            // ESTE CAMPO ES SOLO PARA RELACIONAR LAS CARTAS
-        //            nId_DocxCobrar = d.nId_DocxCobrar,
-        //            RUC = p.cDocParam19,
-        //            CODIGO = p.cDocParam15,
-        //            NRO_CUENTA = p.cDocParam16,
-        //            TIPO_DOCUMENTO = p.cDocParam25,
-        //            NUMERO_RECIBO = p.cDocParam26,
-        //            FECHA_EMISION = d.dDoc_FecEmision.ToString(),
-        //            FECHA_VENCIMIENTO = d.dDoc_FecVenc.ToString(),
-        //            MONEDA = p.cDocParam30,
-        //            MONTO_FACTURADO = p.cDocParam31,
-        //            IMPORTE_PENDIENTE = d.nDoc_ImpSaldo.ToString(),
-        //            TIPO_SERVICIO = p.cDocParam29,
-        //            ESTADO = d.bEstado == 1 ? "ABIERTO" : d.bEstado == 0 ? "CERRADO" : "",
-        //            RAZON_SOCIAL = p.cDocParam17,
-        //            TIPO_IDENTIFICACION = p.cDocParam18,
-        //            MONTO_EN_DISPUTA = string.IsNullOrEmpty(d.cDoc_Coment) ? "NO" : d.cDoc_Coment,
-        //            TRAMO = p.cDocParam50.Substring(3),
-        //            NRO_CONTRATO = string.Empty,
-        //            NRO_PROCESO = string.Empty
-        //        };
+                var data = q_Tmp
+                    .GroupBy(x => x.Hora)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new GetGestionToDayResponseDto
+                    {
+                        Hora = g.Key.ToString(),
 
-        //        data = await query
-        //            //.Skip((estadoCuentaDto.PageNumber - 1) * estadoCuentaDto.PageSize)
-        //            //.Take(estadoCuentaDto.PageSize)
-        //            .ToListAsync();
+                        Total = g.Sum(x => x.Total),
 
-        //        // =========================
-        //        // DOCUMENTOS DE LA PÁGINA
-        //        // =========================
-        //        var documentos = data
-        //            .Select(x => x.nId_DocxCobrar)
-        //            .ToList();
+                        Ges4 = g
+                            .Where(x => x.TipoContact == 1)
+                            .Sum(x => x.Total),
 
-        //        // =========================
-        //        // ÚLTIMA CARTA DE CADA DOCUMENTO
-        //        // =========================
-        //        var cartas = await q_DCar
-        //            .Where(x =>
-        //                x.nId_Cliente == estadoCuentaDto.nId_Cliente &&
-        //                x.nId_Cartera == estadoCuentaDto.nId_Cartera &&
-        //                x.nId_PersDeudor == estadoCuentaDto.nId_Persdeudor &&
-        //                documentos.Contains(x.nId_DocxCobrar))
-        //            .GroupBy(x => x.nId_DocxCobrar)
-        //            .Select(g => g
-        //                .OrderByDescending(x => x.dDocCobCarFecReg)
-        //                .Select(x => new
-        //                {
-        //                    x.nId_DocxCobrar,
-        //                    x.cDocParam07,
-        //                    x.cDocParam08
-        //                })
-        //                .First())
-        //            .ToListAsync();
+                        Ges15 = 0,
 
-        //        // =========================
-        //        // DICCIONARIO
-        //        // =========================
-        //        var dicCartas = cartas.ToDictionary(
-        //            x => x.nId_DocxCobrar,
-        //            x => x);
+                        Ges13 = 0,
 
-        //        // =========================
-        //        // COMPLETAR EL RESULTADO
-        //        // =========================
-        //        foreach (var item in data)
-        //        {
-        //            if (dicCartas.TryGetValue(item.nId_DocxCobrar, out var carta))
-        //            {
-        //                item.NRO_CONTRATO = carta.cDocParam07;
-        //                item.NRO_PROCESO = carta.cDocParam08;
-        //            }
-        //        }
+                        Ges4b = g
+                            .Where(x => x.TipoContact == 2)
+                            .Sum(x => x.Total),
 
-        //        totalRecords = data.Count();
+                        Ges0 = 0
+                    })
+                    .ToList();
 
-        //        var response = ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
-        //        response.TotalRecords = totalRecords;
-        //        response.PageNumber = estadoCuentaDto.PageNumber;
-        //        response.PageSize = estadoCuentaDto.PageSize;
-        //        response.TotalPages = (int)Math.Ceiling((double)totalRecords / estadoCuentaDto.PageSize);
+                /*
+                 * Fila Total
+                 */
 
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
-        //    }
-        //}
+                data.Add(new GetGestionToDayResponseDto
+                {
+                    Hora = "Total",
+
+                    Total = data.Sum(x => x.Total),
+
+                    Ges4 = data.Sum(x => x.Ges4),
+
+                    Ges15 = data.Sum(x => x.Ges15),
+
+                    Ges13 = data.Sum(x => x.Ges13),
+
+                    Ges4b = data.Sum(x => x.Ges4b),
+
+                    Ges0 = data.Sum(x => x.Ges0)
+                });
+
+
+                return ResultListDto<IEnumerable<GetGestionToDayResponseDto>>.Success(
+                    data,
+                    Const.SUCCESS_CODE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.OK_REQUEST_CODE
+                );
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetGestionToDay|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetGestionToDayResponseDto>>.Failure(
+                    Const.ERROR_REQUEST_CODE.ToString(),
+                    "Error interno del servidor.",
+                    ex.Message,
+                    Const.ERROR_REQUEST_CODE
+                );
+            }
+        }
 
         private async Task<List<GetGestionEstadoCuentaResponseDto>> ObtenerGestionEstadoCuentaAsync(GetGestionEstadoCuentaRequestDto estadoCuentaDto, bool paginar)
         {

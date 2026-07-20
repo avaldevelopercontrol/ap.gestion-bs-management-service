@@ -6,5 +6,6 @@ namespace GesMgmt.Domain.Interfaces
     {
         Task<IQueryable<av_Grupo>> Query();
         Task<IQueryable<av_Grupo>> GetGruposByCliente(int nId_Cliente);
+        Task<IQueryable<av_Grupo>> GetGruposActivos();
     }
 }

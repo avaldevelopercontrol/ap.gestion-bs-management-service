@@ -5,6 +5,12 @@ namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionRequestDto
     {
+        public class GetGestionToDayRequestDto
+        {
+            public int nId_Cliente { get; set; } //ID_CLIENTE
+            public int nId_Usuario { get; set; } //ID_USUARIO
+        }
+
         public class GetGestionEstadoCuentaRequestDto
         {
             public int nId_Cliente { get; set; } //ID_CLIENTE
@@ -81,6 +87,7 @@ namespace GesMgmt.Application.DTOs.Gestion
             public int? nESTADOGESTIONCLARO { get; set; }
             public int? nMOTIVONOPAGO { get; set; }
             public DateTime? dFechaInicioGestion { get; set; }
+            public DateTime? dFechaFinGestion { get; set; }
             public bool? bEstado { get; set; }
         }
 
@@ -117,6 +124,7 @@ namespace GesMgmt.Application.DTOs.Gestion
             public int? nESTADOGESTIONCLARO { get; set; }
             public int? nMOTIVONOPAGO { get; set; }
             public DateTime? dFechaInicioGestion { get; set; }
+            public DateTime? dFechaFinGestion { get; set; }
             public bool? bEstado { get; set; }
         }
 

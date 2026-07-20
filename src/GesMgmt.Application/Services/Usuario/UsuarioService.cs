@@ -1,9 +1,13 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Usuario;
+using GesMgmt.Application.Logger;
 using GesMgmt.Application.Validators.Usuario;
 using GesMgmt.Domain.Constants;
+using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
+using System.Security.Cryptography;
+using System.Text;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 
@@ -13,6 +17,7 @@ namespace GesMgmt.Application.Services.Usuario
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
+        private readonly IAppLogger _Logger;
 
         public UsuarioService(IUnitOfWork unitOfWork, IValidationMessageService validationMessageService)
         {
@@ -49,6 +54,7 @@ namespace GesMgmt.Application.Services.Usuario
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetUsuariosList|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetUsuariosListResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -117,6 +123,7 @@ namespace GesMgmt.Application.Services.Usuario
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetLoginUsuario|DatabaseError: {ex.Message}");
                 return ResultDto<GetUsuarioLoginResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -125,7 +132,6 @@ namespace GesMgmt.Application.Services.Usuario
         #region "Usuarios - UGrupos - Grupos"
         public async Task<ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>> GetUsuariosGrupoAsync(GetUsuariosGrupoRequestDto usuarioGrupoDto)
         {
-
             var q_Usuario = await _unitOfWork.av_Usuarios.GetUsuariosActivos();
             var q_Grupos = await _unitOfWork.av_Grupos.GetGruposByCliente(usuarioGrupoDto.nId_Cliente);
             var q_UsuGru = await _unitOfWork.av_UGrupos.Query();
@@ -172,9 +178,193 @@ namespace GesMgmt.Application.Services.Usuario
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetUsuariosGrupo|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion
+
+        #region "Nuevo Usuario"
+        public async Task<ResultDto<CreateUsuarioResponseDto>> CreateUsuarioAsync(CreateUsuarioRequestDto usuarioCreateDto)
+        {
+            CreateUsuarioRequestValidator validator = new CreateUsuarioRequestValidator(_unitOfWork, _validationMessageService, usuarioCreateDto);
+            
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_Usuario av_Usuario = new av_Usuario
+                {
+                    cUsr_NroDoc = usuarioCreateDto.cUsr_NroDoc,
+                    cUsr_ApePat = usuarioCreateDto.cUsr_ApePat,
+                    cUsr_ApeMat = usuarioCreateDto.cUsr_ApeMat,
+                    cUsr_Nombres = usuarioCreateDto.cUsr_Nombres,
+                    cUsr_Login = usuarioCreateDto.cUsr_Login,
+                    cUsr_Pass = CifrarClave(usuarioCreateDto.cUsr_Pass),
+                    nid_perfil = usuarioCreateDto.nid_perfil,
+                    nId_Grupo = usuarioCreateDto.nId_Grupo,
+                    cod_Recau = usuarioCreateDto.cod_Recau,
+                    bEstado = usuarioCreateDto.bEstado,
+                    dUsr_FecNac = usuarioCreateDto.dUsr_FecNac,
+                    bSexo = usuarioCreateDto.bSexo,
+                    nId_Ubigeo = usuarioCreateDto.nId_Ubigeo,
+                    nUsr_CiuGestor = usuarioCreateDto.nUsr_CiuGestor,
+                    nId_SubZonaGen = usuarioCreateDto.nId_SubZonaGen,
+                    cUsr_Celular = usuarioCreateDto.cUsr_Celular,
+                    cUsr_Anexo = usuarioCreateDto.cUsr_Anexo,
+                    cUsr_Email = usuarioCreateDto.cUsr_Email,
+                    cUsr_EmailPersonal = usuarioCreateDto.cUsr_EmailPersonal,
+                    NroCampanaDiscador = usuarioCreateDto.NroCampanaDiscador
+                };
+                var usuarioCreate = await _unitOfWork.av_Usuarios.AddAsync(av_Usuario);
+                await _unitOfWork.SaveChangesAsync();
+
+                //actualizar el campo del Login
+                av_Usuario av_UsuarioUpdateLogin = new av_Usuario
+                {
+                    nId_Usuario = usuarioCreate.nId_Usuario,
+                    cUsr_Login = usuarioCreate.nId_Usuario.ToString()
+                };
+                await _unitOfWork.av_Usuarios.UpdateAsync(av_UsuarioUpdateLogin);
+                await _unitOfWork.SaveChangesAsync();
+
+                //Grabar en la tabla de UGrupos
+                av_UGrupo av_UGrupo = new av_UGrupo
+                {
+                    nId_Usuario = usuarioCreate.nId_Usuario,
+                    nId_Grupo = usuarioCreateDto.nId_Grupo,
+                    dUGrupo_FecIni = DateTime.Now,
+                    dUGrupo_FecFin = null,
+                    bEstado = true,
+                    bActivo = true,
+                    bGestion = true
+                };
+                await _unitOfWork.av_UGrupos.AddAsync(av_UGrupo);
+                await _unitOfWork.SaveChangesAsync();
+
+                CreateUsuarioResponseDto createUsuarioResponseDto = new CreateUsuarioResponseDto
+                {
+                    nId_Usuario = usuarioCreate.nId_Usuario,
+                    cUsr_NroDoc = usuarioCreate.cUsr_NroDoc,
+                    cUsr_ApePat = usuarioCreate.cUsr_ApePat,
+                    cUsr_ApeMat = usuarioCreate.cUsr_ApeMat,
+                    cUsr_Nombres = usuarioCreate.cUsr_Nombres,
+                    cUsr_Login = usuarioCreate.cUsr_Login
+                };
+
+                ResultDto<CreateUsuarioResponseDto> response = ResultDto<CreateUsuarioResponseDto>
+                                                   .Success(createUsuarioResponseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"CreateUsuario|DatabaseError: {ex.Message}");
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<CreateUsuarioResponseDto>.Failure("500", "Error interno del servidor. " + ex.Message, "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+        #endregion
+
+        #region "Editar Usuario"
+        public async Task<ResultDto<EditUsuarioResponseDto>> EditUsuarioAsync(EditUsuarioRequestDto usuarioEditDto)
+        {
+            EditUsuarioRequestValidator validator = new EditUsuarioRequestValidator(_unitOfWork, _validationMessageService, usuarioEditDto);
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_Usuario av_Usuario = new av_Usuario
+                {
+                    nId_Usuario = usuarioEditDto.nId_Usuario,
+                    cUsr_NroDoc = usuarioEditDto.cUsr_NroDocNew ?? usuarioEditDto.cUsr_NroDoc,
+                    cUsr_ApePat = usuarioEditDto.cUsr_ApePat,
+                    cUsr_ApeMat = usuarioEditDto.cUsr_ApeMat,
+                    cUsr_Nombres = usuarioEditDto.cUsr_Nombres,
+                    cUsr_Login = usuarioEditDto.cUsr_LoginNew ?? usuarioEditDto.cUsr_Login,
+                    cUsr_Pass = CifrarClave(usuarioEditDto.cUsr_PassNew ?? usuarioEditDto.cUsr_Pass),
+                    nid_perfil = usuarioEditDto.nid_perfil,
+                    nId_Grupo = usuarioEditDto.nId_Grupo,
+                    cod_Recau = usuarioEditDto.cod_Recau,
+                    bEstado = usuarioEditDto.bEstado,
+                    dUsr_FecNac = usuarioEditDto.dUsr_FecNac,
+                    bSexo = usuarioEditDto.bSexo,
+                    nId_Ubigeo = usuarioEditDto.nId_Ubigeo,
+                    nUsr_CiuGestor = usuarioEditDto.nUsr_CiuGestor,
+                    nId_SubZonaGen = usuarioEditDto.nId_SubZonaGen,
+                    cUsr_Celular = usuarioEditDto.cUsr_Celular,
+                    cUsr_Anexo = usuarioEditDto.cUsr_Anexo,
+                    cUsr_Email = usuarioEditDto.cUsr_Email,
+                    cUsr_EmailPersonal = usuarioEditDto.cUsr_EmailPersonal,
+                    NroCampanaDiscador = usuarioEditDto.NroCampanaDiscador
+                };
+                var usuarioCreate = await _unitOfWork.av_Usuarios.UpdateAsync(av_Usuario);
+                await _unitOfWork.SaveChangesAsync();
+
+                EditUsuarioResponseDto editUsuarioResponseDto = new EditUsuarioResponseDto
+                {
+                    nId_Usuario = usuarioCreate.nId_Usuario,
+                    cUsr_NroDoc = usuarioCreate.cUsr_NroDoc,
+                    cUsr_ApePat = usuarioCreate.cUsr_ApePat,
+                    cUsr_ApeMat = usuarioCreate.cUsr_ApeMat,
+                    cUsr_Nombres = usuarioCreate.cUsr_Nombres,
+                    cUsr_Login = usuarioCreate.cUsr_Login
+                };
+
+                ResultDto<EditUsuarioResponseDto> response = ResultDto<EditUsuarioResponseDto>
+                                                   .Success(editUsuarioResponseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"EditUsuario|DatabaseError: {ex.Message}");
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<EditUsuarioResponseDto>.Failure("500", "Error interno del servidor. " + ex.Message, "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+        #endregion
+
+        #region "Grupos x Usuario - Listar"
+        //public async Task<ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>> GetGruposByIdUsuarioAsync(GetGruposByUsuarioRequestDto usuarioGrupoDto)
+        //{
+
+        //}
+        #endregion
+
+        private static string CifrarClave(string password)
+        {
+            using var md5 = MD5.Create();
+
+            byte[] inputBytes = Encoding.UTF8.GetBytes(password);
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (byte b in hashBytes)
+            {
+                sb.Append(b.ToString("x2")); // hexadecimal en minúsculas
+            }
+
+            return sb.ToString();
+        }
     }
 }

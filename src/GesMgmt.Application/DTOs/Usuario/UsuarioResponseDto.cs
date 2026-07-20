@@ -3,8 +3,17 @@ namespace GesMgmt.Application.DTOs.Usuario
 {
     public class UsuarioResponseDto
     {
+        public class EditUsuarioResponseDto
+        {
+            public int nId_Usuario { get; set; }
+            public string? cUsr_NroDoc { get; set; }
+            public string? cUsr_ApePat { get; set; }
+            public string cUsr_ApeMat { get; set; }
+            public string cUsr_Nombres { get; set; }
+            public string cUsr_Login { get; set; }
+        }
 
-        public class CreateUsuarioResponsetDto
+        public class CreateUsuarioResponseDto
         {
             public int nId_Usuario { get; set; }
             public string? cUsr_NroDoc { get; set; }
@@ -80,6 +89,12 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string? cEmailVerificacion_codigo { get; set; }
             public string? cUsr_EmailVerificacion { get; set; }
             public DateTime? dFechaHora_Codigo { get; set; }
+        }
+
+        public class GetGruposByUsuarioResponseDto
+        {
+            public int nid_grupo { get; set; }
+            public string cNombre_Grupo { get; set; }
         }
 
         public class GetUsuariosGrupoResponseDto

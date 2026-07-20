@@ -9,5 +9,6 @@ namespace GesMgmt.Application.Interfaces.Usuario
         Task<ResultListDto<IEnumerable<GetUsuariosListResponseDto>>> GetUsuariosListAsync();
         Task<ResultDto<GetUsuarioLoginResponseDto>> GetLoginUsuarioAsync(GetUsuarioLoginRequestDto usuarioLoginDto);
         Task<ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>> GetUsuariosGrupoAsync(GetUsuariosGrupoRequestDto usuarioGrupoDto);
+        Task<ResultDto<CreateUsuarioResponseDto>> CreateUsuarioAsync(CreateUsuarioRequestDto usuarioCreateDto);
     }
 }

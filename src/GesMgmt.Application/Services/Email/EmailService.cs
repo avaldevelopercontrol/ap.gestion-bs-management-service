@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Email;
+using GesMgmt.Application.Logger;
 using GesMgmt.Application.Validators.Email;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
@@ -15,6 +16,7 @@ namespace GesMgmt.Application.Services.Email
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
+        private readonly IAppLogger _Logger;
 
         public EmailService(IUnitOfWork unitOfWork, IValidationMessageService validationMessageService)
         {
@@ -73,6 +75,7 @@ namespace GesMgmt.Application.Services.Email
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetEmailsByIdDeudor|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetEmailsPersDeudorResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -114,6 +117,7 @@ namespace GesMgmt.Application.Services.Email
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetEmailsByIdEmailPers|DatabaseError: {ex.Message}");
                 return ResultDto<GetPersEmailsResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -169,6 +173,7 @@ namespace GesMgmt.Application.Services.Email
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"CreateEmail|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<CreateEmailResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, 500);
             }
@@ -227,6 +232,7 @@ namespace GesMgmt.Application.Services.Email
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"EditEmail|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<EditEmailResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud. " + ex.Message, 500);
             }
@@ -253,6 +259,7 @@ namespace GesMgmt.Application.Services.Email
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetStatus|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetStatus>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }

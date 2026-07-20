@@ -5,6 +5,8 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
+using static GesMgmt.Application.DTOs.Email.EmailRequestDto;
+using static GesMgmt.Application.DTOs.Email.EmailResponseDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
@@ -89,6 +91,25 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _usuarioService.GetUsuariosGrupoAsync(usuariosGrupoDto);
             _Logger.LogInfo($"GetUsuariosGrupo|End|GetUsuariosGrupoAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Crear registro de USUARIO.
+        /// </summary>
+        /// <remarks>
+        /// Crear registro de USUARIO.
+        /// </remarks>
+        /// <response code="200">Crear registro de USUARIO.</response>
+        [HttpPost]
+        [ProducesResponseType(typeof(ResultDto<CreateUsuarioResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateUsuarioAsync([FromBody] CreateUsuarioRequestDto usuarioDto)
+        {
+            _Logger.LogInfo($"CreateUsuario|Begin|CreateUsuarioAsync|request: {JsonSerializer.Serialize(usuarioDto)}");
+            var result = await _usuarioService.CreateUsuarioAsync(usuarioDto);
+            _Logger.LogInfo($"CreateUsuario|End|CreateUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

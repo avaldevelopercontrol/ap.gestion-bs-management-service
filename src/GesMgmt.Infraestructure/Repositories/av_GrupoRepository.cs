@@ -27,5 +27,12 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(g => g.nid_cliente == nId_Cliente)
                 .AsNoTracking();
         }
+
+        public async Task<IQueryable<av_Grupo>> GetGruposActivos()
+        {
+            return _dbSet
+                .Where(g => g.bEstado == true)
+                .AsNoTracking();
+        }
     }
 }

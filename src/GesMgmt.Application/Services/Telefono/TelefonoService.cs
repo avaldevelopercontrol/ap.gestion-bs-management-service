@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Telefono;
+using GesMgmt.Application.Logger;
 using GesMgmt.Application.Validators.Telefono;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
@@ -15,6 +16,7 @@ namespace GesMgmt.Application.Services.Telefono
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
+        private readonly IAppLogger _Logger;
 
         public TelefonoService(IUnitOfWork unitOfWork, IValidationMessageService validationMessageService)
         {
@@ -133,6 +135,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetTelefonos|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetTelefonosResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
@@ -194,6 +197,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetTelefonoByIdTelefono|DatabaseError: {ex.Message}");
                 return ResultDto<GetTelefonoAsync>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -220,6 +224,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetTelefonoResultados|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetTelefonoResultados>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -246,6 +251,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetTelefonoOperadores|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetTelefonoOperadores>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -273,6 +279,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetTelefonoUbicaciones|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetTelefonoUbicaciones>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -301,6 +308,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetTelefonoHorarioGestion|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetTelefonoHorarioGestion>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -328,6 +336,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetTelefonoFuenteBusqueda|DatabaseError: {ex.Message}");
                 return ResultListaDto<IEnumerable<GetTelefonoFuenteBusqueda>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
@@ -414,6 +423,7 @@ namespace GesMgmt.Application.Services.Telefono
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"CreateTelefono|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<CreateTelefonoResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
             }
@@ -518,8 +528,9 @@ namespace GesMgmt.Application.Services.Telefono
 
                 return response;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _Logger.LogError($"EditTelefono|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<EditTelefonoResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
             }

@@ -16,6 +16,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_CabPantallaCobRepository? _av_CabPantallaCobs;
         private Iav_CarteraRepository? _av_Carteras;
         private Iav_ClienteRepository? _av_Clientes;
+        private Iav_ConfigSistemaRepository? _av_ConfigSistemas;
         private Iav_ContratoRepository? _av_Contratos;
         private Iav_DetallePersTelefRepository _av_DetallePersTelefs;
         private Iav_DivisionalRepository _av_Divisionals;
@@ -79,6 +80,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_CabPantallaCobRepository av_CabPantallaCobs => _av_CabPantallaCobs ??= new av_CabPantallaCobRepository(_context);
         public Iav_CarteraRepository av_Carteras => _av_Carteras ??= new av_CarteraRepository(_context);
         public Iav_ClienteRepository av_Clientes => _av_Clientes ??= new av_ClienteRepository(_context);
+        public Iav_ConfigSistemaRepository av_ConfigSistemas => _av_ConfigSistemas ??= new av_ConfigSistemaRepository(_context);
         public Iav_ContratoRepository av_Contratos => _av_Contratos ??= new av_ContratoRepository(_context);
         public Iav_DetallePersTelefRepository av_DetallePersTelefs => _av_DetallePersTelefs ??= new av_DetallePersTelefRepository(_context);
         public Iav_DivisionalRepository av_Divisionals => _av_Divisionals ??= new av_DivisionalRepository(_context);

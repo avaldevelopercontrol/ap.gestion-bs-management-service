@@ -64,5 +64,12 @@ namespace GesMgmt.Infraestructure.Repositories
 
             return query.AsNoTracking();
         }
+
+        public async Task<IQueryable<av_OpeCodCliOut>> GetTipificacionByIdClienteAsync(int nId_Cliente)
+        {
+            return _dbSet
+                .Where(s => s.nId_Cliente == nId_Cliente)
+                .AsNoTracking();
+        }
     }
 }

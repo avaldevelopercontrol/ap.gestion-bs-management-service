@@ -116,5 +116,20 @@ namespace GesMgmt.Infraestructure.Repositories
             _dbSet.Update(av_DocxCobrarOpe);
             return av_DocxCobrarOpe;
         }
+
+        public async Task<IQueryable<av_DocxCobrarOpe?>> GetGestionesByIdUsuarioToDay(int nId_Cliente, int nId_Usuario)
+        {
+            DateTime fechaInicio = DateTime.Today;
+            DateTime fechaFin = fechaInicio.AddDays(1);
+
+            return _dbSet
+            .Include(dc => dc.av_OpeCodCliOut)
+            .Where(s => s.nId_Cliente == nId_Cliente &&
+                s.nId_Usuario == nId_Usuario &&
+                s.dDocCobOpe_FecIni >= fechaInicio &&
+                s.dDocCobOpe_FecIni < fechaFin &&
+                s.bEstado == true)
+            .AsNoTracking();
+        }
     }
 }

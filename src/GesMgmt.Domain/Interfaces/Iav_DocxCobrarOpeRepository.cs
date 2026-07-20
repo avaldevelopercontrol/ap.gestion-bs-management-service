@@ -12,5 +12,6 @@ namespace GesMgmt.Domain.Interfaces
         IQueryable<av_DocxCobrarOpe?> GetGestionListarGestionesAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor);
         Task<av_DocxCobrarOpe> AddAsync(av_DocxCobrarOpe av_DocxCobrarOpe);
         Task<av_DocxCobrarOpe> UpdateAsync(av_DocxCobrarOpe av_DocxCobrarOpe);
+        Task<IQueryable<av_DocxCobrarOpe?>> GetGestionesByIdUsuarioToDay(int nId_Cliente, int nId_Usuario);
     }
 }

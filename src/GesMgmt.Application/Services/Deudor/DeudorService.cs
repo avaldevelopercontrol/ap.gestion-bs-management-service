@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Deudor;
+using GesMgmt.Application.Logger;
 using GesMgmt.Application.Validators.Deudor;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
@@ -15,6 +16,7 @@ namespace GesMgmt.Application.Services.Deudor
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IValidationMessageService _validationMessageService;
+        private readonly IAppLogger _Logger;
 
         public DeudorService(IUnitOfWork unitOfWork, IValidationMessageService validationMessageService)
         {
@@ -90,7 +92,7 @@ namespace GesMgmt.Application.Services.Deudor
                         select new GetDeudorResponseDto
                         {
                             nro = 0,
-                            nId_PersDeudor = deudorId,
+                            nId_PersDeudor = g.Key.nId_PersDeudor,
                             zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
                             nId_Cliente = g.Key.nId_Cliente,
                             nId_Contrato = g.Key.nId_Contrato,
@@ -265,6 +267,7 @@ namespace GesMgmt.Application.Services.Deudor
             }
             catch (Exception ex)
             {
+                _Logger.LogError($"GetDeudor|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetDeudorResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
