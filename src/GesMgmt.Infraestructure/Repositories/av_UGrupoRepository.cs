@@ -33,5 +33,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(ug => ug.bEstado == true)
                 .AsNoTracking();
         }
+
+        public async Task<IQueryable<av_UGrupo>> GetUGruposByIdUsuarioAsync(int idUsuario)
+        {
+            return _dbSet
+                .Where(ug => ug.nId_Usuario == idUsuario && ug.bEstado == true)
+                .AsNoTracking();
+        }
+
     }
 }

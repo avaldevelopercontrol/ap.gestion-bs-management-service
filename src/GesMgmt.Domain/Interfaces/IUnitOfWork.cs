@@ -5,10 +5,12 @@ namespace GesMgmt.Domain.Interfaces
     {
         Iav_AgendaRepository av_Agendas { get; }
         Iav_CabPantallaCobRepository av_CabPantallaCobs { get; }
+        Iav_CampanaDiscadorRepository av_CampanaDiscadors { get; }
         Iav_CarteraRepository av_Carteras { get; }
         Iav_ClienteRepository av_Clientes { get; }
         Iav_ConfigSistemaRepository av_ConfigSistemas { get; }
         Iav_ContratoRepository av_Contratos { get; }
+        Iav_DiscadorRepository av_Discadors { get; }
         Iav_DivisionalRepository av_Divisionals { get; }
         Iav_DetallePersTelefRepository av_DetallePersTelefs { get; }
         Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals { get; }
@@ -28,6 +30,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_MonedaRepository av_Monedas { get; }
         Iav_MotivoNoPagoRepository av_MotivoNoPagos { get; }
         Iav_OficinaAvalRepository av_OficinaAvals { get; }
+        Iav_OpcionRepository av_Opcions { get; }
         Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts { get; }
         Iav_OpeCodCliOutRepository av_OpeCodCliOuts { get; }
         Iav_OpeCodInRepository av_OpeCodIns {  get; }

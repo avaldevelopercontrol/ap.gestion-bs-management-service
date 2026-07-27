@@ -3,6 +3,22 @@ namespace GesMgmt.Application.DTOs.Usuario
 {
     public class UsuarioRequestDto
     {
+        public class GetCampannaDiscadorlListRequestDto
+        {
+            public int nId_Usuario { get; set; }
+        }
+
+        public class CreateUGrupoRequestDto
+        {
+            public int nId_Usuario { get; set; }
+            public int nId_Grupo { get; set; }
+            public DateTime? dUGrupo_FecIni { get; set; }
+            public DateTime? dUGrupo_FecFin { get; set; }
+            public bool bEstado { get; set; }
+            public bool bActivo { get; set; }
+            public bool bGestion { get; set; }
+        }
+
         public class EditUsuarioRequestDto
         {
             public int nId_Usuario { get; set; }

@@ -58,5 +58,21 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(d => d.nId_Cliente == nId_Cliente
                        && d.bEstado == 1);
         }
+
+        public async Task<IQueryable<av_DocxCobrar>> GetDocumentosxCobrarByNroDocumentoAsync(string letra, int nId_Cliente, string cDoc_Numero)
+        {
+            if (letra == "T")
+            {
+                return _dbSet
+                    //.Include(c => c.av_Cartera)
+                    //.Include(d => d.av_PersDeudor)
+                    //.Include(m => m.av_Moneda)
+                    //.Include(u => u.av_Usuario)
+                    .AsNoTracking()
+                    .Where(d => d.nId_Cliente == nId_Cliente
+                           && d.cDoc_Numero == cDoc_Numero);
+            }
+            return null;
+        }
     }
 }

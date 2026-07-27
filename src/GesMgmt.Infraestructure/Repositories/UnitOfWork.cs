@@ -14,11 +14,13 @@ namespace GesMgmt.Infraestructure.Repositories
 
         private Iav_AgendaRepository? _av_Agendas;
         private Iav_CabPantallaCobRepository? _av_CabPantallaCobs;
+        private Iav_CampanaDiscadorRepository? _av_CampanaDiscadors;
         private Iav_CarteraRepository? _av_Carteras;
         private Iav_ClienteRepository? _av_Clientes;
         private Iav_ConfigSistemaRepository? _av_ConfigSistemas;
         private Iav_ContratoRepository? _av_Contratos;
         private Iav_DetallePersTelefRepository _av_DetallePersTelefs;
+        private Iav_DiscadorRepository? _av_Discadors;
         private Iav_DivisionalRepository _av_Divisionals;
         private Iav_DocxCobrarAdicionalRepository? _av_DocxCobrarAdicionals;
         private Iav_DocxCobrarCartaRepository? _av_DocxCobrarCartas;
@@ -37,6 +39,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_MonedaRepository? _av_Monedas;
         private Iav_MotivoNoPagoRepository? _av_MotivoNoPagos;
         private Iav_OficinaAvalRepository? _av_OficinaAvals;
+        private Iav_OpcionRepository? _av_Opcions;
         private Iav_OpeCodCliOutEstRepository? _av_OpeCodCliOutEsts;
         private Iav_OpeCodCliOutRepository? _av_OpeCodCliOuts;
         private Iav_OpeCodInRepository? _av_OpeCodIns;
@@ -78,11 +81,13 @@ namespace GesMgmt.Infraestructure.Repositories
         #region Properties
         public Iav_AgendaRepository av_Agendas => _av_Agendas ??= new av_AgendaRepository(_context);
         public Iav_CabPantallaCobRepository av_CabPantallaCobs => _av_CabPantallaCobs ??= new av_CabPantallaCobRepository(_context);
+        public Iav_CampanaDiscadorRepository av_CampanaDiscadors => _av_CampanaDiscadors ??= new av_CampanaDiscadorRepository(_context);
         public Iav_CarteraRepository av_Carteras => _av_Carteras ??= new av_CarteraRepository(_context);
         public Iav_ClienteRepository av_Clientes => _av_Clientes ??= new av_ClienteRepository(_context);
         public Iav_ConfigSistemaRepository av_ConfigSistemas => _av_ConfigSistemas ??= new av_ConfigSistemaRepository(_context);
         public Iav_ContratoRepository av_Contratos => _av_Contratos ??= new av_ContratoRepository(_context);
         public Iav_DetallePersTelefRepository av_DetallePersTelefs => _av_DetallePersTelefs ??= new av_DetallePersTelefRepository(_context);
+        public Iav_DiscadorRepository av_Discadors => _av_Discadors ??= new av_DiscadorRepository(_context);
         public Iav_DivisionalRepository av_Divisionals => _av_Divisionals ??= new av_DivisionalRepository(_context);
         public Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals => _av_DocxCobrarAdicionals ??= new av_DocxCobrarAdicionalRepository(_context);
         public Iav_DocxCobrarCartaRepository av_DocxCobrarCartas => _av_DocxCobrarCartas ??= new av_DocxCobrarCartaRepository(_context);
@@ -101,6 +106,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_MonedaRepository av_Monedas => _av_Monedas ??= new av_MonedaRepository(_context);
         public Iav_MotivoNoPagoRepository av_MotivoNoPagos => _av_MotivoNoPagos ??= new av_MotivoNoPagoRepository(_context);
         public Iav_OficinaAvalRepository av_OficinaAvals => _av_OficinaAvals ??= new av_OficinaAvalRepository(_context);
+        public Iav_OpcionRepository av_Opcions => _av_Opcions ??= new av_OpcionRepository(_context);
         public Iav_OpeCodCliOutEstRepository av_OpeCodCliOutEsts => _av_OpeCodCliOutEsts ??= new av_OpeCodCliOutEstRepository(_context);
         public Iav_OpeCodCliOutRepository av_OpeCodCliOuts => _av_OpeCodCliOuts ??= new av_OpeCodCliOutRepository(_context);
         public Iav_OpeCodInRepository av_OpeCodIns => _av_OpeCodIns ??= new av_OpeCodInRepository(_context);

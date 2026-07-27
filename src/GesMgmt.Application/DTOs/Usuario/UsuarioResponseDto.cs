@@ -3,6 +3,30 @@ namespace GesMgmt.Application.DTOs.Usuario
 {
     public class UsuarioResponseDto
     {
+        public class GetCampannaDiscadorlListResponseDto
+        {
+            public int NroCampanaDiscador { get; set; }
+            public string cNombreCampana { get; set; }
+        }
+
+        public class GetSubZonaGeneralListResponseDto
+        {
+            public int nId_SubZonaGen { get; set; }
+            public string cSzgn_Nombre { get; set; }
+        }
+
+        public class CreateUGrupoResponseDto
+        {
+            public int nId_UGrupo { get; set; }
+            public int nId_Usuario { get; set; }
+            public int nId_Grupo { get; set; }
+            public DateTime? dUGrupo_FecIni { get; set; }
+            public DateTime? dUGrupo_FecFin { get; set; }
+            public bool bEstado { get; set; }
+            public bool bActivo { get; set; }
+            public bool bGestion { get; set; }
+        }
+
         public class EditUsuarioResponseDto
         {
             public int nId_Usuario { get; set; }
@@ -93,6 +117,7 @@ namespace GesMgmt.Application.DTOs.Usuario
 
         public class GetGruposByUsuarioResponseDto
         {
+            public int? nId_Usuario { get; set; }
             public int nid_grupo { get; set; }
             public string cNombre_Grupo { get; set; }
         }

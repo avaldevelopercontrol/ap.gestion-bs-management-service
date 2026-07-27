@@ -8,6 +8,7 @@ using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 
@@ -184,6 +185,142 @@ namespace GesMgmt.Application.Services.Usuario
         }
         #endregion
 
+        #region "Grupos x Usuario - Listar"
+        public async Task<ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>> GetGruposByIdUsuarioAsync(GetGruposByUsuarioRequestDto usuarioGrupoDto)
+        {
+            var q_GruUsu = await _unitOfWork.av_UGrupos.GetUGruposByIdUsuarioAsync(usuarioGrupoDto.nId_Usuario);
+            var q_Grupos = await _unitOfWork.av_Grupos.Query();
+            List<GetGruposByUsuarioResponseDto> data = new();
+            try
+            {
+                data = (
+                    from gu in q_GruUsu
+                    join g in q_Grupos
+                        on gu.nId_Grupo equals g.nId_Grupo
+                    select new GetGruposByUsuarioResponseDto
+                    {
+                        nId_Usuario = gu.nId_Usuario,
+                        nid_grupo = g.nId_Grupo,
+                        cNombre_Grupo = g.cNombre_Grupo
+                    })
+                    .OrderBy(g => g.cNombre_Grupo)
+                    .Skip((usuarioGrupoDto.PageNumber - 1) * usuarioGrupoDto.PageSize)
+                    .Take(usuarioGrupoDto.PageSize)
+                    .ToList();
+
+                var totalRecords = data.Count();
+
+                var response = ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = usuarioGrupoDto.PageNumber;
+                response.PageSize = usuarioGrupoDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / usuarioGrupoDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetGruposByIdUsuario|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Grupos x Usuario Faltantes - Listar"
+        public async Task<ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>>GetGruposFaltantesByIdUsuarioAsync(GetGruposByUsuarioRequestDto usuarioGrupoDto)
+        {
+            try
+            {
+                var q_Grupos = await _unitOfWork.av_Grupos.Query();
+                var q_GruUsu = await _unitOfWork.av_UGrupos.Query();
+
+                var query =
+                    from g in q_Grupos
+                    join ug in q_GruUsu
+                        .Where(x => x.nId_Usuario == usuarioGrupoDto.nId_Usuario)
+                        on g.nId_Grupo equals ug.nId_Grupo
+                        into grupoUsuario
+                    from ug in grupoUsuario.DefaultIfEmpty()
+                    where g.bEstado == true
+                          && ug == null
+                    orderby g.cNombre_Grupo
+
+                    select new GetGruposByUsuarioResponseDto
+                    {
+                        nId_Usuario = usuarioGrupoDto.nId_Usuario,
+                        nid_grupo = g.nId_Grupo,
+                        cNombre_Grupo = g.cNombre_Grupo
+                    };
+
+                var totalRecords = query.Count();
+
+                var data = query
+                    .Skip((usuarioGrupoDto.PageNumber - 1) *
+                          usuarioGrupoDto.PageSize)
+                    .Take(usuarioGrupoDto.PageSize)
+                    .ToList();
+
+                var response = ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Success(data,"200","OK","OK",200);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = usuarioGrupoDto.PageNumber;
+                response.PageSize = usuarioGrupoDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / usuarioGrupoDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetGruposFaltantesByIdUsuario|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Campaña Discador x Usuario - Listar"
+        public async Task<ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>> GetCampannaDiscadorByIdUsuarioAsync(GetCampannaDiscadorlListRequestDto camannaDiscadorDto)
+        {
+            try
+            {
+                var q_campannaDiscador = await _unitOfWork.av_CampanaDiscadors.Query();
+                var q_Ugrupos = await _unitOfWork.av_UGrupos.GetUGruposByIdUsuarioAsync(camannaDiscadorDto.nId_Usuario);
+                var q_Grupos = await _unitOfWork.av_Grupos.Query();
+
+                var query =
+                    from camp in q_campannaDiscador
+                    join gr in q_Grupos
+                        on camp.nId_Cliente equals gr.nid_cliente
+                    join ug in q_Ugrupos
+                        on gr.nId_Grupo equals ug.nId_Grupo
+                    where camp.bestado == true
+                    orderby camp.cNombreCampana
+                    select new GetCampannaDiscadorlListResponseDto
+                    {
+                        NroCampanaDiscador = camp.NroCampanaDiscador,
+                        cNombreCampana = camp.cNombreCampana,
+                    };
+
+                var totalRecords = query.Count();
+
+                var data = query
+                    .Distinct()
+                    .OrderBy(x => x.cNombreCampana)
+                    .ToList();
+
+                var response = ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetCampannaDiscadorByIdUsuario|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
         #region "Nuevo Usuario"
         public async Task<ResultDto<CreateUsuarioResponseDto>> CreateUsuarioAsync(CreateUsuarioRequestDto usuarioCreateDto)
         {
@@ -343,11 +480,36 @@ namespace GesMgmt.Application.Services.Usuario
         }
         #endregion
 
-        #region "Grupos x Usuario - Listar"
-        //public async Task<ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>> GetGruposByIdUsuarioAsync(GetGruposByUsuarioRequestDto usuarioGrupoDto)
+        #region "Ingresar UGrupo"
+        //public async Task<ResultDto<CreateUsuarioResponseDto>> CreateUGrupoAsync(CreateUGrupoRequestDto usuarioCreateDto)
         //{
 
         //}
+        #endregion
+
+        #region "Listado de Sub Zona General"
+        public async Task<ResultListaDto<IEnumerable<GetSubZonaGeneralListResponseDto>>> GetSubZonasGeneralAsync()
+        {
+            try
+            {
+                var q_Resultados = await _unitOfWork.av_SubZonaGenerals.Query();
+                var data = (
+                                    from s in q_Resultados
+                                    orderby s.cSzgn_Nombre
+                                    select new GetSubZonaGeneralListResponseDto
+                                    {
+                                        nId_SubZonaGen = s.nId_SubZonaGen,
+                                        cSzgn_Nombre = s.cSzgn_Nombre
+                                    }
+                    ).ToList();
+                return ResultListaDto<IEnumerable<GetSubZonaGeneralListResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetSubZonasGenerales|DatabaseError: {ex.Message}");
+                return ResultListaDto<IEnumerable<GetSubZonaGeneralListResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
         #endregion
 
         private static string CifrarClave(string password)

@@ -8,11 +8,13 @@ namespace GesMgmt.Infraestructure.Persistence
     {
         public DbSet<av_Agenda> av_Agendas { get; set; }
         public DbSet<av_CabPantallaCob> av_CabPantallaCobs { get; set; }
+        public DbSet<av_CampanaDiscador> av_CampanaDiscadors { get; set; }
         public DbSet<av_Cartera> av_Carteras { get; set; }
         public DbSet<av_Cliente> av_Clientes { get; set; }
         public DbSet<av_ConfigSistema> av_ConfigSistemas { get; set; }
         public DbSet<av_Contrato> av_Contratos { get; set; }
         public DbSet<av_DetallePersTelef> av_DetallePersTelefs { get; set; }
+        public DbSet<av_Discador> av_Discadors { get; set; }
         public DbSet<av_Divisional> av_Divisionals { get; set; }
         public DbSet<av_DocxCobrarAdicional> av_DocxCobrars { get; set; }
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
@@ -31,6 +33,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_Moneda> av_Monedas { get; set; }
         public DbSet<av_MotivoNoPago> av_MotivoNoPagos { get; set; }
         public DbSet<av_OficinaAval> av_OficinaAvals { get; set; }
+        public DbSet<av_Opcion> av_Opcions { get; set; }
         public DbSet<av_OpeCodCliOutEst> av_OpeCodCliOutEsts { get; set; }
         public DbSet<av_OpeCodCliOut> av_OpeCodCliOuts { get; set; }
         public DbSet<av_OpeCodIn> av_OpeCodIns { get; set; }
@@ -68,11 +71,13 @@ namespace GesMgmt.Infraestructure.Persistence
         {
             modelBuilder.ApplyConfiguration(new av_AgendaConfiguration());
             modelBuilder.ApplyConfiguration(new av_CabPantallaCobConfiguration());
+            modelBuilder.ApplyConfiguration(new av_CampanaDiscadorConfiguration());
             modelBuilder.ApplyConfiguration(new av_CarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ClienteConfiguration());
             modelBuilder.ApplyConfiguration(new av_ConfigSistemaConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContratoConfiguration());
             modelBuilder.ApplyConfiguration(new av_DetallePersTelefConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DiscadorConfiguration());
             modelBuilder.ApplyConfiguration(new av_DivisionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarAdicionalConfiguration());
@@ -91,6 +96,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_MonedaConfiguration());
             modelBuilder.ApplyConfiguration(new av_MotivoNoPagoConfiguration());
             modelBuilder.ApplyConfiguration(new av_OficinaAvalConfiguration());
+            modelBuilder.ApplyConfiguration(new av_OpcionConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutEstConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodCliOutConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeCodInConfiguration());

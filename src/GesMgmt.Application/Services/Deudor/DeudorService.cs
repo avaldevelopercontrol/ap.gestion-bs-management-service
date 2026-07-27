@@ -50,65 +50,183 @@ namespace GesMgmt.Application.Services.Deudor
                     }
                     else
                     {
-                        //deudorId = q_deutel.FirstOrDefault().nId_PersDeudor.Value;
 
-                        var q_deudor = await _unitOfWork.av_PersDeudors.Query(); //_unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(deudorId);
-                        var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosByIdClienteAsync(deudorDto.nId_Cliente); //_unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosAsync(deudorDto.nId_Cliente, deudorId);
+                        // Obtener únicamente los Ids de deudor encontrados
+                        var deudores = q_deutel
+                            .Select(x => x.nId_PersDeudor)
+                            .Distinct()
+                            .ToList();
+
+                        var q_deudor = await _unitOfWork.av_PersDeudors.Query();
+                        //var q_dxc = await _unitOfWork.av_DocxCobrars.Query();
+                        var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
-                        var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamAsync(); //_unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
+                        var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamAsync();
+
+                        var query =
+                            from dc in q_dxc
+                            join deu in q_deudor
+                                on dc.nId_PersDeudor equals deu.nId_PersDeudor
+                            join car in q_car
+                                on new { dc.nId_Cartera, dc.nId_Cliente }
+                                equals new { car.nId_Cartera, car.nId_Cliente }
+                            join zc in q_zc
+                                on dc.nId_Cliente equals zc.nid_cliente
+                            join pdp in q_deupar
+                                on new { dc.nId_Cartera, dc.nId_PersDeudor }
+                                equals new { pdp.nId_Cartera, pdp.nId_PersDeudor }
+
+                            where dc.nId_Cliente == deudorDto.nId_Cliente
+                                  && dc.bEstado == 1
+                                  && deudores.Contains(dc.nId_PersDeudor)
+
+                            group new { dc, deu, car, zc, pdp } by new
+                            {
+                                zc.zona,
+                                car.cCampanna,
+                                dc.nId_Cliente,
+                                car.nId_Cartera,
+                                car.nId_Contrato,
+                                dc.nId_PersDeudor,
+                                car.cCar_Nombre,
+                                deu.cNomCompleto,
+                                pdp.nImpTotal,
+                                pdp.nSaldoTotal
+                            }
+                            into g
+                            select new GetDeudorResponseDto
+                            {
+                                nro = 0,
+                                nId_PersDeudor = g.Key.nId_PersDeudor,
+                                zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
+                                nId_Cliente = g.Key.nId_Cliente,
+                                nId_Contrato = g.Key.nId_Contrato,
+                                nId_Cartera = g.Key.nId_Cartera,
+                                cartera = g.Key.cCar_Nombre,
+                                codigoCliente = g.Max(x => x.dc.cPers_CodCliente),
+                                deudor = g.Key.cNomCompleto,
+                                importe = g.Key.nImpTotal,
+                                saldo = g.Key.nSaldoTotal,
+                                fechaUltimaGestionCALL = "",
+                                fechaPromesa = "",
+                                mejorStatus = ""
+                            };
+
+                        var totalRecords = query.Count();
+
+                        var data = query
+                            .OrderBy(x => x.deudor)
+                            .Skip((deudorDto.PageNumber - 1) * deudorDto.PageSize)
+                            .Take(deudorDto.PageSize)
+                            .ToList();
+
+                        int correlativo = (deudorDto.PageNumber - 1) * deudorDto.PageSize + 1;
+
+                        foreach (var item in data)
+                        {
+                            var q_tipificaCall = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 1);
+                            av_OpeCodCliOut? q_tipificaCall_des = null;
+                            if (q_tipificaCall != null)
+                            {
+                                q_tipificaCall_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCall.nId_OpeCodCliOut);
+                            }
+
+                            var q_tipificaCampo = await Tipificacion(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor, 2);
+                            av_OpeCodCliOut? q_tipificaCampo_des = null;
+                            if (q_tipificaCampo != null)
+                            {
+                                q_tipificaCampo_des = await DescripcionTipificacion(item.nId_Cliente, q_tipificaCampo.nId_OpeCodCliOut);
+                            }
+
+                            item.nro = correlativo++;
+
+                            item.fechaUltimaGestionCALL = FormatearFecha(q_tipificaCall?.dDocCobOpe_FecIni ?? null) ?? "";
+                            item.ultimaGestionCALL = q_tipificaCall_des?.cNombre_OpeCodCliOut ?? "";
+                            item.cantidadGestionCALL = 0;
+
+                            item.fechaUltimaGestionCAMPO = FormatearFecha(q_tipificaCampo?.dDocCobOpe_FecIni ?? null) ?? "";
+                            item.ultimaGestionCAMPO = q_tipificaCampo_des?.cNombre_OpeCodCliOut ?? "";
+                            item.cantidadGestionCAMPO = 0;
+
+                            item.fechaPromesa = FormatearFecha(q_tipificaCall?.dFechCompromisoPago ?? null) ?? "";
+                            item.mejorStatus = await MejorStatus(item.nId_Cliente, item.nId_Cartera, item.nId_PersDeudor);
+                        }
+
+                        var response = ResultListDto<IEnumerable<GetDeudorResponseDto>>.Success(data, "200", "OK", "OK", 200);
+
+                        response.TotalRecords = totalRecords;
+                        response.PageNumber = deudorDto.PageNumber;
+                        response.PageSize = deudorDto.PageSize;
+                        response.TotalPages = (int)Math.Ceiling((double)totalRecords / deudorDto.PageSize);
+
+                        return response;
+                    }
+                }
+                else if (letra == "T")
+                {
+                    var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarByNroDocumentoAsync(letra, deudorDto.nId_Cliente, valor);
+                    if (q_dxc == null || !q_dxc.Any())
+                    {
+                        return ResultListDto<IEnumerable<GetDeudorResponseDto>>.Failure("400", "No existe registro buscado.", "ERROR", 400);
+                    }
+                    else
+                    {
+                        deudorId = q_dxc.FirstOrDefault().nId_PersDeudor;
+                        var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
+                        var q_deu = await _unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(deudorId);
 
                         var data = (
-                        from dc in q_dxc
-                        join zc in q_zc
-                            on dc.nId_Cliente equals zc.nid_cliente
-                        join car in q_car
-                            on new { dc.nId_Cartera, dc.nId_Cliente }
-                            equals new { car.nId_Cartera, car.nId_Cliente }
-                        join deu in q_deudor
-                            on dc.nId_PersDeudor equals deu.nId_PersDeudor
-                        join pdp in q_deupar
-                            on new { dc.nId_Cartera, dc.nId_PersDeudor }
-                            equals new { pdp.nId_Cartera, pdp.nId_PersDeudor }
-                        join dtel in q_deutel
-                            on dc.nId_PersDeudor equals dtel.nId_PersDeudor
-                        where dc.nId_Cartera == car.nId_Cartera
-                              //&& dc.nId_PersDeudor == deudorId
-                              && dc.bEstado == 1
-                        group new { dc, zc, car, deu, pdp } by new
-                        {
-                            zc.zona,
-                            car.cCampanna,
-                            dc.nId_Cliente,
-                            car.nId_Cartera,
-                            car.nId_Contrato,
-                            dc.nId_PersDeudor,
-                            car.cCar_Nombre,
-                            deu.cNomCompleto,
-                            pdp.nImpTotal,
-                            pdp.nSaldoTotal
-                        }
-                        into g
-                        select new GetDeudorResponseDto
-                        {
-                            nro = 0,
-                            nId_PersDeudor = g.Key.nId_PersDeudor,
-                            zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
-                            nId_Cliente = g.Key.nId_Cliente,
-                            nId_Contrato = g.Key.nId_Contrato,
-                            nId_Cartera = g.Key.nId_Cartera,
-                            cartera = g.Key.cCar_Nombre,
-                            codigoCliente = g.Max(x => x.dc.cPers_CodCliente),
-                            deudor = g.Key.cNomCompleto,
-                            importe = g.Key.nImpTotal,
-                            saldo = g.Key.nSaldoTotal,
-                            fechaUltimaGestionCALL = "",
-                            fechaPromesa = "",
-                            mejorStatus = ""
-                        })
-                        .Skip((deudorDto.PageNumber - 1) * deudorDto.PageSize)
-                        .Take(deudorDto.PageSize)
-                        .ToList();
+                            from dc in q_dxc
+                            join zc in q_zc
+                                on dc.nId_Cliente equals zc.nid_cliente
+                            join car in q_car
+                                on new { dc.nId_Cartera, dc.nId_Cliente }
+                                equals new { car.nId_Cartera, car.nId_Cliente }
+                            join deu in q_deu
+                                on dc.nId_PersDeudor equals deu.nId_PersDeudor
+                            join pdp in q_deupar
+                                on new { dc.nId_Cartera, dc.nId_PersDeudor }
+                                equals new { pdp.nId_Cartera, pdp.nId_PersDeudor }
+                            where dc.nId_Cartera == car.nId_Cartera
+                                  && dc.nId_PersDeudor == deudorId
+                                  && dc.bEstado == 1
+                            group new { dc, zc, car, deu, pdp } by new
+                            {
+                                zc.zona,
+                                car.cCampanna,
+                                dc.nId_Cliente,
+                                car.nId_Cartera,
+                                car.nId_Contrato,
+                                dc.nId_PersDeudor,
+                                car.cCar_Nombre,
+                                deu.cNomCompleto,
+                                pdp.nImpTotal,
+                                pdp.nSaldoTotal
+                            }
+                            into g
+                            select new GetDeudorResponseDto
+                            {
+                                nro = 0,
+                                nId_PersDeudor = deudorId,
+                                zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
+                                nId_Cliente = g.Key.nId_Cliente,
+                                nId_Contrato = g.Key.nId_Contrato,
+                                nId_Cartera = g.Key.nId_Cartera,
+                                cartera = g.Key.cCar_Nombre,
+                                codigoCliente = g.Max(x => x.dc.cPers_CodCliente),
+                                deudor = g.Key.cNomCompleto,
+                                importe = g.Key.nImpTotal,
+                                saldo = g.Key.nSaldoTotal,
+                                fechaUltimaGestionCALL = "",
+                                fechaPromesa = "",
+                                mejorStatus = ""
+                            })
+                            .Skip((deudorDto.PageNumber - 1) * deudorDto.PageSize)
+                            .Take(deudorDto.PageSize)
+                            .ToList();
 
                         int correlativo = (deudorDto.PageNumber - 1) * deudorDto.PageSize + 1;
 
