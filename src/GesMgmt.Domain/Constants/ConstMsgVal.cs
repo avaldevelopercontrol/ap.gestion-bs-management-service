@@ -90,6 +90,10 @@ namespace GesMgmt.Domain.Constants
         public const string CLAVE_LONGITUD_MAXIMA = "070";
         public const string CLAVE_MENSAJE_VALIDACION = "071";
         public const string CLAVE_NUEVA_REQUERIDA = "072";
+        public const string CODIGO_PERFIL_NO_EXISTE = "073";
+
+        public const string PERFIL_NOMBRE_REQUERIDO = "074";
+        public const string PERFIL_ESTADO_REQUERIDO = "075";
 
     }
 }
