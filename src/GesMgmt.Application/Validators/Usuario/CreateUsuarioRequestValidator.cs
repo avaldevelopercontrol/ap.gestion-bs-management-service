@@ -241,7 +241,7 @@ namespace GesMgmt.Application.Validators.Usuario
                 return ResultDto<CreateUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            if (_requestDto.dUsr_FecNac < DateTime.Now)
+            if (_requestDto.dUsr_FecNac > DateTime.Now)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.FECHA_NACIMIENTO_MAYOR_A_HOY, "ESP");
                 return ResultDto<CreateUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);

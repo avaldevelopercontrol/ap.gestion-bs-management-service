@@ -9,5 +9,6 @@ namespace GesMgmt.Application.Interfaces.Opcion
     public interface IOpcionService
     {
         Task<ResultListaDto<IEnumerable<GetOpcionesResponseDto>>> GetOpcionesAsync();
+        Task<ResultDto<GetOpcionByIdResponseDto>> GetOpcionByIdAsync(int nId_Opcion);
     }
 }

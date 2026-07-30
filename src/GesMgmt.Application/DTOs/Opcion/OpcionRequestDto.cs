@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GesMgmt.Application.DTOs.Opcion
 {
-    internal class OpcionRequestDto
+    public class OpcionRequestDto
     {
+        public class GetOpcionByIdRequestDto
+        {
+            public int nId_opcion { get; set; }
+        }
     }
 }

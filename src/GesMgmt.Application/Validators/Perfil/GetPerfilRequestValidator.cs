@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
+using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using static GesMgmt.Application.DTOs.Perfil.PerfilRequestDto;
 using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
@@ -13,6 +14,7 @@ namespace GesMgmt.Application.Validators.Perfil
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
         private GetPerfilByIdRequestDto _requestDto;
+        public av_Perfil av_perfil;
 
         public GetPerfilRequestValidator(
                 IUnitOfWork unitOfWork,
@@ -42,14 +44,15 @@ namespace GesMgmt.Application.Validators.Perfil
         {
             if (_requestDto.nid_perfil <= 0)
             {
-                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.CODIGO_PERFIL_NO_EXISTE, "ESP");
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.PERFIL_CODIGO_NO_EXISTE, "ESP");
                 return ResultDto<GetPerfilByIdResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
-            var idperfilExists = await _unitOfWork.av_Perfils.ByIdAsync(_requestDto.nid_perfil);
 
-            if (idperfilExists == null)
+            av_perfil = await _unitOfWork.av_Perfils.ByIdAsync(_requestDto.nid_perfil);
+
+            if (av_perfil == null)
             {
-                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.CODIGO_PERFIL_NO_EXISTE, "ESP");
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.PERFIL_CODIGO_NO_EXISTE, "ESP");
                 return ResultDto<GetPerfilByIdResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 

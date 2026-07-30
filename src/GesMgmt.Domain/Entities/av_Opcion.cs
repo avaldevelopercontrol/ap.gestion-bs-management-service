@@ -7,6 +7,7 @@ namespace GesMgmt.Domain.Entities
     public class av_Opcion
     {
         public int nId_Opcion { get; set; }
+        public string sCodigoOpcion { get; set; }
         public string sNombreOpcion { get; set; }
         public string sUrlOpcion { get; set; }
         public string? sIcono { get; set; }

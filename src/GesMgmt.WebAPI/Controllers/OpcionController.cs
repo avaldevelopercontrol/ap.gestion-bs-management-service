@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
+using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -35,7 +36,7 @@ namespace GesMgmt.WebAPI.Controllers
         /// </remarks>
         /// <response code="200">Listado de Opciones.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado de Opciones")]
-        [HttpGet("GetOpciones")]
+        [HttpGet]
         [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetOpcionesResponseDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetOpcionesResponseDto>>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetOpcionesResponseDto>>), StatusCodes.Status500InternalServerError)]
@@ -44,6 +45,26 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetOpciones|Begin|GetOpcionesAsync|request:");
             var result = await _opcionService.GetOpcionesAsync();
             _Logger.LogInfo($"GetOpciones|End|GetOpcionesAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Obtiene el Opcion registrado.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el Opcion registrado.
+        /// </remarks>
+        /// <response code="200">Obtiene el Opcion registrado.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene el Opcion registrado")]
+        [HttpGet("{nId_Opcion}")]
+        [ProducesResponseType(typeof(ResultDto<GetOpcionByIdResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int nId_Opcion)
+        {
+            _Logger.LogInfo($"GetOpcionById|Begin|GetOpcionByIdAsync|request:{nId_Opcion}");
+            var result = await _opcionService.GetOpcionByIdAsync(nId_Opcion);
+            _Logger.LogInfo($"GetOpcionById|End|GetOpcionByIdAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
         }
     }

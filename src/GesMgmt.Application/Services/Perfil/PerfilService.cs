@@ -108,28 +108,21 @@ namespace GesMgmt.Application.Services.Perfil
             }
             try
             {
-                var q_Resultados = await _unitOfWork.av_Perfils.ByIdAsync(nId_Perfil);
-
-                if (q_Resultados == null)
-                {
-                    return ResultDto<GetPerfilByIdResponseDto>.Failure("404", "Perfil no encontrado.", null, 404);
-                }
-
                 var response = ResultDto<GetPerfilByIdResponseDto>.Success(new GetPerfilByIdResponseDto
                 {
-                    nid_perfil = q_Resultados.nid_perfil,
-                    per_Fecha = q_Resultados.per_Fecha.Value.ToString("yyyy-MM-dd") ?? "",
-                    per_Nombre = q_Resultados.per_Nombre ?? "",
-                    nper_EliminaRegJud = q_Resultados.nper_EliminaRegJud ?? 0,
-                    nper_AvisoVencidoJud = q_Resultados.nper_AvisoVencidoJud ?? 0,
-                    nper_RegistraRegJud = q_Resultados.nper_RegistraRegJud ?? 0,
-                    nper_MantUsuario = q_Resultados.nper_MantUsuario ?? 0,
-                    per_abreviatura = q_Resultados.per_abreviatura ?? "",
-                    nEquiv_rrhh = q_Resultados.nEquiv_rrhh ?? 0,
-                    nEstadoGest = q_Resultados.nEstadoGest ?? 0,
-                    bProduccionOnline = q_Resultados.bProduccionOnline ?? false,
-                    nId_TipoGestion = q_Resultados.nId_TipoGestion ?? 0,
-                    bvisualiza_deudorhistoria = q_Resultados.bvisualiza_deudorhistoria ?? false
+                    nid_perfil = validator.av_perfil.nid_perfil,
+                    per_Fecha = validator.av_perfil.per_Fecha.Value.ToString("yyyy-MM-dd") ?? "",
+                    per_Nombre = validator.av_perfil.per_Nombre ?? "",
+                    nper_EliminaRegJud = validator.av_perfil.nper_EliminaRegJud ?? 0,
+                    nper_AvisoVencidoJud = validator.av_perfil.nper_AvisoVencidoJud ?? 0,
+                    nper_RegistraRegJud = validator.av_perfil.nper_RegistraRegJud ?? 0,
+                    nper_MantUsuario = validator.av_perfil.nper_MantUsuario ?? 0,
+                    per_abreviatura = validator.av_perfil.per_abreviatura ?? "",
+                    nEquiv_rrhh = validator.av_perfil.nEquiv_rrhh ?? 0,
+                    nEstadoGest = validator.av_perfil.nEstadoGest ?? 0,
+                    bProduccionOnline = validator.av_perfil.bProduccionOnline ?? false,
+                    nId_TipoGestion = validator.av_perfil.nId_TipoGestion ?? 0,
+                    bvisualiza_deudorhistoria = validator.av_perfil.bvisualiza_deudorhistoria ?? false
                 }, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 return response;
