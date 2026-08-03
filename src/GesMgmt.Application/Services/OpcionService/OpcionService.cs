@@ -11,6 +11,7 @@ using static GesMgmt.Application.DTOs.Opcion.OpcionRequestDto;
 using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
 using static GesMgmt.Application.DTOs.Perfil.PerfilRequestDto;
 using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
+using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.Application.Services.OpcionService
 {
@@ -66,37 +67,35 @@ namespace GesMgmt.Application.Services.OpcionService
         #region "Obtener Opción por ID"
         public async Task<ResultDto<GetOpcionByIdResponseDto>> GetOpcionByIdAsync(int nId_Opcion)
         {
-            GetOpcionRequestValidator validator = new GetOpcionRequestValidator(_unitOfWork, _validationMessageService, new GetOpcionByIdRequestDto { nId_opcion = nId_Opcion });
-            var validationResult = await validator.Validate();
-
-            if (validationResult.Code != Const.SUCCESS_CODE)
-            {
-                return validationResult;
-            }
             try
             {
-                var response = ResultDto<GetOpcionByIdResponseDto>.Success(new GetOpcionByIdResponseDto
+                GetOpcionByIdResponseDto data = new GetOpcionByIdResponseDto();
+                var lq_options = await _unitOfWork.av_Opcions.ByIdAsync(nId_Opcion);
+                if (lq_options != null)
                 {
-                    nId_Opcion = validator.av_opcion.nId_Opcion,
-                    sCodigoOpcion = validator.av_opcion.sCodigoOpcion,
-                    sNombreOpcion = validator.av_opcion.sNombreOpcion,
-                    sUrlOpcion = validator.av_opcion.sUrlOpcion,
-                    sIcono = validator.av_opcion.sIcono,
-                    nTipo = validator.av_opcion.nTipo,
-                    nId_OpcionPadre = validator.av_opcion.nId_OpcionPadre,
-                    nOrden = validator.av_opcion.nOrden,
-                    bVisible = validator.av_opcion.bVisible,
-                    bEstado = validator.av_opcion.bEstado,
-                    nCrea = validator.av_opcion.nCrea,
-                    dFechaCrea = validator.av_opcion.dFechaCrea.ToString("yyyy-MM-dd HH:mm:ss"),
-                    nModifica = validator.av_opcion.nModifica ?? 0,
-                    dFechaModifica = validator.av_opcion.dFechaModifica.Value.ToString("yyyy-MM-dd HH:mm:ss") ?? ""
-                }, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-                return response;
+                    data = new GetOpcionByIdResponseDto
+                    {
+                        nId_Opcion = lq_options.nId_Opcion,
+                        sCodigoOpcion = lq_options.sCodigoOpcion,
+                        sNombreOpcion = lq_options.sNombreOpcion,
+                        sUrlOpcion = lq_options.sUrlOpcion,
+                        sIcono = lq_options.sIcono ?? "",
+                        nTipo = lq_options.nTipo,
+                        nId_OpcionPadre = lq_options.nId_OpcionPadre ?? 0,
+                        nOrden = lq_options.nOrden,
+                        bVisible = lq_options.bVisible,
+                        bEstado = lq_options.bEstado,
+                        nCrea = lq_options.nCrea,
+                        dFechaCrea = lq_options.dFechaCrea.ToString("yyyy-MM-dd HH:mm:ss"),
+                        nModifica = lq_options.nModifica ?? 0,
+                        dFechaModifica = lq_options.dFechaModifica?.ToString("yyyy-MM-dd HH:mm:ss") ?? ""
+                    };
+                }
+                return ResultDto<GetOpcionByIdResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
             {
-                _Logger.LogError($"GetOpcionByIdAsync|DatabaseError: {ex.Message}");
+                _Logger.LogError($"GetTelefonoByIdTelefono|DatabaseError: {ex.Message}");
                 return ResultDto<GetOpcionByIdResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
