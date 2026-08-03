@@ -7,6 +7,7 @@ using GesMgmt.Application.Interfaces.Gestion;
 using GesMgmt.Application.Interfaces.Grupo;
 using GesMgmt.Application.Interfaces.Opcion;
 using GesMgmt.Application.Interfaces.Perfil;
+using GesMgmt.Application.Interfaces.PerfilOpcion;
 using GesMgmt.Application.Interfaces.Telefono;
 using GesMgmt.Application.Interfaces.Usuario;
 using GesMgmt.Application.Services;
@@ -18,6 +19,7 @@ using GesMgmt.Application.Services.Gestion;
 using GesMgmt.Application.Services.Grupo;
 using GesMgmt.Application.Services.OpcionService;
 using GesMgmt.Application.Services.Perfil;
+using GesMgmt.Application.Services.PerfilOpcion;
 using GesMgmt.Application.Services.Telefono;
 using GesMgmt.Application.Services.Usuario;
 using GesMgmt.Domain.Interfaces;
@@ -57,6 +59,7 @@ namespace GesMgmt.Infraestructure
             services.AddScoped<IGrupoService, GrupoService>();
             services.AddScoped<IOpcionService, OpcionService>();
             services.AddScoped<IPerfilService, PerfilService>();
+            services.AddScoped<IPerfilOpcionService, PerfilOpcionService>();
             services.AddScoped<ITelefonoService, TelefonoService>();
             services.AddScoped<IUsuarioService, UsuarioService>();
             

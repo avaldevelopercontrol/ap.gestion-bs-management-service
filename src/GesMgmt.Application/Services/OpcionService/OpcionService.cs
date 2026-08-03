@@ -3,15 +3,11 @@ using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Opcion;
 using GesMgmt.Application.Logger;
 using GesMgmt.Application.Validators.Opcion;
-using GesMgmt.Application.Validators.Perfil;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using static GesMgmt.Application.DTOs.Opcion.OpcionRequestDto;
 using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
-using static GesMgmt.Application.DTOs.Perfil.PerfilRequestDto;
-using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
-using static GesMgmt.Application.DTOs.Telefono.TelefonoResponseDto;
 
 namespace GesMgmt.Application.Services.OpcionService
 {
@@ -197,6 +193,8 @@ namespace GesMgmt.Application.Services.OpcionService
                     nOrden = opcionEditDto.nOrden,
                     bVisible = opcionEditDto.bVisible,
                     bEstado = opcionEditDto.bEstado,
+                    nCrea = validator.option.nCrea,
+                    dFechaCrea = validator.option.dFechaCrea,
                     nModifica = opcionEditDto.nModifica,
                     dFechaModifica = opcionEditDto.dFechaModifica
                 };

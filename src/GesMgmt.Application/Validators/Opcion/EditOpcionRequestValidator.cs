@@ -1,6 +1,7 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
+using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using static GesMgmt.Application.DTOs.Opcion.OpcionRequestDto;
 using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
@@ -13,6 +14,7 @@ namespace GesMgmt.Application.Validators.Opcion
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
         private EditOpcionRequestDto _requestDto;
+        public av_Opcion option;
 
         public EditOpcionRequestValidator(
             IUnitOfWork unitOfWork,
@@ -28,6 +30,12 @@ namespace GesMgmt.Application.Validators.Opcion
         public async Task<ResultDto<EditOpcionResponseDto>> Validate()
         {
             #region Default
+            var validationIdOpcion = await ValidateIdOpcion();
+            if (validationIdOpcion.Code != Const.SUCCESS_CODE) 
+            {
+                return validationIdOpcion;
+            }
+
             var validationCodigoOpcion = await ValidateCodigoOpcion();
             if (validationCodigoOpcion.Code != Const.SUCCESS_CODE)
             {
@@ -58,6 +66,17 @@ namespace GesMgmt.Application.Validators.Opcion
                 return validationOrdenOpcion;
             }
             #endregion
+            return ResultDto<EditOpcionResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+        }
+
+        private async Task<ResultDto<EditOpcionResponseDto>> ValidateIdOpcion()
+        {
+            option = await _unitOfWork.av_Opcions.ByIdAsync(_requestDto.nId_Opcion);
+            if (option == null)
+            {
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_ID_NO_EXISTE, "ESP");
+                return ResultDto<EditOpcionResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+            }
             return ResultDto<EditOpcionResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
