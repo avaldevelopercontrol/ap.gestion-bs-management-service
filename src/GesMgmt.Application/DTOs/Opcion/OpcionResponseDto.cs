@@ -31,6 +31,8 @@ namespace GesMgmt.Application.DTOs.Opcion
             public string? sIcono { get; set; }
             public int nTipo { get; set; }
             public int? nId_OpcionPadre { get; set; }
+            public string sCodigoOpcionPadre { get; set; }
+            public string sNombreOpcionPadre { get; set; }
             public int nOrden { get; set; }
             public bool bVisible { get; set; }
             public bool bEstado { get; set; }

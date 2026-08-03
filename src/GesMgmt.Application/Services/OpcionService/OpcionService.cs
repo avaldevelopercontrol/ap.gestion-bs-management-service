@@ -32,26 +32,34 @@ namespace GesMgmt.Application.Services.OpcionService
         {
             try
             {
-                var q_Resultados = await _unitOfWork.av_Opcions.Query();
+                var q_Opts = await _unitOfWork.av_Opcions.Query();
+                var q_OptsFathers = await _unitOfWork.av_Opcions.Query();
+
                 var data = (
-                                    from s in q_Resultados
-                                    orderby s.sNombreOpcion
+                                    from opt in q_Opts
+                                    join optF in q_OptsFathers
+                                    on  opt.nId_OpcionPadre equals optF.nId_Opcion
+                                    into refoptF
+                                    from optF in refoptF.DefaultIfEmpty()
+                                    orderby opt.nId_Opcion
                                     select new GetOpcionesResponseDto
                                     {
-                                        nId_Opcion = s.nId_Opcion,
-                                        sCodigoOpcion = s.sCodigoOpcion,
-                                        sNombreOpcion = s.sNombreOpcion,
-                                        sUrlOpcion = s.sUrlOpcion,
-                                        sIcono = s.sIcono,
-                                        nTipo = s.nTipo,
-                                        nId_OpcionPadre = s.nId_OpcionPadre,
-                                        nOrden = s.nOrden,
-                                        bVisible = s.bVisible,
-                                        bEstado = s.bEstado,
-                                        nCrea = s.nCrea,
-                                        dFechaCrea = s.dFechaCrea.ToString("yyyy-MM-dd HH:mm:ss"),
-                                        nModifica = s.nModifica ?? 0,
-                                        dFechaModifica = s.dFechaModifica.Value.ToString("yyyy-MM-dd HH:mm:ss") ?? ""
+                                        nId_Opcion = opt.nId_Opcion,
+                                        sCodigoOpcion = opt.sCodigoOpcion,
+                                        sNombreOpcion = opt.sNombreOpcion,
+                                        sUrlOpcion = opt.sUrlOpcion,
+                                        sIcono = opt.sIcono,
+                                        nTipo = opt.nTipo,
+                                        nId_OpcionPadre = opt.nId_OpcionPadre ?? 0,
+                                        sCodigoOpcionPadre = optF.sCodigoOpcion ?? "",
+                                        sNombreOpcionPadre = optF.sNombreOpcion ?? "",
+                                        nOrden = opt.nOrden,
+                                        bVisible = opt.bVisible,
+                                        bEstado = opt.bEstado,
+                                        nCrea = opt.nCrea,
+                                        dFechaCrea = opt.dFechaCrea.ToString("yyyy-MM-dd HH:mm:ss"),
+                                        nModifica = opt.nModifica ?? 0,
+                                        dFechaModifica = opt.dFechaModifica.Value.ToString("yyyy-MM-dd HH:mm:ss") ?? ""
                                     }
                     ).ToList();
                 return ResultListaDto<IEnumerable<GetOpcionesResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
