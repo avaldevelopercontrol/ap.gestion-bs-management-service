@@ -95,7 +95,12 @@ namespace GesMgmt.Domain.Constants
         public const string PERFIL_NOMBRE_REQUERIDO = "074";
         public const string PERFIL_ESTADO_REQUERIDO = "075";
 
-        public const string OPCION_CODIGO_NO_EXISTE = "076";
-
+        public const string OPCION_CODIGO_REQUERIDO = "076";
+        public const string OPCION_NOMBRE_REQUERIDO = "077";
+        public const string OPCION_URL_REQUERIDO = "078";
+        public const string OPCION_TIPO_REQUERIDO = "079";
+        public const string OPCION_ORDEN_REQUERIDO = "080";
+        public const string OPCION_CREA_REQUERIDO = "081";
+        public const string OPCION_ID_NO_EXISTE = "082";
     }
 }

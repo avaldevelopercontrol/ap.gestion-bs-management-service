@@ -25,7 +25,6 @@ namespace GesMgmt.Application.DTOs.Perfil
 
         public class CreatePerfilRequestDto
         {
-            public int nid_perfil { get; set; }
             public DateTime? per_Fecha { get; set; }
             public string per_Nombre { get; set; }
             public int? nper_EliminaRegJud { get; set; }

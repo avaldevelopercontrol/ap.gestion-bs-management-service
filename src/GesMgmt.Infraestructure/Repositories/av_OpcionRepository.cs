@@ -30,7 +30,26 @@ namespace GesMgmt.Infraestructure.Repositories
 
         public async Task<IQueryable<av_Opcion>> QueryByIdPadre(int nId_OpcionPadre)
         {
-            return _dbSet.AsNoTracking().Where(o => o.nId_OpcionPadre == nId_OpcionPadre);
+            return _dbSet.AsNoTracking().Where(o => o.nId_Opcion == nId_OpcionPadre);
+        }
+
+        public async Task<av_Opcion> ByIdPadreAsync(int nId_OpcionPadre)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.nId_Opcion == nId_OpcionPadre).FirstOrDefaultAsync();
+        }
+
+        public async Task<av_Opcion> AddAsync(av_Opcion av_Opcion)
+        {
+            await _dbSet.AddAsync(av_Opcion);
+            return av_Opcion;
+        }
+
+        public async Task<av_Opcion> UpdateAsync(av_Opcion av_Opcion)
+        {
+            _dbSet.Update(av_Opcion);
+            return av_Opcion;
         }
     }
 }

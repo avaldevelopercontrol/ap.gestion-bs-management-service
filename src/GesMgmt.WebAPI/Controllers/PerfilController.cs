@@ -5,8 +5,6 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Direccion.DireccionRequestDto;
-using static GesMgmt.Application.DTOs.Direccion.DireccionResponseDto;
 using static GesMgmt.Application.DTOs.Perfil.PerfilRequestDto;
 using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
 

@@ -14,12 +14,14 @@ namespace GesMgmt.Application.Validators.Opcion
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
         private GetOpcionByIdRequestDto _requestDto;
+
         public av_Opcion av_opcion;
 
         public GetOpcionRequestValidator(
                 IUnitOfWork unitOfWork,
                 IValidationMessageService validationMessageService,
-                GetOpcionByIdRequestDto requestDto)
+                GetOpcionByIdRequestDto requestDto 
+            )
         {
             _unitOfWork = unitOfWork;
             _validationMessageService = validationMessageService;
@@ -44,7 +46,7 @@ namespace GesMgmt.Application.Validators.Opcion
         {
             if (_requestDto.nId_opcion <= 0)
             {
-                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_CODIGO_NO_EXISTE, "ESP");
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_ID_NO_EXISTE, "ESP");
                 return ResultDto<GetOpcionByIdResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
@@ -52,12 +54,44 @@ namespace GesMgmt.Application.Validators.Opcion
 
             if (av_opcion == null)
             {
-                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_CODIGO_NO_EXISTE, "ESP");
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_ID_NO_EXISTE, "ESP");
                 return ResultDto<GetOpcionByIdResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
             return ResultDto<GetOpcionByIdResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
+
+        //public async Task<ResultDto<GetOpcionByIdPadreResponseDto>> ValidatePadre()
+        //{
+        //    #region Default
+        //    var validationResultDefault = await ValidateDefaultPadre();
+
+        //    if (validationResultDefault.Code != Const.SUCCESS_CODE)
+        //    {
+        //        return validationResultDefault;
+        //    }
+        //    #endregion
+        //    return ResultDto<GetOpcionByIdPadreResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+        //}
+
+        //private async Task<ResultDto<GetOpcionByIdPadreResponseDto>> ValidateDefaultPadre()
+        //{
+        //    if (_requestDto.nId_opcion <= 0)
+        //    {
+        //        _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_CODIGO_NO_EXISTE, "ESP");
+        //        return ResultDto<GetOpcionByIdPadreResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+        //    }
+
+        //    av_opcion = await _unitOfWork.av_Opcions.ByIdPadreAsync(_requestDto.nId_opcion);
+
+        //    if (av_opcion == null)
+        //    {
+        //        _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_CODIGO_NO_EXISTE, "ESP");
+        //        return ResultDto<GetOpcionByIdPadreResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+        //    }
+
+        //    return ResultDto<GetOpcionByIdPadreResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+        //}
 
     }
 }

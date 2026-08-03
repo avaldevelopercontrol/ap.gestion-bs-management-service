@@ -150,10 +150,13 @@ namespace GesMgmt.Application.Services.Perfil
 
             await _unitOfWork.BeginTransactionAsync();
 
+            int idPerfil = await _unitOfWork.av_Perfils.GetMaxIdPerfilAsync();
+
             try
             {
                 av_Perfil av_Perfil = new av_Perfil
                 {
+                    nid_perfil = idPerfil + 1,
                     per_Fecha = perfilCreateDto.per_Fecha,
                     per_Nombre = perfilCreateDto.per_Nombre,
                     nper_EliminaRegJud = perfilCreateDto.nper_EliminaRegJud,

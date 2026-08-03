@@ -41,6 +41,8 @@ namespace GesMgmt.Application.Validators.Perfil
 
         private async Task<ResultDto<EditPerfilResponseDto>> ValidatePerfil()
         {
+
+
             //per_Nombre is required
             if (string.IsNullOrEmpty(_requestDto.per_Nombre))
             {

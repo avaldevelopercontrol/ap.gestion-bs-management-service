@@ -28,6 +28,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(p => p.nid_perfil == nId_Perfil).FirstOrDefaultAsync();
         }
 
+        public async Task<int> GetMaxIdPerfilAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .MaxAsync(p => (int?)p.nid_perfil) ?? 0;
+        }
+
         public async Task<av_Perfil> AddAsync(av_Perfil av_Perfil)
         {
             await _dbSet.AddAsync(av_Perfil);
