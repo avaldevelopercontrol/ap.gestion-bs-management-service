@@ -1,9 +1,8 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.PerfilOpcion;
-using GesMgmt.Application.Logger;
-using GesMgmt.Application.Validators.Opcion;
 using GesMgmt.Application.Validators.PerfilOpcion;
+using GesMgmt.Application.Logger;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;

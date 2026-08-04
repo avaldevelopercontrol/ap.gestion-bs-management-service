@@ -1,15 +1,10 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
-using GesMgmt.Application.Interfaces.Perfil;
 using GesMgmt.Application.Interfaces.PerfilOpcion;
-using GesMgmt.Application.Services.Perfil;
 using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Opcion.OpcionRequestDto;
-using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
-using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
 using static GesMgmt.Application.DTOs.PerfilOpcion.PerfilOpcionRequestDto;
 using static GesMgmt.Application.DTOs.PerfilOpcion.PerfilOpcionResponseDto;
 

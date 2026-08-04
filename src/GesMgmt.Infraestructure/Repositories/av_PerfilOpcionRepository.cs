@@ -28,6 +28,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(p => p.nId_PerfilOpcion == nId_PerfilOpcion).FirstOrDefaultAsync();
         }
 
+        public async Task<av_PerfilOpcion> GetPerfilOpcionIdAsync(int nId_Perfil, int nId_Opcion)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.nId_Perfil == nId_Perfil && p.nId_Opcion == nId_Opcion).FirstOrDefaultAsync();
+        }
+
         public async Task<IQueryable<av_PerfilOpcion>> GetOpcionesByIdPerfilAsync(int nId_Perfil)
         {
             return _dbSet.AsNoTracking().Where(o => o.nId_Perfil == nId_Perfil);

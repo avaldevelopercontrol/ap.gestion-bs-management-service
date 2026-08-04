@@ -82,7 +82,7 @@ namespace GesMgmt.Application.Validators.PerfilOpcion
                 return ResultDto<EditPerfilOpcionResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            var perfil = _unitOfWork.av_Perfils.ByIdAsync(_requestDto.nId_Perfil);
+            var perfil = await _unitOfWork.av_Perfils.ByIdAsync(_requestDto.nId_Perfil);
             if (perfil == null)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.PERFIL_CODIGO_NO_EXISTE, "ESP");
@@ -99,7 +99,7 @@ namespace GesMgmt.Application.Validators.PerfilOpcion
                 return ResultDto<EditPerfilOpcionResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            var opcion = _unitOfWork.av_Opcions.ByIdAsync(_requestDto.nId_Opcion);
+            var opcion = await _unitOfWork.av_Opcions.ByIdAsync(_requestDto.nId_Opcion);
             if (opcion == null)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.OPCION_ID_NO_EXISTE, "ESP");
