@@ -21,14 +21,33 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public async Task<IQueryable<av_PerfilOpcion>> OpcionesByIdPerfilAsync(int nId_Perfil)
+        public async Task<av_PerfilOpcion> ByIdAsync(int nId_PerfilOpcion)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.nId_PerfilOpcion == nId_PerfilOpcion).FirstOrDefaultAsync();
+        }
+
+        public async Task<IQueryable<av_PerfilOpcion>> GetOpcionesByIdPerfilAsync(int nId_Perfil)
         {
             return _dbSet.AsNoTracking().Where(o => o.nId_Perfil == nId_Perfil);
         }
 
-        public async Task<IQueryable<av_PerfilOpcion>> OpcionesByIdPerfilActivoAsync(int nId_Perfil)
+        public async Task<IQueryable<av_PerfilOpcion>> GetOpcionesByIdPerfilActivoAsync(int nId_Perfil)
         {
             return _dbSet.AsNoTracking().Where(o => o.nId_Perfil == nId_Perfil && o.bEstado == true);
+        }
+
+        public async Task<av_PerfilOpcion> AddAsync(av_PerfilOpcion av_PerfilOpcion)
+        {
+            await _dbSet.AddAsync(av_PerfilOpcion);
+            return av_PerfilOpcion;
+        }
+
+        public async Task<av_PerfilOpcion> UpdateAsync(av_PerfilOpcion av_PerfilOpcion)
+        {
+            _dbSet.Update(av_PerfilOpcion);
+            return av_PerfilOpcion;
         }
     }
 }

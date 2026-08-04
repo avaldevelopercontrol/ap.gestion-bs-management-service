@@ -5,7 +5,10 @@ namespace GesMgmt.Domain.Interfaces
     public interface Iav_PerfilOpcionRepository
     {
         Task<IQueryable<av_PerfilOpcion>> Query();
-        Task<IQueryable<av_PerfilOpcion>> OpcionesByIdPerfilAsync(int nId_Perfil);
-        Task<IQueryable<av_PerfilOpcion>> OpcionesByIdPerfilActivoAsync(int nId_Perfil);
+        Task<av_PerfilOpcion> ByIdAsync(int nId_PerfilOpcion);
+        Task<IQueryable<av_PerfilOpcion>> GetOpcionesByIdPerfilAsync(int nId_Perfil);
+        Task<IQueryable<av_PerfilOpcion>> GetOpcionesByIdPerfilActivoAsync(int nId_Perfil);
+        Task<av_PerfilOpcion> AddAsync(av_PerfilOpcion av_PerfilOpcion);
+        Task<av_PerfilOpcion> UpdateAsync(av_PerfilOpcion av_PerfilOpcion);
     }
 }

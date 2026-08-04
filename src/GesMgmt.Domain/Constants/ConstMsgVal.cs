@@ -102,5 +102,7 @@ namespace GesMgmt.Domain.Constants
         public const string OPCION_ORDEN_REQUERIDO = "080";
         public const string OPCION_CREA_REQUERIDO = "081";
         public const string OPCION_ID_NO_EXISTE = "082";
+
+        public const string PERFIL_OPCION_ID_NO_EXISTE = "083";
     }
 }
