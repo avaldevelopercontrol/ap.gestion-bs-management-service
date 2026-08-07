@@ -21,6 +21,20 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
+        public async Task<av_Grupo> ByIdAsync(int nId_Grupo)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.nId_Grupo == nId_Grupo).FirstOrDefaultAsync();
+        }
+
+        public async Task<av_Grupo> ByNombreGrupoAsync(string nombreGrupo)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.cNombre_Grupo == nombreGrupo).FirstOrDefaultAsync();
+        }
+
         public async Task<IQueryable<av_Grupo>> GetGruposByCliente(int nId_Cliente)
         {
             return _dbSet
@@ -33,6 +47,18 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet
                 .Where(g => g.bEstado == true)
                 .AsNoTracking();
+        }
+
+        public async Task<av_Grupo> AddAsync(av_Grupo av_Grupo)
+        {
+            await _dbSet.AddAsync(av_Grupo);
+            return av_Grupo;
+        }
+
+        public async Task<av_Grupo> UpdateAsync(av_Grupo av_Grupo)
+        {
+            _dbSet.Update(av_Grupo);
+            return av_Grupo;
         }
     }
 }

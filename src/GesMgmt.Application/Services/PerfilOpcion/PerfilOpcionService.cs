@@ -65,12 +65,13 @@ namespace GesMgmt.Application.Services.PerfilOpcion
         {
             try
             {
-                var q_perOpc = await _unitOfWork.av_PerfilOpcions.GetOpcionesByIdPerfilActivoAsync(nId_Perfil);
+                var q_perOpc = await _unitOfWork.av_PerfilOpcions.GetOpcionesByIdPerfilAsync(nId_Perfil);
                 var data = (
                     from po in q_perOpc
                     orderby po.nId_Perfil
                     select new GetOpcionesPorPerfilResponseDto
                     {
+                        nId_PerfilOpcion = po.nId_PerfilOpcion,
                         nId_Perfil = po.nId_Perfil,
                         nId_Opcion = po.nId_Opcion,
                         bConsultar = po.bConsultar,
@@ -79,6 +80,7 @@ namespace GesMgmt.Application.Services.PerfilOpcion
                         bEliminar = po.bEliminar,
                         bExportar = po.bExportar,
                         bEstado = po.bEstado,
+                        sEstado = po.bEstado == true ? "ACTIVO" : "INACTIVO",
                         nCrea = po.nCrea,
                         dFechaCrea = po.dFechaCrea.ToString("yyyy-MM-dd HH:mm:ss"),
                         nModifica = po.nModifica ?? 0,
@@ -190,8 +192,9 @@ namespace GesMgmt.Application.Services.PerfilOpcion
 
                 EditPerfilOpcionResponseDto responseDto = new EditPerfilOpcionResponseDto
                 {
-                    nId_Opcion = perfilOpcionEditDto.nId_Opcion,
-                    nId_Perfil = perfilOpcionEditDto.nId_Perfil,
+                    nId_PerfilOpcion = perfilOpcionEdit.nId_PerfilOpcion,
+                    nId_Perfil = perfilOpcionEdit.nId_Perfil,
+                    nId_Opcion = perfilOpcionEdit.nId_Opcion
                 };
 
                 ResultDto<EditPerfilOpcionResponseDto> response = ResultDto<EditPerfilOpcionResponseDto>

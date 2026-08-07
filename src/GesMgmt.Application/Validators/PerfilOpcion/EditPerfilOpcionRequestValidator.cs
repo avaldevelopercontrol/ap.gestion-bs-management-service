@@ -116,7 +116,7 @@ namespace GesMgmt.Application.Validators.PerfilOpcion
                 return ResultDto<EditPerfilOpcionResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            var usuario = _unitOfWork.av_Usuarios.GetByIdAsync(_requestDto.nModifica);
+            var usuario = await _unitOfWork.av_Usuarios.GetByIdAsync(_requestDto.nModifica);
             if (usuario == null)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.USUARIO_LOGIN_NO_EXIST, "ESP");

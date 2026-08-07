@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace GesMgmt.Domain.Entities
 {
     public class av_Grupo

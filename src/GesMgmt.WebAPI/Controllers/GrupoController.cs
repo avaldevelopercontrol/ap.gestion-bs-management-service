@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
+using static GesMgmt.Application.DTOs.Grupo.GrupoRequestDto;
 using static GesMgmt.Application.DTOs.Grupo.GrupoResponseDto;
+using static GesMgmt.Application.DTOs.Opcion.OpcionRequestDto;
+using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -49,5 +52,83 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Listado de Grupos - Mantenimiento.
+        /// </summary>
+        /// <remarks>
+        /// Listado de Grupos - Mantenimiento.
+        /// </remarks>
+        /// <response code="200">Listado de Grupos - Mantenimiento.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado de Grupos - Mantenimiento")]
+        [HttpGet("GetGruposListado")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGruposListadoAsync()
+        {
+            _Logger.LogInfo($"GetGruposListado|Begin|GetGruposListadoAsync|request:");
+            var result = await _grupoService.GetGruposListadoAsync();
+            _Logger.LogInfo($"GetGruposListado|End|GetGruposListadoAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Obtiene el GRUPO registrado.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el GRUPO registrado.
+        /// </remarks>
+        /// <response code="200">Obtiene el GRUPO registrado.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene el GRUPO registrado")]
+        [HttpGet("{nId_Grupo}")]
+        [ProducesResponseType(typeof(ResultDto<GetGrupoByIdResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int nId_Grupo)
+        {
+            _Logger.LogInfo($"GetGrupoById|Begin|GetGrupoByIdAsync|request:{nId_Grupo}");
+            var result = await _grupoService.GetGrupoByIdAsync(nId_Grupo);
+            _Logger.LogInfo($"GetGrupoById|End|GetGrupoByIdAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Crear GRUPO.
+        /// </summary>
+        /// <remarks>
+        /// Crear GRUPO.
+        /// </remarks>
+        /// <response code="200">Crear GRUPO.</response>
+        [HttpPost]
+        [ProducesResponseType(typeof(ResultDto<CreateGrupoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateGrupoAsync([FromBody] CreateGrupoRequestDto grupoDto)
+        {
+            _Logger.LogInfo($"CreateGrupo|Begin|CreateGrupoAsync|request: {JsonSerializer.Serialize(grupoDto)}");
+            var result = await _grupoService.CreateGrupoAsync(grupoDto);
+            _Logger.LogInfo($"CreateGrupo|End|CreateGrupoAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// Modificar GRUPO.
+        /// </summary>
+        /// <remarks>
+        /// Modificar GRUPO.
+        /// </remarks>
+        /// <response code="200">Modificar GRUPO.</response>
+        [HttpPut]
+        [ProducesResponseType(typeof(ResultDto<EditGrupoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditGrupoAsync([FromBody] EditGrupoRequestDto grupoDto)
+        {
+            _Logger.LogInfo($"EditGrupo|Begin|EditGrupoAsync|request: {JsonSerializer.Serialize(grupoDto)}");
+            var result = await _grupoService.EditGrupoAsync(grupoDto);
+            _Logger.LogInfo($"EditGrupo|End|EditGrupoAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }

@@ -17,9 +17,7 @@ namespace GesMgmt.Application.DTOs.PerfilOpcion
         {
             public int nId_PerfilOpcion { get; set; }
             public int nId_Perfil { get; set; }
-            public string per_Nombre { get; set; }
             public int nId_Opcion { get; set; }
-            public string sNombreOpcion { get; set; }
         }
 
         public class GetPerfilOpcionResponseDto
@@ -31,6 +29,7 @@ namespace GesMgmt.Application.DTOs.PerfilOpcion
 
         public class GetOpcionesPorPerfilResponseDto
         {
+            public int nId_PerfilOpcion { get; set; }
             public int nId_Perfil { get; set; }
             public int nId_Opcion { get; set; }
             public bool bConsultar { get; set; }
@@ -39,6 +38,7 @@ namespace GesMgmt.Application.DTOs.PerfilOpcion
             public bool bEliminar { get; set; }
             public bool bExportar { get; set; }
             public bool bEstado { get; set; }
+            public string sEstado { get; set; }
             public int nCrea { get; set; }
             public string dFechaCrea { get; set; }
             public int? nModifica { get; set; }
