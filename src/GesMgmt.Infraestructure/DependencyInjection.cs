@@ -1,5 +1,6 @@
 ﻿using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Agenda;
+using GesMgmt.Application.Interfaces.Cliente;
 using GesMgmt.Application.Interfaces.Deudor;
 using GesMgmt.Application.Interfaces.Direccion;
 using GesMgmt.Application.Interfaces.Email;
@@ -12,6 +13,7 @@ using GesMgmt.Application.Interfaces.Telefono;
 using GesMgmt.Application.Interfaces.Usuario;
 using GesMgmt.Application.Services;
 using GesMgmt.Application.Services.Agenda;
+using GesMgmt.Application.Services.Cliente;
 using GesMgmt.Application.Services.Deudor;
 using GesMgmt.Application.Services.Direccion;
 using GesMgmt.Application.Services.Email;
@@ -52,6 +54,7 @@ namespace GesMgmt.Infraestructure
 
             // Services
             services.AddScoped<IAgendaService, AgendaService>();
+            services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IDeudorService, DeudorService>();
             services.AddScoped<IDireccionService, DireccionService>();
             services.AddScoped<IEmailService, EmailService>();

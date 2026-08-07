@@ -6,7 +6,6 @@ using GesMgmt.Application.Validators.Deudor;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using static GesMgmt.Application.DTOs.Deudor.DeudorRequestDto;
 using static GesMgmt.Application.DTOs.Deudor.DeudorResponseDto;
 

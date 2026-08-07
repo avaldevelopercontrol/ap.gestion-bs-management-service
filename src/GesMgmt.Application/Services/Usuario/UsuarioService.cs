@@ -8,7 +8,6 @@ using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
-using static GesMgmt.Application.DTOs.Perfil.PerfilResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 

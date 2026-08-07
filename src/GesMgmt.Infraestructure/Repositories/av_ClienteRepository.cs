@@ -20,5 +20,12 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             return _dbSet.AsNoTracking();
         }
+
+        public async Task<IQueryable<av_Cliente>> ClientesActivosAsync()
+        {
+            return _dbSet
+                .Where(cli => cli.bEstado == true)
+                .AsNoTracking();
+        }
     }
 }
