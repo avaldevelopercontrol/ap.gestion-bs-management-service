@@ -109,5 +109,6 @@ namespace GesMgmt.Domain.Constants
         public const string GRUPO_SIGLA_REQUERIDO = "085";
         public const string GRUPO_CLIENTE_REQUERIDO = "086";
         public const string GRUPO_NOMBRE_EXISTENTE = "087";
+        public const string GRUPO_ID_NO_EXISTENTE = "088";
     }
 }

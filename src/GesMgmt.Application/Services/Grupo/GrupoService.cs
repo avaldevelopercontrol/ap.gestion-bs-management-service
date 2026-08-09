@@ -184,7 +184,8 @@ namespace GesMgmt.Application.Services.Grupo
             {
                 av_Grupo av_Grupo = new av_Grupo
                 {
-                    cNombre_Grupo = grupoEditDto.cNombre_Grupo,
+                    nId_Grupo = grupoEditDto.nId_Grupo,
+                    cNombre_Grupo = grupoEditDto.cNombre_GrupoNuevo,
                     cSigla_Grupo = grupoEditDto.cSigla_Grupo,
                     bEstado = grupoEditDto.bEstado,
                     nCant_Grupo = grupoEditDto.nCant_Grupo,

@@ -129,154 +129,6 @@ namespace GesMgmt.Application.Services.Usuario
         }
         #endregion
 
-        #region "Usuarios - UGrupos - Grupos"
-        public async Task<ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>> GetUsuariosGrupoAsync(GetUsuariosGrupoRequestDto usuarioGrupoDto)
-        {
-            var q_Usuario = await _unitOfWork.av_Usuarios.GetUsuariosActivos();
-            var q_Grupos = await _unitOfWork.av_Grupos.GetGruposByCliente(usuarioGrupoDto.nId_Cliente);
-            var q_UsuGru = await _unitOfWork.av_UGrupos.Query();
-            var q_Perfil = await _unitOfWork.av_Perfils.Query();
-            var q_SubZonGen = await _unitOfWork.av_SubZonaGenerals.Query();
-
-            List<GetUsuariosGrupoResponseDto> data = new();
-            try
-            {
-                data = (
-                    from us in q_Usuario
-                    join ug in q_UsuGru
-                        on us.nId_Usuario equals ug.nId_Usuario
-                    join g in q_Grupos
-                        on ug.nId_Grupo equals g.nId_Grupo
-                    join pf in q_Perfil
-                        on us.nid_perfil equals pf.nid_perfil
-                    join szg in q_SubZonGen
-                        on us.nId_SubZonaGen equals szg.nId_SubZonaGen
-                    orderby us.cUsr_ApePat
-                    select new GetUsuariosGrupoResponseDto
-                    {
-                        id = us.nId_Usuario,
-                        nombre = $"{us.cUsr_ApePat} {us.cUsr_ApeMat} {us.cUsr_Nombres}",
-                        perfil = pf.per_Nombre,
-                        login = us.cUsr_Login,
-                        subZona = szg.cSzgn_Nombre,
-                        codRecaudacion = us.cod_Recau
-                    })
-                    .Skip((usuarioGrupoDto.PageNumber - 1) * usuarioGrupoDto.PageSize)
-                    .Take(usuarioGrupoDto.PageSize)
-                    .ToList();
-
-                var totalRecords = data.Count();
-
-                var response = ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>.Success(data, "200", "OK", "OK", 200);
-
-                response.TotalRecords = totalRecords;
-                response.PageNumber = usuarioGrupoDto.PageNumber;
-                response.PageSize = usuarioGrupoDto.PageSize;
-                response.TotalPages = (int)Math.Ceiling((double)totalRecords / usuarioGrupoDto.PageSize);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _Logger.LogError($"GetUsuariosGrupo|DatabaseError: {ex.Message}");
-                return ResultListDto<IEnumerable<GetUsuariosGrupoResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
-            }
-        }
-        #endregion
-
-        #region "Grupos x Usuario - Listar"
-        public async Task<ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>> GetGruposByIdUsuarioAsync(GetGruposByUsuarioRequestDto usuarioGrupoDto)
-        {
-            var q_GruUsu = await _unitOfWork.av_UGrupos.GetUGruposByIdUsuarioAsync(usuarioGrupoDto.nId_Usuario);
-            var q_Grupos = await _unitOfWork.av_Grupos.Query();
-            List<GetGruposByUsuarioResponseDto> data = new();
-            try
-            {
-                data = (
-                    from gu in q_GruUsu
-                    join g in q_Grupos
-                        on gu.nId_Grupo equals g.nId_Grupo
-                    select new GetGruposByUsuarioResponseDto
-                    {
-                        nId_Usuario = gu.nId_Usuario,
-                        nid_grupo = g.nId_Grupo,
-                        cNombre_Grupo = g.cNombre_Grupo
-                    })
-                    .OrderBy(g => g.cNombre_Grupo)
-                    .Skip((usuarioGrupoDto.PageNumber - 1) * usuarioGrupoDto.PageSize)
-                    .Take(usuarioGrupoDto.PageSize)
-                    .ToList();
-
-                var totalRecords = data.Count();
-
-                var response = ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Success(data, "200", "OK", "OK", 200);
-
-                response.TotalRecords = totalRecords;
-                response.PageNumber = usuarioGrupoDto.PageNumber;
-                response.PageSize = usuarioGrupoDto.PageSize;
-                response.TotalPages = (int)Math.Ceiling((double)totalRecords / usuarioGrupoDto.PageSize);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _Logger.LogError($"GetGruposByIdUsuario|DatabaseError: {ex.Message}");
-                return ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
-            }
-        }
-        #endregion
-
-        #region "Grupos x Usuario Faltantes - Listar"
-        public async Task<ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>>GetGruposFaltantesByIdUsuarioAsync(GetGruposByUsuarioRequestDto usuarioGrupoDto)
-        {
-            try
-            {
-                var q_Grupos = await _unitOfWork.av_Grupos.Query();
-                var q_GruUsu = await _unitOfWork.av_UGrupos.Query();
-
-                var query =
-                    from g in q_Grupos
-                    join ug in q_GruUsu
-                        .Where(x => x.nId_Usuario == usuarioGrupoDto.nId_Usuario)
-                        on g.nId_Grupo equals ug.nId_Grupo
-                        into grupoUsuario
-                    from ug in grupoUsuario.DefaultIfEmpty()
-                    where g.bEstado == true
-                          && ug == null
-                    orderby g.cNombre_Grupo
-
-                    select new GetGruposByUsuarioResponseDto
-                    {
-                        nId_Usuario = usuarioGrupoDto.nId_Usuario,
-                        nid_grupo = g.nId_Grupo,
-                        cNombre_Grupo = g.cNombre_Grupo
-                    };
-
-                var totalRecords = query.Count();
-
-                var data = query
-                    .Skip((usuarioGrupoDto.PageNumber - 1) *
-                          usuarioGrupoDto.PageSize)
-                    .Take(usuarioGrupoDto.PageSize)
-                    .ToList();
-
-                var response = ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Success(data,"200","OK","OK",200);
-
-                response.TotalRecords = totalRecords;
-                response.PageNumber = usuarioGrupoDto.PageNumber;
-                response.PageSize = usuarioGrupoDto.PageSize;
-                response.TotalPages = (int)Math.Ceiling((double)totalRecords / usuarioGrupoDto.PageSize);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _Logger.LogError($"GetGruposFaltantesByIdUsuario|DatabaseError: {ex.Message}");
-                return ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
-            }
-        }
-        #endregion
-
         #region "Campaña Discador x Usuario - Listar"
         public async Task<ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>> GetCampannaDiscadorByIdUsuarioAsync(GetCampannaDiscadorlListRequestDto camannaDiscadorDto)
         {
@@ -307,7 +159,7 @@ namespace GesMgmt.Application.Services.Usuario
                     .OrderBy(x => x.cNombreCampana)
                     .ToList();
 
-                var response = ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>.Success(data, "200", "OK", "OK", 200);
+                var response = ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
                 return response;
 
@@ -477,13 +329,6 @@ namespace GesMgmt.Application.Services.Usuario
                 return ResultDto<EditUsuarioResponseDto>.Failure("500", "Error interno del servidor. " + ex.Message, "Ocurrió un error al procesar la solicitud.", 500);
             }
         }
-        #endregion
-
-        #region "Ingresar UGrupo"
-        //public async Task<ResultDto<CreateUsuarioResponseDto>> CreateUGrupoAsync(CreateUGrupoRequestDto usuarioCreateDto)
-        //{
-
-        //}
         #endregion
 
         #region "Listado de Sub Zona General"

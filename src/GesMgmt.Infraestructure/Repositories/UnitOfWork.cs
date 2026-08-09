@@ -64,6 +64,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_TipoGestionRepository? _av_TipoGestions;
         private Iav_UbigeoRepository? _av_Ubigeos;
         private Iav_UGrupoRepository? _av_UGrupos;
+        private Iav_UsuarioGrupoOpcionRepository _av_UsuarioGrupoOpcions;
         private Iav_UsuarioRepository? _av_Usuarios;
         private Iav_ZonaCarteraRepository? _av_ZonaCarteras;
         private Iav_ZonaGeneralRepository? _av_ZonaGenerals;
@@ -132,6 +133,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
         public Iav_UbigeoRepository av_Ubigeos => _av_Ubigeos ??= new av_UbigeoRepository(_context);
         public Iav_UGrupoRepository av_UGrupos => _av_UGrupos ??= new av_UGrupoRepository(_context);
+        public Iav_UsuarioGrupoOpcionRepository av_UsuarioGrupoOpcions => _av_UsuarioGrupoOpcions ??= new av_UsuarioGrupoOpcionRepository(_context);
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
         public Iav_ZonaCarteraRepository av_ZonaCarteras => _av_ZonaCarteras ??= new av_ZonaCarteraRepository(_context);
         public Iav_ZonaGeneralRepository av_ZonaGenerals => _av_ZonaGenerals ??= new av_ZonaGeneralRepository(_context);

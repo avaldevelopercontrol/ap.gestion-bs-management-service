@@ -5,10 +5,6 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Email.EmailRequestDto;
-using static GesMgmt.Application.DTOs.Email.EmailResponseDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 
@@ -17,7 +13,7 @@ namespace GesMgmt.WebAPI.Controllers
     [ApiController]
     [Route("v1/Usuario")]
     [Produces("application/json")]
-    public class UsuarioController : Controller
+    public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
         private readonly IValidationMessageService _validationMessageService;
@@ -71,66 +67,6 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _usuarioService.GetLoginUsuarioAsync(usuarioDeudorDto);
             _Logger.LogInfo($"GetLoginUsuario|End|GetLoginUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
             return Ok(result);
-        }
-
-        /// <summary>
-        /// Lista de Usuarios - UGrupos - Grupos
-        /// </summary>
-        /// <remarks>
-        /// Lista de Usuarios - UGrupos - Grupos.
-        /// </remarks>
-        /// <response code="200">Lista de Usuarios - UGrupos - Grupos.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Lista de Usuarios - UGrupos - Grupos")]
-        [HttpGet("GetUsuariosGrupo")]
-        [ProducesResponseType(typeof(ResultDto<GetUsuariosGrupoResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUsuariosGrupoAsync([FromQuery] GetUsuariosGrupoRequestDto usuariosGrupoDto)
-        {
-            _Logger.LogInfo($"GetUsuariosGrupo|Begin|GetUsuariosGrupoAsync|request: {JsonSerializer.Serialize(usuariosGrupoDto)}");
-            var result = await _usuarioService.GetUsuariosGrupoAsync(usuariosGrupoDto);
-            _Logger.LogInfo($"GetUsuariosGrupo|End|GetUsuariosGrupoAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
-        }
-
-        /// <summary>
-        /// Lista de Grupos x Usuario.
-        /// </summary>
-        /// <remarks>
-        /// Lista de Grupos x Usuario.
-        /// </remarks>
-        /// <response code="200">Lista de Grupos x Usuario.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Lista de Grupos x Usuario")]
-        [HttpGet("GetGruposByIdUsuario")]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGruposByIdUsuarioAsync([FromQuery] GetGruposByUsuarioRequestDto usuariosGrupoDto)
-        {
-            _Logger.LogInfo($"GetGruposByIdUsuario|Begin|GetGruposByIdUsuarioAsync|request: {JsonSerializer.Serialize(usuariosGrupoDto)}");
-            var result = await _usuarioService.GetGruposByIdUsuarioAsync(usuariosGrupoDto);
-            _Logger.LogInfo($"GetGruposByIdUsuario|End|GetGruposByIdUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
-        }
-
-        /// <summary>
-        /// Lista de Grupos Faltantes x Usuario.
-        /// </summary>
-        /// <remarks>
-        /// Lista de Grupos Faltantes x Usuario.
-        /// </remarks>
-        /// <response code="200">Lista de Grupos Faltantes x Usuario.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Lista de Grupos Faltantes x Usuario")]
-        [HttpGet("GetGruposFaltantesByIdUsuario")]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGruposFaltantesByIdUsuarioAsync([FromQuery] GetGruposByUsuarioRequestDto usuariosGrupoDto)
-        {
-            _Logger.LogInfo($"GetGruposFaltantesByIdUsuario|Begin|GetGruposFaltantesByIdUsuarioAsync|request: {JsonSerializer.Serialize(usuariosGrupoDto)}");
-            var result = await _usuarioService.GetGruposFaltantesByIdUsuarioAsync(usuariosGrupoDto);
-            _Logger.LogInfo($"GetGruposFaltantesByIdUsuario|End|GetGruposFaltantesByIdUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>

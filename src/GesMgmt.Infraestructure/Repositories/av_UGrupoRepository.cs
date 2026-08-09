@@ -21,9 +21,22 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
+        public async Task<av_UGrupo> ByIdAsync(int nId_UGrupo)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.nId_UGrupo == nId_UGrupo).FirstOrDefaultAsync();
+        }
+
         public async Task<av_UGrupo> AddAsync(av_UGrupo av_UGrupo)
         {
             await _dbSet.AddAsync(av_UGrupo);
+            return av_UGrupo;
+        }
+
+        public async Task<av_UGrupo> UpdateAsync(av_UGrupo av_UGrupo)
+        {
+            _dbSet.Update(av_UGrupo);
             return av_UGrupo;
         }
 

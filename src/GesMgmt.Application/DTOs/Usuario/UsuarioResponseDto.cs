@@ -15,18 +15,6 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string cSzgn_Nombre { get; set; }
         }
 
-        public class CreateUGrupoResponseDto
-        {
-            public int nId_UGrupo { get; set; }
-            public int nId_Usuario { get; set; }
-            public int nId_Grupo { get; set; }
-            public DateTime? dUGrupo_FecIni { get; set; }
-            public DateTime? dUGrupo_FecFin { get; set; }
-            public bool bEstado { get; set; }
-            public bool bActivo { get; set; }
-            public bool bGestion { get; set; }
-        }
-
         public class EditUsuarioResponseDto
         {
             public int nId_Usuario { get; set; }
@@ -113,23 +101,6 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string? cEmailVerificacion_codigo { get; set; }
             public string? cUsr_EmailVerificacion { get; set; }
             public DateTime? dFechaHora_Codigo { get; set; }
-        }
-
-        public class GetGruposByUsuarioResponseDto
-        {
-            public int? nId_Usuario { get; set; }
-            public int nid_grupo { get; set; }
-            public string cNombre_Grupo { get; set; }
-        }
-
-        public class GetUsuariosGrupoResponseDto
-        {
-            public int id { get; set; }
-            public string nombre { get; set; }
-            public string? perfil { get; set; }
-            public string login { get; set; }
-            public string? subZona { get; set; }
-            public string? codRecaudacion { get; set; }
         }
     }
 }

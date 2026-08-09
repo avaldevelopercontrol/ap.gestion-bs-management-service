@@ -55,6 +55,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_TipoGestionRepository av_TipoGestions { get; }
         Iav_UbigeoRepository av_Ubigeos { get; }
         Iav_UGrupoRepository av_UGrupos { get; }
+        Iav_UsuarioGrupoOpcionRepository av_UsuarioGrupoOpcions { get; }
         Iav_UsuarioRepository av_Usuarios { get; }
         Iav_ZonaCarteraRepository av_ZonaCarteras { get; }
         Iav_ZonaGeneralRepository av_ZonaGenerals { get; }

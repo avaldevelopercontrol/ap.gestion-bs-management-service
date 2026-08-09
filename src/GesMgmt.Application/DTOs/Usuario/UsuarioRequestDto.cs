@@ -8,17 +8,6 @@ namespace GesMgmt.Application.DTOs.Usuario
             public int nId_Usuario { get; set; }
         }
 
-        public class CreateUGrupoRequestDto
-        {
-            public int nId_Usuario { get; set; }
-            public int nId_Grupo { get; set; }
-            public DateTime? dUGrupo_FecIni { get; set; }
-            public DateTime? dUGrupo_FecFin { get; set; }
-            public bool bEstado { get; set; }
-            public bool bActivo { get; set; }
-            public bool bGestion { get; set; }
-        }
-
         public class EditUsuarioRequestDto
         {
             public int nId_Usuario { get; set; }
@@ -80,30 +69,6 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string cUsr_Pass { get; set; }
         }
 
-        public class GetGruposByUsuarioRequestDto
-        {
-            public int nId_Usuario { get; set; }
-
-            public int PageNumber { get; set; } = 1;
-            private int _pageSize = 10;
-            public int PageSize
-            {
-                get => _pageSize;
-                set => _pageSize = value > 1000 ? 1000 : value; // Máximo 1000
-            }
-        }
-
-        public class GetUsuariosGrupoRequestDto
-        {
-            public int nId_Cliente { get; set; }
-
-            public int PageNumber { get; set; } = 1;
-            private int _pageSize = 10;
-            public int PageSize
-            {
-                get => _pageSize;
-                set => _pageSize = value > 1000 ? 1000 : value; // Máximo 1000
-            }
-        }
+        
     }
 }

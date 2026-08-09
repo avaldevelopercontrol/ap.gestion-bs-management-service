@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Infraestructure.Configurations;
+using GesMgmt.Infraestructure.Repositories;
 
 namespace GesMgmt.Infraestructure.Persistence
 {
@@ -56,6 +57,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_TablaCampoGeneral> av_TablaCampoGenerals { get; set; }
         public DbSet<av_TipoGestion> av_TipoGestions { get; set; }
         public DbSet<av_Ubigeo> av_Ubigeos { get; set; }
+        public DbSet<av_UsuarioGrupoOpcion> av_UsuarioGrupoOpcions { get; set; }
         public DbSet<av_Usuario> av_Usuarios { get; set; }
         public DbSet<av_ZonaCartera> av_ZonaCarteras { get; set; }
         public DbSet<av_ZonaGeneral> av_ZonaGenerals { get; set; }
@@ -122,6 +124,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_TipoGestionConfiguration());
             modelBuilder.ApplyConfiguration(new av_UbigeoConfiguration());
             modelBuilder.ApplyConfiguration(new av_UGrupoConfiguration());
+            modelBuilder.ApplyConfiguration(new av_UsuarioGrupoOpcionConfiguration());
             modelBuilder.ApplyConfiguration(new av_UsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new av_ZonaCarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ZonaGeneralConfiguration());
