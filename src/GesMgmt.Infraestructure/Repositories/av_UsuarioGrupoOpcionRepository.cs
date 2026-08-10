@@ -24,8 +24,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public async Task<av_UsuarioGrupoOpcion> ByIdAsync(int nId_UsuarioGrupoOpcion)
         {
             return await _dbSet
-                .AsNoTracking()
-                .Where(p => p.nId_UsuarioGrupoOpcion == nId_UsuarioGrupoOpcion).FirstOrDefaultAsync();
+                .AsNoTracking().Where(p => p.nId_UsuarioGrupoOpcion == nId_UsuarioGrupoOpcion).FirstOrDefaultAsync();
         }
 
         public async Task<av_UsuarioGrupoOpcion> AddAsync(av_UsuarioGrupoOpcion av_UsuarioGrupoOpcion)
