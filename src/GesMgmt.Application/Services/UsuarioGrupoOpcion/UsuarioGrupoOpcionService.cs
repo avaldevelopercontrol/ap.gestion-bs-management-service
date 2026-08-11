@@ -98,6 +98,52 @@ namespace GesMgmt.Application.Services.UsuarioGrupoOpcion
         }
         #endregion
 
+        #region "Listado de Usuario - Grupo - Opción"
+        public async Task<ResultListDto<IEnumerable<GetByIdUsuarioIdGrupoAsyncResponseDto>>> GetByIdUsuarioIdGrupoAsync(GetByIdUsuarioIdGrupoAsyncRequestDto usuarioGrupoOpcionDto)
+        {
+            try
+            {
+                var q_UsuarioGrupoOpcion = await _unitOfWork.av_UsuarioGrupoOpcions.ByIdUsuarioIdGrupoAsync(usuarioGrupoOpcionDto.nId_Usuario, usuarioGrupoOpcionDto.nId_Grupo);
+
+                var data = await (
+                    from ugo in q_UsuarioGrupoOpcion
+                    select new GetByIdUsuarioIdGrupoAsyncResponseDto
+                    {
+                        nId_UsuarioGrupoOpcion = ugo.nId_UsuarioGrupoOpcion,
+                        nId_Usuario = ugo.nId_Usuario,
+                        nId_Grupo = ugo.nId_Grupo,
+                        nId_Opcion = ugo.nId_Opcion,
+                        bConsultar = ugo.bConsultar ?? null,
+                        bInsertar = ugo.bInsertar ?? null,
+                        bEditar = ugo.bEditar ?? null,
+                        bEliminar = ugo.bEliminar ?? null,
+                        bExportar = ugo.bExportar ?? null,
+                        bEstado = ugo.bEstado,
+                    }
+                    )
+                    .Skip((usuarioGrupoOpcionDto.PageNumber - 1) * usuarioGrupoOpcionDto.PageSize)
+                    .Take(usuarioGrupoOpcionDto.PageSize)
+                    .ToListAsync();
+
+                int totalRecords = data.Count();
+
+                var response = ResultListDto<IEnumerable<GetByIdUsuarioIdGrupoAsyncResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                response.TotalRecords = totalRecords;
+                response.PageNumber = usuarioGrupoOpcionDto.PageNumber;
+                response.PageSize = usuarioGrupoOpcionDto.PageSize;
+                response.TotalPages = (int)Math.Ceiling((double)totalRecords / usuarioGrupoOpcionDto.PageSize);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetByIdUsuarioIdGrupo|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetByIdUsuarioIdGrupoAsyncResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
         #region "Obtener por Id Usuario Grupo Opcion"
         public async Task<ResultDto<GetUsuarioGrupoOpcionObtenerResponseDto>> GetUsuarioGrupoOpcionObtenerIdAsync(int nId_UsuarioGrupoOpcion)
         {
@@ -113,11 +159,11 @@ namespace GesMgmt.Application.Services.UsuarioGrupoOpcion
                         nId_Usuario = q_UsuarioGrupoOpcion.nId_Usuario,
                         nId_Grupo = q_UsuarioGrupoOpcion.nId_Grupo,
                         nId_Opcion = q_UsuarioGrupoOpcion.nId_Opcion,
-                        bConsultar = q_UsuarioGrupoOpcion.bConsultar,
-                        bInsertar = q_UsuarioGrupoOpcion.bInsertar,
-                        bEditar = q_UsuarioGrupoOpcion.bEditar,
-                        bEliminar = q_UsuarioGrupoOpcion.bEliminar,
-                        bExportar = q_UsuarioGrupoOpcion.bExportar,
+                        bConsultar = q_UsuarioGrupoOpcion.bConsultar ?? null,
+                        bInsertar = q_UsuarioGrupoOpcion.bInsertar ?? null,
+                        bEditar = q_UsuarioGrupoOpcion.bEditar ?? null,
+                        bEliminar = q_UsuarioGrupoOpcion.bEliminar ?? null,
+                        bExportar = q_UsuarioGrupoOpcion.bExportar ?? null,
                         bEstado = q_UsuarioGrupoOpcion.bEstado,
                         nCrea = q_UsuarioGrupoOpcion.nCrea,
                         dFechaCrea = q_UsuarioGrupoOpcion.dFechaCrea.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -222,8 +268,10 @@ namespace GesMgmt.Application.Services.UsuarioGrupoOpcion
                     bEliminar = usuarioGrupoOpcionEditarDto.bEliminar,
                     bExportar = usuarioGrupoOpcionEditarDto.bExportar,
                     bEstado = usuarioGrupoOpcionEditarDto.bEstado,
+                    nCrea = validator.usuarioGrupoOpcion.nCrea,
+                    dFechaCrea = validator.usuarioGrupoOpcion.dFechaCrea,
                     nModifica = usuarioGrupoOpcionEditarDto.nModifica,
-                    dFechaModifica = DateTime.Now
+                    dFechaModifica = usuarioGrupoOpcionEditarDto.dFechaModifica
                 };
 
                 var usuarioGrupoOpcionModificada = await _unitOfWork.av_UsuarioGrupoOpcions.UpdateAsync(av_UsuarioGrupoOpcion);

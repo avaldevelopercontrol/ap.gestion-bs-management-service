@@ -50,11 +50,15 @@ namespace GesMgmt.Domain.Constants
         public const string STAT_CONFIRM_DENY = "D";
 
         public const int MAXIMUM_DAYS_OF_DIFFERENCE = 180;
+        
         public const int CODIGO_TABLA_CONFIGURACION_SISTEMA = 161;
         public const string CLAVE_LONGITUD_MINIMA = "CLAVE_MIN_LARGO";
         public const string CLAVE_LONGITUD_MAXIMA = "CLAVE_MAX_LARGO";
         public const string CLAVE_MIN_ESPECIAL = "CLAVE_MIN_ESPECIAL";
         public const string CLAVE_MIN_LETRA = "CLAVE_MIN_LETRA";
         public const string CLAVE_MIN_NUMERO = "CLAVE_MIN_NUMERO";
+
+        public const int SEGURIDAD_ACCESO = 160;
+        public const string DIAS_RETOMAR_CLAVE = "DIAS_RETOMAR_CLAVE";
     }
 }

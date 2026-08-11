@@ -36,6 +36,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_OpeCodInRepository av_OpeCodIns {  get; }
         Iav_OperadorTelefonicoRepository av_OperadorTelefonicos { get;  }
         Iav_OpeTipoRepository av_OpeTipos { get; }
+        Iav_PasswordHisRepository av_PasswordHiss { get; }
         Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss { get; }
         Iav_PersDeudorInfoParamDefCabRepository av_PersDeudorInfoParamDefCabs { get; }
         Iav_PersDeudorInfoParamRepository av_PersDeudorInfoParams { get; }

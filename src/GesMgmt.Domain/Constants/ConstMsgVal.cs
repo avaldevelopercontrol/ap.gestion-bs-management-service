@@ -110,5 +110,9 @@ namespace GesMgmt.Domain.Constants
         public const string GRUPO_CLIENTE_REQUERIDO = "086";
         public const string GRUPO_NOMBRE_EXISTENTE = "087";
         public const string GRUPO_ID_NO_EXISTENTE = "088";
+
+        public const string USUARIO_GRUPO_OPCION_NO_EXISTE = "089";
+        public const string CLAVE_NO_COINCIDE = "090";
+        public const string CLAVE_YA_UTILIZADA = "091";
     }
 }

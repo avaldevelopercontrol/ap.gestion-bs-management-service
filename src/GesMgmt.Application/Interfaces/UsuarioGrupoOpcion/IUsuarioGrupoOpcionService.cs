@@ -7,6 +7,7 @@ namespace GesMgmt.Application.Interfaces.UsuarioGrupoOpcion
     public interface IUsuarioGrupoOpcionService
     {
         Task<ResultListDto<IEnumerable<GetUsuarioGrupoOpcionListadoResponseDto>>> GetUsuarioGrupoOpcionListadoAsync(GetUsuarioGrupoOpcionListadoRequestDto usuarioGrupoOpcionDto);
+        Task<ResultListDto<IEnumerable<GetByIdUsuarioIdGrupoAsyncResponseDto>>> GetByIdUsuarioIdGrupoAsync(GetByIdUsuarioIdGrupoAsyncRequestDto usuarioGrupoOpcionDto);
         Task<ResultDto<GetUsuarioGrupoOpcionObtenerResponseDto>> GetUsuarioGrupoOpcionObtenerIdAsync(int nId_UsuarioGrupoOpcion);
         Task<ResultDto<PostUsuarioGrupoOpcionCrearResponseDto>> PostUsuarioGrupoOpcionCrearAsync(PostUsuarioGrupoOpcionCrearRequestDto usuarioGrupoOpcionCrearDto);
         Task<ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>> PutUsuarioGrupoOpcionModificarAsync(PutUsuarioGrupoOpcionEditarRequestDto usuarioGrupoOpcionEditarDto);

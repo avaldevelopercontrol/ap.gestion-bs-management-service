@@ -353,5 +353,6 @@ namespace GesMgmt.Application.Validators.Usuario
             }
             return countNum >= nMinNumero && countLet >= nMinLetra && countCar >= nMinEspecial && strPassword.Length >= nMinLargo && strPassword.Length <= nMaxLargo;
         }
+    
     }
 }

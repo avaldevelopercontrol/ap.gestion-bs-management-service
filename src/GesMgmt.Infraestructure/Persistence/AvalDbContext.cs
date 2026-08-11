@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Infraestructure.Configurations;
-using GesMgmt.Infraestructure.Repositories;
 
 namespace GesMgmt.Infraestructure.Persistence
 {
@@ -40,6 +39,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_OpeCodIn> av_OpeCodIns { get; set; }
         public DbSet<av_OperadorTelefonico> av_OperadorTelefonicos { get; set; }
         public DbSet<av_OpeTipo> av_OpeTipos { get; set; }
+        public DbSet<av_PasswordHis> av_PasswordHiss { get; set; }
         public DbSet<av_PersDeudor> av_PersDeudors { get; set; }
         public DbSet<av_PersDeudorParam> av_PersDeudorParams { get; set; }
         public DbSet<av_PersDirecc> av_PersDireccs { get; set; }
@@ -105,6 +105,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_OpeCodInConfiguration());
             modelBuilder.ApplyConfiguration(new av_OperadorTelefonicoConfiguration());
             modelBuilder.ApplyConfiguration(new av_OpeTipoConfiguration());
+            modelBuilder.ApplyConfiguration(new av_PasswordHisConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDeudorParamConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersDireccConfiguration());

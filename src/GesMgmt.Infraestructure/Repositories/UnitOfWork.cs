@@ -45,6 +45,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_OpeCodInRepository? _av_OpeCodIns;
         private Iav_OperadorTelefonicoRepository? _av_OperadorTelefonicos;
         private Iav_OpeTipoRepository? _av_OpeTipos;
+        private Iav_PasswordHisRepository? _av_PasswordHiss;
         private Iav_PersDeudorGestionHrsRepository? _av_PersDeudorGestionHrss;
         private Iav_PersDeudorInfoParamDefCabRepository? _av_PersDeudorInfoParamDefCabs;
         private Iav_PersDeudorInfoParamRepository? _av_PersDeudorInfoParams;
@@ -114,6 +115,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_OpeCodInRepository av_OpeCodIns => _av_OpeCodIns ??= new av_OpeCodInRepository(_context);
         public Iav_OperadorTelefonicoRepository av_OperadorTelefonicos => _av_OperadorTelefonicos ??= new av_OperadorTelefonicoRepository(_context);
         public Iav_OpeTipoRepository av_OpeTipos => _av_OpeTipos ??= new av_OpeTipoRepository(_context);
+        public Iav_PasswordHisRepository av_PasswordHiss => _av_PasswordHiss ??= new av_PasswordHisRepository(_context);
         public Iav_PersDeudorRepository av_PersDeudors => _av_PersDeudors ??= new av_PersDeudorRepository(_context);
         public Iav_PersDeudorParamRepository av_PersDeudorParams => _av_PersDeudorParams ??= new av_PersDeudorParamRepository(_context);
         public Iav_PersDeudorGestionHrsRepository av_PersDeudorGestionHrss => _av_PersDeudorGestionHrss ??= new av_PersDeudorGestionHrsRepository(_context);

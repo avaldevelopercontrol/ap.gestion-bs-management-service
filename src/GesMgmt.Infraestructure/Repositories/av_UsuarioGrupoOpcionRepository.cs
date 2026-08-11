@@ -21,6 +21,11 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
+        public async Task<IQueryable<av_UsuarioGrupoOpcion>> ByIdUsuarioIdGrupoAsync(int nId_Usuario, int nId_Grupo)
+        {
+            return _dbSet.AsNoTracking().Where(p => p.nId_Usuario == nId_Usuario && p.nId_Grupo == nId_Grupo);
+        }
+
         public async Task<av_UsuarioGrupoOpcion> ByIdAsync(int nId_UsuarioGrupoOpcion)
         {
             return await _dbSet
@@ -38,5 +43,6 @@ namespace GesMgmt.Infraestructure.Repositories
             _dbSet.Update(av_UsuarioGrupoOpcion);
             return av_UsuarioGrupoOpcion;
         }
+
     }
 }

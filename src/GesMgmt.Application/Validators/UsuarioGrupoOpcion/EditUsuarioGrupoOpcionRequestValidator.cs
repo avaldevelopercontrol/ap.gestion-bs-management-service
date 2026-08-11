@@ -1,7 +1,9 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
+using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
+using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
 using static GesMgmt.Application.DTOs.UsuarioGrupoOpcion.UsuarioGrupoOpcionRequestDto;
 using static GesMgmt.Application.DTOs.UsuarioGrupoOpcion.UsuarioGrupoOpcionResponseDto;
 
@@ -13,6 +15,7 @@ namespace GesMgmt.Application.Validators.UsuarioGrupoOpcion
         private readonly IValidationMessageService _validationMessageService;
         private ValidationMessageDto _oValMsgDto;
         private PutUsuarioGrupoOpcionEditarRequestDto _requestDto;
+        public av_UsuarioGrupoOpcion usuarioGrupoOpcion;
 
         public EditUsuarioGrupoOpcionRequestValidator(
             IUnitOfWork unitOfWork,
@@ -27,6 +30,12 @@ namespace GesMgmt.Application.Validators.UsuarioGrupoOpcion
 
         public async Task<ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>> Validate()
         {
+            var validationIdUsuarioGrupoOpcion = await ValidateUsuarioGrupoOpcion();
+            if (validationIdUsuarioGrupoOpcion.Code != Const.SUCCESS_CODE)
+            {
+                return validationIdUsuarioGrupoOpcion;
+            }
+
             var validationUsuario = await ValidateUsuario();
             if (validationUsuario.Code != Const.SUCCESS_CODE)
             {
@@ -44,7 +53,17 @@ namespace GesMgmt.Application.Validators.UsuarioGrupoOpcion
             {
                 return validationOpcion;
             }
+            return ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+        }
 
+        private async Task<ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>> ValidateUsuarioGrupoOpcion()
+        {
+            usuarioGrupoOpcion = await _unitOfWork.av_UsuarioGrupoOpcions.ByIdAsync(_requestDto.nId_UsuarioGrupoOpcion);
+            if (usuarioGrupoOpcion == null)
+            {
+                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.USUARIO_GRUPO_OPCION_NO_EXISTE, "ESP");
+                return ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+            }
             return ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
