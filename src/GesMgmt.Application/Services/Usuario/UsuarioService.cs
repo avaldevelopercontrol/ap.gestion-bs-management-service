@@ -372,5 +372,62 @@ namespace GesMgmt.Application.Services.Usuario
 
             return sb.ToString();
         }
+
+        #region "Cambiar Contraseña"
+        public async Task<ResultDto<ResetearUsuarioResponseDto>> ResetearUsuarioAsync(ResetearUsuarioRequestDto usuarioResetDto)
+        {
+            ResetearUsuarioRequestValidator validator = new ResetearUsuarioRequestValidator(_unitOfWork, _validationMessageService, usuarioResetDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                var usuario = await _unitOfWork.av_Usuarios.GetByIdAsync(usuarioResetDto.nId_Usuario);
+
+                usuario.cUsr_Pass = usuarioResetDto.cUsr_PassNueva;
+                usuario.dUsr_PassUpdate = DateTime.Now;
+                usuario.nUsr_NroIntentoAcc = 0;
+                await _unitOfWork.SaveChangesAsync();
+
+                //guardar en historico de contraseñas
+                av_PasswordHis historicoPass = new av_PasswordHis
+                {
+                    dFecRegistro = DateTime.Now,
+                    nId_Usuario = usuarioResetDto.nId_Usuario,
+                    cUsr_Pass = validator.cUsr_PassNueva,
+                    nId_UsuarioReg = usuarioResetDto.nId_Usuario
+                };
+                
+                await _unitOfWork.av_PasswordHiss.AddAsync(historicoPass);
+                await _unitOfWork.SaveChangesAsync();
+
+                ResetearUsuarioResponseDto resetearUsuarioResponseDto = new ResetearUsuarioResponseDto
+                {
+                    nId_Usuario = usuario.nId_Usuario,
+                    cUsr_Login = usuario.cUsr_Login,
+                    cUsr_Pass = validator.cUsr_PassNueva //usuario.cUsr_Pass
+                };
+
+                ResultDto<ResetearUsuarioResponseDto> response = ResultDto<ResetearUsuarioResponseDto>
+                                                   .Success(resetearUsuarioResponseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"ResetearUsuario|DatabaseError: {ex.Message}");
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<ResetearUsuarioResponseDto>.Failure("500", "Error interno del servidor. " + ex.Message, "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+        #endregion
     }
 }

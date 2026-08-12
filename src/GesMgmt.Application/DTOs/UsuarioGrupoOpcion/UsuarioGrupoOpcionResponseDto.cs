@@ -31,6 +31,7 @@ namespace GesMgmt.Application.DTOs.UsuarioGrupoOpcion
             public int? nModifica { get; set; }
             public string? dFechaModifica { get; set; }
         }
+
         public class GetByIdUsuarioIdGrupoAsyncResponseDto
         {
             public int nId_UsuarioGrupoOpcion { get; set; }
@@ -79,5 +80,6 @@ namespace GesMgmt.Application.DTOs.UsuarioGrupoOpcion
             public int? nId_Opcion { get; set; }
         }
 
+        
     }
 }

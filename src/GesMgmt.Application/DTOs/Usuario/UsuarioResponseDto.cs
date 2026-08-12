@@ -103,7 +103,7 @@ namespace GesMgmt.Application.DTOs.Usuario
             public DateTime? dFechaHora_Codigo { get; set; }
         }
 
-        public class RestearUsuarioResponseDto
+        public class ResetearUsuarioResponseDto
         {
             public int nId_Usuario { get; set; }
             public string cUsr_Login { get; set; }

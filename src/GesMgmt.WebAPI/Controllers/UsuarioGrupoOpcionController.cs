@@ -5,8 +5,6 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Opcion.OpcionRequestDto;
-using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
 using static GesMgmt.Application.DTOs.UsuarioGrupoOpcion.UsuarioGrupoOpcionRequestDto;
 using static GesMgmt.Application.DTOs.UsuarioGrupoOpcion.UsuarioGrupoOpcionResponseDto;
 
@@ -102,7 +100,7 @@ namespace GesMgmt.WebAPI.Controllers
         [ProducesResponseType(typeof(ResultDto<PostUsuarioGrupoOpcionCrearResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateOpcionAsync([FromBody] PostUsuarioGrupoOpcionCrearRequestDto opcionDto)
+        public async Task<IActionResult> PostUsuarioGrupoOpcionCrearAsync([FromBody] PostUsuarioGrupoOpcionCrearRequestDto opcionDto)
         {
             _Logger.LogInfo($"PostUsuarioGrupoOpcionCrear|Begin|PostUsuarioGrupoOpcionCrearAsync|request: {JsonSerializer.Serialize(opcionDto)}");
             var result = await _usuariogrupoopcionService.PostUsuarioGrupoOpcionCrearAsync(opcionDto);
@@ -121,7 +119,7 @@ namespace GesMgmt.WebAPI.Controllers
         [ProducesResponseType(typeof(ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> EditOpcionAsync([FromBody] PutUsuarioGrupoOpcionEditarRequestDto opcionDto)
+        public async Task<IActionResult> PutUsuarioGrupoOpcionModificarAsync([FromBody] PutUsuarioGrupoOpcionEditarRequestDto opcionDto)
         {
             _Logger.LogInfo($"PutUsuarioGrupoOpcionModificar|Begin|PutUsuarioGrupoOpcionModificarAsync|request: {JsonSerializer.Serialize(opcionDto)}");
             var result = await _usuariogrupoopcionService.PutUsuarioGrupoOpcionModificarAsync(opcionDto);

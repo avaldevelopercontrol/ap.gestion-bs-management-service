@@ -12,5 +12,6 @@ namespace GesMgmt.Application.Interfaces.Usuario
         Task<ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>> GetCampannaDiscadorByIdUsuarioAsync(GetCampannaDiscadorlListRequestDto camannaDiscadorDto);
         Task<ResultDto<CreateUsuarioResponseDto>> CreateUsuarioAsync(CreateUsuarioRequestDto usuarioCreateDto);
         Task<ResultDto<EditUsuarioResponseDto>> EditUsuarioAsync(EditUsuarioRequestDto usuarioEditDto);
+        Task<ResultDto<ResetearUsuarioResponseDto>> ResetearUsuarioAsync(ResetearUsuarioRequestDto usuarioResetDto);
     }
 }

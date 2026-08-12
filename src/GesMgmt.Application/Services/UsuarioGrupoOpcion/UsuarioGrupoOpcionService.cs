@@ -240,9 +240,15 @@ namespace GesMgmt.Application.Services.UsuarioGrupoOpcion
         #endregion
 
         #region "Edit Usuario - Grupo - Opción"
-        public async Task<ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>> PutUsuarioGrupoOpcionModificarAsync(PutUsuarioGrupoOpcionEditarRequestDto usuarioGrupoOpcionEditarDto)
+        public async Task<ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>>
+    PutUsuarioGrupoOpcionModificarAsync(
+        PutUsuarioGrupoOpcionEditarRequestDto usuarioGrupoOpcionEditarDto)
         {
-            EditUsuarioGrupoOpcionRequestValidator validator = new EditUsuarioGrupoOpcionRequestValidator(_unitOfWork, _validationMessageService, usuarioGrupoOpcionEditarDto);
+            EditUsuarioGrupoOpcionRequestValidator validator =
+                new EditUsuarioGrupoOpcionRequestValidator(
+                    _unitOfWork,
+                    _validationMessageService,
+                    usuarioGrupoOpcionEditarDto);
 
             // Validaciones
             var validationResult = await validator.Validate();
@@ -252,41 +258,61 @@ namespace GesMgmt.Application.Services.UsuarioGrupoOpcion
                 return validationResult;
             }
 
-            await _unitOfWork.BeginTransactionAsync();
-
             try
             {
-                av_UsuarioGrupoOpcion av_UsuarioGrupoOpcion = new av_UsuarioGrupoOpcion
-                {
-                    nId_UsuarioGrupoOpcion = usuarioGrupoOpcionEditarDto.nId_UsuarioGrupoOpcion,
-                    nId_Usuario = usuarioGrupoOpcionEditarDto.nId_Usuario,
-                    nId_Grupo = usuarioGrupoOpcionEditarDto.nId_Grupo,
-                    nId_Opcion = usuarioGrupoOpcionEditarDto.nId_Opcion,
-                    bConsultar = usuarioGrupoOpcionEditarDto.bConsultar,
-                    bInsertar = usuarioGrupoOpcionEditarDto.bInsertar,
-                    bEditar = usuarioGrupoOpcionEditarDto.bEditar,
-                    bEliminar = usuarioGrupoOpcionEditarDto.bEliminar,
-                    bExportar = usuarioGrupoOpcionEditarDto.bExportar,
-                    bEstado = usuarioGrupoOpcionEditarDto.bEstado,
-                    nCrea = validator.usuarioGrupoOpcion.nCrea,
-                    dFechaCrea = validator.usuarioGrupoOpcion.dFechaCrea,
-                    nModifica = usuarioGrupoOpcionEditarDto.nModifica,
-                    dFechaModifica = usuarioGrupoOpcionEditarDto.dFechaModifica
-                };
+                await _unitOfWork.BeginTransactionAsync();
 
-                var usuarioGrupoOpcionModificada = await _unitOfWork.av_UsuarioGrupoOpcions.UpdateAsync(av_UsuarioGrupoOpcion);
+                av_UsuarioGrupoOpcion av_UsuarioGrupoOpcion =
+                    new av_UsuarioGrupoOpcion
+                    {
+                        nId_UsuarioGrupoOpcion = usuarioGrupoOpcionEditarDto.nId_UsuarioGrupoOpcion,
+                        nId_Usuario = usuarioGrupoOpcionEditarDto.nId_Usuario,
+                        nId_Grupo = usuarioGrupoOpcionEditarDto.nId_Grupo,
+                        nId_Opcion = usuarioGrupoOpcionEditarDto.nId_Opcion,
+
+                        bConsultar = usuarioGrupoOpcionEditarDto.bConsultar,
+                        bInsertar = usuarioGrupoOpcionEditarDto.bInsertar,
+                        bEditar = usuarioGrupoOpcionEditarDto.bEditar,
+                        bEliminar = usuarioGrupoOpcionEditarDto.bEliminar,
+                        bExportar = usuarioGrupoOpcionEditarDto.bExportar,
+                        bEstado = usuarioGrupoOpcionEditarDto.bEstado,
+
+                        nCrea = validator.usuarioGrupoOpcion.nCrea,
+                        dFechaCrea = validator.usuarioGrupoOpcion.dFechaCrea,
+
+                        nModifica = usuarioGrupoOpcionEditarDto.nModifica,
+                        dFechaModifica = usuarioGrupoOpcionEditarDto.dFechaModifica
+                    };
+
+                var usuarioGrupoOpcionModificada =
+                    await _unitOfWork.av_UsuarioGrupoOpcions
+                        .UpdateAsync(av_UsuarioGrupoOpcion);
+
                 await _unitOfWork.SaveChangesAsync();
 
-                PutUsuarioGrupoOpcionModificarResponseDto responseDto = new PutUsuarioGrupoOpcionModificarResponseDto
-                {
-                    nId_UsuarioGrupoOpcion = usuarioGrupoOpcionModificada.nId_UsuarioGrupoOpcion,
-                    nId_Usuario = usuarioGrupoOpcionModificada.nId_Usuario,
-                    nId_Grupo = usuarioGrupoOpcionModificada.nId_Grupo,
-                    nId_Opcion = usuarioGrupoOpcionModificada.nId_Opcion
-                };
+                PutUsuarioGrupoOpcionModificarResponseDto responseDto =
+                    new PutUsuarioGrupoOpcionModificarResponseDto
+                    {
+                        nId_UsuarioGrupoOpcion =
+                            usuarioGrupoOpcionModificada.nId_UsuarioGrupoOpcion,
 
-                ResultDto<PutUsuarioGrupoOpcionModificarResponseDto> response = ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>
-                                                  .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                        nId_Usuario =
+                            usuarioGrupoOpcionModificada.nId_Usuario,
+
+                        nId_Grupo =
+                            usuarioGrupoOpcionModificada.nId_Grupo,
+
+                        nId_Opcion =
+                            usuarioGrupoOpcionModificada.nId_Opcion
+                    };
+
+                var response =
+                    ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>.Success(
+                        responseDto,
+                        Const.SUCCESS_CODE,
+                        Const.SUCCESS_MESSAGE,
+                        Const.SUCCESS_MESSAGE,
+                        Const.OK_REQUEST_CODE);
 
                 await _unitOfWork.CommitTransactionAsync();
 
@@ -294,9 +320,30 @@ namespace GesMgmt.Application.Services.UsuarioGrupoOpcion
             }
             catch (Exception ex)
             {
-                _Logger.LogError($"PutUsuarioGrupoOpcionModificar|DatabaseError: {ex.Message}");
-                await _unitOfWork.RollbackTransactionAsync();
-                return ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
+                _Logger.LogError(
+                    $"PutUsuarioGrupoOpcionModificar|DatabaseError|Message: {ex.Message}");
+
+                _Logger.LogError(
+                    $"PutUsuarioGrupoOpcionModificar|DatabaseError|StackTrace: {ex.StackTrace}");
+
+                _Logger.LogError(
+                    $"PutUsuarioGrupoOpcionModificar|DatabaseError|Exception: {ex}");
+
+                try
+                {
+                    await _unitOfWork.RollbackTransactionAsync();
+                }
+                catch (Exception rollbackEx)
+                {
+                    _Logger.LogError(
+                        $"PutUsuarioGrupoOpcionModificar|RollbackError|Exception: {rollbackEx}");
+                }
+
+                return ResultDto<PutUsuarioGrupoOpcionModificarResponseDto>.Failure(
+                    "500",
+                    "Error interno del servidor.",
+                    "Ocurrió un error al procesar la solicitud.",
+                    500);
             }
         }
         #endregion

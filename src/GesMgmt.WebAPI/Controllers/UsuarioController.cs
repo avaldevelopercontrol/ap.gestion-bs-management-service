@@ -127,5 +127,24 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"CreateUsuario|End|CreateUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
+
+        /// <summary>
+        /// Resetear clave de USUARIO.
+        /// </summary>
+        /// <remarks>
+        /// Resetear clave de USUARIO.
+        /// </remarks>
+        /// <response code="200">Resetear clave de USUARIO.</response>
+        [HttpPut("ResetearUsuarioAsync")]
+        [ProducesResponseType(typeof(ResultDto<ResetearUsuarioResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ResetearUsuarioAsync([FromBody] ResetearUsuarioRequestDto usuarioDto)
+        {
+            _Logger.LogInfo($"ResetearUsuario|Begin|ResetearUsuarioAsync|request: {JsonSerializer.Serialize(usuarioDto)}");
+            var result = await _usuarioService.ResetearUsuarioAsync(usuarioDto);
+            _Logger.LogInfo($"ResetearUsuario|End|ResetearUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }
