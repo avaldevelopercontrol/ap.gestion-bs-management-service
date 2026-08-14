@@ -114,5 +114,8 @@ namespace GesMgmt.Domain.Constants
         public const string USUARIO_GRUPO_OPCION_NO_EXISTE = "089";
         public const string CLAVE_NO_COINCIDE = "090";
         public const string CLAVE_YA_UTILIZADA = "091";
+        public const string CLAVE_VENCIDA = "092";
+        public const string CLAVE_PROXIMA_VENCER = "093";
+        public const string INTENTOS_MAXIMOS_SUPERADOS = "094";
     }
 }

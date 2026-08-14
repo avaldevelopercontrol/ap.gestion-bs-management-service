@@ -70,8 +70,21 @@ namespace GesMgmt.Application.Services.Usuario
             
             if (validationResult.Code != Const.SUCCESS_CODE)
             {
+                if (validationResult.Code == "038") //USUARIO_LOGIN_INCORRECT
+                {
+                    var validationResultLoginUser = await validator.ValidateIntentoLogin();
+                    if (validationResultLoginUser.Code != Const.SUCCESS_CODE)
+                    {
+                        return validationResultLoginUser;
+                    }
+                    await _unitOfWork.BeginTransactionAsync();
+                    var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoLoginAsync(usuarioLoginDto.cUsr_Login);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitTransactionAsync();
+                }
                 return validationResult;
             }
+
             try
             {
                 GetUsuarioLoginResponseDto data = new GetUsuarioLoginResponseDto();
@@ -113,13 +126,16 @@ namespace GesMgmt.Application.Services.Usuario
                         nId_UEstado = validator.usuario.nId_UEstado ?? null,
                         nid_perfil = validator.usuario.nid_perfil ?? 0
                     };
+                    await _unitOfWork.BeginTransactionAsync();
+                    var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoLoginAsync(usuarioLoginDto.cUsr_Login);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitTransactionAsync();
                 }
                 else
                 {
                     return ResultDto<GetUsuarioLoginResponseDto>.Failure(Const.BAD_REQUEST_CODE.ToString(), "Usuario o Clave Erroneo", "Usuario o Clave Erroneo", Const.BAD_REQUEST_CODE);
                 }
                 return ResultDto<GetUsuarioLoginResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-
             }
             catch (Exception ex)
             {
@@ -215,16 +231,11 @@ namespace GesMgmt.Application.Services.Usuario
                 var usuarioCreate = await _unitOfWork.av_Usuarios.AddAsync(av_Usuario);
                 await _unitOfWork.SaveChangesAsync();
 
-                //actualizar el campo del Login
-                av_Usuario av_UsuarioUpdateLogin = new av_Usuario
-                {
-                    nId_Usuario = usuarioCreate.nId_Usuario,
-                    cUsr_Login = usuarioCreate.nId_Usuario.ToString()
-                };
-                await _unitOfWork.av_Usuarios.UpdateAsync(av_UsuarioUpdateLogin);
+                // Actualizar el Login utilizando la misma instancia trackeada
+                usuarioCreate.cUsr_Login = usuarioCreate.nId_Usuario.ToString();
                 await _unitOfWork.SaveChangesAsync();
 
-                //Grabar en la tabla de UGrupos
+                //INICIO - Grabar en la tabla de UGrupos
                 av_UGrupo av_UGrupo = new av_UGrupo
                 {
                     nId_Usuario = usuarioCreate.nId_Usuario,
@@ -237,6 +248,19 @@ namespace GesMgmt.Application.Services.Usuario
                 };
                 await _unitOfWork.av_UGrupos.AddAsync(av_UGrupo);
                 await _unitOfWork.SaveChangesAsync();
+                //FIN - Grabar en la tabla de UGrupos
+
+                //INICIO - guardar en historico de contraseñas
+                av_PasswordHis historicoPass = new av_PasswordHis
+                {
+                    dFecRegistro = DateTime.Now,
+                    nId_Usuario = usuarioCreate.nId_Usuario,
+                    cUsr_Pass = usuarioCreate.cUsr_Pass,
+                    nId_UsuarioReg = usuarioCreate.nId_Usuario
+                };
+                await _unitOfWork.av_PasswordHiss.AddAsync(historicoPass);
+                await _unitOfWork.SaveChangesAsync();
+                //FIN - guardar en historico de contraseñas
 
                 CreateUsuarioResponseDto createUsuarioResponseDto = new CreateUsuarioResponseDto
                 {
@@ -287,7 +311,7 @@ namespace GesMgmt.Application.Services.Usuario
                     cUsr_ApeMat = usuarioEditDto.cUsr_ApeMat,
                     cUsr_Nombres = usuarioEditDto.cUsr_Nombres,
                     cUsr_Login = usuarioEditDto.cUsr_LoginNew ?? usuarioEditDto.cUsr_Login,
-                    cUsr_Pass = CifrarClave(usuarioEditDto.cUsr_PassNew ?? usuarioEditDto.cUsr_Pass),
+                    cUsr_Pass = CifrarClave(usuarioEditDto.cUsr_PassNew),
                     nid_perfil = usuarioEditDto.nid_perfil,
                     nId_Grupo = usuarioEditDto.nId_Grupo,
                     cod_Recau = usuarioEditDto.cod_Recau,
@@ -303,17 +327,29 @@ namespace GesMgmt.Application.Services.Usuario
                     cUsr_EmailPersonal = usuarioEditDto.cUsr_EmailPersonal,
                     NroCampanaDiscador = usuarioEditDto.NroCampanaDiscador
                 };
-                var usuarioCreate = await _unitOfWork.av_Usuarios.UpdateAsync(av_Usuario);
+                var usuarioEditado = await _unitOfWork.av_Usuarios.UpdateAsync(av_Usuario);
                 await _unitOfWork.SaveChangesAsync();
+
+                //INICIO - guardar en historico de contraseñas
+                av_PasswordHis historicoPass = new av_PasswordHis
+                {
+                    dFecRegistro = DateTime.Now,
+                    nId_Usuario = usuarioEditado.nId_Usuario,
+                    cUsr_Pass = usuarioEditado.cUsr_Pass,
+                    nId_UsuarioReg = usuarioEditado.nId_Usuario
+                };
+                await _unitOfWork.av_PasswordHiss.AddAsync(historicoPass);
+                await _unitOfWork.SaveChangesAsync();
+                //FIN - guardar en historico de contraseñas
 
                 EditUsuarioResponseDto editUsuarioResponseDto = new EditUsuarioResponseDto
                 {
-                    nId_Usuario = usuarioCreate.nId_Usuario,
-                    cUsr_NroDoc = usuarioCreate.cUsr_NroDoc,
-                    cUsr_ApePat = usuarioCreate.cUsr_ApePat,
-                    cUsr_ApeMat = usuarioCreate.cUsr_ApeMat,
-                    cUsr_Nombres = usuarioCreate.cUsr_Nombres,
-                    cUsr_Login = usuarioCreate.cUsr_Login
+                    nId_Usuario = usuarioEditado.nId_Usuario,
+                    cUsr_NroDoc = usuarioEditado.cUsr_NroDoc,
+                    cUsr_ApePat = usuarioEditado.cUsr_ApePat,
+                    cUsr_ApeMat = usuarioEditado.cUsr_ApeMat,
+                    cUsr_Nombres = usuarioEditado.cUsr_Nombres,
+                    cUsr_Login = usuarioEditado.cUsr_Login
                 };
 
                 ResultDto<EditUsuarioResponseDto> response = ResultDto<EditUsuarioResponseDto>
@@ -374,7 +410,7 @@ namespace GesMgmt.Application.Services.Usuario
         }
 
         #region "Cambiar Contraseña"
-        public async Task<ResultDto<ResetearUsuarioResponseDto>> ResetearUsuarioAsync(ResetearUsuarioRequestDto usuarioResetDto)
+        public async Task<ResultDto<ResetearUsuarioResponseDto>> ResetearClaveUsuarioAsync(ResetearUsuarioRequestDto usuarioResetDto)
         {
             ResetearUsuarioRequestValidator validator = new ResetearUsuarioRequestValidator(_unitOfWork, _validationMessageService, usuarioResetDto);
 
@@ -391,9 +427,10 @@ namespace GesMgmt.Application.Services.Usuario
             {
                 var usuario = await _unitOfWork.av_Usuarios.GetByIdAsync(usuarioResetDto.nId_Usuario);
 
-                usuario.cUsr_Pass = usuarioResetDto.cUsr_PassNueva;
-                usuario.dUsr_PassUpdate = DateTime.Now;
+                usuario.cUsr_Pass = validator.cUsr_PassNueva; //usuarioResetDto.cUsr_PassNueva;
+                usuario.dUsr_PassUpdate = null;
                 usuario.nUsr_NroIntentoAcc = 0;
+                await _unitOfWork.av_Usuarios.UpdateAsync(usuario);
                 await _unitOfWork.SaveChangesAsync();
 
                 //guardar en historico de contraseñas
@@ -404,7 +441,6 @@ namespace GesMgmt.Application.Services.Usuario
                     cUsr_Pass = validator.cUsr_PassNueva,
                     nId_UsuarioReg = usuarioResetDto.nId_Usuario
                 };
-                
                 await _unitOfWork.av_PasswordHiss.AddAsync(historicoPass);
                 await _unitOfWork.SaveChangesAsync();
 

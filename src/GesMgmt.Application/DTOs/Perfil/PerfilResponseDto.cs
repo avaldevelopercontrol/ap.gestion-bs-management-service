@@ -22,6 +22,7 @@ namespace GesMgmt.Application.DTOs.Perfil
         {
             public int nid_perfil { get; set; }
             public string per_Nombre { get; set; }
+            public int? nEstadoGest { get; set; }
         }
 
         public class GetPerfilesListadoResponseDto

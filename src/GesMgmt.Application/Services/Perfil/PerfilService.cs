@@ -36,7 +36,8 @@ namespace GesMgmt.Application.Services.Perfil
                                     select new GetPerfilesResponseDto
                                     {
                                         nid_perfil = s.nid_perfil,
-                                        per_Nombre = s.per_Nombre
+                                        per_Nombre = s.per_Nombre,
+                                        nEstadoGest = s.nEstadoGest ?? 0,
                                     }
                     ).ToListAsync();
                 return ResultListaDto<IEnumerable<GetPerfilesResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);

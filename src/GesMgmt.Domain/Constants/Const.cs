@@ -60,5 +60,9 @@ namespace GesMgmt.Domain.Constants
 
         public const int SEGURIDAD_ACCESO = 160;
         public const string DIAS_RETOMAR_CLAVE = "DIAS_RETOMAR_CLAVE";
+        public const string DIAS_EXPIRA_CLAVE = "DIAS_EXPIRA_CLAVE";
+        public const string DIAS_PREVENIR_BLOQUEO_CLAVE = "DIAS_PREVENIR_BLOQUEO_CLAVE";
+        public const string DIAS_BLOQUEO_CLAVE = "DIAS_BLOQUEO_CLAVE";
+        public const string INTENTOS_MAXIMO = "INTENTOS_MAXIMO";
     }
 }

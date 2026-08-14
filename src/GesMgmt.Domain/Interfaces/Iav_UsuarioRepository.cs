@@ -14,5 +14,6 @@ namespace GesMgmt.Domain.Interfaces
         Task<av_Usuario> GetByUsuarioByLoginAsync(string cUsr_Login);
         Task<av_Usuario> AddAsync(av_Usuario av_Usuario);
         Task<av_Usuario> UpdateAsync(av_Usuario av_Usuario);
+        Task<av_Usuario> UpdateIntentoLoginAsync(string cUsr_Login);
     }
 }

@@ -90,5 +90,24 @@ namespace GesMgmt.Infraestructure.Repositories
             _dbSet.Update(av_Usuario);
             return av_Usuario;
         }
+
+        public async Task<av_Usuario> UpdateIntentoLoginAsync(string cUsr_Login)
+        {
+            var usuario = await GetByUsuarioByLoginAsync(cUsr_Login);
+            if (usuario != null)
+            {
+                if (usuario.nUsr_NroIntentoAcc == null)
+                {
+                    usuario.nUsr_NroIntentoAcc = 0 + 1;
+                }
+                else
+                {
+                    usuario.nUsr_NroIntentoAcc = usuario.nUsr_NroIntentoAcc + 1;
+                }
+                _dbSet.Update(usuario);
+            }
+            return usuario;
+        }
+
     }
 }

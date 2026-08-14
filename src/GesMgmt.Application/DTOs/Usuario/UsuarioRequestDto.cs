@@ -16,7 +16,7 @@ namespace GesMgmt.Application.DTOs.Usuario
 
         public class CreateUsuarioRequestDto
         {
-            public int nId_Usuario { get; set; }
+            //public int nId_Usuario { get; set; }
             public string cUsr_NroDoc { get; set; }
             public string cUsr_ApePat { get; set; }
             public string cUsr_ApeMat { get; set; }

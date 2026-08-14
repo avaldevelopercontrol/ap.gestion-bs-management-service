@@ -135,15 +135,15 @@ namespace GesMgmt.WebAPI.Controllers
         /// Resetear clave de USUARIO.
         /// </remarks>
         /// <response code="200">Resetear clave de USUARIO.</response>
-        [HttpPut("ResetearUsuarioAsync")]
+        [HttpPut("ResetearClaveUsuario")]
         [ProducesResponseType(typeof(ResultDto<ResetearUsuarioResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ResetearUsuarioAsync([FromBody] ResetearUsuarioRequestDto usuarioDto)
+        public async Task<IActionResult> ResetearClaveUsuarioAsync([FromBody] ResetearUsuarioRequestDto usuarioDto)
         {
-            _Logger.LogInfo($"ResetearUsuario|Begin|ResetearUsuarioAsync|request: {JsonSerializer.Serialize(usuarioDto)}");
-            var result = await _usuarioService.ResetearUsuarioAsync(usuarioDto);
-            _Logger.LogInfo($"ResetearUsuario|End|ResetearUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            _Logger.LogInfo($"ResetearClaveUsuario|Begin|ResetearClaveUsuarioAsync|request: {JsonSerializer.Serialize(usuarioDto)}");
+            var result = await _usuarioService.ResetearClaveUsuarioAsync(usuarioDto);
+            _Logger.LogInfo($"ResetearClaveUsuario|End|ResetearClaveUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
     }
