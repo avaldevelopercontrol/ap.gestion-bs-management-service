@@ -5,6 +5,7 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
+using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 
@@ -47,6 +48,26 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _usuarioService.GetUsuariosListAsync();
             _Logger.LogInfo($"GetUsuariosList|End|GetUsuariosListAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// Obtiene el USUARIO registrado.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el USUARIO registrado.
+        /// </remarks>
+        /// <response code="200">Obtiene el USUARIO registrado.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene el USUARIO registrado")]
+        [HttpGet("{nId_Usuario}")]
+        [ProducesResponseType(typeof(ResultDto<GetUsuarioObtenerResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int nId_Usuario)
+        {
+            _Logger.LogInfo($"GetUsuarioById|Begin|GetUsuarioByIdAsync|request:{nId_Usuario}");
+            var result = await _usuarioService.GetUsuarioByIdAsync(nId_Usuario);
+            _Logger.LogInfo($"GetUsuarioById|End|GetUsuarioByIdAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
         }
 
         /// <summary>

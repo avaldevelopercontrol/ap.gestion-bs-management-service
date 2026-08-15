@@ -1,4 +1,5 @@
-﻿using GesMgmt.Application.DTOs;
+﻿using DocumentFormat.OpenXml.Office2016.Excel;
+using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Grupo;
 using GesMgmt.Application.Logger;
@@ -213,6 +214,54 @@ namespace GesMgmt.Application.Services.Grupo
                 _Logger.LogError($"EditGrupo|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<EditGrupoResponseDto>.Failure("500", "Error interno del servidor.", "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+        #endregion
+
+        #region "Listado de Grupo - Cliente Inicia"
+        public async Task<ResultListDto<IEnumerable<GetGruposClienteInicialResponseDto>>> GetGruposClienteInicialAsync(int nId_Usuario)
+        {
+            try
+            {
+                var q_grupos = await _unitOfWork.av_Grupos.GetGruposActivos();
+                var q_clientes = await _unitOfWork.av_Clientes.Query();
+                var q_ugrupos = await _unitOfWork.av_UGrupos.Query();
+
+                var data = await (
+                                from gru in q_grupos
+
+                                join cli in q_clientes
+                                on gru.nid_cliente equals cli.nId_Cliente
+                                into refcliente
+                                from cli in refcliente.DefaultIfEmpty()
+
+                                join ugr in q_ugrupos
+                                on gru.nId_Grupo equals ugr.nId_Grupo
+                                into refugrupo
+                                from ugr in refugrupo.DefaultIfEmpty()
+
+                                where ugr.nId_Usuario == nId_Usuario
+                                && ugr.bEstado == true
+                                && cli.bEstado == true
+
+                                select new GetGruposClienteInicialResponseDto
+                                {
+                                    nId_Cliente = gru.nid_cliente ?? 0,
+                                    cCli_Nombre = cli.cCli_Nombre ?? "",
+                                    swt_estadoGest = cli.swt_estadoGest ?? 0,
+                                    ntip_campanna = cli.ntip_campanna ?? 0
+                                }
+                            )
+                            .Distinct()
+                            .OrderBy(x => x.cCli_Nombre)
+                            .ToListAsync();
+
+                return ResultListDto<IEnumerable<GetGruposClienteInicialResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetGruposClienteInicial|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetGruposClienteInicialResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion

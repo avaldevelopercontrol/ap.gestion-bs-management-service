@@ -11,5 +11,6 @@ namespace GesMgmt.Application.Interfaces.Grupo
         Task<ResultDto<GetGrupoByIdResponseDto>> GetGrupoByIdAsync(int nId_Grupo);
         Task<ResultDto<CreateGrupoResponseDto>> CreateGrupoAsync(CreateGrupoRequestDto grupoCreateDto);
         Task<ResultDto<EditGrupoResponseDto>> EditGrupoAsync(EditGrupoRequestDto grupoEditDto);
+        Task<ResultListDto<IEnumerable<GetGruposClienteInicialResponseDto>>> GetGruposClienteInicialAsync(int nId_Usuario);
     }
 }

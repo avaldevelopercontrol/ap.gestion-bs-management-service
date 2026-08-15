@@ -18,6 +18,8 @@ namespace GesMgmt.Application.Validators.Usuario
         private ValidationMessageDto _oValMsgDto;
         private GetUsuarioLoginRequestDto _requestDto;
         public av_Usuario usuario;
+        public int nIntentosMaximo = 0;
+        public int nUsr_NroIntentoAcc = -1;
 
         public GetUsuarioRequestValidator(
                 IUnitOfWork unitOfWork,
@@ -96,11 +98,9 @@ namespace GesMgmt.Application.Validators.Usuario
                 return ResultDto<GetUsuarioLoginResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            int nIntentosMaximo = 0;
             nIntentosMaximo = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.SEGURIDAD_ACCESO, Const.INTENTOS_MAXIMO)).cValor);
 
             var usu = await _unitOfWork.av_Usuarios.GetByUsuarioAsync(_requestDto.cUsr_Login);
-            int nUsr_NroIntentoAcc = -1;
             if (usu != null)
             {
                 nUsr_NroIntentoAcc = usu.nUsr_NroIntentoAcc ?? 0;

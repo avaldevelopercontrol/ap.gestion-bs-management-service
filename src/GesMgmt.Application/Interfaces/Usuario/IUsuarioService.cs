@@ -7,6 +7,7 @@ namespace GesMgmt.Application.Interfaces.Usuario
     public interface IUsuarioService
     {
         Task<ResultListDto<IEnumerable<GetUsuariosListResponseDto>>> GetUsuariosListAsync();
+        Task<ResultDto<GetUsuarioObtenerResponseDto>> GetUsuarioByIdAsync(int nId_Usuario);
         Task<ResultDto<GetUsuarioLoginResponseDto>> GetLoginUsuarioAsync(GetUsuarioLoginRequestDto usuarioLoginDto);
         Task<ResultListaDto<IEnumerable<GetSubZonaGeneralListResponseDto>>> GetSubZonasGeneralAsync();
         Task<ResultListDto<IEnumerable<GetCampannaDiscadorlListResponseDto>>> GetCampannaDiscadorByIdUsuarioAsync(GetCampannaDiscadorlListRequestDto camannaDiscadorDto);

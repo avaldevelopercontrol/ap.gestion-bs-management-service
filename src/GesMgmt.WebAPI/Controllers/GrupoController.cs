@@ -69,7 +69,6 @@ namespace GesMgmt.WebAPI.Controllers
             return Ok(result);
         }
 
-
         /// <summary>
         /// Obtiene el GRUPO registrado.
         /// </summary>
@@ -126,6 +125,26 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _grupoService.EditGrupoAsync(grupoDto);
             _Logger.LogInfo($"EditGrupo|End|EditGrupoAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// Listado de Grupo - Cliente Inicia.
+        /// </summary>
+        /// <remarks>
+        /// Listado de Grupo - Cliente Inicia.
+        /// </remarks>
+        /// <response code="200">Listado de Grupo - Cliente Inicia.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado de Grupos - Cliente Inicia")]
+        [HttpGet("GetGruposClienteInicial")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposClienteInicialResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposClienteInicialResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGruposClienteInicialResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGruposClienteInicialAsync(int nId_Usuario)
+        {
+            _Logger.LogInfo($"GetGruposClienteInicial|Begin|GetGruposClienteInicialAsync|request:");
+            var result = await _grupoService.GetGruposClienteInicialAsync(nId_Usuario);
+            _Logger.LogInfo($"GetGruposClienteInicial|End|GetGruposClienteInicialAsync|response: {JsonSerializer.Serialize(result)}");
+            return Ok(result);
         }
     }
 }

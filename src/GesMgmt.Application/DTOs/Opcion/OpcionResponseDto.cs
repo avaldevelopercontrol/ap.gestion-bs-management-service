@@ -29,6 +29,7 @@ namespace GesMgmt.Application.DTOs.Opcion
             public string sNombreOpcion { get; set; }
             public string sDescripcionOpcion { get; set; }
             public string sUrlOpcion { get; set; }
+            public string? sUrlBI { get; set; }
             public string? sIcono { get; set; }
             public int nTipo { get; set; }
             public int? nId_OpcionPadre { get; set; }
@@ -50,6 +51,7 @@ namespace GesMgmt.Application.DTOs.Opcion
             public string sNombreOpcion { get; set; }
             public string sDescripcionOpcion { get; set; }
             public string sUrlOpcion { get; set; }
+            public string? sUrlBI { get; set; }
             public string? sIcono { get; set; }
             public int nTipo { get; set; }
             public int? nId_OpcionPadre { get; set; }

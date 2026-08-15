@@ -60,6 +60,83 @@ namespace GesMgmt.Application.Services.Usuario
         }
         #endregion
 
+        #region "Obtener Usuario por ID"
+        public async Task<ResultDto<GetUsuarioObtenerResponseDto>> GetUsuarioByIdAsync(int nId_Usuario)
+        {
+            try
+            {
+                GetUsuarioObtenerResponseDto data = new GetUsuarioObtenerResponseDto();
+                var q_Usuario = await _unitOfWork.av_Usuarios.GetByIdAsync(nId_Usuario);
+                if (q_Usuario != null)
+                {
+                    data = new GetUsuarioObtenerResponseDto()
+                    {
+                        nId_Usuario = q_Usuario.nId_Usuario,
+                        cUsr_NroDoc = q_Usuario.cUsr_NroDoc,
+                        cUsr_ApePat = q_Usuario.cUsr_ApePat ?? "",
+                        cUsr_ApeMat = q_Usuario.cUsr_ApeMat ?? "",
+                        cUsr_Nombres = q_Usuario.cUsr_Nombres ?? "",
+                        bSexo = q_Usuario.bSexo,
+                        cUsr_Login = q_Usuario.cUsr_Login,
+                        cUsr_Pass = q_Usuario.cUsr_Pass,
+                        bEstado = q_Usuario.bEstado,
+                        mUsr_CostoMes = q_Usuario.mUsr_CostoMes ?? 0,
+                        nId_Horario = q_Usuario.nId_Horario ?? 0,
+                        nUsr_CtaNroAcum = q_Usuario.nUsr_CtaNroAcum ?? 0,
+                        nUsr_CtaMontoAcum = q_Usuario.nUsr_CtaMontoAcum ?? 0,
+                        nUsr_CtaMontoRecAcum = q_Usuario.nUsr_CtaMontoRecAcum ?? 0,
+                        nUsr_CtaMontoRecEfi = q_Usuario.nUsr_CtaMontoRecEfi ?? 0,
+                        cUsr_Anexo = q_Usuario.cUsr_Anexo ?? "",
+                        cUsr_Celular = q_Usuario.cUsr_Celular ?? "",
+                        cUsr_Email = q_Usuario.cUsr_Email ?? "",
+                        cUsr_Telef = q_Usuario.cUsr_Telef ?? "",
+                        nId_UTipo = q_Usuario.nId_UTipo ?? 0,
+                        nId_Cargo = q_Usuario.nId_Cargo ?? 0,
+                        dUsr_FecNac = q_Usuario.dUsr_FecNac ?? null,
+                        dUsr_FecIngreso = q_Usuario.dUsr_FecIngreso ?? null,
+                        nId_Mtabla = q_Usuario.nId_Mtabla ?? null,
+                        cUsr_Direcc = q_Usuario.cUsr_Direcc ?? "",
+                        nId_Ubigeo = q_Usuario.nId_Ubigeo,
+                        cUsr_DireccRef = q_Usuario.cUsr_DireccRef ?? "",
+                        nId_Grupo = q_Usuario.nId_Grupo ?? 0,
+                        nId_Sucursal = q_Usuario.nId_Sucursal ?? 0,
+                        dUsr_FecSalida = q_Usuario.dUsr_FecSalida ?? null,
+                        nId_UEstado = q_Usuario.nId_UEstado ?? null,
+                        nid_perfil = q_Usuario.nid_perfil ?? 0,
+                        cod_Recau = q_Usuario.cod_Recau ?? "",
+                        nUsr_CiuGestor = q_Usuario.nUsr_CiuGestor ?? "",
+                        nUsr_Zona = q_Usuario.nUsr_Zona ?? "",
+                        cComp_Zona = q_Usuario.cComp_Zona ?? "",
+                        bValidaGesAsterisk = q_Usuario.bValidaGesAsterisk ?? false,
+                        cGestionaEstado = q_Usuario.cGestionaEstado ?? "",
+                        NroCampanaDiscador = q_Usuario.NroCampanaDiscador ?? 0,
+                        cUsr_EmailPersonal = q_Usuario.cUsr_EmailPersonal ?? "",
+                        nId_ZonaGen = q_Usuario.nId_ZonaGen ?? 0,
+                        dUsr_PassUpdate = q_Usuario.dUsr_PassUpdate ?? null,
+                        nUsr_NroIntentoAcc = q_Usuario.nUsr_NroIntentoAcc ?? 0,
+                        cUsr_EmailProfile = q_Usuario.cUsr_EmailProfile ?? "",
+                        nId_PerfilGest = q_Usuario.nId_PerfilGest ?? 0,
+                        nId_ClientePri = q_Usuario.nId_ClientePri ?? 0,
+                        nId_SubZonaGen = q_Usuario.nId_SubZonaGen ?? 0,
+                        nBuscarReniec = q_Usuario.nBuscarReniec ?? 0,
+                        nid_UsuSuper = q_Usuario.nid_UsuSuper ?? 0,
+                        dUsr_FecCese = q_Usuario.dUsr_FecCese ?? null,
+                        bEmailVerificacion = q_Usuario.bEmailVerificacion ?? false,
+                        cEmailVerificacion_codigo = q_Usuario.cEmailVerificacion_codigo ?? "",
+                        cUsr_EmailVerificacion = q_Usuario.cUsr_EmailVerificacion ?? "",
+                        dFechaHora_Codigo = q_Usuario.dFechaHora_Codigo ?? null
+                    };
+                }
+                return ResultDto<GetUsuarioObtenerResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetUsuarioById|DatabaseError: {ex.Message}");
+                return ResultDto<GetUsuarioObtenerResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
         #region "Login al New SISGES"
         public async Task<ResultDto<GetUsuarioLoginResponseDto>> GetLoginUsuarioAsync(GetUsuarioLoginRequestDto usuarioLoginDto)
         {
@@ -77,10 +154,13 @@ namespace GesMgmt.Application.Services.Usuario
                     {
                         return validationResultLoginUser;
                     }
-                    await _unitOfWork.BeginTransactionAsync();
-                    var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoLoginAsync(usuarioLoginDto.cUsr_Login);
-                    await _unitOfWork.SaveChangesAsync();
-                    await _unitOfWork.CommitTransactionAsync();
+                    if (validator.nUsr_NroIntentoAcc > validator.nIntentosMaximo)
+                    {
+                        await _unitOfWork.BeginTransactionAsync();
+                        var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoLoginAsync(usuarioLoginDto.cUsr_Login);
+                        await _unitOfWork.SaveChangesAsync();
+                        await _unitOfWork.CommitTransactionAsync();
+                    }
                 }
                 return validationResult;
             }
@@ -306,11 +386,11 @@ namespace GesMgmt.Application.Services.Usuario
                 av_Usuario av_Usuario = new av_Usuario
                 {
                     nId_Usuario = usuarioEditDto.nId_Usuario,
-                    cUsr_NroDoc = usuarioEditDto.cUsr_NroDocNew ?? usuarioEditDto.cUsr_NroDoc,
+                    cUsr_NroDoc = usuarioEditDto.cUsr_NroDocNew,
                     cUsr_ApePat = usuarioEditDto.cUsr_ApePat,
                     cUsr_ApeMat = usuarioEditDto.cUsr_ApeMat,
                     cUsr_Nombres = usuarioEditDto.cUsr_Nombres,
-                    cUsr_Login = usuarioEditDto.cUsr_LoginNew ?? usuarioEditDto.cUsr_Login,
+                    cUsr_Login = usuarioEditDto.cUsr_LoginNew,
                     cUsr_Pass = CifrarClave(usuarioEditDto.cUsr_PassNew),
                     nid_perfil = usuarioEditDto.nid_perfil,
                     nId_Grupo = usuarioEditDto.nId_Grupo,
@@ -330,17 +410,20 @@ namespace GesMgmt.Application.Services.Usuario
                 var usuarioEditado = await _unitOfWork.av_Usuarios.UpdateAsync(av_Usuario);
                 await _unitOfWork.SaveChangesAsync();
 
-                //INICIO - guardar en historico de contraseñas
-                av_PasswordHis historicoPass = new av_PasswordHis
+                if (usuarioEditDto.bCambioPass)
                 {
-                    dFecRegistro = DateTime.Now,
-                    nId_Usuario = usuarioEditado.nId_Usuario,
-                    cUsr_Pass = usuarioEditado.cUsr_Pass,
-                    nId_UsuarioReg = usuarioEditado.nId_Usuario
-                };
-                await _unitOfWork.av_PasswordHiss.AddAsync(historicoPass);
-                await _unitOfWork.SaveChangesAsync();
-                //FIN - guardar en historico de contraseñas
+                    //INICIO - guardar en historico de contraseñas
+                    av_PasswordHis historicoPass = new av_PasswordHis
+                    {
+                        dFecRegistro = DateTime.Now,
+                        nId_Usuario = usuarioEditado.nId_Usuario,
+                        cUsr_Pass = usuarioEditado.cUsr_Pass,
+                        nId_UsuarioReg = usuarioEditado.nId_Usuario
+                    };
+                    await _unitOfWork.av_PasswordHiss.AddAsync(historicoPass);
+                    await _unitOfWork.SaveChangesAsync();
+                    //FIN - guardar en historico de contraseñas
+                }
 
                 EditUsuarioResponseDto editUsuarioResponseDto = new EditUsuarioResponseDto
                 {
