@@ -60,7 +60,7 @@ namespace GesMgmt.Application.Services.Deudor
                         //var q_dxc = await _unitOfWork.av_DocxCobrars.Query();
                         var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
-                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteActivoAsync(deudorDto.nId_Cliente);
                         var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamAsync();
 
                         var query =
@@ -173,7 +173,7 @@ namespace GesMgmt.Application.Services.Deudor
                     {
                         deudorId = q_dxc.FirstOrDefault().nId_PersDeudor;
                         var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
-                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteActivoAsync(deudorDto.nId_Cliente);
                         var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
                         var q_deu = await _unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(deudorId);
 
@@ -284,7 +284,7 @@ namespace GesMgmt.Application.Services.Deudor
 
                         var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosAsync(deudorDto.nId_Cliente, deudorId);
                         var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
-                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAsync(deudorDto.nId_Cliente);
+                        var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteActivoAsync(deudorDto.nId_Cliente);
                         var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
 
                         var data = (

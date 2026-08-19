@@ -93,6 +93,7 @@ namespace GesMgmt.Application.Services.UGrupo
                         on gu.nId_Grupo equals g.nId_Grupo
                     select new GetGruposByUsuarioResponseDto
                     {
+                        nId_UGrupo = gu.nId_UGrupo,
                         nId_Usuario = gu.nId_Usuario,
                         nid_grupo = g.nId_Grupo,
                         cNombre_Grupo = g.cNombre_Grupo

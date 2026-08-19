@@ -48,6 +48,7 @@ namespace GesMgmt.Application.DTOs.UGrupo
 
         public class GetGruposByUsuarioResponseDto
         {
+            public int nId_UGrupo { get; set; }
             public int? nId_Usuario { get; set; }
             public int nid_grupo { get; set; }
             public string cNombre_Grupo { get; set; }

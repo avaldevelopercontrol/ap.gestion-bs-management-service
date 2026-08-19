@@ -29,7 +29,7 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync(s => s.nId_Cliente == nId_Cliente && s.nId_Cartera == nId_Cartera);
         }
 
-        public async Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteAsync(int nId_Cliente)
+        public async Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteActivoAsync(int nId_Cliente)
         {
             return _dbSet
                 .Include(d => d.av_Cliente)
@@ -37,12 +37,20 @@ namespace GesMgmt.Infraestructure.Repositories
                 .AsNoTracking();
         }
 
-        public async Task<IQueryable<av_Cartera>> GetCarterasByIdClienteCarterasAsync(int nId_Cliente, int nId_Cartera)
+        public async Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteAsync(int nId_Cliente)
+        {
+            return _dbSet
+                .Include(d => d.av_Cliente)
+                .Where(s => s.nId_Cliente == nId_Cliente)
+                .AsNoTracking();
+        }
+
+        public async Task<IQueryable<av_Cartera>> GetCarterasParametrosByIdClienteAnnioAsync(int nId_Cliente, int Annio)
         {
             return _dbSet
                 .Include(d => d.av_Cliente)
                 .Where(s => s.nId_Cliente == nId_Cliente
-                && s.nId_Cartera == nId_Cartera
+                && s.anio == Annio
                 && s.bEstado == true)
                 .AsNoTracking();
         }

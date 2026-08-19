@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace GesMgmt.Domain.Entities
 {
     public class av_Opcion
@@ -13,6 +10,8 @@ namespace GesMgmt.Domain.Entities
         public string sUrlOpcion { get; set; }
         public string? sUrlBI { get; set; }
         public string? sIcono { get; set; }
+        public string? sImagenOpcion { get; set; }
+        public string? sEmailOpcion { get; set; }
         public int nTipo { get; set; }
         public int? nId_OpcionPadre { get; set; }
         public int nOrden { get; set; }

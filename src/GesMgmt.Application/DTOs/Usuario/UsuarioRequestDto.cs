@@ -75,7 +75,7 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string cUsr_PassActual { get; set; }
             public string cUsr_PassNueva { get; set; }
             public string cUsr_PassConfirma { get; set; }
-            public DateTime dFecRegistro { get; set; }
+            public DateTime? dFecRegistro { get; set; }
         }
     }
 }

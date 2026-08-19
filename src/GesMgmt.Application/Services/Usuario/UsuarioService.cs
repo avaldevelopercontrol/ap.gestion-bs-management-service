@@ -407,6 +407,18 @@ namespace GesMgmt.Application.Services.Usuario
                     cUsr_EmailPersonal = usuarioEditDto.cUsr_EmailPersonal,
                     NroCampanaDiscador = usuarioEditDto.NroCampanaDiscador
                 };
+
+                if (usuarioEditDto.bCambioPass)
+                {
+                    av_Usuario.cUsr_Pass = CifrarClave(usuarioEditDto.cUsr_PassNew);
+                    av_Usuario.dUsr_PassUpdate = null;
+                }
+                else
+                {
+                    av_Usuario.cUsr_Pass = usuarioEditDto.cUsr_Pass;
+                    av_Usuario.dUsr_PassUpdate = DateTime.Now;
+                }
+
                 var usuarioEditado = await _unitOfWork.av_Usuarios.UpdateAsync(av_Usuario);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -511,7 +523,15 @@ namespace GesMgmt.Application.Services.Usuario
                 var usuario = await _unitOfWork.av_Usuarios.GetByIdAsync(usuarioResetDto.nId_Usuario);
 
                 usuario.cUsr_Pass = validator.cUsr_PassNueva; //usuarioResetDto.cUsr_PassNueva;
-                usuario.dUsr_PassUpdate = null;
+                if (usuarioResetDto.dFecRegistro == null)
+                {
+                    usuario.dUsr_PassUpdate = null;
+                }
+                else
+                {
+                    usuario.dUsr_PassUpdate = usuarioResetDto.dFecRegistro;
+                }
+                
                 usuario.nUsr_NroIntentoAcc = 0;
                 await _unitOfWork.av_Usuarios.UpdateAsync(usuario);
                 await _unitOfWork.SaveChangesAsync();

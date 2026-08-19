@@ -150,6 +150,25 @@ namespace GesMgmt.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Editar registro de USUARIO.
+        /// </summary>
+        /// <remarks>
+        /// Editar registro de USUARIO.
+        /// </remarks>
+        /// <response code="200">Editar registro de USUARIO.</response>
+        [HttpPut]
+        [ProducesResponseType(typeof(ResultDto<EditUsuarioResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditUsuarioAsync([FromBody] EditUsuarioRequestDto usuarioDto)
+        {
+            _Logger.LogInfo($"EditUsuario|Begin|EditUsuarioAsync|request: {JsonSerializer.Serialize(usuarioDto)}");
+            var result = await _usuarioService.EditUsuarioAsync(usuarioDto);
+            _Logger.LogInfo($"EditUsuario|End|EditUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
         /// Resetear clave de USUARIO.
         /// </summary>
         /// <remarks>

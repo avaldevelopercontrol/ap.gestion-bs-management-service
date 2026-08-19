@@ -1,13 +1,11 @@
 ﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Cliente;
-using GesMgmt.Application.Interfaces.Email;
 using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Cliente.ClienteResponseDto;
-using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -15,7 +13,7 @@ namespace GesMgmt.WebAPI.Controllers
     [Route("v1/Cliente")]
     [Produces("application/json")]
 
-    public class ClienteController : Controller
+    public class ClienteController : ControllerBase
     {
         private readonly IClienteService _clienteService;
         private readonly IValidationMessageService _validationMessageService;

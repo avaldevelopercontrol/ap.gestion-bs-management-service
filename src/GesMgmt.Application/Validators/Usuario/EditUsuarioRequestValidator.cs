@@ -71,11 +71,11 @@ namespace GesMgmt.Application.Validators.Usuario
             {
                 return validationFechaNacimiento;
             }
-            var validationAnexo = await ValidateAnexo();
-            if (validationAnexo.Code != Const.SUCCESS_CODE)
-            {
-                return validationAnexo;
-            }
+            //var validationAnexo = await ValidateAnexo();
+            //if (validationAnexo.Code != Const.SUCCESS_CODE)
+            //{
+            //    return validationAnexo;
+            //}
             var validationLogin = await ValidateLogin();
             if (validationLogin.Code != Const.SUCCESS_CODE)
             {
@@ -155,7 +155,7 @@ namespace GesMgmt.Application.Validators.Usuario
                 return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            if (_requestDto.cUsr_ApePat.Length <= 5)
+            if (_requestDto.cUsr_ApePat.Length < 5)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.APELLIDO_PATERNO_MENOR_LONGITUD, "ESP");
                 return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
@@ -247,7 +247,7 @@ namespace GesMgmt.Application.Validators.Usuario
                 return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            if (_requestDto.dUsr_FecNac < DateTime.Now)
+            if (_requestDto.dUsr_FecNac > DateTime.Now)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.FECHA_NACIMIENTO_MAYOR_A_HOY, "ESP");
                 return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
@@ -256,32 +256,32 @@ namespace GesMgmt.Application.Validators.Usuario
             return ResultDto<EditUsuarioResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
         }
 
-        private async Task<ResultDto<EditUsuarioResponseDto>> ValidateAnexo()
-        {
-            if (_requestDto.cUsr_Anexo != null && _requestDto.cUsr_Anexo.Length != 4)
-            {
-                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.ANEXO_INCORRECTO, "ESP");
-                return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
-            }
+        //private async Task<ResultDto<EditUsuarioResponseDto>> ValidateAnexo()
+        //{
+        //    if (_requestDto.cUsr_Anexo != null && _requestDto.cUsr_AnexoNew.Length != 4)
+        //    {
+        //        _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.ANEXO_INCORRECTO, "ESP");
+        //        return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+        //    }
 
-            if (!RegexUtils.ValidateInteger(_requestDto.cUsr_Anexo.Trim()))
-            {
-                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.ANEXO_FORMATO_INCORRECTO, "ESP");
-                return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
-            }
+        //    if (!RegexUtils.ValidateInteger(_requestDto.cUsr_AnexoNew.Trim()))
+        //    {
+        //        _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.ANEXO_FORMATO_INCORRECTO, "ESP");
+        //        return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+        //    }
 
-            if (_requestDto.cUsr_Anexo != _requestDto.cUsr_AnexoNew)
-            {
-                var result = await _unitOfWork.av_Usuarios.GetByUsuarioByAnexoAsync(_requestDto.cUsr_Anexo.Trim());
-                if (result != null)
-                {
-                    _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.ANEXO_EXISTENTE, "ESP");
-                    return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
-                }
-            }
+        //    if (_requestDto.cUsr_Anexo != _requestDto.cUsr_AnexoNew)
+        //    {
+        //        var result = await _unitOfWork.av_Usuarios.GetByUsuarioByAnexoAsync(_requestDto.cUsr_AnexoNew.Trim());
+        //        if (result != null)
+        //        {
+        //            _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.ANEXO_EXISTENTE, "ESP");
+        //            return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
+        //        }
+        //    }
 
-            return ResultDto<EditUsuarioResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-        }
+        //    return ResultDto<EditUsuarioResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+        //}
 
         private async Task<ResultDto<EditUsuarioResponseDto>> ValidateLogin()
         {
@@ -335,30 +335,30 @@ namespace GesMgmt.Application.Validators.Usuario
                     _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.CLAVE_YA_UTILIZADA, "ESP");
                     return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
                 }
-            }
 
-            //obtener longitud minima y maxima de la clave desde la tabla de parametros
-            int maximaLargo = 0;
-            int minimaEspecial = 0;
-            int minimaLargo = 0;
-            int minimaLetra = 0;
-            int minimaNumerico = 0;
+                //obtener longitud minima y maxima de la clave desde la tabla de parametros
+                int maximaLargo = 0;
+                int minimaEspecial = 0;
+                int minimaLargo = 0;
+                int minimaLetra = 0;
+                int minimaNumerico = 0;
 
-            minimaLargo = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_LONGITUD_MINIMA)).cValor);
-            maximaLargo = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_LONGITUD_MAXIMA)).cValor);
-            minimaEspecial = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_MIN_ESPECIAL)).cValor);
-            minimaLetra = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_MIN_LETRA)).cValor);
-            minimaNumerico = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_MIN_NUMERO)).cValor);
+                minimaLargo = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_LONGITUD_MINIMA)).cValor);
+                maximaLargo = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_LONGITUD_MAXIMA)).cValor);
+                minimaEspecial = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_MIN_ESPECIAL)).cValor);
+                minimaLetra = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_MIN_LETRA)).cValor);
+                minimaNumerico = int.Parse((await _unitOfWork.av_ConfigSistemas.GetConfiguracionSistemaByCodigoTablaAsync(Const.CODIGO_TABLA_CONFIGURACION_SISTEMA, Const.CLAVE_MIN_NUMERO)).cValor);
 
-            if (!ValidarFormatoPassword(_requestDto.cUsr_PassNew, minimaNumerico, minimaLetra, minimaEspecial, minimaLargo, maximaLargo))
-            {
-                _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.CLAVE_MENSAJE_VALIDACION, "ESP");
-                string strMessage = _oValMsgDto.Message.Replace("{minimaNumerico}", minimaNumerico.ToString())
-                    .Replace("{minimaLetra}", minimaLetra.ToString())
-                    .Replace("{minimaEspecial}", minimaEspecial.ToString())
-                    .Replace("{minimaLargo}", minimaLargo.ToString())
-                    .Replace("{maximaLargo}", maximaLargo.ToString());
-                return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, strMessage, strMessage, Const.BAD_REQUEST_CODE);
+                if (!ValidarFormatoPassword(_requestDto.cUsr_PassNew, minimaNumerico, minimaLetra, minimaEspecial, minimaLargo, maximaLargo))
+                {
+                    _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.CLAVE_MENSAJE_VALIDACION, "ESP");
+                    string strMessage = _oValMsgDto.Message.Replace("MSJ_CARNUM", minimaNumerico.ToString())
+                        .Replace("MSJ_CARLET", minimaLetra.ToString())
+                        .Replace("MSJ_CARESP", minimaEspecial.ToString())
+                        .Replace("MSJ_CARMIN", minimaLargo.ToString())
+                        .Replace("MSJ_CARMAX", maximaLargo.ToString());
+                    return ResultDto<EditUsuarioResponseDto>.Failure(_oValMsgDto.Code, strMessage, strMessage, Const.BAD_REQUEST_CODE);
+                }
             }
 
             return ResultDto<EditUsuarioResponseDto>.Success(default, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);

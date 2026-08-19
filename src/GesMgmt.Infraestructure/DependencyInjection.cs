@@ -1,5 +1,6 @@
 ﻿using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Agenda;
+using GesMgmt.Application.Interfaces.Cartera;
 using GesMgmt.Application.Interfaces.Cliente;
 using GesMgmt.Application.Interfaces.Deudor;
 using GesMgmt.Application.Interfaces.Direccion;
@@ -15,6 +16,7 @@ using GesMgmt.Application.Interfaces.Usuario;
 using GesMgmt.Application.Interfaces.UsuarioGrupoOpcion;
 using GesMgmt.Application.Services;
 using GesMgmt.Application.Services.Agenda;
+using GesMgmt.Application.Services.Cartera;
 using GesMgmt.Application.Services.Cliente;
 using GesMgmt.Application.Services.Deudor;
 using GesMgmt.Application.Services.Direccion;
@@ -58,6 +60,7 @@ namespace GesMgmt.Infraestructure
 
             // Services
             services.AddScoped<IAgendaService, AgendaService>();
+            services.AddScoped<ICarteraService, CarteraService>();
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IDeudorService, DeudorService>();
             services.AddScoped<IDireccionService, DireccionService>();
