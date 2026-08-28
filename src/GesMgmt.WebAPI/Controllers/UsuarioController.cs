@@ -186,5 +186,45 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"ResetearClaveUsuario|End|ResetearClaveUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
+
+        /// <summary>
+        /// Lista de Zonas Faltantes por Cliente y Usuario.
+        /// </summary>
+        /// <remarks>
+        /// Lista de Zonas Faltantes por Cliente y Usuario.
+        /// </remarks>
+        /// <response code="200">Lista de Zonas Faltantes por Cliente y Usuario.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Lista de Zonas Faltantes por Cliente y Usuario")]
+        [HttpGet("ZonasFaltantesByIdClienteAndIdUsuario")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ZonasFaltantesByIdClienteAndIdUsuarioAsync([FromQuery] GetZonasFaltantesByIdClienteIdUsuarioRequestDto clienteUsuarioDto)
+        {
+            _Logger.LogInfo($"ZonasFaltantesByIdClienteAndIdUsuario|Begin|ZonasFaltantesByIdClienteAndIdUsuarioAsync|request: {JsonSerializer.Serialize(clienteUsuarioDto)}");
+            var result = await _usuarioService.ZonasFaltantesByIdClienteAndIdUsuarioAsync(clienteUsuarioDto);
+            _Logger.LogInfo($"ZonasFaltantesByIdClienteAndIdUsuario|End|ZonasFaltantesByIdClienteAndIdUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// Lista de Zonas Asignados por Cliente y Usuario.
+        /// </summary>
+        /// <remarks>
+        /// Lista de Zonas Asignados por Cliente y Usuario.
+        /// </remarks>
+        /// <response code="200">Lista de Zonas Asignados por Cliente y Usuario.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Lista de Zonas Asignados por Cliente y Usuario")]
+        [HttpGet("ZonasAsignadosByIdClienteAndIdUsuario")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetZonasAsignadosByIdClienteIdUsuarioResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetZonasAsignadosByIdClienteIdUsuarioResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetZonasAsignadosByIdClienteIdUsuarioResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ZonasAsignadosByIdClienteAndIdUsuarioAsync([FromQuery] GetZonasAsignadosByIdClienteIdUsuarioRequestDto clienteUsuarioDto)
+        {
+            _Logger.LogInfo($"ZonasAsignadosByIdClienteAndIdUsuario|Begin|ZonasAsignadosByIdClienteAndIdUsuarioAsync|request: {JsonSerializer.Serialize(clienteUsuarioDto)}");
+            var result = await _usuarioService.ZonasAsignadosByIdClienteAndIdUsuarioAsync(clienteUsuarioDto);
+            _Logger.LogInfo($"ZonasAsignadosByIdClienteAndIdUsuario|End|ZonasAsignadosByIdClienteAndIdUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }

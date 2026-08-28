@@ -1,4 +1,5 @@
-﻿using GesMgmt.Application.DTOs;
+﻿using DocumentFormat.OpenXml.InkML;
+using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Usuario;
 using GesMgmt.Application.Logger;
@@ -6,6 +7,7 @@ using GesMgmt.Application.Validators.Usuario;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
@@ -402,7 +404,7 @@ namespace GesMgmt.Application.Services.Usuario
                     nUsr_CiuGestor = usuarioEditDto.nUsr_CiuGestor,
                     nId_SubZonaGen = usuarioEditDto.nId_SubZonaGen,
                     cUsr_Celular = usuarioEditDto.cUsr_Celular,
-                    cUsr_Anexo = usuarioEditDto.cUsr_Anexo,
+                    cUsr_Anexo = usuarioEditDto.cUsr_AnexoNew,
                     cUsr_Email = usuarioEditDto.cUsr_Email,
                     cUsr_EmailPersonal = usuarioEditDto.cUsr_EmailPersonal,
                     NroCampanaDiscador = usuarioEditDto.NroCampanaDiscador
@@ -469,14 +471,14 @@ namespace GesMgmt.Application.Services.Usuario
             {
                 var q_Resultados = await _unitOfWork.av_SubZonaGenerals.Query();
                 var data = (
-                                    from s in q_Resultados
-                                    orderby s.cSzgn_Nombre
-                                    select new GetSubZonaGeneralListResponseDto
-                                    {
-                                        nId_SubZonaGen = s.nId_SubZonaGen,
-                                        cSzgn_Nombre = s.cSzgn_Nombre
-                                    }
-                    ).ToList();
+                            from s in q_Resultados
+                            orderby s.cSzgn_Nombre
+                            select new GetSubZonaGeneralListResponseDto
+                            {
+                                nId_SubZonaGen = s.nId_SubZonaGen,
+                                cSzgn_Nombre = s.cSzgn_Nombre
+                            }
+            ).ToList();
                 return ResultListaDto<IEnumerable<GetSubZonaGeneralListResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
@@ -565,6 +567,71 @@ namespace GesMgmt.Application.Services.Usuario
                 _Logger.LogError($"ResetearUsuario|DatabaseError: {ex.Message}");
                 await _unitOfWork.RollbackTransactionAsync();
                 return ResultDto<ResetearUsuarioResponseDto>.Failure("500", "Error interno del servidor. " + ex.Message, "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+        #endregion
+
+        #region "Zonas x Usuario Faltantes"
+        public async Task<ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>> ZonasFaltantesByIdClienteAndIdUsuarioAsync(GetZonasFaltantesByIdClienteIdUsuarioRequestDto clienteUsuarioDto)
+        {
+            try
+            {
+                var q_zxc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(clienteUsuarioDto.nId_Cliente);
+                var q_asig = await _unitOfWork.av_asigUsuarios.GetAsignacionesByIdClienteAndIdUsuarioAsync(clienteUsuarioDto.nId_Cliente, clienteUsuarioDto.nId_Usuario);
+
+                var zonasAsignadas = q_asig.Select(x => x.zona).ToHashSet();
+
+                var data = q_zxc
+                    .Where(x => !zonasAsignadas.Contains(x.zona))
+                    .Select(x => new GetZonasFaltantesByIdClienteIdUsuarioResponseDto
+                    {
+                        Zona = x.zona,
+                        DescripcionZona = $"{x.zona} {x.region}"
+                    })
+                    .ToList();
+
+                return ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"ZonasFaltantesByIdClienteAndIdUsuario|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "Zonas x Usuario Asignadas"
+        public async Task<ResultListDto<IEnumerable<GetZonasAsignadosByIdClienteIdUsuarioResponseDto>>> ZonasAsignadosByIdClienteAndIdUsuarioAsync(GetZonasAsignadosByIdClienteIdUsuarioRequestDto clienteUsuarioDto)
+        {
+            try
+            {
+                var q_zxc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(clienteUsuarioDto.nId_Cliente);
+                var q_asig = await _unitOfWork.av_asigUsuarios.GetAsignacionesByIdClienteAndIdUsuarioAsync(clienteUsuarioDto.nId_Cliente, clienteUsuarioDto.nId_Usuario);
+
+                var data = (
+                from a in q_asig
+                join z in q_zxc
+                    on a.zona equals z.zona
+                where a.nid_cliente == clienteUsuarioDto.nId_Cliente
+                      && a.nid_usuario == clienteUsuarioDto.nId_Usuario
+                      && a.bestado == true
+                      && z.nid_cliente == clienteUsuarioDto.nId_Cliente
+                select new GetZonasAsignadosByIdClienteIdUsuarioResponseDto
+                {
+                    nid_asignacion = a.nid_asignacion,
+                    nid_usuario = a.nid_usuario,
+                    nid_cliente = a.nid_cliente,
+                    zona = a.zona,
+                    bestado = a.bestado,
+                    region = z.region
+                }).ToList();
+
+                return ResultListDto<IEnumerable<GetZonasAsignadosByIdClienteIdUsuarioResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"ZonasAsignadosByIdClienteAndIdUsuario|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetZonasAsignadosByIdClienteIdUsuarioResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }
         #endregion

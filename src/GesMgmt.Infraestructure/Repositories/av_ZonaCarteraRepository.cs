@@ -42,5 +42,6 @@ namespace GesMgmt.Infraestructure.Repositories
                 .Where(s => s.nid_cliente == nId_Cliente)
                 .AsNoTracking();
         }
+        
     }
 }

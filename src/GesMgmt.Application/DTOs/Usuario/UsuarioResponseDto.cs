@@ -167,5 +167,21 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string cUsr_Login { get; set; }
             public string cUsr_Pass { get; set; }
         }
+
+        public class GetZonasFaltantesByIdClienteIdUsuarioResponseDto
+        {
+            public string Zona { get; set; }
+            public string DescripcionZona { get; set; }
+        }
+
+        public class GetZonasAsignadosByIdClienteIdUsuarioResponseDto
+        {
+            public int nid_asignacion { get; set; }
+            public int? nid_usuario { get; set; }
+            public int? nid_cliente { get; set; }
+            public string? zona { get; set; }
+            public bool? bestado { get; set; }
+            public string? region { get; set; }
+        }
     }
 }

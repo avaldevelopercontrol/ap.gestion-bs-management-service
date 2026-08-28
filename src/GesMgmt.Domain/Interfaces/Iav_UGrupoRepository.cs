@@ -10,5 +10,7 @@ namespace GesMgmt.Domain.Interfaces
         Task<av_UGrupo> UpdateAsync(av_UGrupo av_UGrupo);
         Task<IQueryable<av_UGrupo>> GetUGruposActivo();
         Task<IQueryable<av_UGrupo>> GetUGruposByIdUsuarioAsync(int idUsuario);
+        Task<IQueryable<av_UGrupo>> GetUGruposActivosByIdUsuarioAsync(int idUsuario);
+        Task<IQueryable<av_UGrupo>> GetUGruposInactivosByIdUsuarioAsync(int idUsuario);
     }
 }

@@ -27,6 +27,8 @@ namespace GesMgmt.Application.DTOs.Grupo
             public string? cCli_Nombre { get; set; }
             public int? swt_estadoGest { get; set; }
             public int? ntip_campanna { get; set; }
+            public int? nId_Grupo { get; set; }
+            public int? nId_UGrupo { get; set; }
         }
 
 

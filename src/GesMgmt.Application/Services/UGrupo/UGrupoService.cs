@@ -82,7 +82,7 @@ namespace GesMgmt.Application.Services.UGrupo
         #region "Grupos x Usuario - Listar"
         public async Task<ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>> GetGruposByIdUsuarioAsync(GetGruposByUsuarioRequestDto usuarioGrupoDto)
         {
-            var q_GruUsu = await _unitOfWork.av_UGrupos.GetUGruposByIdUsuarioAsync(usuarioGrupoDto.nId_Usuario);
+            var q_GruUsu = await _unitOfWork.av_UGrupos.GetUGruposActivosByIdUsuarioAsync(usuarioGrupoDto.nId_Usuario);
             var q_Grupos = await _unitOfWork.av_Grupos.Query();
             List<GetGruposByUsuarioResponseDto> data = new();
             try
@@ -128,35 +128,75 @@ namespace GesMgmt.Application.Services.UGrupo
             try
             {
                 var q_Grupos = await _unitOfWork.av_Grupos.Query();
-                var q_GruUsu = await _unitOfWork.av_UGrupos.Query();
+                // TODOS los registros UGrupo del usuario
+                var q_GruUsu = await _unitOfWork.av_UGrupos.GetUGruposByIdUsuarioAsync(usuarioGrupoDto.nId_Usuario);
 
-                var query =
-                    from g in q_Grupos
-                    join ug in q_GruUsu
-                        .Where(x => x.nId_Usuario == usuarioGrupoDto.nId_Usuario)
-                        on g.nId_Grupo equals ug.nId_Grupo
-                        into grupoUsuario
-                    from ug in grupoUsuario.DefaultIfEmpty()
-                    where g.bEstado == true
-                          && ug == null
-                    orderby g.cNombre_Grupo
-
+                // ============================================================
+                // 1. GRUPOS QUE ESTÁN EN UGRUPO PERO ESTÁN INACTIVOS
+                // ============================================================
+                var gruposInactivos =
+                    from ug in q_GruUsu
+                    join g in q_Grupos
+                        on ug.nId_Grupo equals g.nId_Grupo
+                    where ug.bEstado == false
+                          && g.bEstado == true
                     select new GetGruposByUsuarioResponseDto
                     {
+                        nId_UGrupo = ug.nId_UGrupo,
                         nId_Usuario = usuarioGrupoDto.nId_Usuario,
                         nid_grupo = g.nId_Grupo,
                         cNombre_Grupo = g.cNombre_Grupo
                     };
 
+                // ============================================================
+                // 2. GRUPOS QUE NO EXISTEN EN UGRUPO PARA EL USUARIO
+                // ============================================================
+                var gruposNoAsignados =
+                    from g in q_Grupos
+                    join ug in q_GruUsu
+                        on g.nId_Grupo equals ug.nId_Grupo
+                        into grupoUsuario
+                    from ug in grupoUsuario.DefaultIfEmpty()
+                    where g.bEstado == true
+                          && ug == null
+                    select new GetGruposByUsuarioResponseDto
+                    {
+                        nId_UGrupo = 0,
+                        nId_Usuario = usuarioGrupoDto.nId_Usuario,
+                        nid_grupo = g.nId_Grupo,
+                        cNombre_Grupo = g.cNombre_Grupo
+                    };
+
+                // ============================================================
+                // 3. UNIR:
+                //    - INACTIVOS
+                //    - NO EXISTENTES
+                // ============================================================
+                var query = gruposInactivos
+                    .Concat(gruposNoAsignados)
+                    .OrderBy(x => x.cNombre_Grupo);
+
+                // ============================================================
+                // 4. TOTAL
+                // ============================================================
                 var totalRecords = query.Count();
 
+                // ============================================================
+                // 5. PAGINACIÓN
+                // ============================================================
+
                 var data = query
-                    .Skip((usuarioGrupoDto.PageNumber - 1) *
-                          usuarioGrupoDto.PageSize)
+                    .Skip((usuarioGrupoDto.PageNumber - 1) * usuarioGrupoDto.PageSize)
                     .Take(usuarioGrupoDto.PageSize)
                     .ToList();
 
-                var response = ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+                var response =
+                    ResultListDto<IEnumerable<GetGruposByUsuarioResponseDto>>.Success(
+                        data,
+                        Const.SUCCESS_CODE,
+                        Const.SUCCESS_MESSAGE,
+                        Const.SUCCESS_MESSAGE,
+                        Const.OK_REQUEST_CODE);
 
                 response.TotalRecords = totalRecords;
                 response.PageNumber = usuarioGrupoDto.PageNumber;
@@ -336,33 +376,64 @@ namespace GesMgmt.Application.Services.UGrupo
 
             try
             {
-                av_UGrupo av_UGrupo = new av_UGrupo
+                if (usuarioGrupoModificarDto.nId_UGrupo <= 0)
                 {
-                    nId_UGrupo = usuarioGrupoModificarDto.nId_UGrupo,
-                    nId_Usuario = usuarioGrupoModificarDto.nId_Usuario,
-                    nId_Grupo = usuarioGrupoModificarDto.nId_Grupo,
-                    dUGrupo_FecIni = usuarioGrupoModificarDto.dUGrupo_FecIni,
-                    dUGrupo_FecFin = usuarioGrupoModificarDto.dUGrupo_FecFin,
-                    bEstado = usuarioGrupoModificarDto.bEstado,
-                    bActivo = usuarioGrupoModificarDto.bActivo,
-                    bGestion = usuarioGrupoModificarDto.bGestion
-                };
-                var usuarioGrupoModificada = await _unitOfWork.av_UGrupos.UpdateAsync(av_UGrupo);
-                await _unitOfWork.SaveChangesAsync();
+                    av_UGrupo av_UGrupo = new av_UGrupo
+                    {
+                        nId_Usuario = usuarioGrupoModificarDto.nId_Usuario,
+                        nId_Grupo = usuarioGrupoModificarDto.nId_Grupo,
+                        dUGrupo_FecIni = usuarioGrupoModificarDto.dUGrupo_FecIni,
+                        dUGrupo_FecFin = usuarioGrupoModificarDto.dUGrupo_FecFin,
+                        bEstado = usuarioGrupoModificarDto.bEstado,
+                        bActivo = usuarioGrupoModificarDto.bActivo,
+                        bGestion = usuarioGrupoModificarDto.bGestion
+                    };
+                    var usuarioGrupoCreada = await _unitOfWork.av_UGrupos.AddAsync(av_UGrupo);
+                    await _unitOfWork.SaveChangesAsync();
 
-                PutUsuarioGrupoModificarResponseDto responseDto = new PutUsuarioGrupoModificarResponseDto
-                {
-                    nId_UGrupo = usuarioGrupoModificada.nId_UGrupo,
-                    nId_Grupo = usuarioGrupoModificada.nId_Grupo,
-                    nId_Usuario = usuarioGrupoModificada.nId_Usuario
-                };
+                    PutUsuarioGrupoModificarResponseDto responseDto = new PutUsuarioGrupoModificarResponseDto
+                    {
+                        nId_UGrupo = usuarioGrupoCreada.nId_UGrupo,
+                        nId_Grupo = usuarioGrupoCreada.nId_Grupo,
+                        nId_Usuario = usuarioGrupoCreada.nId_Usuario
+                    };
 
-                ResultDto<PutUsuarioGrupoModificarResponseDto> response = ResultDto<PutUsuarioGrupoModificarResponseDto>
+                    ResultDto<PutUsuarioGrupoModificarResponseDto> response = ResultDto<PutUsuarioGrupoModificarResponseDto>
                                                    .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
 
-                await _unitOfWork.CommitTransactionAsync();
+                    await _unitOfWork.CommitTransactionAsync();
+                    return response;
+                }
+                else
+                {
+                    av_UGrupo av_UGrupo = new av_UGrupo
+                    {
+                        nId_UGrupo = usuarioGrupoModificarDto.nId_UGrupo,
+                        nId_Usuario = usuarioGrupoModificarDto.nId_Usuario,
+                        nId_Grupo = usuarioGrupoModificarDto.nId_Grupo,
+                        dUGrupo_FecIni = usuarioGrupoModificarDto.dUGrupo_FecIni,
+                        dUGrupo_FecFin = usuarioGrupoModificarDto.dUGrupo_FecFin,
+                        bEstado = usuarioGrupoModificarDto.bEstado,
+                        bActivo = usuarioGrupoModificarDto.bActivo,
+                        bGestion = usuarioGrupoModificarDto.bGestion
+                    };
+                    var usuarioGrupoModificada = await _unitOfWork.av_UGrupos.UpdateAsync(av_UGrupo);
+                    await _unitOfWork.SaveChangesAsync();
 
-                return response;
+                    PutUsuarioGrupoModificarResponseDto responseDto = new PutUsuarioGrupoModificarResponseDto
+                    {
+                        nId_UGrupo = usuarioGrupoModificada.nId_UGrupo,
+                        nId_Grupo = usuarioGrupoModificada.nId_Grupo,
+                        nId_Usuario = usuarioGrupoModificada.nId_Usuario
+                    };
+
+                    ResultDto<PutUsuarioGrupoModificarResponseDto> response = ResultDto<PutUsuarioGrupoModificarResponseDto>
+                                                   .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                    await _unitOfWork.CommitTransactionAsync();
+
+                    return response;
+                }
             }
             catch (Exception ex)
             {

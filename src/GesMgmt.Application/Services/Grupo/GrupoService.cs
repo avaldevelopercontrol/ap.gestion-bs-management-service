@@ -249,7 +249,9 @@ namespace GesMgmt.Application.Services.Grupo
                                     nId_Cliente = gru.nid_cliente ?? 0,
                                     cCli_Nombre = cli.cCli_Nombre ?? "",
                                     swt_estadoGest = cli.swt_estadoGest ?? 0,
-                                    ntip_campanna = cli.ntip_campanna ?? 0
+                                    ntip_campanna = cli.ntip_campanna ?? 0,
+                                    nId_Grupo = ugr.nId_Grupo ?? 0,
+                                    nId_UGrupo = ugr.nId_UGrupo
                                 }
                             )
                             .Distinct()

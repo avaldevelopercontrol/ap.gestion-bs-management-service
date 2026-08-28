@@ -57,7 +57,6 @@ namespace GesMgmt.Application.Services.Deudor
                             .ToList();
 
                         var q_deudor = await _unitOfWork.av_PersDeudors.Query();
-                        //var q_dxc = await _unitOfWork.av_DocxCobrars.Query();
                         var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteActivoAsync(deudorDto.nId_Cliente);

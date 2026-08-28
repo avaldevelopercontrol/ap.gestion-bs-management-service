@@ -77,5 +77,17 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string cUsr_PassConfirma { get; set; }
             public DateTime? dFecRegistro { get; set; }
         }
+
+        public class GetZonasFaltantesByIdClienteIdUsuarioRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Usuario { get; set; }
+        }
+
+        public class GetZonasAsignadosByIdClienteIdUsuarioRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Usuario { get; set; }
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private IDbContextTransaction? _transaction;
 
         private Iav_AgendaRepository? _av_Agendas;
+        private Iav_asigUsuarioRepository? _av_asigUsuarios;
         private Iav_CabPantallaCobRepository? _av_CabPantallaCobs;
         private Iav_CampanaDiscadorRepository? _av_CampanaDiscadors;
         private Iav_CarteraRepository? _av_Carteras;
@@ -83,6 +84,7 @@ namespace GesMgmt.Infraestructure.Repositories
 
         #region Properties
         public Iav_AgendaRepository av_Agendas => _av_Agendas ??= new av_AgendaRepository(_context);
+        public Iav_asigUsuarioRepository av_asigUsuarios => _av_asigUsuarios ??= new av_asigUsuarioRepository(_context);
         public Iav_CabPantallaCobRepository av_CabPantallaCobs => _av_CabPantallaCobs ??= new av_CabPantallaCobRepository(_context);
         public Iav_CampanaDiscadorRepository av_CampanaDiscadors => _av_CampanaDiscadors ??= new av_CampanaDiscadorRepository(_context);
         public Iav_CarteraRepository av_Carteras => _av_Carteras ??= new av_CarteraRepository(_context);

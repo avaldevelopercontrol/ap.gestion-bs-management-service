@@ -1,5 +1,4 @@
 ﻿using GesMgmt.Application.DTOs;
-using GesMgmt.Application.DTOs.Gestion;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;

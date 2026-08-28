@@ -50,7 +50,21 @@ namespace GesMgmt.Infraestructure.Repositories
         public async Task<IQueryable<av_UGrupo>> GetUGruposByIdUsuarioAsync(int idUsuario)
         {
             return _dbSet
+                .Where(ug => ug.nId_Usuario == idUsuario)
+                .AsNoTracking();
+        }
+
+        public async Task<IQueryable<av_UGrupo>> GetUGruposActivosByIdUsuarioAsync(int idUsuario)
+        {
+            return _dbSet
                 .Where(ug => ug.nId_Usuario == idUsuario && ug.bEstado == true)
+                .AsNoTracking();
+        }
+
+        public async Task<IQueryable<av_UGrupo>> GetUGruposInactivosByIdUsuarioAsync(int idUsuario)
+        {
+            return _dbSet
+                .Where(ug => ug.nId_Usuario == idUsuario && ug.bEstado == false)
                 .AsNoTracking();
         }
 
