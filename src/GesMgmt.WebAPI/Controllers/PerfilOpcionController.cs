@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetPerfilOptionsCount|Begin|GetPerfilOptionsCountAsync|request:");
             var result = await _perfilOpcionService.GetPerfilOptionsCountAsync();
             _Logger.LogInfo($"GetPerfilOptionsCount|End|GetPerfilOptionsCountAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetOpcionesPorPerfil|Begin|GetOpcionesPorPerfilAsync|request:");
             var result = await _perfilOpcionService.GetOpcionesPorPerfilAsync(nId_Perfil);
             _Logger.LogInfo($"GetOpcionesPorPerfil|End|GetOpcionesPorPerfilAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>

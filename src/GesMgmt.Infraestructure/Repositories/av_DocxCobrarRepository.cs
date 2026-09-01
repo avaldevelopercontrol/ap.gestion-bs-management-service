@@ -64,13 +64,16 @@ namespace GesMgmt.Infraestructure.Repositories
             if (letra == "T")
             {
                 return _dbSet
-                    //.Include(c => c.av_Cartera)
-                    //.Include(d => d.av_PersDeudor)
-                    //.Include(m => m.av_Moneda)
-                    //.Include(u => u.av_Usuario)
                     .AsNoTracking()
                     .Where(d => d.nId_Cliente == nId_Cliente
                            && d.cDoc_Numero == cDoc_Numero);
+            }
+            if (letra == "C")
+            {
+                return _dbSet
+                    .AsNoTracking()
+                    .Where(d => d.nId_Cliente == nId_Cliente
+                           && d.cPers_CodCliente == cDoc_Numero);
             }
             return null;
         }

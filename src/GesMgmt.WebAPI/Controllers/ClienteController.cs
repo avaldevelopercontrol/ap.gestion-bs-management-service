@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetClientesActivos|Begin|GetClientesActivosAsync|request:");
             var result = await _clienteService.GetClientesActivosAsync();
             _Logger.LogInfo($"GetClientesActivos|End|GetClientesActivosAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

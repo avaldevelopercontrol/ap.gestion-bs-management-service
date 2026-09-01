@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetAnioByIdCliente|Begin|GetAnioByIdClienteAsync|request:");
             var result = await _carteraService.GetAnioByIdClienteAsync(nId_Cliente);
             _Logger.LogInfo($"GetAnioByIdCliente|End|GetAnioByIdClienteAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetCarterasParametrosByIdClienteAnnio|Begin|GetCarterasParametrosByIdClienteAnnioAsync|request:");
             var result = await _carteraService.GetCarterasParametrosByIdClienteAnnioAsync(nId_Cliente, anio);
             _Logger.LogInfo($"GetCarterasParametrosByIdClienteAnnio|End|GetCarterasParametrosByIdClienteAnnioAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

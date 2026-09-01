@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetOpciones|Begin|GetOpcionesAsync|request:");
             var result = await _opcionService.GetOpcionesAsync();
             _Logger.LogInfo($"GetOpciones|End|GetOpcionesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetOpcionById|Begin|GetOpcionByIdAsync|request:{nId_Opcion}");
             var result = await _opcionService.GetOpcionByIdAsync(nId_Opcion);
             _Logger.LogInfo($"GetOpcionById|End|GetOpcionByIdAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>

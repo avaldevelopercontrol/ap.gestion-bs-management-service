@@ -209,7 +209,7 @@ namespace GesMgmt.Application.Services.Usuario
                         nid_perfil = validator.usuario.nid_perfil ?? 0
                     };
                     await _unitOfWork.BeginTransactionAsync();
-                    var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoLoginAsync(usuarioLoginDto.cUsr_Login);
+                    var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoZeroLoginAsync(usuarioLoginDto.cUsr_Login);
                     await _unitOfWork.SaveChangesAsync();
                     await _unitOfWork.CommitTransactionAsync();
                 }

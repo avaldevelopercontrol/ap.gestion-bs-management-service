@@ -48,7 +48,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetDirecciones|Begin|GetDireccionesAsync|request: {JsonSerializer.Serialize(gestionDireccionDto)}");
             var result = await _direccionService.GetDireccionesAsync(gestionDireccionDto);
             _Logger.LogInfo($"GetDirecciones|End|GetDireccionesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetDireccionByIdDireccion|Begin|GetDireccionByIdDireccionAsync|request:{nId_PersDirecc}");
             var result = await _direccionService.GetDireccionByIdDireccionAsync(nId_PersDirecc);
             _Logger.LogInfo($"GetDireccionByIdDireccion|End|GetDireccionByIdDireccionAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetDireccionDepartamentos|Begin|GetDireccionDepartamentosAsync|request:");
             var result = await _direccionService.GetDireccionDepartamentosAsync();
             _Logger.LogInfo($"GetDireccionDepartamentos|End|GetDireccionDepartamentosAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetDireccionProvincias|Begin|GetDireccionProvinciasAsync|request:{nId_Departamento}");
             var result = await _direccionService.GetDireccionProvinciasAsync(nId_Departamento);
             _Logger.LogInfo($"GetDireccionProvincias|End|GetDireccionProvinciasAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetDireccionDistritos|Begin|GetDireccionDistritosAsync|request:{nId_Departamento}");
             var result = await _direccionService.GetDireccionDistritosAsync(nId_Departamento, nId_Provincia);
             _Logger.LogInfo($"GetDireccionDistritos|End|GetDireccionDistritosAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetDireccionUbicaciones|Begin|GetDireccionUbicacionesAsync|request:");
             var result = await _direccionService.GetDireccionUbicacionesAsync();
             _Logger.LogInfo($"GetDireccionUbicaciones|End|GetDireccionUbicacionesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

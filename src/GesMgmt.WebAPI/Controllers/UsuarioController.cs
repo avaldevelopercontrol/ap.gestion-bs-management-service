@@ -5,7 +5,6 @@ using GesMgmt.Infraestructure.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using static GesMgmt.Application.DTOs.Opcion.OpcionResponseDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioResponseDto;
 
@@ -67,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetUsuarioById|Begin|GetUsuarioByIdAsync|request:{nId_Usuario}");
             var result = await _usuarioService.GetUsuarioByIdAsync(nId_Usuario);
             _Logger.LogInfo($"GetUsuarioById|End|GetUsuarioByIdAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetLoginUsuario|Begin|GetLoginUsuarioAsync|request: {JsonSerializer.Serialize(usuarioDeudorDto)}");
             var result = await _usuarioService.GetLoginUsuarioAsync(usuarioDeudorDto);
             _Logger.LogInfo($"GetLoginUsuario|End|GetLoginUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>

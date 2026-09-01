@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetPerfiles|Begin|GetPerfilesAsync|request:");
             var result = await _perfilService.GetPerfilesAsync();
             _Logger.LogInfo($"GetPerfiles|End|GetPerfilesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetPerfilesListado|Begin|GetPerfilesListadoAsync|request: {JsonSerializer.Serialize(perfilDto)}");
             var result = await _perfilService.GetPerfilesListadoAsync(perfilDto);
             _Logger.LogInfo($"GetPerfilesListado|End|GetPerfilesListadoAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetPerfilById|Begin|GetPerfilByIdAsync|request:{nId_Perfil}");
             var result = await _perfilService.GetPerfilByIdAsync(nId_Perfil);
             _Logger.LogInfo($"GetPerfilById|End|GetPerfilByIdAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>

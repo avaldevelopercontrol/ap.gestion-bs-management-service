@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetUsuariosGrupo|Begin|GetUsuariosGrupoAsync|request: {JsonSerializer.Serialize(usuariosGrupoDto)}");
             var result = await _ugrupoService.GetUsuariosGrupoAsync(usuariosGrupoDto);
             _Logger.LogInfo($"GetUsuariosGrupo|End|GetUsuariosGrupoAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetUsuarioGrupoObtenerId|Begin|GetUsuarioGrupoObtenerIdAsync|request:{nId_UGrupo}");
             var result = await _ugrupoService.GetUsuarioGrupoObtenerIdAsync(nId_UGrupo);
             _Logger.LogInfo($"GetUsuarioGrupoObtenerId|End|GetUsuarioGrupoObtenerIdAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>

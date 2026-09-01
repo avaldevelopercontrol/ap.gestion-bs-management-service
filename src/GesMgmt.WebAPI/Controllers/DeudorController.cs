@@ -37,7 +37,7 @@ namespace GesMgmt.WebAPI.Controllers
         /// </remarks>
         /// <response code="200">Sirve para poder buscar al deudor para gestionar, se busca por la letra D=DNI o R=RUC.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Listado Deudores")]
-        [HttpGet("GetDeudorAsync")]
+        [HttpGet("GetDeudor")]
         [ProducesResponseType(typeof(ResultDto<GetDeudorResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetDeudor|Begin|GetDeudorAsync|request: {JsonSerializer.Serialize(deduroDto)}");
             var result = await _deudorService.GetDeudorAsync(deduroDto);
             _Logger.LogInfo($"GetDeudor|End|GetDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

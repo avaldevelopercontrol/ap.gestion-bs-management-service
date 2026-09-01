@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetEmailsByIdEmailPers|Begin|GetEmailsByIdEmailPersAsync|request:");
             var result = await _emailService.GetEmailsByIdEmailPersAsync(nId_PersEmails);
             _Logger.LogInfo($"GetEmailsByIdEmailPers|End|GetEmailsByIdEmailPersAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetEmailsByIdDeudor|Begin|GetEmailsByIdDeudorAsync|request: {JsonSerializer.Serialize(gestionEmailsDto)}");
             var result = await _emailService.GetEmailsByIdDeudorAsync(gestionEmailsDto);
             _Logger.LogInfo($"GetEmailsByIdDeudor|End|GetEmailsByIdDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetStatus|Begin|GetStatusAsync|request:");
             var result = await _emailService.GetStatusAsync();
             _Logger.LogInfo($"GetStatus|End|GetStatusAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

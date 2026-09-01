@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGrupos|Begin|GetGruposAsync|request:");
             var result = await _grupoService.GetGruposAsync();
             _Logger.LogInfo($"GetGrupos|End|GetGruposAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGruposListado|Begin|GetGruposListadoAsync|request:");
             var result = await _grupoService.GetGruposListadoAsync();
             _Logger.LogInfo($"GetGruposListado|End|GetGruposListadoAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGrupoById|Begin|GetGrupoByIdAsync|request:{nId_Grupo}");
             var result = await _grupoService.GetGrupoByIdAsync(nId_Grupo);
             _Logger.LogInfo($"GetGrupoById|End|GetGrupoByIdAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGruposClienteInicial|Begin|GetGruposClienteInicialAsync|request:");
             var result = await _grupoService.GetGruposClienteInicialAsync(nId_Usuario);
             _Logger.LogInfo($"GetGruposClienteInicial|End|GetGruposClienteInicialAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

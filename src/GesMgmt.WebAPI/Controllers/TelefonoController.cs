@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetTelefonos|Begin|GetTelefonosAsync|request: {JsonSerializer.Serialize(gestionTelefonoDto)}");
             var result = await _telefonoService.GetTelefonosAsync(gestionTelefonoDto);
             _Logger.LogInfo($"GetTelefonos|End|GetTelefonosAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetTelefonoResultados|Begin|GetTelefonoResultadosAsync|request:");
             var result = await _telefonoService.GetTelefonoResultadosAsync();
             _Logger.LogInfo($"GetTelefonoResultados|End|GetTelefonoResultadosAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetTelefonoOperadores|Begin|GetTelefonoOperadoresAsync|request:");
             var result = await _telefonoService.GetTelefonoOperadoresAsync();
             _Logger.LogInfo($"GetTelefonoOperadores|End|GetTelefonoOperadoresAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetTelefonoUbicaciones|Begin|GetTelefonoUbicacionesAsync|request:");
             var result = await _telefonoService.GetTelefonoUbicacionesAsync();
             _Logger.LogInfo($"GetTelefonoUbicaciones|End|GetTelefonoUbicacionesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetTelefonoHorarioGestion|Begin|GetTelefonoHorarioGestionAsync|request:");
             var result = await _telefonoService.GetTelefonoHorarioGestionAsync();
             _Logger.LogInfo($"GetTelefonoHorarioGestion|End|GetTelefonoHorarioGestionAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetTelefonoFuenteBusqueda|Begin|GetTelefonoFuenteBusquedaAsync|request:");
             var result = await _telefonoService.GetTelefonoFuenteBusquedaAsync();
             _Logger.LogInfo($"GetTelefonoFuenteBusqueda|End|GetTelefonoFuenteBusquedaAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

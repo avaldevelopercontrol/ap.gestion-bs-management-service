@@ -147,7 +147,7 @@ namespace GesMgmt.Application.Services.Gestion
             {
                 var q_Dco = await _unitOfWork.av_DocxCobrarOpes.Query();
                 var q_Doc = await _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
-                var q_dcp = await _unitOfWork.av_DocxCobrarParams.Query();
+                var q_dcp = await _unitOfWork.av_DocxCobrarParams.GetGestionesParamByIdCartera(gestionDto.nId_Cartera);
 
                 var ultGestion =
                                     from op in q_Dco

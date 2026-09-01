@@ -58,7 +58,6 @@ namespace GesMgmt.Application.Services.Deudor
 
                         var q_deudor = await _unitOfWork.av_PersDeudors.Query();
                         var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosByIdClienteAsync(deudorDto.nId_Cliente);
-                        var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteActivoAsync(deudorDto.nId_Cliente);
                         var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamAsync();
 
@@ -69,8 +68,6 @@ namespace GesMgmt.Application.Services.Deudor
                             join car in q_car
                                 on new { dc.nId_Cartera, dc.nId_Cliente }
                                 equals new { car.nId_Cartera, car.nId_Cliente }
-                            join zc in q_zc
-                                on dc.nId_Cliente equals zc.nid_cliente
                             join pdp in q_deupar
                                 on new { dc.nId_Cartera, dc.nId_PersDeudor }
                                 equals new { pdp.nId_Cartera, pdp.nId_PersDeudor }
@@ -79,9 +76,9 @@ namespace GesMgmt.Application.Services.Deudor
                                   && dc.bEstado == 1
                                   && deudores.Contains(dc.nId_PersDeudor)
 
-                            group new { dc, deu, car, zc, pdp } by new
+                            group new { dc, deu, car, pdp } by new
                             {
-                                zc.zona,
+                                pdp.nZona,
                                 car.cCampanna,
                                 dc.nId_Cliente,
                                 car.nId_Cartera,
@@ -97,7 +94,7 @@ namespace GesMgmt.Application.Services.Deudor
                             {
                                 nro = 0,
                                 nId_PersDeudor = g.Key.nId_PersDeudor,
-                                zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
+                                zonaCampanna = g.Key.nZona + "-" + g.Key.cCampanna,
                                 nId_Cliente = g.Key.nId_Cliente,
                                 nId_Contrato = g.Key.nId_Contrato,
                                 nId_Cartera = g.Key.nId_Cartera,
@@ -161,7 +158,7 @@ namespace GesMgmt.Application.Services.Deudor
                         return response;
                     }
                 }
-                else if (letra == "T")
+                else if (letra == "T" || letra == "C")
                 {
                     var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarByNroDocumentoAsync(letra, deudorDto.nId_Cliente, valor);
                     if (q_dxc == null || !q_dxc.Any())
@@ -171,15 +168,12 @@ namespace GesMgmt.Application.Services.Deudor
                     else
                     {
                         deudorId = q_dxc.FirstOrDefault().nId_PersDeudor;
-                        var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteActivoAsync(deudorDto.nId_Cliente);
                         var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
                         var q_deu = await _unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(deudorId);
 
                         var data = (
                             from dc in q_dxc
-                            join zc in q_zc
-                                on dc.nId_Cliente equals zc.nid_cliente
                             join car in q_car
                                 on new { dc.nId_Cartera, dc.nId_Cliente }
                                 equals new { car.nId_Cartera, car.nId_Cliente }
@@ -191,9 +185,9 @@ namespace GesMgmt.Application.Services.Deudor
                             where dc.nId_Cartera == car.nId_Cartera
                                   && dc.nId_PersDeudor == deudorId
                                   && dc.bEstado == 1
-                            group new { dc, zc, car, deu, pdp } by new
+                            group new { dc, car, deu, pdp } by new
                             {
-                                zc.zona,
+                                pdp.nZona,
                                 car.cCampanna,
                                 dc.nId_Cliente,
                                 car.nId_Cartera,
@@ -209,7 +203,7 @@ namespace GesMgmt.Application.Services.Deudor
                             {
                                 nro = 0,
                                 nId_PersDeudor = deudorId,
-                                zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
+                                zonaCampanna = g.Key.nZona + "-" + g.Key.cCampanna,
                                 nId_Cliente = g.Key.nId_Cliente,
                                 nId_Contrato = g.Key.nId_Contrato,
                                 nId_Cartera = g.Key.nId_Cartera,
@@ -282,14 +276,11 @@ namespace GesMgmt.Application.Services.Deudor
                         deudorId = q_deu.FirstOrDefault().nId_PersDeudor;
 
                         var q_dxc = await _unitOfWork.av_DocxCobrars.GetDocumentosxCobrarActivosAsync(deudorDto.nId_Cliente, deudorId);
-                        var q_zc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(deudorDto.nId_Cliente);
                         var q_car = await _unitOfWork.av_Carteras.GetCarterasByIdClienteActivoAsync(deudorDto.nId_Cliente);
                         var q_deupar = await _unitOfWork.av_PersDeudorParams.GetDeudorParamByIdDeudorAsync(deudorId);
 
                         var data = (
                             from dc in q_dxc
-                            join zc in q_zc
-                                on dc.nId_Cliente equals zc.nid_cliente
                             join car in q_car
                                 on new { dc.nId_Cartera, dc.nId_Cliente }
                                 equals new { car.nId_Cartera, car.nId_Cliente }
@@ -301,9 +292,9 @@ namespace GesMgmt.Application.Services.Deudor
                             where dc.nId_Cartera == car.nId_Cartera
                                   && dc.nId_PersDeudor == deudorId
                                   && dc.bEstado == 1
-                            group new { dc, zc, car, deu, pdp } by new
+                            group new { dc, car, deu, pdp } by new
                             {
-                                zc.zona,
+                                pdp.nZona,
                                 car.cCampanna,
                                 dc.nId_Cliente,
                                 car.nId_Cartera,
@@ -319,7 +310,7 @@ namespace GesMgmt.Application.Services.Deudor
                             {
                                 nro = 0,
                                 nId_PersDeudor = deudorId,
-                                zonaCampanna = g.Key.zona + "-" + g.Key.cCampanna,
+                                zonaCampanna = g.Key.nZona + "-" + g.Key.cCampanna,
                                 nId_Cliente = g.Key.nId_Cliente,
                                 nId_Contrato = g.Key.nId_Contrato,
                                 nId_Cartera = g.Key.nId_Cartera,

@@ -46,7 +46,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionZonaCarteraCampanna|Begin|GetGestionZonaCarteraCampannaAsync|request: {JsonSerializer.Serialize(gestionZonaCartCamp)}");
             var result = await _gestionService.GetGestionZonaCarteraCampannaAsync(gestionZonaCartCamp);
             _Logger.LogInfo($"GetGestionZonaCarteraCampanna|End|GetGestionZonaCarteraCampannaAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionCabecera|Begin|GetGestionDocumentosCabeceraAsync|request: {JsonSerializer.Serialize(gestionCabeceraDto)}");
             var result = await _gestionService.GetGestionDocumentosCabeceraAsync(gestionCabeceraDto);
             _Logger.LogInfo($"GetGestionCabecera|End|GetGestionDocumentosCabeceraAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionDocumentos|Begin|GetGestionesDocumentosAsync|request: {JsonSerializer.Serialize(gestionDto)}");
             var result = await _gestionService.GetGestionDocumentosAsync(gestionDto);
             _Logger.LogInfo($"GetGestionDocumentos|End|GetGestionesDocumentosAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionDeudor|Begin|GetGestionDeudorAsync|request: {JsonSerializer.Serialize(gestionDeudorDto)}");
             var result = await _gestionService.GetGestionDeudorAsync(gestionDeudorDto);
             _Logger.LogInfo($"GetGestionDeudor|End|GetGestionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionDocumentosAdicionalesCabecera|Begin|GetGestionDocumentosAdicionalesCabeceraAsync|request: {JsonSerializer.Serialize(gestionCabeceraAdicionalDto)}");
             var result = await _gestionService.GetGestionDocumentosAdicionalesCabeceraAsync(gestionCabeceraAdicionalDto);
             _Logger.LogInfo($"GetGestionDocumentosAdicionalesCabecera|End|GetGestionDocumentosAdicionalesCabeceraAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionDocumentosAdicionales|Begin|GetGestionDocumentosAdicionalesAsync|request: {JsonSerializer.Serialize(gestionAdicionalDto)}");
             var result = await _gestionService.GetGestionDocumentosAdicionalesAsync(gestionAdicionalDto);
             _Logger.LogInfo($"GetGestionDocumentosAdicionales|End|GetGestionDocumentosAdicionalesAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
         
         /// <summary>
@@ -166,7 +166,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionGestionesCarteraDeudor|Begin|GetGestionGestionesCarteraDeudorAsync|request: {JsonSerializer.Serialize(gestionCarteraDeudorDto)}");
             var result = await _gestionService.GetGestionGestionesCarteraDeudorAsync(gestionCarteraDeudorDto);
             _Logger.LogInfo($"GetGestionGestionesCarteraDeudor|End|GetGestionGestionesCarteraDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionGestionesCarteraDeudorHistoricas|Begin|GetGestionGestionesCarteraDeudorHistoricasAsync|request: {JsonSerializer.Serialize(gestionCarteraDeudorDto)}");
             var result = await _gestionService.GetGestionGestionesCarteraDeudorHistoricasAsync(gestionCarteraDeudorDto);
             _Logger.LogInfo($"GetGestionGestionesCarteraDeudorHistoricas|End|GetGestionGestionesCarteraDeudorHistoricasAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudor|Begin|GetGestionEstadosGestionesCarteraDeudorAsync|request: {JsonSerializer.Serialize(gestionEstadoCarteraDeudorDto)}");
             var result = await _gestionService.GetGestionEstadosGestionesCarteraDeudorAsync(gestionEstadoCarteraDeudorDto);
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudor|End|GetGestionEstadosGestionesCarteraDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudorHistorica|Begin|GetGestionEstadosGestionesCarteraDeudorHistoricaAsync|request: {JsonSerializer.Serialize(gestionEstadoCarteraDeudorHistoricaDto)}");
             var result = await _gestionService.GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(gestionEstadoCarteraDeudorHistoricaDto);
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudorHistorica|End|GetGestionEstadosGestionesCarteraDeudorHistoricaAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionAgendasDeudor|Begin|GetGestionAgendasDeudorAsync|request: {JsonSerializer.Serialize(gestionAgendaDto)}");
             var result = await _gestionService.GetGestionAgendasDeudorAsync(gestionAgendaDto);
             _Logger.LogInfo($"GetGestionAgendasDeudor|End|GetGestionAgendasDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionPagosDeudor|Begin|GetGestionPagosDeudorAsync|request: {JsonSerializer.Serialize(gestionPagoDto)}");
             var result = await _gestionService.GetGestionPagosDeudorAsync(gestionPagoDto);
             _Logger.LogInfo($"GetGestionPagosDeudor|End|GetGestionPagosDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionInformacionDeudor|Begin|GetGestionInformacionDeudorAsync|request: {JsonSerializer.Serialize(gestionInfoDeudor)}");
             var result = await _gestionService.GetGestionInformacionDeudorAsync(gestionInfoDeudor);
             _Logger.LogInfo($"GetGestionInformacionDeudor|End|GetGestionInformacionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionInformacionDeudorParam|Begin|GetGestionInformacionDeudorParamAsync|request: {JsonSerializer.Serialize(gestionInfoDeudorParam)}");
             var result = await _gestionService.GetGestionInformacionDeudorParamAsync(gestionInfoDeudorParam);
             _Logger.LogInfo($"GetGestionInformacionDeudorParam|End|GetGestionInformacionDeudorParamAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionTipoGestion|Begin|GetGestionTipoGestionAsync|request:");
             var result = await _gestionService.GetGestionTipoGestionAsync();
             _Logger.LogInfo($"GetGestionTipoGestion|End|GetGestionTipoGestionAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionEstadoGestion|Begin|GetGestionEstadoGestionAsync|request: {JsonSerializer.Serialize(gestionEstadoDto)}");
             var result = await _gestionService.GetGestionEstadoGestionAsync(gestionEstadoDto);
             _Logger.LogInfo($"GetGestionEstadoGestion|End|GetGestionEstadoGestionAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -366,7 +366,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionPaletaRespuesta|Begin|GetGestionPaletaRespuestaAsync|request: {JsonSerializer.Serialize(gestionPaletaDto)}");
             var result = await _gestionService.GetGestionPaletaRespuestaAsync(gestionPaletaDto);
             _Logger.LogInfo($"GetGestionPaletaRespuesta|End|GetGestionPaletaRespuestaAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionEstadoGestionClaro|Begin|GetGestionEstadoGestionClaroAsync|request: {JsonSerializer.Serialize(estadoGestionClaroDto)}");
             var result = await _gestionService.GetGestionEstadoGestionClaroAsync(estadoGestionClaroDto);
             _Logger.LogInfo($"GetGestionEstadoGestionClaro|End|GetGestionEstadoGestionClaroAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionMotivoNoPago|Begin|GetGestionMotivoNoPagoAsync|request: {JsonSerializer.Serialize(motivoNoPagoDto)}");
             var result = await _gestionService.GetGestionMotivoNoPagoAsync(motivoNoPagoDto);
             _Logger.LogInfo($"GetGestionMotivoNoPago|End|GetGestionMotivoNoPagoAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         /// <summary>
@@ -458,7 +458,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionToDay|Begin|GetGestionToDayAsync|request: {JsonSerializer.Serialize(gestionToDayDto)}");
             var result = await _gestionService.GetGestionToDayAsync(gestionToDayDto);
             _Logger.LogInfo($"GetGestionToDay|End|GetGestionToDayAsync|response: {JsonSerializer.Serialize(result)}");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }
