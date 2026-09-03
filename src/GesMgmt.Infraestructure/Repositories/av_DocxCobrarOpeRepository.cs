@@ -21,7 +21,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public IQueryable<av_DocxCobrarOpe?> GetGestionesCarteraDeudor(int nId_Cliente, int nId_Cartera, int nId_PersDeudor, int? nId_PerfilUsuario)
+        public async Task<IQueryable<av_DocxCobrarOpe?>> GetGestionesCarteraDeudorAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor, int? nId_PerfilUsuario)
         {
             var query = _dbSet
                 .Include(dc => dc.av_DocxCobrar)
@@ -39,7 +39,7 @@ namespace GesMgmt.Infraestructure.Repositories
             if (nId_PersDeudor > 0)
                 query = query.Where(s => s.nId_PersDeudor == nId_PersDeudor);
 
-            if (nId_Cliente != 95)
+            if (nId_Cliente != 95 && nId_Cliente != 59)
             {
                 if (nId_PerfilUsuario > 0)
                     query = query.Where(s => s.av_Usuario.nId_PerfilGest == nId_PerfilUsuario);

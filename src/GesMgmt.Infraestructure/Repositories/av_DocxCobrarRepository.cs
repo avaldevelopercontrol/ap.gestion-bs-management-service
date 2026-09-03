@@ -47,16 +47,39 @@ namespace GesMgmt.Infraestructure.Repositories
                        && d.bEstado == 1);
         }
 
+        public async Task<IQueryable<av_DocxCobrar>> GetDocumentosxCobrarByIdClienteAndIdDeudorAsync(int nId_Cliente, int nId_PersDeudor)
+        {
+            return _dbSet
+                .Include(c => c.av_Cartera)
+                .Include(d => d.av_PersDeudor)
+                //.Include(m => m.av_Moneda)
+                //.Include(u => u.av_Usuario)
+                .AsNoTracking()
+                .Where(d => d.nId_Cliente == nId_Cliente
+                       && d.nId_PersDeudor == nId_PersDeudor);
+        }
+
         public async Task<IQueryable<av_DocxCobrar>> GetDocumentosxCobrarActivosByIdClienteAsync(int nId_Cliente)
         {
             return _dbSet
                 .Include(c => c.av_Cartera)
                 .Include(d => d.av_PersDeudor)
-                .Include(m => m.av_Moneda)
-                .Include(u => u.av_Usuario)
+                //.Include(m => m.av_Moneda)
+                //.Include(u => u.av_Usuario)
                 .AsNoTracking()
                 .Where(d => d.nId_Cliente == nId_Cliente
                        && d.bEstado == 1);
+        }
+
+        public async Task<IQueryable<av_DocxCobrar>> GetDocumentosxCobrarByIdClienteAsync(int nId_Cliente)
+        {
+            return _dbSet
+                .Include(c => c.av_Cartera)
+                .Include(d => d.av_PersDeudor)
+                //.Include(m => m.av_Moneda)
+                //.Include(u => u.av_Usuario)
+                .AsNoTracking()
+                .Where(d => d.nId_Cliente == nId_Cliente);
         }
 
         public async Task<IQueryable<av_DocxCobrar>> GetDocumentosxCobrarByNroDocumentoAsync(string letra, int nId_Cliente, string cDoc_Numero)

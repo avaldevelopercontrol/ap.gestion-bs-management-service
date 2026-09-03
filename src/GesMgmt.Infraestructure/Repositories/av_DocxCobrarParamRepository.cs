@@ -21,7 +21,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public async Task<IQueryable<av_DocxCobrarParam>> GetGestionesParamByIdCartera(int nId_Cartera)
+        public async Task<IQueryable<av_DocxCobrarParam>> GetGestionesParamByIdCarteraAsync(int nId_Cartera)
         {
             return _dbSet.AsNoTracking().Where(p => p.nId_Cartera == nId_Cartera && p.bEstado == 1);
         }

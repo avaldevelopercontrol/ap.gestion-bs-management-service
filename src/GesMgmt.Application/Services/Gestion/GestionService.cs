@@ -8,6 +8,7 @@ using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.Arm;
 using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
@@ -147,7 +148,8 @@ namespace GesMgmt.Application.Services.Gestion
             {
                 var q_Dco = await _unitOfWork.av_DocxCobrarOpes.Query();
                 var q_Doc = await _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
-                var q_dcp = await _unitOfWork.av_DocxCobrarParams.GetGestionesParamByIdCartera(gestionDto.nId_Cartera);
+                var q_dcp = await _unitOfWork.av_DocxCobrarParams.GetGestionesParamByIdCarteraAsync(gestionDto.nId_Cartera);
+                var q_ca = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAndIdCarteraAsync(gestionDto.nId_Cliente, gestionDto.nId_Cartera);
 
                 var ultGestion =
                                     from op in q_Dco
@@ -183,7 +185,9 @@ namespace GesMgmt.Application.Services.Gestion
 
                 if (q_Doc != null)
                 {
-                    data = await (
+                    if (gestionDto.nId_Cliente == 95)
+                    {
+                        data = await (
                                     from s in q_Doc
                                     join dcp in q_dcp
                                         on new { nId_DocxCobrar = s.nId_DocxCobrar, nId_Cartera = (int?)s.nId_Cartera }
@@ -254,6 +258,77 @@ namespace GesMgmt.Application.Services.Gestion
                                 .Skip((gestionDto.PageNumber - 1) * gestionDto.PageSize)
                                 .Take(gestionDto.PageSize)
                                 .ToListAsync();
+                    }
+                    else
+                    {
+                        data = await (
+                                    from s in q_Doc
+
+                                    join dcp in q_dcp
+                                        on new { nId_DocxCobrar = s.nId_DocxCobrar, nId_Cartera = (int?)s.nId_Cartera }
+                                        equals new { nId_DocxCobrar = dcp.nId_DocxCobrar, nId_Cartera = dcp.nId_Cartera }
+                                        into dcpJoin
+                                    from dcp in dcpJoin.DefaultIfEmpty()
+                                    
+                                    join ug in ultGestionCompleta
+                                    on s.nId_DocxCobrar equals ug.nId_DocxCobrar
+                                    into ugJoin
+                                    from ug in ugJoin.DefaultIfEmpty()
+
+                                    join ca in q_ca
+                                    on s.nId_Cartera equals ca.nId_Cartera
+                                    into caJoin
+                                    from ca in caJoin.DefaultIfEmpty()
+
+                                    select new GetGestionDocumentoResponseDto
+                                    {
+                                        nId_DocxCobrar = s.nId_DocxCobrar,
+                                        mejorStatus = s.mej_status ?? 0,
+                                        nId_Moneda = s.av_Moneda.nId_Moneda,
+                                        bEstado = s.bEstado,
+                                        nZona = dcp.cDocParamZona ?? "",
+                                        bSelected = false,
+                                        nId_Estrategia = s.nid_estrategia ?? 0,
+                                        nId_Cartera = s.nId_Cartera,
+                                        ///**** FIN DE LOS CAMPOS RESERVADOS******************/
+                                        tramo = dcp.cDocParam04 ?? "SIN-TRAMO",
+                                        nro = 0, // este campo se llenará después
+                                        numeroDocumento = s.cDoc_Numero,
+                                        estado = s.bEstado == 1 ? "ACTIVO" : "INACTIVO",
+                                        numeroCuota = dcp.cDocParam107,
+                                        fechaVencimiento = s.dDoc_FecVenc.HasValue ? FormatearFecha(s.dDoc_FecVenc) : "",
+                                        siglaMoneda = s.av_Moneda.cSigla_Moneda ?? "",
+                                        importeTotal = s.nDoc_ImpTotal,
+                                        importeSaldo = s.nDoc_ImpSaldo,
+                                        diasAtrazo = s.nDoc_DiasAtrazo ?? 0,
+                                        tipoCredito = dcp.cDocParam24 ?? "",
+                                        COD_ACC_PREV = ObtenerCodAccPrev(dcp.cDocParam177 ?? ""),
+                                        COD_ACC_PREJU = dcp.cDocParam177 ?? "",
+                                        ultimoTramo = dcp.cDocParam140 ?? "",
+                                        ultimoFechaPago = dcp.cDocParam136 ?? "",
+                                        categoria = dcp.cDocParam193 ?? "",
+                                        numeroReprogramaciones = dcp.cDocParam173 ?? "",
+                                        gWhatsApp = dcp.cDocParam160 ?? "",
+                                        cuotaActual = s.nId_Moneda == 1 ? dcp.cDocParam153 : dcp.cDocParam151,
+                                        interesActual = s.nId_Moneda == 1 ? dcp.cDocParam154 : dcp.cDocParam152,
+                                        placa = dcp.cDocParam47 ?? "",
+                                        numeroCuenta = ca.cDescripcion.Contains("IMPUESTO") ? dcp.cDocParam107 : "",
+                                        MARCA_ESPECIAL = dcp.cDocParam174 ?? "",
+                                        plazoReprogramado = dcp.cDocParam175 ?? "",
+                                        plazoMaximoReprogramado = dcp.cDocParam176 ?? "",
+                                        gestorCall = s.av_Usuario != null ? $"{s.av_Usuario.nId_Usuario} - {s.av_Usuario.cUsr_Login}" : "",
+                                        MARCA_ESPECIAL2 = dcp.cDocParam166 ?? "",
+                                        COMENTARIO_REPROG = dcp.cDocParam167 ?? "",
+                                        TASA_INTERES = dcp.cDocParam60 ?? "",
+                                        CAPITAL_ACTUAL = dcp.cDocParam165 ?? ""
+                                    }
+                                )
+                                .Skip((gestionDto.PageNumber - 1) * gestionDto.PageSize)
+                                .Take(gestionDto.PageSize)
+                                .ToListAsync();
+                    }
+                    
+                    
 
                     int correlativo = (gestionDto.PageNumber - 1) * gestionDto.PageSize + 1;
 
@@ -277,6 +352,19 @@ namespace GesMgmt.Application.Services.Gestion
                 _Logger.LogError($"GetGestionDocumentos|DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetGestionDocumentoResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
+        }
+
+        private static string ObtenerCodAccPrev(string? valor)
+        {
+            if (string.IsNullOrWhiteSpace(valor))
+                return "";
+
+            if (!int.TryParse(valor, out int codigo))
+                return "";
+
+            return codigo >= 100 && codigo <= 199
+                ? valor
+                : "";
         }
 
         private static string FormatearFecha(DateTime? fecha)
@@ -533,7 +621,7 @@ namespace GesMgmt.Application.Services.Gestion
 
             try
             {
-                var q_Doc = _unitOfWork.av_DocxCobrarOpes.GetGestionesCarteraDeudor(filterdc.nId_Cliente.Value, filterdc.nId_Cartera.Value, filterdc.nId_PersDeudor, filterdc.av_Usuario.nId_PerfilGest);
+                var q_Doc = await _unitOfWork.av_DocxCobrarOpes.GetGestionesCarteraDeudorAsync(filterdc.nId_Cliente.Value, filterdc.nId_Cartera.Value, filterdc.nId_PersDeudor, filterdc.av_Usuario.nId_PerfilGest);
                 var q_DesGes = await _unitOfWork.av_OpeCodCliOuts.Query();
                 var q_DesGes2 = await _unitOfWork.av_OpeCodCliOuts.Query();
 

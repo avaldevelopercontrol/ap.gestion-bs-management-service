@@ -337,7 +337,6 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string? siglaMoneda { get; set; }
             public decimal? importeTotal { get; set; }
             public decimal? importeSaldo { get; set; }
-            //public decimal deudaVencida { get; set; }
             public int diasAtrazo { get; set; }
             public string? servicio { get; set; }
             public string? comentario { get; set; }
@@ -349,6 +348,28 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string? fechaStatusDocumento { get; set; }
             public string? gestorCall { get; set; }
             public string? bajaProvabilidad { get; set; }
+            //-- 59 MAF
+            public string? numeroCuota { get; set; }
+            public decimal deudaVencida { get; set; }
+            public string? tipoCredito { get; set; }
+            public string? COD_ACC_PREV { get; set; }
+            public string? COD_ACC_PREJU { get; set; }
+            public string? ultimoTramo { get; set; }
+            public string? ultimoFechaPago { get; set; }
+            public string? categoria { get; set; }
+            public string? numeroReprogramaciones { get; set; }
+            public string? gWhatsApp { get; set; }
+            public string? cuotaActual { get; set; }
+            public string? interesActual { get; set; }
+            public string? placa { get; set; }
+            public string? numeroCuenta { get; set; }
+            public string? MARCA_ESPECIAL { get; set; }
+            public string? plazoReprogramado { get; set; }
+            public string? plazoMaximoReprogramado { get; set; }
+            public string? MARCA_ESPECIAL2 { get; set; }
+            public string? COMENTARIO_REPROG { get; set; }
+            public string? TASA_INTERES { get; set; }
+            public string? CAPITAL_ACTUAL { get; set; }
         }
 
         public class GetGestionDeudorResponseDto

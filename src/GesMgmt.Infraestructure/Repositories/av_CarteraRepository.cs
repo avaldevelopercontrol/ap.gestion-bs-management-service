@@ -54,5 +54,13 @@ namespace GesMgmt.Infraestructure.Repositories
                 && s.bEstado == true)
                 .AsNoTracking();
         }
+
+        public async Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteAndIdCarteraAsync(int nId_Cliente, int nId_Cartera)
+        {
+            return _dbSet
+                .Include(d => d.av_Cliente)
+                .Where(s => s.nId_Cliente == nId_Cliente && s.nId_Cartera == nId_Cartera)
+                .AsNoTracking();
+        }
     }
 }
