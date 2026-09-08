@@ -1,4 +1,15 @@
-﻿using GesMgmt.Application.Interfaces;
+using GesMgmt.Application.Interfaces;
+using GesMgmt.Application.DTOs.Analytics;
+using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
+using GesMgmt.Application.Interfaces.Analytics.PortfolioControlCenter;
+using GesMgmt.Application.Services.Analytics.PortfolioControlCenter;
+using GesMgmt.Domain.Interfaces.Analytics.PortfolioControlCenter;
+using GesMgmt.Infraestructure.Persistence.Analytics.Caching;
+using GesMgmt.Infraestructure.Repositories.Analytics.PortfolioControlCenter;
+using GesMgmt.Application.Interfaces.Analytics;
+using GesMgmt.Application.Services.Analytics;
+using GesMgmt.Domain.Interfaces.Analytics;
+using GesMgmt.Infraestructure.Repositories.Analytics;
 using GesMgmt.Application.Interfaces.Agenda;
 using GesMgmt.Application.Interfaces.Cartera;
 using GesMgmt.Application.Interfaces.Cliente;
@@ -33,6 +44,7 @@ using GesMgmt.Application.Services.UsuarioGrupoOpcion;
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Logger;
 using GesMgmt.Infraestructure.Persistence;
+using GesMgmt.Infraestructure.Persistence.Analytics;
 using GesMgmt.Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,6 +61,10 @@ namespace GesMgmt.Infraestructure
 
             services.AddDbContext<AvalDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            AddAnalyticsPersistence(services, configuration);
+            AddAnalyticsAccess(services, configuration);
+            AddPortfolioControlCenter(services, configuration);
 
             // Memoria
             services.AddMemoryCache();
@@ -82,5 +98,207 @@ namespace GesMgmt.Infraestructure
 
             return services;
         }
+
+        private static void AddAnalyticsPersistence(
+            IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var analyticsOptions = new AnalyticsDatabaseOptions
+            {
+                ExpectedDatabase =
+                    configuration[$"{AnalyticsDatabaseOptions.SectionName}:ExpectedDatabase"]
+                    ?? "aval_analytics",
+                CommandTimeoutSeconds = ReadCommandTimeout(
+                    configuration,
+                    AnalyticsDatabaseOptions.SectionName,
+                    15)
+            };
+
+            var sisgesOptions = new SisgesDatabaseOptions
+            {
+                ExpectedDatabase =
+                    configuration[$"{SisgesDatabaseOptions.SectionName}:ExpectedDatabase"]
+                    ?? "aval_cob",
+                CommandTimeoutSeconds = ReadCommandTimeout(
+                    configuration,
+                    SisgesDatabaseOptions.SectionName,
+                    15)
+            };
+
+            ValidateDatabaseOptions(
+                AnalyticsDatabaseOptions.SectionName,
+                analyticsOptions.ExpectedDatabase,
+                analyticsOptions.CommandTimeoutSeconds);
+            ValidateDatabaseOptions(
+                SisgesDatabaseOptions.SectionName,
+                sisgesOptions.ExpectedDatabase,
+                sisgesOptions.CommandTimeoutSeconds);
+
+            services.AddSingleton(analyticsOptions);
+            services.AddSingleton(sisgesOptions);
+            services.AddSingleton<AnalyticsDatabaseTelemetry>();
+            services.AddSingleton<IAnalyticsDbConnectionFactory, SqlAnalyticsDbConnectionFactory>();
+            services.AddSingleton<IAnalyticsQueryExecutor, SqlClientAnalyticsQueryExecutor>();
+            services.AddSingleton<ISisgesQueryExecutor, SqlSisgesQueryExecutor>();
+            services.AddSingleton<IAnalyticsDatabaseHealthProbe, AnalyticsDatabaseHealthProbe>();
+            services.AddSingleton<ISisgesDatabaseHealthProbe, SisgesDatabaseHealthProbe>();
+        }
+
+
+        private static void AddAnalyticsAccess(
+            IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var administratorUserIds = configuration
+                .GetSection($"{AnalyticsAdministrationOptions.SectionName}:AdministratorUserIds")
+                .GetChildren()
+                .Select(item =>
+                    int.TryParse(item.Value, out var userId)
+                        ? userId
+                        : 0)
+                .Where(userId => userId > 0)
+                .Distinct()
+                .OrderBy(userId => userId)
+                .ToArray();
+
+            var allowPublishToWeb = true;
+            var rawAllowPublishToWeb =
+                configuration[$"{AnalyticsPowerBiSecurityOptions.SectionName}:AllowPublishToWeb"];
+
+            if (!string.IsNullOrWhiteSpace(rawAllowPublishToWeb) &&
+                !bool.TryParse(rawAllowPublishToWeb, out allowPublishToWeb))
+            {
+                throw new InvalidOperationException(
+                    $"{AnalyticsPowerBiSecurityOptions.SectionName}:AllowPublishToWeb debe ser true o false.");
+            }
+
+            services.AddSingleton(new AnalyticsAdministrationOptions
+            {
+                AdministratorUserIds = administratorUserIds
+            });
+            services.AddSingleton(new AnalyticsPowerBiSecurityOptions
+            {
+                AllowPublishToWeb = allowPublishToWeb
+            });
+
+            services.AddSingleton<IAnalyticsAccessCache, AnalyticsAccessMemoryCache>();
+
+            services.AddScoped<ISisgesUserClientRepository, SisgesUserClientRepository>();
+            services.AddScoped<ISisgesUserGroupRepository, SisgesUserGroupRepository>();
+            services.AddScoped<ISisgesClientGroupRepository, SisgesClientGroupRepository>();
+
+            services.AddScoped<IAnalyticsOptionConfigRepository, AnalyticsOptionConfigRepository>();
+            services.AddScoped<IAnalyticsOptionClientScopeRepository, AnalyticsOptionClientScopeRepository>();
+            services.AddScoped<IAnalyticsOptionGroupScopeRepository, AnalyticsOptionGroupScopeRepository>();
+            services.AddScoped<IAnalyticsUserOptionRepository, AnalyticsUserOptionRepository>();
+            services.AddScoped<IAnalyticsReportClientScopeRepository, AnalyticsReportClientScopeRepository>();
+            services.AddScoped<IAnalyticsReportClientCatalogRepository, AnalyticsReportClientCatalogRepository>();
+            services.AddScoped<IAnalyticsReportClientEmbedRepository, AnalyticsReportClientEmbedRepository>();
+            services.AddScoped<IAnalyticsReportClientPublicationWriter, AnalyticsReportClientPublicationWriter>();
+            services.AddScoped<IAnalyticsPowerBiConfigurationWriter, AnalyticsPowerBiConfigurationWriter>();
+
+            services.AddScoped<IAnalyticsAuthorizationService, AnalyticsAuthorizationService>();
+            services.AddScoped<IAnalyticsOptionService, AnalyticsOptionService>();
+            services.AddScoped<IAnalyticsUserOptionQueryService, AnalyticsUserOptionQueryService>();
+            services.AddScoped<IAnalyticsAccessService, AnalyticsAccessService>();
+            services.AddScoped<IAnalyticsGroupAccessService, AnalyticsGroupAccessService>();
+            services.AddScoped<IAnalyticsOptionAccessService, AnalyticsOptionAccessService>();
+            services.AddScoped<IAnalyticsOptionClientAdministrationService, AnalyticsOptionClientAdministrationService>();
+            services.AddScoped<IAnalyticsOptionGroupAdministrationService, AnalyticsOptionGroupAdministrationService>();
+            services.AddScoped<IAnalyticsUserOptionAdministrationService, AnalyticsUserOptionAdministrationService>();
+            services.AddScoped<IAnalyticsReportClientConfigurationService, AnalyticsReportClientConfigurationService>();
+            services.AddScoped<IAnalyticsReportClientAccessService, AnalyticsReportClientAccessService>();
+            services.AddScoped<IAnalyticsReportClientEmbedLookupService, AnalyticsReportClientEmbedLookupService>();
+            services.AddScoped<IAnalyticsOptionReportClientEmbedsAdministrationService, AnalyticsOptionReportClientEmbedsAdministrationService>();
+            services.AddScoped<IAnalyticsPowerBiConfigurationService, AnalyticsPowerBiConfigurationService>();
+            services.AddSingleton<IAnalyticsPowerBiSecurityPolicy, AnalyticsPowerBiSecurityPolicy>();
+            services.AddScoped<IAnalyticsPowerBiUserAccessService, AnalyticsPowerBiUserAccessService>();
+            services.AddScoped<IAnalyticsPowerBiViewerContextService, AnalyticsPowerBiViewerContextService>();
+        }
+
+
+        private static void AddPortfolioControlCenter(
+            IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var performance = configuration
+                .GetSection(PortfolioControlCenterPerformanceOptions.SectionName)
+                .Get<PortfolioControlCenterPerformanceOptions>()
+                ?? new PortfolioControlCenterPerformanceOptions();
+            performance.Validate();
+
+            services.AddSingleton(performance);
+            services.AddSingleton<IPortfolioPerformanceCache, PortfolioPerformanceMemoryCache>();
+
+            services.AddScoped<IPortfolioControlCenterAccessService, PortfolioControlCenterAccessService>();
+
+            services.AddScoped<IPortfolioSummaryRepository, PortfolioSummaryRepository>();
+            services.AddScoped<PortfolioAdvisorPerformanceRepository>();
+            services.AddScoped<IPortfolioAdvisorPerformanceRepository, CachedPortfolioAdvisorPerformanceRepository>();
+            services.AddScoped<PortfolioSupervisorPerformanceRepository>();
+            services.AddScoped<IPortfolioSupervisorPerformanceRepository, CachedPortfolioSupervisorPerformanceRepository>();
+            services.AddScoped<IPortfolioCampaignPerformanceRepository, PortfolioCampaignPerformanceRepository>();
+            services.AddScoped<IPortfolioBootstrapRepository, PortfolioBootstrapRepository>();
+            services.AddScoped<IPortfolioEvolutionRepository, PortfolioEvolutionRepository>();
+            services.AddScoped<IPortfolioFilterOptionsRepository, PortfolioFilterOptionsRepository>();
+            services.AddScoped<IPortfolioOverviewRepository, PortfolioOverviewRepository>();
+            services.AddScoped<IPortfolioPromisesRepository, PortfolioPromisesRepository>();
+            services.AddScoped<IPortfolioDueTodayPromisesRepository, PortfolioDueTodayPromisesRepository>();
+            services.AddScoped<IPortfolioOverduePromisesRepository, PortfolioOverduePromisesRepository>();
+            services.AddScoped<IPortfolioTargetProgressRepository, PortfolioTargetProgressRepository>();
+
+            services.AddScoped<IPortfolioAdvisorPerformanceService, PortfolioAdvisorPerformanceService>();
+            services.AddScoped<IPortfolioBootstrapService, PortfolioBootstrapService>();
+            services.AddScoped<IPortfolioCampaignPerformanceService, PortfolioCampaignPerformanceService>();
+            services.AddScoped<IPortfolioEvolutionService, PortfolioEvolutionService>();
+            services.AddScoped<IPortfolioFilterOptionsService, PortfolioFilterOptionsService>();
+            services.AddScoped<IPortfolioOverviewService, PortfolioOverviewService>();
+            services.AddScoped<IPortfolioPromisesService, PortfolioPromisesService>();
+            services.AddScoped<IPortfolioDueTodayPromisesService, PortfolioDueTodayPromisesService>();
+            services.AddScoped<IPortfolioOverduePromisesService, PortfolioOverduePromisesService>();
+            services.AddScoped<IPortfolioSummaryService, PortfolioSummaryService>();
+            services.AddScoped<IPortfolioSupervisorPerformanceService, PortfolioSupervisorPerformanceService>();
+            services.AddScoped<IPortfolioTargetProgressService, PortfolioTargetProgressService>();
+        }
+
+        private static int ReadCommandTimeout(
+            IConfiguration configuration,
+            string sectionName,
+            int defaultValue)
+        {
+            var rawValue = configuration[$"{sectionName}:CommandTimeoutSeconds"];
+
+            if (string.IsNullOrWhiteSpace(rawValue))
+            {
+                return defaultValue;
+            }
+
+            if (!int.TryParse(rawValue, out var value))
+            {
+                throw new InvalidOperationException(
+                    $"{sectionName}:CommandTimeoutSeconds debe ser un entero válido.");
+            }
+
+            return value;
+        }
+
+        private static void ValidateDatabaseOptions(
+            string sectionName,
+            string expectedDatabase,
+            int commandTimeoutSeconds)
+        {
+            if (string.IsNullOrWhiteSpace(expectedDatabase))
+            {
+                throw new InvalidOperationException(
+                    $"{sectionName}:ExpectedDatabase es obligatorio.");
+            }
+
+            if (commandTimeoutSeconds is <= 0 or > 120)
+            {
+                throw new InvalidOperationException(
+                    $"{sectionName}:CommandTimeoutSeconds debe estar entre 1 y 120.");
+            }
+        }
+
     }
 }

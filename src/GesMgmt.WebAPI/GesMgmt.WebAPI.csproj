@@ -21,6 +21,12 @@
     <ProjectReference Include="..\GesMgmt.Infraestructure\GesMgmt.Infraestructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<UserSecretsId>645a8240-c90e-4542-bf7a-5ecd7bee52a2</UserSecretsId>

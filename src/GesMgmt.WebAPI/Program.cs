@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using NLog.Web;
 using GesMgmt.Infraestructure;
+using GesMgmt.Application.Interfaces.Analytics;
+using GesMgmt.WebAPI.Services.Analytics;
+using GesMgmt.WebAPI.Services.Analytics.Health;
 using System.Text.Json.Serialization;
 
 
@@ -77,6 +81,20 @@ builder.Services.AddSwaggerGen(c =>
 
 // Add Infraestructure services
 builder.Services.AddInfraestructure(builder.Configuration);
+builder.Services.AddPortfolioControlCenterResourceProtection(builder.Configuration);
+
+// Analytics consume la identidad del host sin registrar un esquema de autenticación propio.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAnalyticsUserContext, HttpAnalyticsUserContext>();
+
+builder.Services
+    .AddHealthChecks()
+    .AddCheck<AnalyticsDatabaseHealthCheck>(
+        "analytics_database",
+        tags: ["ready"])
+    .AddCheck<SisgesDatabaseHealthCheck>(
+        "sisges_database",
+        tags: ["ready"]);
 
 var app = builder.Build();
 
@@ -90,10 +108,35 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 app.UseCors("ReactPolicy");
+
+app.UseMiddleware<AnalyticsRequestMiddleware>();
+app.UseRequestTimeouts();
+app.UseRateLimiter();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHealthChecks(
+    "/health/live",
+    new HealthCheckOptions
+    {
+        Predicate = _ => false,
+        ResponseWriter = AnalyticsHealthResponseWriter.WriteLiveAsync
+    });
+
+app.MapHealthChecks(
+    "/health/ready",
+    new HealthCheckOptions
+    {
+        Predicate = registration => registration.Tags.Contains("ready"),
+        ResponseWriter = AnalyticsHealthResponseWriter.WriteReadyAsync
+    });
+
 app.Run();
+
+public partial class Program
+{
+}
