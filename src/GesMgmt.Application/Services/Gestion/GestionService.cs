@@ -8,7 +8,6 @@ using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.Intrinsics.Arm;
 using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
@@ -146,7 +145,7 @@ namespace GesMgmt.Application.Services.Gestion
 
             try
             {
-                var q_Dco = await _unitOfWork.av_DocxCobrarOpes.Query();
+                var q_Dco = await _unitOfWork.av_DocxCobrarOpes.GetGestionesCarteraDeudorAsync(gestionDto.nId_Cliente, gestionDto.nId_Cartera, gestionDto.nId_Persdeudor, 0);
                 var q_Doc = await _unitOfWork.av_DocxCobrars.GetGestionesAsync(filterdc);
                 var q_dcp = await _unitOfWork.av_DocxCobrarParams.GetGestionesParamByIdCarteraAsync(gestionDto.nId_Cartera);
                 var q_ca = await _unitOfWork.av_Carteras.GetCarterasByIdClienteAndIdCarteraAsync(gestionDto.nId_Cliente, gestionDto.nId_Cartera);
@@ -200,6 +199,8 @@ namespace GesMgmt.Application.Services.Gestion
                                     from ug in ugJoin.DefaultIfEmpty()
                                     select new GetGestionDocumentoResponseDto
                                     {
+                                        nId_ClienteJson = gestionDto.nId_Cliente,
+
                                         nId_DocxCobrar = s.nId_DocxCobrar,
                                         mejorStatus = s.mej_status ?? 0,
                                         nId_Moneda = s.av_Moneda.nId_Moneda,
@@ -282,6 +283,8 @@ namespace GesMgmt.Application.Services.Gestion
 
                                     select new GetGestionDocumentoResponseDto
                                     {
+                                        nId_ClienteJson = gestionDto.nId_Cliente,
+
                                         nId_DocxCobrar = s.nId_DocxCobrar,
                                         mejorStatus = s.mej_status ?? 0,
                                         nId_Moneda = s.av_Moneda.nId_Moneda,
@@ -295,7 +298,7 @@ namespace GesMgmt.Application.Services.Gestion
                                         nro = 0, // este campo se llenará después
                                         numeroDocumento = s.cDoc_Numero,
                                         estado = s.bEstado == 1 ? "ACTIVO" : "INACTIVO",
-                                        numeroCuota = dcp.cDocParam107,
+                                        numeroCuota = dcp.cDocParam107 ?? "",
                                         fechaVencimiento = s.dDoc_FecVenc.HasValue ? FormatearFecha(s.dDoc_FecVenc) : "",
                                         siglaMoneda = s.av_Moneda.cSigla_Moneda ?? "",
                                         importeTotal = s.nDoc_ImpTotal,
@@ -309,8 +312,8 @@ namespace GesMgmt.Application.Services.Gestion
                                         categoria = dcp.cDocParam193 ?? "",
                                         numeroReprogramaciones = dcp.cDocParam173 ?? "",
                                         gWhatsApp = dcp.cDocParam160 ?? "",
-                                        cuotaActual = s.nId_Moneda == 1 ? dcp.cDocParam153 : dcp.cDocParam151,
-                                        interesActual = s.nId_Moneda == 1 ? dcp.cDocParam154 : dcp.cDocParam152,
+                                        cuotaActual = s.nId_Moneda == 1 ? dcp.cDocParam153 : dcp.cDocParam151 ?? "",
+                                        interesActual = s.nId_Moneda == 1 ? dcp.cDocParam154 : dcp.cDocParam152 ?? "",
                                         placa = dcp.cDocParam47 ?? "",
                                         numeroCuenta = ca.cDescripcion.Contains("IMPUESTO") ? dcp.cDocParam107 : "",
                                         MARCA_ESPECIAL = dcp.cDocParam174 ?? "",

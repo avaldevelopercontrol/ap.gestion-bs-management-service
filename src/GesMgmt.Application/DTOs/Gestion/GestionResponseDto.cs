@@ -1,4 +1,7 @@
 ﻿
+using GesMgmt.Application.DTOs.Gestion.Converters;
+using System.Text.Json.Serialization;
+
 namespace GesMgmt.Application.DTOs.Gestion
 {
     public class GestionResponseDto
@@ -316,19 +319,38 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string? comentario { get; set; }
         }
 
+        [JsonConverter(typeof(GetGestionDocumentoResponseDtoJsonConverter))]
         public class GetGestionDocumentoResponseDto
         {
-            public int nId_DocxCobrar { get; set; } //1 Cabecera principal
-            public int? mejorStatus { get; set; } //2 Cabecera principal
-            public int nId_Moneda { get; set; } //2 Cabecera principal
-            public int? bEstado { get; set; } //3 Cabecera principal
-            public string? nZona { get; set; } //3 Cabecera principal
-            public bool bSelected { get; set; } //4 Cabecera principal
-            public int? nId_Estrategia { get; set; } //5 Cabecera principal
-            public int nId_Cartera { get; set; } //6 Cabecera principal
+            // ============================================================
+            // CAMPOS COMUNES - TODOS LOS CLIENTES
+            // ============================================================
 
-            //-- Campos adicionales para la gestión
-            //-- 95 CLARO
+            // =========================================================
+            // PROPIEDAD AUXILIAR PARA EL CONVERTER
+            // NO SE MOSTRARÁ EN EL JSON
+            // =========================================================
+            [JsonIgnore]
+            public int nId_ClienteJson { get; set; }
+
+
+            // =========================================================
+            // CAMPOS CABECERA - COMUNES
+            // =========================================================
+
+            public int nId_DocxCobrar { get; set; }
+            public int? mejorStatus { get; set; }
+            public int nId_Moneda { get; set; }
+            public int? bEstado { get; set; }
+            public string? nZona { get; set; }
+            public bool bSelected { get; set; }
+            public int? nId_Estrategia { get; set; }
+            public int nId_Cartera { get; set; }
+
+            // =========================================================
+            // CAMPOS ADICIONALES / COMUNES DE GESTIÓN
+            // =========================================================
+
             public string? tramo { get; set; }
             public int nro { get; set; }
             public string? numeroDocumento { get; set; }
@@ -338,37 +360,73 @@ namespace GesMgmt.Application.DTOs.Gestion
             public decimal? importeTotal { get; set; }
             public decimal? importeSaldo { get; set; }
             public int diasAtrazo { get; set; }
+            public string? gestorCall { get; set; }
+
+            // =========================================================
+            // CLIENTE 95 - CLARO
+            // =========================================================
+
             public string? servicio { get; set; }
             public string? comentario { get; set; }
             public string? codigoCliente { get; set; }
             public string? estadoDocumento { get; set; }
+
             public string? fechaEstadoDocumento { get; set; }
+
             public string? estadoPago { get; set; }
+
             public string? statusDocumento { get; set; }
+
             public string? fechaStatusDocumento { get; set; }
-            public string? gestorCall { get; set; }
+
             public string? bajaProvabilidad { get; set; }
-            //-- 59 MAF
+
+
+            // =========================================================
+            // CLIENTE 59 - MAF
+            // =========================================================
+
             public string? numeroCuota { get; set; }
-            public decimal deudaVencida { get; set; }
+
+            // IMPORTANTE: nullable
+            public decimal? deudaVencida { get; set; }
+
             public string? tipoCredito { get; set; }
+
             public string? COD_ACC_PREV { get; set; }
+
             public string? COD_ACC_PREJU { get; set; }
+
             public string? ultimoTramo { get; set; }
+
             public string? ultimoFechaPago { get; set; }
+
             public string? categoria { get; set; }
+
             public string? numeroReprogramaciones { get; set; }
+
             public string? gWhatsApp { get; set; }
+
             public string? cuotaActual { get; set; }
+
             public string? interesActual { get; set; }
+
             public string? placa { get; set; }
+
             public string? numeroCuenta { get; set; }
+
             public string? MARCA_ESPECIAL { get; set; }
+
             public string? plazoReprogramado { get; set; }
+
             public string? plazoMaximoReprogramado { get; set; }
+
             public string? MARCA_ESPECIAL2 { get; set; }
+
             public string? COMENTARIO_REPROG { get; set; }
+
             public string? TASA_INTERES { get; set; }
+
             public string? CAPITAL_ACTUAL { get; set; }
         }
 

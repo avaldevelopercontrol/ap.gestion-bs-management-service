@@ -23,7 +23,7 @@ namespace GesMgmt.Infraestructure.Repositories
 
         public async Task<IQueryable<av_DocxCobrarParam>> GetGestionesParamByIdCarteraAsync(int nId_Cartera)
         {
-            return _dbSet.AsNoTracking().Where(p => p.nId_Cartera == nId_Cartera && p.bEstado == 1);
+            return _dbSet.AsNoTracking().Where(p => p.nId_Cartera == nId_Cartera);
         }
 
         public IQueryable<av_DocxCobrarParam> GetGestionesParamAsync(av_DocxCobrarParam av_DocxCobrarParam)
