@@ -1,31 +1,44 @@
 using GesMgmt.Application.DTOs.Analytics;
 using GesMgmt.Application.Interfaces.Analytics;
-using GesMgmt.Application.Utils.Analytics;
-using GesMgmt.Application.Validators.Analytics;
-using GesMgmt.Domain.Constants.Analytics;
-using GesMgmt.Domain.Entities.Analytics;
+using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces.Analytics;
 
 namespace GesMgmt.Application.Services.Analytics;
 
 public sealed class AnalyticsAuthorizationService(
-    AnalyticsAdministrationOptions options)
+    ISisgesOptionPermissionRepository permissionRepository)
     : IAnalyticsAuthorizationService
 {
-    private readonly HashSet<int> _administratorUserIds = options
-        .AdministratorUserIds
-        .Where(userId => userId > 0)
-        .ToHashSet();
-
-    public Task<AnalyticsAuthorizationResult> CanManageAsync(
+    public async Task<AnalyticsAuthorizationResult> CanAccessAdministrationAsync(
         int userId,
+        int? groupId,
+        SisgesOptionPermission permission,
         CancellationToken cancellationToken)
     {
-        var result = _administratorUserIds.Contains(userId)
-            ? AnalyticsAuthorizationResult.Allow()
-            : AnalyticsAuthorizationResult.Deny(
-                "El usuario no tiene permisos administrativos de Analytics.");
+        var allowed = await permissionRepository.HasPermissionAsync(
+            userId,
+            groupId,
+            SisgesOptionCodes.MaintainModule,
+            permission,
+            cancellationToken);
 
-        return Task.FromResult(result);
+        if (allowed)
+        {
+            return AnalyticsAuthorizationResult.Allow();
+        }
+
+        return AnalyticsAuthorizationResult.Deny(
+            $"El usuario no tiene permiso {GetPermissionName(permission)} sobre Mantener módulo.");
     }
+
+    private static string GetPermissionName(SisgesOptionPermission permission) =>
+        permission switch
+        {
+            SisgesOptionPermission.Consult => "Consultar",
+            SisgesOptionPermission.Insert => "Insertar",
+            SisgesOptionPermission.Edit => "Editar",
+            SisgesOptionPermission.Delete => "Eliminar",
+            SisgesOptionPermission.Export => "Exportar",
+            _ => "requerido"
+        };
 }

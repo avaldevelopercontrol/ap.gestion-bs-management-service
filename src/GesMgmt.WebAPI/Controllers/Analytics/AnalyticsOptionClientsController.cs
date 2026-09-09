@@ -1,5 +1,6 @@
 using GesMgmt.Application.DTOs.Analytics;
 using GesMgmt.Application.Interfaces.Analytics;
+using GesMgmt.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GesMgmt.WebAPI.Controllers.Analytics;
@@ -24,6 +25,7 @@ public sealed class AnalyticsOptionClientsController(
         var administrator = await RequireAdministratorAsync(
             userContext,
             authorizationService,
+            SisgesOptionPermission.Consult,
             cancellationToken);
 
         if (administrator.Error is not null)
@@ -55,6 +57,7 @@ public sealed class AnalyticsOptionClientsController(
         var administrator = await RequireAdministratorAsync(
             userContext,
             authorizationService,
+            SisgesOptionPermission.Edit,
             cancellationToken);
 
         if (administrator.Error is not null)

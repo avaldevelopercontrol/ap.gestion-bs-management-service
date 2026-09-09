@@ -1,22 +1,18 @@
-using Microsoft.Extensions.Options;
 using GesMgmt.Application.Interfaces.Analytics;
 using GesMgmt.Application.Utils.Analytics;
 using GesMgmt.Domain.Constants.Analytics;
 using GesMgmt.Domain.Entities.Analytics;
 using GesMgmt.Domain.Interfaces.Analytics;
-using GesMgmt.Infraestructure.Persistence.Analytics;
+using GesMgmt.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics;
 
 internal sealed class AnalyticsReportClientCatalogRepository(
-    IAnalyticsQueryExecutor queryExecutor,
-    AnalyticsDatabaseOptions databaseOptions,
+    AnalyticsDbContext context,
     IAnalyticsAccessCache cache)
     : IAnalyticsReportClientCatalogRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
     public bool Supports(int optionId) =>
         optionId == AnalyticsOptionIds.GestionIntegralCobranza;
 
@@ -30,14 +26,20 @@ internal sealed class AnalyticsReportClientCatalogRepository(
                 Array.Empty<AnalyticsReportClientCatalogItem>());
         }
 
-        return cache.GetOrCreateAsync(
+        return cache.GetOrCreateAsync<IReadOnlyList<AnalyticsReportClientCatalogItem>>(
             AnalyticsAccessCacheKeys.ReportClientCatalog(optionId),
             AnalyticsAccessCachePolicy.CatalogDuration,
-            token => queryExecutor.QueryAsync<AnalyticsReportClientCatalogItem>(
-                AnalyticsReportClientCatalogSql.Current,
-                new { OptionId = optionId },
-                _commandTimeoutSeconds,
-                token),
+            async token => await context.AnalyticsReportClientCatalog
+                .AsNoTracking()
+                .Where(catalog => catalog.OptionId == optionId)
+                .OrderBy(catalog => catalog.ReportClientValue)
+                .ThenBy(catalog => catalog.CrmClientId)
+                .Select(catalog => new AnalyticsReportClientCatalogItem
+                {
+                    CrmClientId = catalog.CrmClientId,
+                    ReportClientValue = catalog.ReportClientValue
+                })
+                .ToArrayAsync(token),
             cancellationToken);
     }
 }

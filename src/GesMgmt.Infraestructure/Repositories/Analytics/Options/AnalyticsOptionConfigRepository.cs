@@ -1,38 +1,33 @@
-using Microsoft.Extensions.Options;
+using System.Data;
 using GesMgmt.Application.Interfaces.Analytics;
 using GesMgmt.Application.Utils.Analytics;
 using GesMgmt.Domain.Constants.Analytics;
 using GesMgmt.Domain.Entities.Analytics;
 using GesMgmt.Domain.Interfaces.Analytics;
-using GesMgmt.Infraestructure.Persistence.Analytics;
+using GesMgmt.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics;
 
 internal sealed class AnalyticsOptionConfigRepository(
-    IAnalyticsQueryExecutor queryExecutor,
-    AnalyticsDatabaseOptions databaseOptions,
+    AnalyticsDbContext context,
     IAnalyticsAccessCache cache)
     : IAnalyticsOptionConfigRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
-    public async Task<bool> ExistsAsync(
+    public Task<bool> ExistsAsync(
         int optionId,
         CancellationToken cancellationToken)
     {
         if (optionId <= 0)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
-        var exists = await queryExecutor.QuerySingleAsync<int>(
-            AnalyticsOptionConfigSql.Exists,
-            new { OptionId = optionId },
-            _commandTimeoutSeconds,
-            cancellationToken);
-
-        return exists == 1;
+        return context.AnalyticsOptionConfigs
+            .AsNoTracking()
+            .AnyAsync(
+                option => option.OptionId == optionId,
+                cancellationToken);
     }
 
     public async Task<bool> IsActiveAsync(
@@ -60,42 +55,64 @@ internal sealed class AnalyticsOptionConfigRepository(
         int? userId,
         CancellationToken cancellationToken)
     {
-        var parameters = new
-        {
-            OptionId = optionId,
-            OptionCode = optionCode,
-            OptionName = optionName,
-            IsActive = isActive,
-            UserId = userId
-        };
-
-        IReadOnlyCollection<AnalyticsDbCommand> commands =
-        [
-            new AnalyticsDbCommand(
-                AnalyticsOptionConfigSql.Update,
-                parameters),
-            new AnalyticsDbCommand(
-                AnalyticsOptionConfigSql.InsertMissing,
-                parameters)
-        ];
-
-        await queryExecutor.ExecuteTransactionAsync(
-            commands,
-            _commandTimeoutSeconds,
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
             cancellationToken);
+
+        var option = await context.AnalyticsOptionConfigs
+            .SingleOrDefaultAsync(
+                current => current.OptionId == optionId,
+                cancellationToken);
+
+        var now = DateTime.UtcNow;
+
+        if (option is null)
+        {
+            option = new AnalyticsOptionConfig
+            {
+                OptionId = optionId,
+                OptionCode = optionCode,
+                OptionName = optionName,
+                IsActive = isActive,
+                CreatedBy = userId,
+                CreatedAt = now
+            };
+
+            await context.AnalyticsOptionConfigs.AddAsync(
+                option,
+                cancellationToken);
+        }
+        else
+        {
+            option.OptionCode = optionCode;
+            option.OptionName = optionName;
+            option.IsActive = isActive;
+            option.UpdatedBy = userId;
+            option.UpdatedAt = now;
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         cache.Remove(AnalyticsAccessCacheKeys.ActiveOptions);
     }
 
     private Task<IReadOnlyList<AnalyticsOptionConfig>> GetActiveOptionsAsync(
         CancellationToken cancellationToken) =>
-        cache.GetOrCreateAsync(
+        cache.GetOrCreateAsync<IReadOnlyList<AnalyticsOptionConfig>>(
             AnalyticsAccessCacheKeys.ActiveOptions,
             AnalyticsAccessCachePolicy.ConfigurationDuration,
-            token => queryExecutor.QueryAsync<AnalyticsOptionConfig>(
-                AnalyticsOptionConfigSql.GetAll,
-                null,
-                _commandTimeoutSeconds,
-                token),
+            async token => await context.AnalyticsOptionConfigs
+                .AsNoTracking()
+                .Where(option => option.IsActive)
+                .OrderBy(option => option.OptionId)
+                .Select(option => new AnalyticsOptionConfig
+                {
+                    OptionId = option.OptionId,
+                    OptionCode = option.OptionCode,
+                    OptionName = option.OptionName,
+                    IsActive = true
+                })
+                .ToArrayAsync(token),
             cancellationToken);
 }

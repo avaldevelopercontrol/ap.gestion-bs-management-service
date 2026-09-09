@@ -1,56 +1,26 @@
+using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
 using GesMgmt.Domain.Entities.Analytics.PortfolioControlCenter;
 using GesMgmt.Domain.Interfaces.Analytics.PortfolioControlCenter;
-using GesMgmt.Infraestructure.Persistence.Analytics;
-using GesMgmt.Application.Interfaces.Analytics.PortfolioControlCenter;
-using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
+using GesMgmt.Infraestructure.Persistence;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics.PortfolioControlCenter;
 
-internal sealed class PortfolioOverviewRepository(
-    IAnalyticsQueryExecutor queryExecutor,
-    AnalyticsDatabaseOptions databaseOptions)
+internal sealed class PortfolioOverviewRepository(AnalyticsDbContext context)
     : IPortfolioOverviewRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
-    public async Task<PortfolioOverviewContext?> ResolveContextAsync(
+    public Task<PortfolioOverviewContext?> ResolveContextAsync(
         int crmClientId,
         string? campaignCode,
         long? subPortfolioId,
         string? businessUnit,
-        CancellationToken cancellationToken)
-    {
-        var row = await queryExecutor.QuerySingleOrDefaultAsync<ContextDbRow>(
-            PortfolioOverviewSql.ResolveContext,
-            new
-            {
-                CrmClientId = crmClientId,
-                CampaignCode = campaignCode,
-                SubPortfolioId = subPortfolioId,
-                BusinessUnit = businessUnit
-            },
-            _commandTimeoutSeconds,
+        CancellationToken cancellationToken) =>
+        PortfolioOverviewContextEfQuery.ExecuteAsync(
+            context,
+            crmClientId,
+            campaignCode,
+            subPortfolioId,
+            businessUnit,
             cancellationToken);
-
-        if (row is null)
-        {
-            return null;
-        }
-
-        return new PortfolioOverviewContext(
-            new PortfolioSummaryContext(
-                row.ClientKey,
-                row.CampaignKey,
-                row.CampaignCode,
-                row.CampaignName,
-                DateOnly.FromDateTime(row.StartDate),
-                DateOnly.FromDateTime(row.EndDate),
-                row.LatestDataDate.HasValue
-                    ? DateOnly.FromDateTime(row.LatestDataDate.Value)
-                    : null),
-            row.OperationalSubPortfolioAvailable);
-    }
 
     public async Task<PortfolioOverviewDbRows> GetOverviewAsync(
         int clientKey,
@@ -61,48 +31,48 @@ internal sealed class PortfolioOverviewRepository(
         PortfolioSummaryRange range,
         CancellationToken cancellationToken)
     {
-        var dateFrom = range.DateFrom.ToDateTime(TimeOnly.MinValue);
-        var dateTo = range.DateTo.ToDateTime(TimeOnly.MinValue);
-        var dateToExclusive = range.DateTo
-            .AddDays(1)
-            .ToDateTime(TimeOnly.MinValue);
+        var summary = await PortfolioSummaryEfQuery.ExecuteAsync(
+            context,
+            clientKey,
+            campaignKey,
+            subPortfolioId,
+            businessUnit,
+            range,
+            cancellationToken);
 
-        var results = await queryExecutor.QueryFourAsync<
-            PortfolioSummaryDbRow,
-            PortfolioTargetProgressDbRow,
-            PortfolioPromisesDbRow,
-            PortfolioEvolutionDbRow>(
-                PortfolioOverviewSql.Query,
-                new
-                {
-                    ClientKey = clientKey,
-                    CampaignKey = campaignKey,
-                    SubPortfolioId = subPortfolioId,
-                    BusinessUnit = businessUnit,
-                    IncludeClientLevelTarget = includeClientLevelTarget,
-                    DateFrom = dateFrom,
-                    DateTo = dateTo,
-                    DateToExclusive = dateToExclusive
-                },
-                _commandTimeoutSeconds,
+        PortfolioTargetProgressDbRow? targetProgress = null;
+        if (subPortfolioId is null && includeClientLevelTarget)
+        {
+            targetProgress = await PortfolioTargetProgressEfQuery.GetAsync(
+                context,
+                clientKey,
+                campaignKey,
+                businessUnit,
+                range.DateTo,
                 cancellationToken);
+        }
+
+        var promises = await PortfolioPromisesEfQuery.GetOperationalAsync(
+            context,
+            clientKey,
+            campaignKey,
+            subPortfolioId,
+            businessUnit,
+            cancellationToken);
+
+        var evolution = await PortfolioEvolutionEfQuery.GetAsync(
+            context,
+            clientKey,
+            campaignKey,
+            subPortfolioId,
+            businessUnit,
+            new PortfolioEvolutionRange(range.DateFrom, range.DateTo),
+            cancellationToken);
 
         return new PortfolioOverviewDbRows(
-            results.First.Single(),
-            results.Second.SingleOrDefault(),
-            results.Third.Single(),
-            results.Fourth);
-    }
-
-    private sealed record ContextDbRow
-    {
-        public int ClientKey { get; init; }
-        public int CampaignKey { get; init; }
-        public required string CampaignCode { get; init; }
-        public required string CampaignName { get; init; }
-        public DateTime StartDate { get; init; }
-        public DateTime EndDate { get; init; }
-        public DateTime? LatestDataDate { get; init; }
-        public bool OperationalSubPortfolioAvailable { get; init; }
+            summary,
+            targetProgress,
+            promises,
+            evolution);
     }
 }

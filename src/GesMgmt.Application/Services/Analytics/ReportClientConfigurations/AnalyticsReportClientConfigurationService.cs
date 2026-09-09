@@ -91,27 +91,19 @@ public sealed class AnalyticsReportClientConfigurationService(
 
         var usesLiveCatalog = catalogRepository.Supports(optionId);
 
-        Task<IReadOnlyList<AnalyticsReportClientCatalogItem>> catalogTask =
+        IReadOnlyList<AnalyticsReportClientCatalogItem> catalogItems =
             usesLiveCatalog
-                ? catalogRepository.GetCurrentAsync(optionId, cancellationToken)
-                : Task.FromResult<IReadOnlyList<AnalyticsReportClientCatalogItem>>(
-                    Array.Empty<AnalyticsReportClientCatalogItem>());
+                ? await catalogRepository.GetCurrentAsync(
+                    optionId,
+                    cancellationToken)
+                : Array.Empty<AnalyticsReportClientCatalogItem>();
 
-        var scopeMappingsTask = scopeRepository.GetMappingsAsync(
+        var scopeMappings = await scopeRepository.GetMappingsAsync(
             optionId,
             cancellationToken);
-        var publicationsTask = embedRepository.GetActiveForOptionAsync(
+        var publications = await embedRepository.GetActiveForOptionAsync(
             optionId,
             cancellationToken);
-
-        await Task.WhenAll(
-            catalogTask,
-            scopeMappingsTask,
-            publicationsTask);
-
-        var catalogItems = await catalogTask;
-        var scopeMappings = await scopeMappingsTask;
-        var publications = await publicationsTask;
 
         var clientIds = catalogItems
             .Select(item => item.CrmClientId)

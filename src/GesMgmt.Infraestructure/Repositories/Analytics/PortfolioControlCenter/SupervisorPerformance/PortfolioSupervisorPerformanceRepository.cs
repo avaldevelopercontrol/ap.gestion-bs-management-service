@@ -1,45 +1,19 @@
 using GesMgmt.Domain.Entities.Analytics.PortfolioControlCenter;
 using GesMgmt.Domain.Interfaces.Analytics.PortfolioControlCenter;
-using GesMgmt.Infraestructure.Persistence.Analytics;
-using GesMgmt.Application.Interfaces.Analytics.PortfolioControlCenter;
-using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
+using GesMgmt.Infraestructure.Persistence;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics.PortfolioControlCenter;
 
-internal sealed class PortfolioSupervisorPerformanceRepository(
-    IAnalyticsQueryExecutor queryExecutor,
-    AnalyticsDatabaseOptions databaseOptions)
+internal sealed class PortfolioSupervisorPerformanceRepository(AnalyticsDbContext context)
     : IPortfolioSupervisorPerformanceRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
-    public async Task<IReadOnlyList<PortfolioSupervisorPerformanceDbRow>?> GetSupervisorPerformanceAsync(
+    public Task<IReadOnlyList<PortfolioSupervisorPerformanceDbRow>?> GetSupervisorPerformanceAsync(
         int crmClientId,
         PortfolioSupervisorPerformanceRequest request,
-        CancellationToken cancellationToken)
-    {
-        var result = await queryExecutor.QueryTwoAsync<int, PortfolioSupervisorPerformanceDbRow>(
-            PortfolioSupervisorPerformanceSql.SupervisorPerformance,
-            new
-            {
-                CrmClientId = crmClientId,
-                CampaignCode = request.Campaign,
-                SubPortfolioId = request.SubPortfolioId,
-                BusinessUnit = request.BusinessUnit,
-                SupervisorId = request.SupervisorId,
-                DateFrom = request.DateFrom?.ToDateTime(TimeOnly.MinValue),
-                DateTo = request.DateTo?.ToDateTime(TimeOnly.MinValue)
-            },
-            _commandTimeoutSeconds,
+        CancellationToken cancellationToken) =>
+        PortfolioPeoplePerformanceEfQuery.GetSupervisorsAsync(
+            context,
+            crmClientId,
+            request,
             cancellationToken);
-
-        return result.First.Count switch
-        {
-            0 => null,
-            1 => result.Second,
-            _ => throw new InvalidOperationException(
-                "La resolución del cliente Analytics devolvió más de una fila.")
-        };
-    }
 }

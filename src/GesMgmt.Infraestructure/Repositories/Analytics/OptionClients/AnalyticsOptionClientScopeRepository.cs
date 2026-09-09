@@ -1,82 +1,71 @@
+using System.Data;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
-using GesMgmt.Application.Interfaces.Analytics;
 using GesMgmt.Application.Utils.Analytics;
 using GesMgmt.Domain.Constants.Analytics;
 using GesMgmt.Domain.Entities.Analytics;
 using GesMgmt.Domain.Interfaces.Analytics;
-using GesMgmt.Infraestructure.Persistence.Analytics;
+using GesMgmt.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics;
 
 internal sealed class AnalyticsOptionClientScopeRepository(
-    IAnalyticsQueryExecutor queryExecutor,
-    AnalyticsDatabaseOptions databaseOptions)
+    GesMgmt.Infraestructure.Persistence.AnalyticsDbContext context)
     : IAnalyticsOptionClientScopeRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
-    public Task<IReadOnlyList<int>> GetClientIdsAsync(
+    public async Task<IReadOnlyList<int>> GetClientIdsAsync(
         int optionId,
         CancellationToken cancellationToken) =>
-        queryExecutor.QueryAsync<int>(
-            AnalyticsOptionClientScopeSql.GetClients,
-            new { OptionId = optionId },
-            _commandTimeoutSeconds,
-            cancellationToken);
+        await context.AnalyticsOptionClientScopes
+            .AsNoTracking()
+            .Where(scope =>
+                scope.OptionId == optionId &&
+                scope.IsActive)
+            .OrderBy(scope => scope.CrmClientId)
+            .Select(scope => scope.CrmClientId)
+            .ToArrayAsync(cancellationToken);
 
-    public Task<IReadOnlyList<int>> GetAuthorizedClientIdsAsync(
+    public async Task<IReadOnlyList<int>> GetAuthorizedClientIdsAsync(
+        int userId,
+        int optionId,
+        CancellationToken cancellationToken) =>
+        await GetAuthorizedScopes(userId, optionId)
+            .OrderBy(scope => scope.CrmClientId)
+            .Select(scope => scope.CrmClientId)
+            .ToArrayAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<AnalyticsAuthorizedClientScopeEntry>> GetAuthorizedClientsAsync(
         int userId,
         int optionId,
         CancellationToken cancellationToken)
     {
-        if (UsesInheritedClientAccess(optionId))
-        {
-            return queryExecutor.QueryAsync<int>(
-                AnalyticsOptionClientScopeSql.GetInheritedClientIds,
-                new { OptionId = optionId },
-                _commandTimeoutSeconds,
-                cancellationToken);
-        }
-
-        return queryExecutor.QueryAsync<int>(
-            AnalyticsOptionClientScopeSql.GetAuthorizedClientIds,
-            new
+        var rows = await (
+            from scope in GetAuthorizedScopes(userId, optionId)
+            join client in context.AnalyticsClients.AsNoTracking()
+                on scope.CrmClientId equals client.CrmClientId into clients
+            from client in clients.DefaultIfEmpty()
+            orderby scope.CrmClientId
+            select new
             {
-                UserId = userId,
-                OptionId = optionId
-            },
-            _commandTimeoutSeconds,
-            cancellationToken);
+                scope.CrmClientId,
+                client.ClientName,
+                client.ClientCode
+            })
+            .ToArrayAsync(cancellationToken);
+
+        return rows
+            .Select(row => new AnalyticsAuthorizedClientScopeEntry
+            {
+                CrmClientId = row.CrmClientId,
+                Name = ResolveClientName(
+                    row.CrmClientId,
+                    row.ClientName,
+                    row.ClientCode)
+            })
+            .ToArray();
     }
 
-    public Task<IReadOnlyList<AnalyticsAuthorizedClientScopeEntry>> GetAuthorizedClientsAsync(
-        int userId,
-        int optionId,
-        CancellationToken cancellationToken)
-    {
-        if (UsesInheritedClientAccess(optionId))
-        {
-            return queryExecutor.QueryAsync<AnalyticsAuthorizedClientScopeEntry>(
-                AnalyticsOptionClientScopeSql.GetInheritedClients,
-                new { OptionId = optionId },
-                _commandTimeoutSeconds,
-                cancellationToken);
-        }
-
-        return queryExecutor.QueryAsync<AnalyticsAuthorizedClientScopeEntry>(
-            AnalyticsOptionClientScopeSql.GetAuthorizedClients,
-            new
-            {
-                UserId = userId,
-                OptionId = optionId
-            },
-            _commandTimeoutSeconds,
-            cancellationToken);
-    }
-
-    public async Task<bool> IsAuthorizedClientAsync(
+    public Task<bool> IsAuthorizedClientAsync(
         int userId,
         int optionId,
         int clientId,
@@ -84,34 +73,16 @@ internal sealed class AnalyticsOptionClientScopeRepository(
     {
         if (userId <= 0 || optionId <= 0 || clientId <= 0)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
-        var result = UsesInheritedClientAccess(optionId)
-            ? await queryExecutor.QuerySingleOrDefaultAsync<int>(
-                AnalyticsOptionClientScopeSql.IsInheritedClient,
-                new
-                {
-                    OptionId = optionId,
-                    ClientId = clientId
-                },
-                _commandTimeoutSeconds,
-                cancellationToken)
-            : await queryExecutor.QuerySingleOrDefaultAsync<int>(
-                AnalyticsOptionClientScopeSql.IsAuthorizedClient,
-                new
-                {
-                    UserId = userId,
-                    OptionId = optionId,
-                    ClientId = clientId
-                },
-                _commandTimeoutSeconds,
+        return GetAuthorizedScopes(userId, optionId)
+            .AnyAsync(
+                scope => scope.CrmClientId == clientId,
                 cancellationToken);
-
-        return result == 1;
     }
 
-    public Task<IReadOnlyList<AnalyticsOptionClientScopeEntry>> GetActiveScopesAsync(
+    public async Task<IReadOnlyList<AnalyticsOptionClientScopeEntry>> GetActiveScopesAsync(
         IReadOnlyCollection<int> optionIds,
         CancellationToken cancellationToken)
     {
@@ -123,21 +94,27 @@ internal sealed class AnalyticsOptionClientScopeRepository(
 
         if (normalizedOptionIds.Length == 0)
         {
-            return Task.FromResult<IReadOnlyList<AnalyticsOptionClientScopeEntry>>(
-                Array.Empty<AnalyticsOptionClientScopeEntry>());
+            return Array.Empty<AnalyticsOptionClientScopeEntry>();
         }
 
-        return queryExecutor.QueryAsync<AnalyticsOptionClientScopeEntry>(
-            AnalyticsOptionClientScopeSql.GetActiveScopes,
-            new
+        return await (
+            from scope in context.AnalyticsOptionClientScopes.AsNoTracking()
+            join option in context.AnalyticsOptionConfigs.AsNoTracking()
+                on scope.OptionId equals option.OptionId
+            where normalizedOptionIds.Contains(scope.OptionId)
+                && scope.IsActive
+                && option.IsActive
+            orderby scope.OptionId, scope.CrmClientId
+            select new AnalyticsOptionClientScopeEntry
             {
-                OptionIdsJson = JsonSerializer.Serialize(normalizedOptionIds)
-            },
-            _commandTimeoutSeconds,
-            cancellationToken);
+                OptionId = scope.OptionId,
+                CrmClientId = scope.CrmClientId,
+                IsActive = true
+            })
+            .ToArrayAsync(cancellationToken);
     }
 
-    public Task ReplaceAsync(
+    public async Task ReplaceAsync(
         int optionId,
         IReadOnlyCollection<int> previousClientIds,
         IReadOnlyCollection<int> clientIds,
@@ -146,32 +123,123 @@ internal sealed class AnalyticsOptionClientScopeRepository(
     {
         var normalizedPreviousClientIds = Normalize(previousClientIds);
         var normalizedClientIds = Normalize(clientIds);
-        var commands = new List<AnalyticsDbCommand>
+        var requestedClientIds = normalizedClientIds.ToHashSet();
+        var now = DateTime.UtcNow;
+
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken);
+
+        var existingScopes = await context.AnalyticsOptionClientScopes
+            .Where(scope => scope.OptionId == optionId)
+            .ToListAsync(cancellationToken);
+
+        foreach (var scope in existingScopes)
         {
-            new(
-                AnalyticsOptionClientScopeSql.Replace,
-                new
+            if (requestedClientIds.Contains(scope.CrmClientId))
+            {
+                scope.IsActive = true;
+                scope.UpdatedBy = userId;
+                scope.UpdatedAt = now;
+                requestedClientIds.Remove(scope.CrmClientId);
+                continue;
+            }
+
+            if (!scope.IsActive)
+            {
+                continue;
+            }
+
+            scope.IsActive = false;
+            scope.UpdatedBy = userId;
+            scope.UpdatedAt = now;
+        }
+
+        foreach (var clientId in requestedClientIds.OrderBy(clientId => clientId))
+        {
+            await context.AnalyticsOptionClientScopes.AddAsync(
+                new AnalyticsOptionClientScopeEntry
                 {
                     OptionId = optionId,
-                    ClientIdsJson = JsonSerializer.Serialize(normalizedClientIds),
-                    UserId = userId
-                })
-        };
+                    CrmClientId = clientId,
+                    IsActive = true,
+                    CreatedBy = userId,
+                    CreatedAt = now
+                },
+                cancellationToken);
+        }
 
-        commands.Add(new AnalyticsDbCommand(
-            AnalyticsOptionClientScopeAuditSql.Insert,
-            new
-            {
-                OptionId = optionId,
-                PreviousClientIdsJson = JsonSerializer.Serialize(normalizedPreviousClientIds),
-                NewClientIdsJson = JsonSerializer.Serialize(normalizedClientIds),
-                UserId = userId
-            }));
+        await context.SaveChangesAsync(cancellationToken);
 
-        return queryExecutor.ExecuteTransactionAsync(
-            commands,
-            _commandTimeoutSeconds,
+        var previousClientIdsJson = JsonSerializer.Serialize(normalizedPreviousClientIds);
+        var newClientIdsJson = JsonSerializer.Serialize(normalizedClientIds);
+
+        await context.Database.ExecuteSqlInterpolatedAsync(
+            $"""
+            INSERT INTO analytics_access.option_client_scope_audit
+            (
+                option_id,
+                previous_client_ids,
+                new_client_ids,
+                created_by,
+                created_at
+            )
+            VALUES
+            (
+                {optionId},
+                {previousClientIdsJson},
+                {newClientIdsJson},
+                {userId},
+                {now}
+            );
+            """,
             cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    private IQueryable<AnalyticsOptionClientScopeEntry> GetAuthorizedScopes(
+        int userId,
+        int optionId)
+    {
+        var query = context.AnalyticsOptionClientScopes
+            .AsNoTracking()
+            .Where(scope =>
+                scope.OptionId == optionId &&
+                scope.IsActive &&
+                context.AnalyticsOptionConfigs.Any(option =>
+                    option.OptionId == scope.OptionId &&
+                    option.IsActive));
+
+        if (UsesInheritedClientAccess(optionId))
+        {
+            return query;
+        }
+
+        return query.Where(scope =>
+            context.AnalyticsUserOptionScopes.Any(userScope =>
+                userScope.UserId == userId &&
+                userScope.OptionId == scope.OptionId &&
+                userScope.IsActive));
+    }
+
+    private static string ResolveClientName(
+        int clientId,
+        string? clientName,
+        string? clientCode)
+    {
+        var normalizedName = clientName?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(normalizedName))
+        {
+            return normalizedName;
+        }
+
+        var normalizedCode = clientCode?.Trim();
+
+        return !string.IsNullOrWhiteSpace(normalizedCode)
+            ? normalizedCode
+            : $"Cartera {clientId}";
     }
 
     // Portfolio Control Center is an operational module whose data scope is

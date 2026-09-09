@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Infraestructure.Configurations;
 
@@ -57,6 +57,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_SubZonaGeneral> av_SubZonaGenerals { get; set; }
         public DbSet<av_TablaCampoGeneral> av_TablaCampoGenerals { get; set; }
         public DbSet<av_TipoGestion> av_TipoGestions { get; set; }
+        public DbSet<av_UGrupo> av_UGrupos { get; set; }
         public DbSet<av_Ubigeo> av_Ubigeos { get; set; }
         public DbSet<av_UsuarioGrupoOpcion> av_UsuarioGrupoOpcions { get; set; }
         public DbSet<av_Usuario> av_Usuarios { get; set; }

@@ -1,45 +1,38 @@
+using System.Data;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
-using GesMgmt.Application.Interfaces.Analytics;
-using GesMgmt.Application.Utils.Analytics;
-using GesMgmt.Domain.Constants.Analytics;
 using GesMgmt.Domain.Entities.Analytics;
 using GesMgmt.Domain.Interfaces.Analytics;
-using GesMgmt.Infraestructure.Persistence.Analytics;
+using GesMgmt.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics;
 
 internal sealed class AnalyticsOptionGroupScopeRepository(
-    IAnalyticsQueryExecutor queryExecutor,
-    AnalyticsDatabaseOptions databaseOptions)
+    GesMgmt.Infraestructure.Persistence.AnalyticsDbContext context)
     : IAnalyticsOptionGroupScopeRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
-    public async Task<bool> HasAnyScopeAsync(
-        int optionId,
-        CancellationToken cancellationToken)
-    {
-        var count = await queryExecutor.QuerySingleAsync<int>(
-            AnalyticsOptionGroupScopeSql.HasAnyScope,
-            new { OptionId = optionId },
-            _commandTimeoutSeconds,
-            cancellationToken);
-
-        return count > 0;
-    }
-
-    public Task<IReadOnlyList<int>> GetGroupIdsAsync(
+    public Task<bool> HasAnyScopeAsync(
         int optionId,
         CancellationToken cancellationToken) =>
-        queryExecutor.QueryAsync<int>(
-            AnalyticsOptionGroupScopeSql.GetGroups,
-            new { OptionId = optionId },
-            _commandTimeoutSeconds,
-            cancellationToken);
+        context.AnalyticsOptionGroupScopes
+            .AsNoTracking()
+            .AnyAsync(
+                scope => scope.OptionId == optionId,
+                cancellationToken);
 
-    public Task<IReadOnlyList<AnalyticsOptionGroupScopeEntry>> GetScopesAsync(
+    public async Task<IReadOnlyList<int>> GetGroupIdsAsync(
+        int optionId,
+        CancellationToken cancellationToken) =>
+        await context.AnalyticsOptionGroupScopes
+            .AsNoTracking()
+            .Where(scope =>
+                scope.OptionId == optionId &&
+                scope.IsActive)
+            .OrderBy(scope => scope.SisgesGroupId)
+            .Select(scope => scope.SisgesGroupId)
+            .ToArrayAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<AnalyticsOptionGroupScopeEntry>> GetScopesAsync(
         IReadOnlyCollection<int> optionIds,
         CancellationToken cancellationToken)
     {
@@ -51,21 +44,24 @@ internal sealed class AnalyticsOptionGroupScopeRepository(
 
         if (normalizedOptionIds.Length == 0)
         {
-            return Task.FromResult<IReadOnlyList<AnalyticsOptionGroupScopeEntry>>(
-                Array.Empty<AnalyticsOptionGroupScopeEntry>());
+            return Array.Empty<AnalyticsOptionGroupScopeEntry>();
         }
 
-        return queryExecutor.QueryAsync<AnalyticsOptionGroupScopeEntry>(
-            AnalyticsOptionGroupScopeSql.GetScopes,
-            new
+        return await context.AnalyticsOptionGroupScopes
+            .AsNoTracking()
+            .Where(scope => normalizedOptionIds.Contains(scope.OptionId))
+            .OrderBy(scope => scope.OptionId)
+            .ThenBy(scope => scope.SisgesGroupId)
+            .Select(scope => new AnalyticsOptionGroupScopeEntry
             {
-                OptionIdsJson = JsonSerializer.Serialize(normalizedOptionIds)
-            },
-            _commandTimeoutSeconds,
-            cancellationToken);
+                OptionId = scope.OptionId,
+                SisgesGroupId = scope.SisgesGroupId,
+                IsActive = scope.IsActive
+            })
+            .ToArrayAsync(cancellationToken);
     }
 
-    public Task ReplaceAsync(
+    public async Task ReplaceAsync(
         int optionId,
         IReadOnlyCollection<int> previousGroupIds,
         IReadOnlyCollection<int> groupIds,
@@ -74,32 +70,81 @@ internal sealed class AnalyticsOptionGroupScopeRepository(
     {
         var normalizedPreviousGroupIds = Normalize(previousGroupIds);
         var normalizedGroupIds = Normalize(groupIds);
-        var commands = new List<AnalyticsDbCommand>
+        var requestedGroupIds = normalizedGroupIds.ToHashSet();
+        var now = DateTime.UtcNow;
+
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken);
+
+        var existingScopes = await context.AnalyticsOptionGroupScopes
+            .Where(scope => scope.OptionId == optionId)
+            .ToListAsync(cancellationToken);
+
+        foreach (var scope in existingScopes)
         {
-            new(
-                AnalyticsOptionGroupScopeSql.Replace,
-                new
+            if (requestedGroupIds.Contains(scope.SisgesGroupId))
+            {
+                scope.IsActive = true;
+                scope.UpdatedBy = userId;
+                scope.UpdatedAt = now;
+                requestedGroupIds.Remove(scope.SisgesGroupId);
+                continue;
+            }
+
+            if (!scope.IsActive)
+            {
+                continue;
+            }
+
+            scope.IsActive = false;
+            scope.UpdatedBy = userId;
+            scope.UpdatedAt = now;
+        }
+
+        foreach (var groupId in requestedGroupIds.OrderBy(groupId => groupId))
+        {
+            await context.AnalyticsOptionGroupScopes.AddAsync(
+                new AnalyticsOptionGroupScopeEntry
                 {
                     OptionId = optionId,
-                    GroupIdsJson = JsonSerializer.Serialize(normalizedGroupIds),
-                    UserId = userId
-                })
-        };
+                    SisgesGroupId = groupId,
+                    IsActive = true,
+                    CreatedBy = userId,
+                    CreatedAt = now,
+                    UpdatedBy = userId,
+                    UpdatedAt = now
+                },
+                cancellationToken);
+        }
 
-        commands.Add(new AnalyticsDbCommand(
-            AnalyticsOptionGroupScopeAuditSql.Insert,
-            new
-            {
-                OptionId = optionId,
-                PreviousGroupIdsJson = JsonSerializer.Serialize(normalizedPreviousGroupIds),
-                NewGroupIdsJson = JsonSerializer.Serialize(normalizedGroupIds),
-                UserId = userId
-            }));
+        await context.SaveChangesAsync(cancellationToken);
 
-        return queryExecutor.ExecuteTransactionAsync(
-            commands,
-            _commandTimeoutSeconds,
+        var previousGroupIdsJson = JsonSerializer.Serialize(normalizedPreviousGroupIds);
+        var newGroupIdsJson = JsonSerializer.Serialize(normalizedGroupIds);
+
+        await context.Database.ExecuteSqlInterpolatedAsync(
+            $"""
+            INSERT INTO analytics_access.option_group_scope_audit
+            (
+                option_id,
+                previous_group_ids,
+                new_group_ids,
+                created_by,
+                created_at
+            )
+            VALUES
+            (
+                {optionId},
+                {previousGroupIdsJson},
+                {newGroupIdsJson},
+                {userId},
+                {now}
+            );
+            """,
             cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
     }
 
     private static int[] Normalize(IReadOnlyCollection<int> groupIds) =>

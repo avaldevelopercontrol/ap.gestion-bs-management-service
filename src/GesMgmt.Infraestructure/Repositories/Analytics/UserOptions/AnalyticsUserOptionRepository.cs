@@ -1,59 +1,59 @@
+using System.Data;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
-using GesMgmt.Application.Interfaces.Analytics;
-using GesMgmt.Application.Utils.Analytics;
-using GesMgmt.Domain.Constants.Analytics;
 using GesMgmt.Domain.Entities.Analytics;
 using GesMgmt.Domain.Interfaces.Analytics;
-using GesMgmt.Infraestructure.Persistence.Analytics;
+using GesMgmt.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics;
 
 internal sealed class AnalyticsUserOptionRepository(
-    IAnalyticsQueryExecutor executor,
-    AnalyticsDatabaseOptions databaseOptions)
+    GesMgmt.Infraestructure.Persistence.AnalyticsDbContext context)
     : IAnalyticsUserOptionRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
-    public async Task<bool> HasAccessAsync(
+    public Task<bool> HasAccessAsync(
         int userId,
         int optionId,
-        CancellationToken cancellationToken)
-    {
-        var count = await executor.QuerySingleAsync<int>(
-            AnalyticsUserOptionSql.HasAccess,
-            new
-            {
-                UserId = userId,
-                OptionId = optionId
-            },
-            _commandTimeoutSeconds,
-            cancellationToken);
+        CancellationToken cancellationToken) =>
+        context.AnalyticsUserOptionScopes
+            .AsNoTracking()
+            .AnyAsync(
+                scope =>
+                    scope.UserId == userId &&
+                    scope.OptionId == optionId &&
+                    scope.IsActive,
+                cancellationToken);
 
-        return count > 0;
-    }
-
-    public Task<IReadOnlyList<AnalyticsUserOption>> GetUserOptionsAsync(
+    public async Task<IReadOnlyList<AnalyticsUserOption>> GetUserOptionsAsync(
         int userId,
         CancellationToken cancellationToken) =>
-        executor.QueryAsync<AnalyticsUserOption>(
-            AnalyticsUserOptionSql.GetUserOptions,
-            new { UserId = userId },
-            _commandTimeoutSeconds,
-            cancellationToken);
+        await (
+            from scope in context.AnalyticsUserOptionScopes.AsNoTracking()
+            join option in context.AnalyticsOptionConfigs.AsNoTracking()
+                on scope.OptionId equals option.OptionId
+            where scope.UserId == userId &&
+                  scope.IsActive &&
+                  option.IsActive
+            orderby option.OptionId
+            select new AnalyticsUserOption(
+                option.OptionId,
+                option.OptionCode,
+                option.OptionName))
+            .ToArrayAsync(cancellationToken);
 
-    public Task<IReadOnlyList<int>> GetUserIdsAsync(
+    public async Task<IReadOnlyList<int>> GetUserIdsAsync(
         int optionId,
         CancellationToken cancellationToken) =>
-        executor.QueryAsync<int>(
-            AnalyticsUserOptionSql.GetUsers,
-            new { OptionId = optionId },
-            _commandTimeoutSeconds,
-            cancellationToken);
+        await context.AnalyticsUserOptionScopes
+            .AsNoTracking()
+            .Where(scope =>
+                scope.OptionId == optionId &&
+                scope.IsActive)
+            .OrderBy(scope => scope.UserId)
+            .Select(scope => scope.UserId)
+            .ToArrayAsync(cancellationToken);
 
-    public Task ReplaceAsync(
+    public async Task ReplaceAsync(
         int optionId,
         IReadOnlyCollection<int> previousUserIds,
         IReadOnlyCollection<int> userIds,
@@ -62,32 +62,79 @@ internal sealed class AnalyticsUserOptionRepository(
     {
         var normalizedPreviousUserIds = Normalize(previousUserIds);
         var normalizedUserIds = Normalize(userIds);
-        var commands = new List<AnalyticsDbCommand>
-        {
-            new(
-                AnalyticsUserOptionSql.Replace,
-                new
-                {
-                    OptionId = optionId,
-                    UserIdsJson = JsonSerializer.Serialize(normalizedUserIds),
-                    AdminUserId = adminUserId
-                })
-        };
+        var requestedUserIds = normalizedUserIds.ToHashSet();
+        var now = DateTime.UtcNow;
 
-        commands.Add(new AnalyticsDbCommand(
-            AnalyticsUserOptionScopeAuditSql.Insert,
-            new
-            {
-                OptionId = optionId,
-                PreviousUserIdsJson = JsonSerializer.Serialize(normalizedPreviousUserIds),
-                NewUserIdsJson = JsonSerializer.Serialize(normalizedUserIds),
-                UserId = adminUserId
-            }));
-
-        return executor.ExecuteTransactionAsync(
-            commands,
-            _commandTimeoutSeconds,
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
             cancellationToken);
+
+        var existingScopes = await context.AnalyticsUserOptionScopes
+            .Where(scope => scope.OptionId == optionId)
+            .ToListAsync(cancellationToken);
+
+        foreach (var scope in existingScopes)
+        {
+            if (requestedUserIds.Contains(scope.UserId))
+            {
+                scope.IsActive = true;
+                scope.UpdatedBy = adminUserId;
+                scope.UpdatedAt = now;
+                requestedUserIds.Remove(scope.UserId);
+                continue;
+            }
+
+            if (!scope.IsActive)
+            {
+                continue;
+            }
+
+            scope.IsActive = false;
+            scope.UpdatedBy = adminUserId;
+            scope.UpdatedAt = now;
+        }
+
+        foreach (var userId in requestedUserIds.OrderBy(userId => userId))
+        {
+            await context.AnalyticsUserOptionScopes.AddAsync(
+                new AnalyticsUserOptionScopeEntry
+                {
+                    UserId = userId,
+                    OptionId = optionId,
+                    IsActive = true,
+                    CreatedBy = adminUserId,
+                    CreatedAt = now
+                },
+                cancellationToken);
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        var previousUserIdsJson = JsonSerializer.Serialize(normalizedPreviousUserIds);
+        var newUserIdsJson = JsonSerializer.Serialize(normalizedUserIds);
+
+        await context.Database.ExecuteSqlInterpolatedAsync(
+            $"""
+            INSERT INTO analytics_access.user_option_scope_audit
+            (
+                option_id,
+                previous_user_ids,
+                new_user_ids,
+                created_by,
+                created_at
+            )
+            VALUES
+            (
+                {optionId},
+                {previousUserIdsJson},
+                {newUserIdsJson},
+                {adminUserId},
+                {now}
+            );
+            """,
+            cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
     }
 
     private static int[] Normalize(IReadOnlyCollection<int> userIds) =>

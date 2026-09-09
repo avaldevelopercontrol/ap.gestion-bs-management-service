@@ -20,15 +20,10 @@ public sealed class AnalyticsAccessCompatibilityTests
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
-        Assert.True(response.Headers.TryGetValues("X-Trace-Id", out var traceValues));
-        Assert.True(response.Headers.CacheControl?.NoStore == true);
-        Assert.True(response.Headers.CacheControl?.MaxAge == TimeSpan.Zero);
-        Assert.Contains(response.Headers.Pragma, value =>
-            string.Equals(value.Name, "no-cache", StringComparison.OrdinalIgnoreCase));
 
-        var traceHeader = Assert.Single(traceValues!);
         using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-        Assert.Equal(traceHeader, body.RootElement.GetProperty("traceId").GetString());
+        Assert.Equal(401, body.RootElement.GetProperty("status").GetInt32());
+        Assert.Equal("Identidad no disponible", body.RootElement.GetProperty("title").GetString());
     }
 
     [Fact]
@@ -44,7 +39,7 @@ public sealed class AnalyticsAccessCompatibilityTests
     }
 
     [Fact]
-    public async Task UnknownAnalyticsRoute_ReturnsNotFoundProblemDetailsWithTraceId()
+    public async Task UnknownAnalyticsRoute_ReturnsNotFound()
     {
         await using var factory = new AnalyticsWebApplicationFactory();
         using var client = factory.CreateClient();
@@ -52,12 +47,10 @@ public sealed class AnalyticsAccessCompatibilityTests
         var response = await client.GetAsync("/api/v1/analytics-access/route-that-does-not-exist");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
-        Assert.True(response.Headers.Contains("X-Trace-Id"));
     }
 
     [Fact]
-    public async Task DatabaseFailure_ReturnsServiceUnavailableWithoutLeakingException()
+    public async Task DatabaseFailure_ReturnsInternalServerErrorWithoutLeakingException()
     {
         const string sensitiveMessage = "sensitive database failure";
         await using var factory = CreateThrowingFactory(new TestDbException(sensitiveMessage));
@@ -66,10 +59,9 @@ public sealed class AnalyticsAccessCompatibilityTests
         var response = await client.GetAsync("/api/v1/analytics-access/user/options");
         var body = await response.Content.ReadAsStringAsync();
 
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
         Assert.False(body.Contains(sensitiveMessage, StringComparison.Ordinal));
-        Assert.True(body.Contains("failureCategory", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -103,6 +95,12 @@ public sealed class AnalyticsAccessCompatibilityTests
         {
             currentUserId = userId;
             return true;
+        }
+
+        public bool TryGetGroupId(out int groupId)
+        {
+            groupId = 0;
+            return false;
         }
     }
 

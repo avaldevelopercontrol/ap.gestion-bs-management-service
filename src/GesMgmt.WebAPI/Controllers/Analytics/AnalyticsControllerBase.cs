@@ -1,7 +1,7 @@
 using GesMgmt.Application.DTOs.Analytics;
 using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
 using GesMgmt.Application.Interfaces.Analytics;
-using GesMgmt.WebAPI.Services.Analytics;
+using GesMgmt.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -10,6 +10,12 @@ namespace GesMgmt.WebAPI.Controllers.Analytics;
 [ApiController]
 public abstract class AnalyticsControllerBase : ControllerBase
 {
+    public const string PortfolioConcurrencyPolicyName =
+        "portfolio-control-center-concurrency";
+
+    public const string PortfolioRequestTimeoutPolicyName =
+        "portfolio-control-center-timeout";
+
     protected IActionResult? RequireUser(
         IAnalyticsUserContext userContext,
         out int userId)
@@ -28,6 +34,7 @@ public abstract class AnalyticsControllerBase : ControllerBase
     protected async Task<AnalyticsAdministratorAccess> RequireAdministratorAsync(
         IAnalyticsUserContext userContext,
         IAnalyticsAuthorizationService authorizationService,
+        SisgesOptionPermission permission,
         CancellationToken cancellationToken)
     {
         var identityError = RequireUser(userContext, out var userId);
@@ -36,8 +43,14 @@ public abstract class AnalyticsControllerBase : ControllerBase
             return new AnalyticsAdministratorAccess(0, identityError);
         }
 
-        var authorization = await authorizationService.CanManageAsync(
+        int? groupId = userContext.TryGetGroupId(out var currentGroupId)
+            ? currentGroupId
+            : null;
+
+        var authorization = await authorizationService.CanAccessAdministrationAsync(
             userId,
+            groupId,
+            permission,
             cancellationToken);
 
         if (!authorization.Allowed)
@@ -48,7 +61,7 @@ public abstract class AnalyticsControllerBase : ControllerBase
                     StatusCodes.Status403Forbidden,
                     "Acceso administrativo denegado",
                     authorization.Reason ??
-                    "El usuario no tiene permisos administrativos de Analytics."));
+                    "El usuario no tiene permisos sobre Mantener módulo."));
         }
 
         return new AnalyticsAdministratorAccess(userId, null);
@@ -104,8 +117,6 @@ public abstract class AnalyticsControllerBase : ControllerBase
             Detail = "Revise los parámetros enviados.",
             Instance = HttpContext.Request.Path.Value
         };
-        problem.Extensions["traceId"] = AnalyticsTraceContext.GetTraceId(HttpContext);
-
         var result = new BadRequestObjectResult(problem);
         result.ContentTypes.Add("application/problem+json");
         return result;
@@ -132,11 +143,13 @@ public abstract class AnalyticsControllerBase : ControllerBase
         string title,
         string detail)
     {
-        var problem = AnalyticsProblemDetailsFactory.Create(
-            HttpContext,
-            statusCode,
-            title,
-            detail);
+        var problem = new ProblemDetails
+        {
+            Status = statusCode,
+            Title = title,
+            Detail = detail,
+            Instance = HttpContext.Request.Path.Value
+        };
 
         var result = new ObjectResult(problem)
         {

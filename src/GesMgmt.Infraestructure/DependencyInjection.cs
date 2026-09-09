@@ -4,7 +4,6 @@ using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
 using GesMgmt.Application.Interfaces.Analytics.PortfolioControlCenter;
 using GesMgmt.Application.Services.Analytics.PortfolioControlCenter;
 using GesMgmt.Domain.Interfaces.Analytics.PortfolioControlCenter;
-using GesMgmt.Infraestructure.Persistence.Analytics.Caching;
 using GesMgmt.Infraestructure.Repositories.Analytics.PortfolioControlCenter;
 using GesMgmt.Application.Interfaces.Analytics;
 using GesMgmt.Application.Services.Analytics;
@@ -44,7 +43,6 @@ using GesMgmt.Application.Services.UsuarioGrupoOpcion;
 using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Logger;
 using GesMgmt.Infraestructure.Persistence;
-using GesMgmt.Infraestructure.Persistence.Analytics;
 using GesMgmt.Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -58,11 +56,24 @@ namespace GesMgmt.Infraestructure
         {
             // Configuración de la cadena de conexión
             var connectionString = configuration.GetConnectionString("AvalCobConnection");
+            var analyticsConnectionString = configuration.GetConnectionString("AvalAnalyticsConnection");
+            var analyticsCommandTimeoutSeconds =
+                configuration.GetValue<int?>("AnalyticsDatabase:CommandTimeoutSeconds") ?? 15;
+
+            if (analyticsCommandTimeoutSeconds is <= 0 or > 120)
+            {
+                throw new InvalidOperationException(
+                    "AnalyticsDatabase:CommandTimeoutSeconds debe estar entre 1 y 120.");
+            }
 
             services.AddDbContext<AvalDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            AddAnalyticsPersistence(services, configuration);
+            services.AddDbContext<AnalyticsDbContext>(options =>
+                options.UseSqlServer(
+                    analyticsConnectionString,
+                    sqlServerOptions =>
+                        sqlServerOptions.CommandTimeout(analyticsCommandTimeoutSeconds)));
             AddAnalyticsAccess(services, configuration);
             AddPortfolioControlCenter(services, configuration);
 
@@ -98,61 +109,10 @@ namespace GesMgmt.Infraestructure
 
             return services;
         }
-
-        private static void AddAnalyticsPersistence(
-            IServiceCollection services,
-            IConfiguration configuration)
-        {
-            var analyticsOptions = new AnalyticsDatabaseOptions
-            {
-                CommandTimeoutSeconds = ReadCommandTimeout(
-                    configuration,
-                    AnalyticsDatabaseOptions.SectionName,
-                    15)
-            };
-
-            var sisgesOptions = new SisgesDatabaseOptions
-            {
-                CommandTimeoutSeconds = ReadCommandTimeout(
-                    configuration,
-                    SisgesDatabaseOptions.SectionName,
-                    15)
-            };
-
-            ValidateCommandTimeout(
-                AnalyticsDatabaseOptions.SectionName,
-                analyticsOptions.CommandTimeoutSeconds);
-            ValidateCommandTimeout(
-                SisgesDatabaseOptions.SectionName,
-                sisgesOptions.CommandTimeoutSeconds);
-
-            services.AddSingleton(analyticsOptions);
-            services.AddSingleton(sisgesOptions);
-            services.AddSingleton<AnalyticsDatabaseTelemetry>();
-            services.AddSingleton<IAnalyticsDbConnectionFactory, SqlAnalyticsDbConnectionFactory>();
-            services.AddSingleton<IAnalyticsQueryExecutor, SqlClientAnalyticsQueryExecutor>();
-            services.AddSingleton<ISisgesQueryExecutor, SqlSisgesQueryExecutor>();
-            services.AddSingleton<IAnalyticsDatabaseHealthProbe, AnalyticsDatabaseHealthProbe>();
-            services.AddSingleton<ISisgesDatabaseHealthProbe, SisgesDatabaseHealthProbe>();
-        }
-
-
         private static void AddAnalyticsAccess(
             IServiceCollection services,
             IConfiguration configuration)
         {
-            var administratorUserIds = configuration
-                .GetSection($"{AnalyticsAdministrationOptions.SectionName}:AdministratorUserIds")
-                .GetChildren()
-                .Select(item =>
-                    int.TryParse(item.Value, out var userId)
-                        ? userId
-                        : 0)
-                .Where(userId => userId > 0)
-                .Distinct()
-                .OrderBy(userId => userId)
-                .ToArray();
-
             var allowPublishToWeb = true;
             var rawAllowPublishToWeb =
                 configuration[$"{AnalyticsPowerBiSecurityOptions.SectionName}:AllowPublishToWeb"];
@@ -164,10 +124,6 @@ namespace GesMgmt.Infraestructure
                     $"{AnalyticsPowerBiSecurityOptions.SectionName}:AllowPublishToWeb debe ser true o false.");
             }
 
-            services.AddSingleton(new AnalyticsAdministrationOptions
-            {
-                AdministratorUserIds = administratorUserIds
-            });
             services.AddSingleton(new AnalyticsPowerBiSecurityOptions
             {
                 AllowPublishToWeb = allowPublishToWeb
@@ -179,6 +135,7 @@ namespace GesMgmt.Infraestructure
             services.AddScoped<ISisgesUserGroupRepository, SisgesUserGroupRepository>();
             services.AddScoped<ISisgesClientGroupRepository, SisgesClientGroupRepository>();
 
+            services.AddScoped<ISisgesOptionPermissionRepository, SisgesOptionPermissionRepository>();
             services.AddScoped<IAnalyticsOptionConfigRepository, AnalyticsOptionConfigRepository>();
             services.AddScoped<IAnalyticsOptionClientScopeRepository, AnalyticsOptionClientScopeRepository>();
             services.AddScoped<IAnalyticsOptionGroupScopeRepository, AnalyticsOptionGroupScopeRepository>();
@@ -252,38 +209,5 @@ namespace GesMgmt.Infraestructure
             services.AddScoped<IPortfolioSupervisorPerformanceService, PortfolioSupervisorPerformanceService>();
             services.AddScoped<IPortfolioTargetProgressService, PortfolioTargetProgressService>();
         }
-
-        private static int ReadCommandTimeout(
-            IConfiguration configuration,
-            string sectionName,
-            int defaultValue)
-        {
-            var rawValue = configuration[$"{sectionName}:CommandTimeoutSeconds"];
-
-            if (string.IsNullOrWhiteSpace(rawValue))
-            {
-                return defaultValue;
-            }
-
-            if (!int.TryParse(rawValue, out var value))
-            {
-                throw new InvalidOperationException(
-                    $"{sectionName}:CommandTimeoutSeconds debe ser un entero válido.");
-            }
-
-            return value;
-        }
-
-        private static void ValidateCommandTimeout(
-            string sectionName,
-            int commandTimeoutSeconds)
-        {
-            if (commandTimeoutSeconds is <= 0 or > 120)
-            {
-                throw new InvalidOperationException(
-                    $"{sectionName}:CommandTimeoutSeconds debe estar entre 1 y 120.");
-            }
-        }
-
     }
 }

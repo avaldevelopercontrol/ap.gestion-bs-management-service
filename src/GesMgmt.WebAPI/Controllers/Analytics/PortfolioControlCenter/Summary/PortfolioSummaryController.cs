@@ -1,15 +1,14 @@
 using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
 using GesMgmt.Application.Interfaces.Analytics.PortfolioControlCenter;
-using GesMgmt.WebAPI.Services.Analytics;
 using Microsoft.AspNetCore.Http.Timeouts;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GesMgmt.WebAPI.Controllers.Analytics;
 
 [Route("api/v1/portfolio-control-center/summary")]
-[EnableRateLimiting(PortfolioControlCenterResourceProtection.ConcurrencyPolicyName)]
-[RequestTimeout(PortfolioControlCenterResourceProtection.RequestTimeoutPolicyName)]
+[EnableRateLimiting(AnalyticsControllerBase.PortfolioConcurrencyPolicyName)]
+[RequestTimeout(AnalyticsControllerBase.PortfolioRequestTimeoutPolicyName)]
 public sealed class PortfolioSummaryController(IPortfolioSummaryService service) : AnalyticsControllerBase
 {
     [HttpGet]

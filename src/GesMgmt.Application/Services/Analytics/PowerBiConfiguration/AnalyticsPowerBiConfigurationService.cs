@@ -51,21 +51,19 @@ public sealed class AnalyticsPowerBiConfigurationService(
                 Array.Empty<AnalyticsOptionReportClientEmbed>());
         }
 
-        var groupIdsTask = optionGroupRepository.GetGroupIdsAsync(
+        var groupIdsResult = await optionGroupRepository.GetGroupIdsAsync(
             optionId,
             cancellationToken);
-        var configurationsTask = configurationService.ResolveAsync(
+        var configurations = await configurationService.ResolveAsync(
             optionId,
             cancellationToken);
 
-        await Task.WhenAll(groupIdsTask, configurationsTask);
-
-        var groupIds = (await groupIdsTask)
+        var groupIds = groupIdsResult
             .Where(groupId => groupId > 0)
             .Distinct()
             .OrderBy(groupId => groupId)
             .ToArray();
-        var clients = (await configurationsTask)
+        var clients = configurations
             .Select(AnalyticsReportClientConfigurationContractMapper.Map)
             .ToArray();
 
@@ -116,23 +114,20 @@ public sealed class AnalyticsPowerBiConfigurationService(
                 "Gestión Integral de Cobranza debe tener exactamente un grupo SISGES asociado.");
         }
 
-        var previousGroupIdsTask = optionGroupRepository.GetGroupIdsAsync(
+        var previousGroupIds = await optionGroupRepository.GetGroupIdsAsync(
             optionId,
             cancellationToken);
         var requestedPublications = request.Publications ?? [];
-        Task<IReadOnlyList<AnalyticsReportClientConfiguration>> configurationsTask =
+        IReadOnlyList<AnalyticsReportClientConfiguration> configurations =
             requestedPublications.Count == 0
-                ? Task.FromResult<IReadOnlyList<AnalyticsReportClientConfiguration>>(
-                    Array.Empty<AnalyticsReportClientConfiguration>())
-                : configurationService.ResolveAsync(
+                ? Array.Empty<AnalyticsReportClientConfiguration>()
+                : await configurationService.ResolveAsync(
                     optionId,
                     cancellationToken);
 
-        await Task.WhenAll(previousGroupIdsTask, configurationsTask);
-
         var publicationValidation = AnalyticsReportClientPublicationUpdateValidator.Validate(
             request.Publications,
-            await configurationsTask,
+            configurations,
             powerBiSecurityPolicy.AllowPublishToWeb);
 
         if (publicationValidation.Error is not null)
@@ -147,7 +142,7 @@ public sealed class AnalyticsPowerBiConfigurationService(
             optionCode,
             optionName,
             request.IsActive,
-            await previousGroupIdsTask,
+            previousGroupIds,
             groupIds,
             publicationValidation.Updates,
             userId,

@@ -1,45 +1,46 @@
-using System.Text.Json;
-using Microsoft.Extensions.Options;
-using GesMgmt.Application.Interfaces.Analytics;
-using GesMgmt.Application.Utils.Analytics;
-using GesMgmt.Domain.Constants.Analytics;
+using System.Data;
 using GesMgmt.Domain.Entities.Analytics;
 using GesMgmt.Domain.Interfaces.Analytics;
-using GesMgmt.Infraestructure.Persistence.Analytics;
+using GesMgmt.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics;
 
 internal sealed class AnalyticsReportClientScopeRepository(
-    IAnalyticsQueryExecutor queryExecutor,
-    AnalyticsDatabaseOptions databaseOptions)
+    AnalyticsDbContext context)
     : IAnalyticsReportClientScopeRepository
 {
-    private readonly int _commandTimeoutSeconds =
-        databaseOptions.CommandTimeoutSeconds;
-
-    public async Task<bool> HasAnyScopeAsync(
-        int optionId,
-        CancellationToken cancellationToken)
-    {
-        var count = await queryExecutor.QuerySingleAsync<int>(
-            AnalyticsReportClientScopeSql.HasAnyScope,
-            new { OptionId = optionId },
-            _commandTimeoutSeconds,
-            cancellationToken);
-
-        return count > 0;
-    }
-
-    public Task<IReadOnlyList<AnalyticsReportClientScopeMapping>> GetMappingsAsync(
+    public Task<bool> HasAnyScopeAsync(
         int optionId,
         CancellationToken cancellationToken) =>
-        queryExecutor.QueryAsync<AnalyticsReportClientScopeMapping>(
-            AnalyticsReportClientScopeSql.GetMappings,
-            new { OptionId = optionId },
-            _commandTimeoutSeconds,
-            cancellationToken);
+        context.AnalyticsReportClientScopes
+            .AsNoTracking()
+            .AnyAsync(
+                scope =>
+                    scope.OptionId == optionId &&
+                    scope.IsActive,
+                cancellationToken);
 
-    public Task<IReadOnlyList<int>> GetOptionIdsWithActiveScopeAsync(
+    public async Task<IReadOnlyList<AnalyticsReportClientScopeMapping>> GetMappingsAsync(
+        int optionId,
+        CancellationToken cancellationToken) =>
+        await context.AnalyticsReportClientScopes
+            .AsNoTracking()
+            .Where(scope =>
+                scope.OptionId == optionId &&
+                scope.IsActive)
+            .OrderBy(scope => scope.ReportClientValue)
+            .ThenBy(scope => scope.CrmClientId)
+            .ThenBy(scope => scope.SisgesGroupId)
+            .Select(scope => new AnalyticsReportClientScopeMapping
+            {
+                CrmClientId = scope.CrmClientId,
+                ReportClientValue = scope.ReportClientValue,
+                SisgesGroupId = scope.SisgesGroupId
+            })
+            .ToArrayAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<int>> GetOptionIdsWithActiveScopeAsync(
         IReadOnlyCollection<int> optionIds,
         CancellationToken cancellationToken)
     {
@@ -51,20 +52,21 @@ internal sealed class AnalyticsReportClientScopeRepository(
 
         if (normalizedOptionIds.Length == 0)
         {
-            return Task.FromResult<IReadOnlyList<int>>(Array.Empty<int>());
+            return Array.Empty<int>();
         }
 
-        return queryExecutor.QueryAsync<int>(
-            AnalyticsReportClientScopeSql.GetOptionIdsWithActiveScope,
-            new
-            {
-                OptionIdsJson = JsonSerializer.Serialize(normalizedOptionIds)
-            },
-            _commandTimeoutSeconds,
-            cancellationToken);
+        return await context.AnalyticsReportClientScopes
+            .AsNoTracking()
+            .Where(scope =>
+                scope.IsActive &&
+                normalizedOptionIds.Contains(scope.OptionId))
+            .Select(scope => scope.OptionId)
+            .Distinct()
+            .OrderBy(optionId => optionId)
+            .ToArrayAsync(cancellationToken);
     }
 
-    public Task ReplaceForClientAsync(
+    public async Task ReplaceForClientAsync(
         int optionId,
         int crmClientId,
         string reportClientValue,
@@ -78,23 +80,57 @@ internal sealed class AnalyticsReportClientScopeRepository(
             .Distinct()
             .OrderBy(groupId => groupId)
             .ToArray();
-        var commands = new[]
-        {
-            new AnalyticsDbCommand(
-                AnalyticsReportClientScopeSql.ReplaceClientGroups,
-                new
-                {
-                    OptionId = optionId,
-                    CrmClientId = crmClientId,
-                    ReportClientValue = normalizedName,
-                    GroupIdsJson = JsonSerializer.Serialize(normalizedGroupIds),
-                    UpdatedBy = updatedBy
-                })
-        };
 
-        return queryExecutor.ExecuteTransactionAsync(
-            commands,
-            _commandTimeoutSeconds,
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
             cancellationToken);
+
+        var existingScopes = await context.AnalyticsReportClientScopes
+            .Where(scope =>
+                scope.OptionId == optionId &&
+                scope.CrmClientId == crmClientId &&
+                scope.ReportClientValue == normalizedName)
+            .ToListAsync(cancellationToken);
+
+        var now = DateTime.UtcNow;
+
+        foreach (var scope in existingScopes.Where(scope => scope.IsActive))
+        {
+            scope.IsActive = false;
+            scope.UpdatedBy = updatedBy;
+            scope.UpdatedAt = now;
+        }
+
+        foreach (var groupId in normalizedGroupIds)
+        {
+            var scope = existingScopes.FirstOrDefault(
+                item => item.SisgesGroupId == groupId);
+
+            if (scope is null)
+            {
+                await context.AnalyticsReportClientScopes.AddAsync(
+                    new AnalyticsReportClientScopeEntry
+                    {
+                        OptionId = optionId,
+                        CrmClientId = crmClientId,
+                        ReportClientValue = normalizedName,
+                        SisgesGroupId = groupId,
+                        IsActive = true,
+                        CreatedBy = updatedBy,
+                        CreatedAt = now,
+                        UpdatedBy = updatedBy,
+                        UpdatedAt = now
+                    },
+                    cancellationToken);
+                continue;
+            }
+
+            scope.IsActive = true;
+            scope.UpdatedBy = updatedBy;
+            scope.UpdatedAt = now;
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
     }
 }

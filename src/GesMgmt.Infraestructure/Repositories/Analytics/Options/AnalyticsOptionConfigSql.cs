@@ -3,7 +3,6 @@ using GesMgmt.Application.Utils.Analytics;
 using GesMgmt.Domain.Constants.Analytics;
 using GesMgmt.Domain.Entities.Analytics;
 using GesMgmt.Domain.Interfaces.Analytics;
-using GesMgmt.Infraestructure.Persistence.Analytics;
 
 namespace GesMgmt.Infraestructure.Repositories.Analytics;
 
