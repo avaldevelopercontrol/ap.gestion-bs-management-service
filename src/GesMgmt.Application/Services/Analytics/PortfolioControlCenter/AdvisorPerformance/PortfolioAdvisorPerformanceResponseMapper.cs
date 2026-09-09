@@ -27,9 +27,11 @@ internal static class PortfolioAdvisorPerformanceResponseMapper
         var advisors = rows
             .Select(row => new PortfolioAdvisorPerformanceItem(
                 row.AdvisorId,
-                row.AdvisorName,
+                NormalizeAdvisorName(row.AdvisorId, row.AdvisorName),
+                row.PeriodSupervisorId,
+                NormalizeOptionalName(row.PeriodSupervisorName),
                 row.CurrentSupervisorId,
-                row.CurrentSupervisorName,
+                NormalizeOptionalName(row.CurrentSupervisorName),
                 row.ManagementCount,
                 ToPercentage(row.RpcRate),
                 ToPercentage(row.CloseRate),
@@ -45,6 +47,18 @@ internal static class PortfolioAdvisorPerformanceResponseMapper
                 ? null
                 : ToUtcOffset(updatedAtUtc),
             advisors);
+    }
+
+    private static string NormalizeAdvisorName(int advisorId, string? advisorName)
+    {
+        var normalized = NormalizeOptionalName(advisorName);
+        return normalized ?? $"Sin nombre (ID {advisorId})";
+    }
+
+    private static string? NormalizeOptionalName(string? value)
+    {
+        var normalized = value?.Trim();
+        return string.IsNullOrWhiteSpace(normalized) ? null : normalized;
     }
 
     private static decimal? ToPercentage(decimal? value)

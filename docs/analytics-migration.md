@@ -32,16 +32,16 @@ Integrar la funcionalidad de `analytics-api` dentro de `GesMgmt.WebAPI` como un 
 La infraestructura Analytics se integra bajo `GesMgmt.Infraestructure/Persistence/Analytics`; no se crea un proyecto ni una raíz arquitectónica paralela.
 
 - `ConnectionStrings:AvalCobConnection` continúa siendo la conexión SISGES/`aval_cob` del host y también es reutilizada por las consultas Analytics que leen SISGES.
-- `ConnectionStrings:Analytics` es la única conexión adicional requerida para `aval_analytics`. No se almacena ningún secreto en el repositorio.
+- `ConnectionStrings:AvalAnalyticsConnection` es la única conexión adicional requerida para `aval_analytics`. No se almacena ningún secreto en el repositorio.
 - No se migra `DevelopmentBridge`, `AnalyticsDatabase:Provider`, `X-Sisges-User-Id` ni ningún esquema de autenticación de desarrollo.
-- La ausencia de `ConnectionStrings:Analytics` no impide iniciar Gestión en este stage; `/health/ready` reportará la dependencia Analytics como `Unhealthy` hasta que la conexión sea configurada.
+- La ausencia de `ConnectionStrings:AvalAnalyticsConnection` no impide iniciar Gestión en este stage; `/health/ready` reportará la dependencia Analytics como `Unhealthy` hasta que la conexión sea configurada.
 - `/health/live` comprueba únicamente que el proceso esté activo. `/health/ready` comprueba `aval_cob` y `aval_analytics` y devuelve descripciones seguras, sin exponer excepciones SQL.
 
 Configuración local recomendada para la conexión Analytics, usando el `UserSecretsId` existente de `GesMgmt.WebAPI`:
 
 ```bash
 dotnet user-secrets set --project src/GesMgmt.WebAPI \
-  "ConnectionStrings:Analytics" "<connection-string-a-aval_analytics>"
+  "ConnectionStrings:AvalAnalyticsConnection" "<connection-string-a-aval_analytics>"
 ```
 
 ## Stage 2 - Analytics Access y administración

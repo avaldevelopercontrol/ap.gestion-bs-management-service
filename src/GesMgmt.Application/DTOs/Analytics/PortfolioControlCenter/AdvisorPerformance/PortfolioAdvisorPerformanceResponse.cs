@@ -7,6 +7,8 @@ namespace GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
 public sealed record PortfolioAdvisorPerformanceItem(
     int AdvisorId,
     string AdvisorName,
+    int? PeriodSupervisorId,
+    string? PeriodSupervisorName,
     int? CurrentSupervisorId,
     string? CurrentSupervisorName,
     long ManagementCount,

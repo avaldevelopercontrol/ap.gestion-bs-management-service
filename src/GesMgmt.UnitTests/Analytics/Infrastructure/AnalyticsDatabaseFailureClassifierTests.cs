@@ -10,7 +10,7 @@ public sealed class AnalyticsDatabaseFailureClassifierTests
     public void Classify_RecognizesMissingConnectionConfiguration()
     {
         var category = AnalyticsDatabaseFailureClassifier.Classify(
-            new InvalidOperationException("No se configuró ConnectionStrings:Analytics."));
+            new InvalidOperationException("No se configuró ConnectionStrings:AvalAnalyticsConnection."));
 
         Assert.Equal(AnalyticsDatabaseFailureCategory.Configuration, category);
         Assert.Equal("configuration", category.ToWireValue());

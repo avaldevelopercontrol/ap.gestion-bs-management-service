@@ -16,8 +16,8 @@ namespace GesMgmt.Infraestructure.Persistence.Analytics
         {
             var connectionString = SqlDatabaseConnectionString.GetRequired(
                 configuration,
-                "AvalCobConnection",
-                options.ExpectedDatabase);
+                SisgesDatabaseOptions.ConnectionStringName,
+                SisgesDatabaseOptions.DatabaseName);
 
             await using var connection = new SqlConnection(connectionString);
 

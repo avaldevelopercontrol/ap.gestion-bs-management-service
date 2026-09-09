@@ -4,8 +4,12 @@ using GesMgmt.Application.Interfaces.Analytics;
 namespace GesMgmt.WebAPI.Services.Analytics
 {
     internal sealed class HttpAnalyticsUserContext(
-        IHttpContextAccessor httpContextAccessor) : IAnalyticsUserContext
+        IHttpContextAccessor httpContextAccessor,
+        IConfiguration configuration,
+        IHostEnvironment hostEnvironment) : IAnalyticsUserContext
     {
+        private const string LocalTestingUserIdKey = "AnalyticsTesting:UserId";
+
         private static readonly string[] UserIdClaimTypes =
         [
             "sisges_user_id",
@@ -17,23 +21,29 @@ namespace GesMgmt.WebAPI.Services.Analytics
         {
             var principal = httpContextAccessor.HttpContext?.User;
 
-            if (principal is null)
+            if (principal is not null)
             {
-                userId = 0;
-                return false;
-            }
-
-            foreach (var identity in principal.Identities.Where(x => x.IsAuthenticated))
-            {
-                foreach (var claimType in UserIdClaimTypes)
+                foreach (var identity in principal.Identities.Where(x => x.IsAuthenticated))
                 {
-                    var rawValue = identity.FindFirst(claimType)?.Value;
-
-                    if (int.TryParse(rawValue, out userId) && userId > 0)
+                    foreach (var claimType in UserIdClaimTypes)
                     {
-                        return true;
+                        var rawValue = identity.FindFirst(claimType)?.Value;
+
+                        if (int.TryParse(rawValue, out userId) && userId > 0)
+                        {
+                            return true;
+                        }
                     }
                 }
+            }
+
+            // Soporte exclusivo para smoke tests locales del frontend.
+            // No acepta headers/query params y nunca se habilita fuera de Development.
+            if (hostEnvironment.IsDevelopment() &&
+                int.TryParse(configuration[LocalTestingUserIdKey], out userId) &&
+                userId > 0)
+            {
+                return true;
             }
 
             userId = 0;

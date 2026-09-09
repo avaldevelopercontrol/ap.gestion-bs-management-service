@@ -18,7 +18,7 @@ internal sealed class AnalyticsWebApplicationFactory(
             "ConnectionStrings:AvalCobConnection",
             "Server=localhost;Database=aval_cob;Integrated Security=True;TrustServerCertificate=True;");
         builder.UseSetting(
-            "ConnectionStrings:Analytics",
+            "ConnectionStrings:AvalAnalyticsConnection",
             "Server=localhost;Database=aval_analytics;Integrated Security=True;TrustServerCertificate=True;");
 
         builder.ConfigureServices(services =>

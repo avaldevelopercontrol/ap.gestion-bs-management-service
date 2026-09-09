@@ -23,8 +23,8 @@ public sealed class AnalyticsAccessCompatibilityTests
         Assert.True(response.Headers.TryGetValues("X-Trace-Id", out var traceValues));
         Assert.True(response.Headers.CacheControl?.NoStore == true);
         Assert.True(response.Headers.CacheControl?.MaxAge == TimeSpan.Zero);
-        Assert.True(response.Headers.Pragma.Any(value =>
-            string.Equals(value.Name, "no-cache", StringComparison.OrdinalIgnoreCase)));
+        Assert.Contains(response.Headers.Pragma, value =>
+            string.Equals(value.Name, "no-cache", StringComparison.OrdinalIgnoreCase));
 
         var traceHeader = Assert.Single(traceValues!);
         using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());

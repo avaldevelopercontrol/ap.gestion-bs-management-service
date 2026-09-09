@@ -105,9 +105,6 @@ namespace GesMgmt.Infraestructure
         {
             var analyticsOptions = new AnalyticsDatabaseOptions
             {
-                ExpectedDatabase =
-                    configuration[$"{AnalyticsDatabaseOptions.SectionName}:ExpectedDatabase"]
-                    ?? "aval_analytics",
                 CommandTimeoutSeconds = ReadCommandTimeout(
                     configuration,
                     AnalyticsDatabaseOptions.SectionName,
@@ -116,22 +113,17 @@ namespace GesMgmt.Infraestructure
 
             var sisgesOptions = new SisgesDatabaseOptions
             {
-                ExpectedDatabase =
-                    configuration[$"{SisgesDatabaseOptions.SectionName}:ExpectedDatabase"]
-                    ?? "aval_cob",
                 CommandTimeoutSeconds = ReadCommandTimeout(
                     configuration,
                     SisgesDatabaseOptions.SectionName,
                     15)
             };
 
-            ValidateDatabaseOptions(
+            ValidateCommandTimeout(
                 AnalyticsDatabaseOptions.SectionName,
-                analyticsOptions.ExpectedDatabase,
                 analyticsOptions.CommandTimeoutSeconds);
-            ValidateDatabaseOptions(
+            ValidateCommandTimeout(
                 SisgesDatabaseOptions.SectionName,
-                sisgesOptions.ExpectedDatabase,
                 sisgesOptions.CommandTimeoutSeconds);
 
             services.AddSingleton(analyticsOptions);
@@ -282,17 +274,10 @@ namespace GesMgmt.Infraestructure
             return value;
         }
 
-        private static void ValidateDatabaseOptions(
+        private static void ValidateCommandTimeout(
             string sectionName,
-            string expectedDatabase,
             int commandTimeoutSeconds)
         {
-            if (string.IsNullOrWhiteSpace(expectedDatabase))
-            {
-                throw new InvalidOperationException(
-                    $"{sectionName}:ExpectedDatabase es obligatorio.");
-            }
-
             if (commandTimeoutSeconds is <= 0 or > 120)
             {
                 throw new InvalidOperationException(

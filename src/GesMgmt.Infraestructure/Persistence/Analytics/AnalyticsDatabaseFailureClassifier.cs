@@ -79,8 +79,8 @@ namespace GesMgmt.Infraestructure.Persistence.Analytics
             exception is InvalidOperationException &&
             ContainsAny(
                 exception.Message,
-                "ConnectionStrings:Analytics",
-                "ConnectionStrings:AvalCobConnection");
+                $"ConnectionStrings:{AnalyticsDatabaseOptions.ConnectionStringName}",
+                $"ConnectionStrings:{SisgesDatabaseOptions.ConnectionStringName}");
 
         private static bool IsTlsFailure(Exception exception) =>
             exception is AuthenticationException ||

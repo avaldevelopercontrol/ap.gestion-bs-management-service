@@ -35,14 +35,14 @@ del proyecto anterior.
 El host utiliza:
 
 - `ConnectionStrings:AvalCobConnection` para SISGES / `aval_cob`;
-- `ConnectionStrings:Analytics` para `aval_analytics`.
+- `ConnectionStrings:AvalAnalyticsConnection` para `aval_analytics`.
 
 No almacene connection strings ni credenciales en Git. En local puede usar el
 `UserSecretsId` existente de `GesMgmt.WebAPI`:
 
 ```bash
 dotnet user-secrets set --project src/GesMgmt.WebAPI \
-  "ConnectionStrings:Analytics" \
+  "ConnectionStrings:AvalAnalyticsConnection" \
   "<connection-string-a-aval_analytics>"
 ```
 

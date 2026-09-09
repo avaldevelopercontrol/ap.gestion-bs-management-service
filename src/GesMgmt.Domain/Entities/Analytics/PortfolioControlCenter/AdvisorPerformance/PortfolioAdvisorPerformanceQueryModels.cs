@@ -7,6 +7,8 @@ public sealed record PortfolioAdvisorPerformanceDbRow
 {
     public int AdvisorId { get; init; }
     public required string AdvisorName { get; init; }
+    public int? PeriodSupervisorId { get; init; }
+    public string? PeriodSupervisorName { get; init; }
     public int? CurrentSupervisorId { get; init; }
     public string? CurrentSupervisorName { get; init; }
     public DateTime DateFrom { get; init; }

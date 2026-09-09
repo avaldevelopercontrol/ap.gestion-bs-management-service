@@ -73,6 +73,8 @@ internal static class PortfolioAdvisorPerformanceSql
                 a.calendar_date,
                 a.advisor_key,
                 a.advisor_name,
+                a.supervisor_key,
+                a.supervisor_name,
                 a.management_events,
                 a.recovered_amount,
                 a.loaded_at
@@ -100,6 +102,16 @@ internal static class PortfolioAdvisorPerformanceSql
             SELECT
                 advisor_key,
                 MAX(advisor_name) AS advisor_name,
+                CASE
+                    WHEN COUNT(DISTINCT supervisor_key) = 1
+                        THEN MAX(supervisor_key)
+                    ELSE NULL
+                END AS period_supervisor_key,
+                CASE
+                    WHEN COUNT(DISTINCT supervisor_key) = 1
+                        THEN MAX(NULLIF(LTRIM(RTRIM(supervisor_name)), ''))
+                    ELSE NULL
+                END AS period_supervisor_name,
                 MIN(calendar_date) AS date_from,
                 MAX(calendar_date) AS date_to,
                 SUM(CONVERT(BIGINT, management_events)) AS management_count,
@@ -273,6 +285,8 @@ internal static class PortfolioAdvisorPerformanceSql
         SELECT
             m.advisor_key AS AdvisorId,
             m.advisor_name AS AdvisorName,
+            m.period_supervisor_key AS PeriodSupervisorId,
+            m.period_supervisor_name AS PeriodSupervisorName,
             cs.supervisor_key AS CurrentSupervisorId,
             cs.supervisor_name AS CurrentSupervisorName,
             er.date_from AS DateFrom,

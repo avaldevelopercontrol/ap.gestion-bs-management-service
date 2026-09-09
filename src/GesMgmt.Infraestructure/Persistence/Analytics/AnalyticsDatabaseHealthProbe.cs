@@ -17,7 +17,7 @@ namespace GesMgmt.Infraestructure.Persistence.Analytics
 
                 if (!string.Equals(
                         databaseName,
-                        options.ExpectedDatabase,
+                        AnalyticsDatabaseOptions.DatabaseName,
                         StringComparison.OrdinalIgnoreCase))
                 {
                     return Failure(

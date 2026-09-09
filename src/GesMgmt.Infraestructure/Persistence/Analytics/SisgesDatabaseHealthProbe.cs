@@ -1,8 +1,7 @@
 namespace GesMgmt.Infraestructure.Persistence.Analytics
 {
     internal sealed class SisgesDatabaseHealthProbe(
-        ISisgesQueryExecutor queryExecutor,
-        SisgesDatabaseOptions options) : ISisgesDatabaseHealthProbe
+        ISisgesQueryExecutor queryExecutor) : ISisgesDatabaseHealthProbe
     {
         public async Task<DatabaseHealthProbeResult> CheckAsync(
             CancellationToken cancellationToken = default)
@@ -18,7 +17,7 @@ namespace GesMgmt.Infraestructure.Persistence.Analytics
 
                 if (!string.Equals(
                         databaseName,
-                        options.ExpectedDatabase,
+                        SisgesDatabaseOptions.DatabaseName,
                         StringComparison.OrdinalIgnoreCase))
                 {
                     return Failure(

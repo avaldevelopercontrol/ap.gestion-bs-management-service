@@ -6,7 +6,6 @@ namespace GesMgmt.Infraestructure.Persistence.Analytics
 {
     internal sealed class SqlAnalyticsDbConnectionFactory(
         IConfiguration configuration,
-        AnalyticsDatabaseOptions options,
         AnalyticsDatabaseTelemetry telemetry) : IAnalyticsDbConnectionFactory
     {
         public async Task<DbConnection> OpenConnectionAsync(
@@ -14,8 +13,8 @@ namespace GesMgmt.Infraestructure.Persistence.Analytics
         {
             var connectionString = SqlDatabaseConnectionString.GetRequired(
                 configuration,
-                "Analytics",
-                options.ExpectedDatabase);
+                AnalyticsDatabaseOptions.ConnectionStringName,
+                AnalyticsDatabaseOptions.DatabaseName);
 
             var connection = new SqlConnection(connectionString);
 

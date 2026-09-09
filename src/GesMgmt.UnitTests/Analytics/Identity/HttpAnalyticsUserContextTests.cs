@@ -1,6 +1,9 @@
 using System.Security.Claims;
 using GesMgmt.WebAPI.Services.Analytics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 
 namespace GesMgmt.UnitTests.Analytics.Identity;
 
@@ -20,7 +23,7 @@ public sealed class HttpAnalyticsUserContextTests
                     authenticationType: "host-test"))
         };
         var accessor = new HttpContextAccessor { HttpContext = httpContext };
-        var context = new HttpAnalyticsUserContext(accessor);
+        var context = CreateContext(accessor, Environments.Production);
 
         var result = context.TryGetUserId(out var userId);
 
@@ -34,7 +37,7 @@ public sealed class HttpAnalyticsUserContextTests
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers["X-Sisges-User-Id"] = "16068";
         var accessor = new HttpContextAccessor { HttpContext = httpContext };
-        var context = new HttpAnalyticsUserContext(accessor);
+        var context = CreateContext(accessor, Environments.Development);
 
         var result = context.TryGetUserId(out var userId);
 
@@ -51,9 +54,58 @@ public sealed class HttpAnalyticsUserContextTests
                 new ClaimsIdentity([new Claim("sisges_user_id", "16068")]))
         };
         var accessor = new HttpContextAccessor { HttpContext = httpContext };
-        var context = new HttpAnalyticsUserContext(accessor);
+        var context = CreateContext(accessor, Environments.Production);
 
         Assert.False(context.TryGetUserId(out var userId));
         Assert.Equal(0, userId);
+    }
+
+    [Fact]
+    public void TryGetUserId_UsesConfiguredTestingUserOnlyInDevelopment()
+    {
+        var accessor = new HttpContextAccessor { HttpContext = new DefaultHttpContext() };
+        var context = CreateContext(accessor, Environments.Development, localTestingUserId: 16068);
+
+        Assert.True(context.TryGetUserId(out var userId));
+        Assert.Equal(16068, userId);
+    }
+
+    [Fact]
+    public void TryGetUserId_DoesNotUseConfiguredTestingUserOutsideDevelopment()
+    {
+        var accessor = new HttpContextAccessor { HttpContext = new DefaultHttpContext() };
+        var context = CreateContext(accessor, Environments.Production, localTestingUserId: 16068);
+
+        Assert.False(context.TryGetUserId(out var userId));
+        Assert.Equal(0, userId);
+    }
+
+    private static HttpAnalyticsUserContext CreateContext(
+        IHttpContextAccessor accessor,
+        string environmentName,
+        int? localTestingUserId = null)
+    {
+        var settings = new Dictionary<string, string?>();
+        if (localTestingUserId is > 0)
+        {
+            settings["AnalyticsTesting:UserId"] = localTestingUserId.Value.ToString();
+        }
+
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(settings)
+            .Build();
+
+        return new HttpAnalyticsUserContext(
+            accessor,
+            configuration,
+            new TestHostEnvironment(environmentName));
+    }
+
+    private sealed class TestHostEnvironment(string environmentName) : IHostEnvironment
+    {
+        public string EnvironmentName { get; set; } = environmentName;
+        public string ApplicationName { get; set; } = "GesMgmt.UnitTests";
+        public string ContentRootPath { get; set; } = Directory.GetCurrentDirectory();
+        public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
     }
 }
