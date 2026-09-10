@@ -61,9 +61,5 @@ namespace GesMgmt.Domain.Entities
         public DateTime? dDoc_FecCrea { get; set; }
         public int? nId_usuarioModifica { get; set; }
         public DateTime? dDoc_FecModifica { get; set; }
-
-        //relations
-        //public av_Cliente av_Cliente { get; set; }
-        //public av_DocxCobrar av_DocxCobrar { get; set; }
     }
 }

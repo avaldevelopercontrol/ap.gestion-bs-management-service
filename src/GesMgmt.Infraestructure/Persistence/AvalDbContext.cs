@@ -13,6 +13,9 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_Cartera> av_Carteras { get; set; }
         public DbSet<av_Cliente> av_Clientes { get; set; }
         public DbSet<av_ConfigSistema> av_ConfigSistemas { get; set; }
+        public DbSet<av_ContFormTipoParamOpe> av_ContFormTipoParamOpes { get; set; }
+        public DbSet<av_ContFormTipoCrud> av_ContFormTipoCruds { get; set; }
+        public DbSet<av_ContFormularioRptc> av_ContFormularioRptcs { get; set; }
         public DbSet<av_Contrato> av_Contratos { get; set; }
         public DbSet<av_DetallePersTelef> av_DetallePersTelefs { get; set; }
         public DbSet<av_Discador> av_Discadors { get; set; }
@@ -63,6 +66,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_Usuario> av_Usuarios { get; set; }
         public DbSet<av_ZonaCartera> av_ZonaCarteras { get; set; }
         public DbSet<av_ZonaGeneral> av_ZonaGenerals { get; set; }
+        public DbSet<RPTC_ReportexCliente> RPTC_ReportexClientes { get; set; }
 
         public DbSet<ValidationMessage> ValidationMessages { get; set; }
 
@@ -81,6 +85,9 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_CarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ClienteConfiguration());
             modelBuilder.ApplyConfiguration(new av_ConfigSistemaConfiguration());
+            modelBuilder.ApplyConfiguration(new av_ContFormTipoParamOpeConfiguration());
+            modelBuilder.ApplyConfiguration(new av_ContFormTipoCrudConfiguration());
+            modelBuilder.ApplyConfiguration(new av_ContFormularioRptcConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContratoConfiguration());
             modelBuilder.ApplyConfiguration(new av_DetallePersTelefConfiguration());
             modelBuilder.ApplyConfiguration(new av_DiscadorConfiguration());
@@ -132,6 +139,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_UsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new av_ZonaCarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ZonaGeneralConfiguration());
+            modelBuilder.ApplyConfiguration(new RPTC_ReportexClienteConfiguration());
             modelBuilder.ApplyConfiguration(new ValidationMessageConfiguration());
         }
     }

@@ -396,7 +396,7 @@ namespace GesMgmt.Application.Services.Gestion
 
             try
             {
-                var query = _unitOfWork.av_TablaCampoGenerals.GetCabeceraGestionesAdicionalAsync(filter);
+                var query = await _unitOfWork.av_TablaCampoGenerals.GetCabeceraGestionesAdicionalAsync(filter);
                 GetGestionCabeceraAdicionalResponseDto data = new GetGestionCabeceraAdicionalResponseDto();
                 if (query != null)
                 {
@@ -597,6 +597,53 @@ namespace GesMgmt.Application.Services.Gestion
             {
                 _Logger.LogError($"GetGestionDeudor|DatabaseError: {ex.Message}");
                 return ResultDto<GetGestionDeudorResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+            }
+        }
+        #endregion
+
+        #region "Lista de Botones"
+        public async Task<ResultListDto<IEnumerable<GetGestionBotonesResponseDto>>> GetGestionBotonesAsync(GetGestionBotonesRequestDto gestionBotonesDto)
+        {
+            var filterdc = new av_DocxCobrarOpe
+            {
+                nId_Contrato = gestionBotonesDto.nId_Contrato
+            };
+
+            try
+            {
+                var q_repBot = await _unitOfWork.av_ContFormularioRptcs.Query();
+
+                IEnumerable<GetGestionBotonesResponseDto> data = Enumerable.Empty<GetGestionBotonesResponseDto>();
+                if (q_repBot != null)
+                {
+                    data = await (
+                                    from s in q_repBot
+                                    where s.bEstado == true
+                                    && s.nId_Contrato == gestionBotonesDto.nId_Contrato
+                                    select new GetGestionBotonesResponseDto
+                                    {
+                                        nId_ContFormRptc = s.nId_ContFormRptc,
+                                        nId_Contrato = s.nId_Contrato,
+                                        nTipoFormCrud = s.nTipoFormCrud,
+                                        cScriptStoreParamList = s.cScriptStoreParamList,
+                                        nTipoFormParamOpe = s.nTipoFormParamOpe,
+                                        nId_ReporteFormParam = s.nId_ReporteFormParam,
+                                        cScriptStoreParamEdit = s.cScriptStoreParamEdit,
+                                        bEstado = s.bEstado,
+                                        cNombreFormLink = s.cNombreFormLink
+                                    }
+                    )
+                    .ToListAsync();
+                }
+
+                var response = ResultListDto<IEnumerable<GetGestionBotonesResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetGestionBotones|DatabaseError: {ex.Message}");
+                return ResultListDto<IEnumerable<GetGestionBotonesResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
             }
         }
         #endregion

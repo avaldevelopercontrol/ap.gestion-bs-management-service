@@ -10,6 +10,9 @@ namespace GesMgmt.Domain.Interfaces
         Iav_CarteraRepository av_Carteras { get; }
         Iav_ClienteRepository av_Clientes { get; }
         Iav_ConfigSistemaRepository av_ConfigSistemas { get; }
+        Iav_ContFormTipoCrudRepository av_ContFormTipoCruds { get; }
+        Iav_ContFormTipoParamOpeRepository av_ContFormTipoParamOpes { get; }
+        Iav_ContFormularioRptcRepository av_ContFormularioRptcs { get; }
         Iav_ContratoRepository av_Contratos { get; }
         Iav_DiscadorRepository av_Discadors { get; }
         Iav_DivisionalRepository av_Divisionals { get; }
@@ -61,6 +64,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_UsuarioRepository av_Usuarios { get; }
         Iav_ZonaCarteraRepository av_ZonaCarteras { get; }
         Iav_ZonaGeneralRepository av_ZonaGenerals { get; }
+        IRPTC_ReportexClienteRepository RPTC_ReportexClientes { get; }
 
         IValidationMessageRepository ValidationMessages { get; }
 

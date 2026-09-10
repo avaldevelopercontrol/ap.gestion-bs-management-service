@@ -1,5 +1,6 @@
 ﻿
 using GesMgmt.Application.DTOs.Gestion.Converters;
+using GesMgmt.Domain.Entities;
 using System.Text.Json.Serialization;
 
 namespace GesMgmt.Application.DTOs.Gestion
@@ -455,6 +456,19 @@ namespace GesMgmt.Application.DTOs.Gestion
             public string? clienteListaBlanca { get; set; }
             public string? clienteConSinPe { get; set; }
             public string? nGra_Instruccion { get; set; }
+        }
+
+        public class GetGestionBotonesResponseDto
+        {
+            public int nId_ContFormRptc { get; set; }
+            public int nId_Contrato { get; set; }
+            public int nTipoFormCrud { get; set; }
+            public string? cScriptStoreParamList { get; set; }
+            public int nTipoFormParamOpe { get; set; }
+            public int nId_ReporteFormParam { get; set; }
+            public string? cScriptStoreParamEdit { get; set; }
+            public bool bEstado { get; set; }
+            public string? cNombreFormLink { get; set; }
         }
 
         public class GetGestionCabeceraResponseDto

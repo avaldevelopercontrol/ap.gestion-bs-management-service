@@ -19,6 +19,9 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_CarteraRepository? _av_Carteras;
         private Iav_ClienteRepository? _av_Clientes;
         private Iav_ConfigSistemaRepository? _av_ConfigSistemas;
+        private Iav_ContFormTipoParamOpeRepository? _av_ContFormTipoParamOpes;
+        private Iav_ContFormTipoCrudRepository? _av_ContFormTipoCruds;
+        private Iav_ContFormularioRptcRepository? _av_ContFormularioRptcs;
         private Iav_ContratoRepository? _av_Contratos;
         private Iav_DetallePersTelefRepository _av_DetallePersTelefs;
         private Iav_DiscadorRepository? _av_Discadors;
@@ -70,6 +73,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_UsuarioRepository? _av_Usuarios;
         private Iav_ZonaCarteraRepository? _av_ZonaCarteras;
         private Iav_ZonaGeneralRepository? _av_ZonaGenerals;
+        private IRPTC_ReportexClienteRepository? _rPTC_ReportexClientes;
 
         private IValidationMessageRepository? _validationMessages;
         #endregion
@@ -90,6 +94,9 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_CarteraRepository av_Carteras => _av_Carteras ??= new av_CarteraRepository(_context);
         public Iav_ClienteRepository av_Clientes => _av_Clientes ??= new av_ClienteRepository(_context);
         public Iav_ConfigSistemaRepository av_ConfigSistemas => _av_ConfigSistemas ??= new av_ConfigSistemaRepository(_context);
+        public Iav_ContFormTipoParamOpeRepository av_ContFormTipoParamOpes => _av_ContFormTipoParamOpes ??= new av_ContFormTipoParamOpeRepository(_context);
+        public Iav_ContFormTipoCrudRepository av_ContFormTipoCruds => _av_ContFormTipoCruds ??= new av_ContFormTipoCrudRepository(_context);
+        public Iav_ContFormularioRptcRepository av_ContFormularioRptcs => _av_ContFormularioRptcs ??= new av_ContFormularioRptcRepository(_context);
         public Iav_ContratoRepository av_Contratos => _av_Contratos ??= new av_ContratoRepository(_context);
         public Iav_DetallePersTelefRepository av_DetallePersTelefs => _av_DetallePersTelefs ??= new av_DetallePersTelefRepository(_context);
         public Iav_DiscadorRepository av_Discadors => _av_Discadors ??= new av_DiscadorRepository(_context);
@@ -141,6 +148,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_UsuarioRepository av_Usuarios => _av_Usuarios ??= new av_UsuarioRepository(_context, _cache);
         public Iav_ZonaCarteraRepository av_ZonaCarteras => _av_ZonaCarteras ??= new av_ZonaCarteraRepository(_context);
         public Iav_ZonaGeneralRepository av_ZonaGenerals => _av_ZonaGenerals ??= new av_ZonaGeneralRepository(_context);
+        public IRPTC_ReportexClienteRepository RPTC_ReportexClientes => _rPTC_ReportexClientes ??= new RPTC_ReportexClienteRepository(_context);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
         #endregion
 

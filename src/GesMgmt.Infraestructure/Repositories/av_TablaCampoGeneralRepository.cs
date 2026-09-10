@@ -21,7 +21,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public IQueryable<av_TablaCampoGeneral> GetCabeceraGestionesAdicionalAsync(av_TablaCampoGeneral av_TablaCampoGeneral)
+        public async Task<IQueryable<av_TablaCampoGeneral>> GetCabeceraGestionesAdicionalAsync(av_TablaCampoGeneral av_TablaCampoGeneral)
         {
             var query = _dbSet
                 .AsNoTracking()

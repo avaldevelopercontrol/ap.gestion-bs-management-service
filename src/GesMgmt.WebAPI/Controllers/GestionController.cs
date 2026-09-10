@@ -110,6 +110,26 @@ namespace GesMgmt.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene la Lista de los botones por Id Contrato.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene la Lista de los botones por Id Contrato.
+        /// </remarks>
+        /// <response code="200">Obtiene la Lista de los botones por Id Contrato.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Gestion Botones")]
+        [HttpGet("GetGestionBotones")]
+        [ProducesResponseType(typeof(ResultDto<GetGestionBotonesResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetGestionBotonesAsync([FromQuery] GetGestionBotonesRequestDto gestionBotonesDto)
+        {
+            _Logger.LogInfo($"GetGestionBotones|Begin|GetGestionBotonesAsync|request: {JsonSerializer.Serialize(gestionBotonesDto)}");
+            var result = await _gestionService.GetGestionBotonesAsync(gestionBotonesDto);
+            _Logger.LogInfo($"GetGestionBotones|End|GetGestionBotonesAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
         /// Obtiene el listado con las columnas para la cabecera de DATOS ADICIONALES.
         /// </summary>
         /// <remarks>

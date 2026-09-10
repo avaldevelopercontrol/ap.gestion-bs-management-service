@@ -236,6 +236,11 @@ namespace GesMgmt.Application.DTOs.Gestion
             public int nId_Persdeudor { get; set; } //ID_DEUDOR
         }
 
+        public class GetGestionBotonesRequestDto
+        {
+            public int nId_Contrato { get; set; } //ID_CONTRATO
+        }
+
         public class GetGestionCabeceraRequestDto
         {
             public int nId_Cliente { get; set; }
