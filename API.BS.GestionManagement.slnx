@@ -12,7 +12,4 @@
   <Folder Name="/Infraestructure/">
     <Project Path="src/GesMgmt.Infraestructure/GesMgmt.Infraestructure.csproj" />
   </Folder>
-  <Folder Name="/Tests/">
-    <Project Path="src/GesMgmt.UnitTests/GesMgmt.UnitTests.csproj" />
-  </Folder>
 </Solution>
