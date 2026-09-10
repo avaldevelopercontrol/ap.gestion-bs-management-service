@@ -1,0 +1,105 @@
+diff --git a/src/GesMgmt.UnitTests/Analytics/Identity/HttpAnalyticsUserContextTests.cs b/src/GesMgmt.UnitTests/Analytics/Identity/HttpAnalyticsUserContextTests.cs
+index 96b03f7..5833677 100644
+--- a/src/GesMgmt.UnitTests/Analytics/Identity/HttpAnalyticsUserContextTests.cs
++++ b/src/GesMgmt.UnitTests/Analytics/Identity/HttpAnalyticsUserContextTests.cs
+@@ -32,7 +32,7 @@ public sealed class HttpAnalyticsUserContextTests
+     }
+ 
+     [Fact]
+-    public void TryGetUserId_ReadsDevelopmentHeader()
++    public void TryGetUserId_ReadsSisgesHeader()
+     {
+         var httpContext = new DefaultHttpContext();
+         httpContext.Request.Headers["X-Sisges-User-Id"] = "16068";
+@@ -46,7 +46,7 @@ public sealed class HttpAnalyticsUserContextTests
+     }
+ 
+     [Fact]
+-    public void TryGetUserId_IgnoresDevelopmentHeaderOutsideDevelopment()
++    public void TryGetUserId_ReadsSisgesHeaderOutsideDevelopment()
+     {
+         var httpContext = new DefaultHttpContext();
+         httpContext.Request.Headers["X-Sisges-User-Id"] = "16068";
+@@ -55,8 +55,8 @@ public sealed class HttpAnalyticsUserContextTests
+ 
+         var result = context.TryGetUserId(out var userId);
+ 
+-        Assert.False(result);
+-        Assert.Equal(0, userId);
++        Assert.True(result);
++        Assert.Equal(16068, userId);
+     }
+ 
+     [Theory]
+@@ -81,7 +81,7 @@ public sealed class HttpAnalyticsUserContextTests
+     }
+ 
+     [Fact]
+-    public void TryGetGroupId_ReadsDevelopmentHeader()
++    public void TryGetGroupId_ReadsSisgesHeader()
+     {
+         var httpContext = new DefaultHttpContext();
+         httpContext.Request.Headers["X-Sisges-Group-Id"] = "156";
+@@ -95,15 +95,15 @@ public sealed class HttpAnalyticsUserContextTests
+     }
+ 
+     [Fact]
+-    public void TryGetGroupId_IgnoresDevelopmentHeaderOutsideDevelopment()
++    public void TryGetGroupId_ReadsSisgesHeaderOutsideDevelopment()
+     {
+         var httpContext = new DefaultHttpContext();
+         httpContext.Request.Headers["X-Sisges-Group-Id"] = "156";
+         var accessor = new HttpContextAccessor { HttpContext = httpContext };
+         var context = CreateContext(accessor, Environments.Production);
+ 
+-        Assert.False(context.TryGetGroupId(out var groupId));
+-        Assert.Equal(0, groupId);
++        Assert.True(context.TryGetGroupId(out var groupId));
++        Assert.Equal(156, groupId);
+     }
+ 
+     [Fact]
+diff --git a/src/GesMgmt.WebAPI/HttpAnalyticsUserContext.cs b/src/GesMgmt.WebAPI/HttpAnalyticsUserContext.cs
+index 607dabf..e9b3392 100644
+--- a/src/GesMgmt.WebAPI/HttpAnalyticsUserContext.cs
++++ b/src/GesMgmt.WebAPI/HttpAnalyticsUserContext.cs
+@@ -64,24 +64,23 @@ namespace GesMgmt.WebAPI
+                 }
+             }
+ 
+-            // Sólo en Development se acepta el contexto SISGES propagado por el
+-            // frontend legacy. En otros ambientes debe provenir del host autenticado.
+-            if (hostEnvironment.IsDevelopment())
+-            {
+-                var headerValue = httpContextAccessor.HttpContext?
+-                    .Request.Headers[developmentHeader]
+-                    .FirstOrDefault();
++            // El frontend SISGES propaga el usuario/grupo real mediante headers.
++            // Los claims autenticados mantienen prioridad cuando estén disponibles.
++            var headerValue = httpContextAccessor.HttpContext?
++                .Request.Headers[developmentHeader]
++                .FirstOrDefault();
+ 
+-                if (int.TryParse(headerValue, out identifier) && identifier > 0)
+-                {
+-                    return true;
+-                }
++            if (int.TryParse(headerValue, out identifier) && identifier > 0)
++            {
++                return true;
++            }
+ 
+-                if (int.TryParse(configuration[localTestingKey], out identifier) &&
+-                    identifier > 0)
+-                {
+-                    return true;
+-                }
++            // Los valores configurados son exclusivamente un fallback de pruebas locales.
++            if (hostEnvironment.IsDevelopment() &&
++                int.TryParse(configuration[localTestingKey], out identifier) &&
++                identifier > 0)
++            {
++                return true;
+             }
+ 
+             identifier = 0;

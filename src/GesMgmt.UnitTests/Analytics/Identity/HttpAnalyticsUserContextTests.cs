@@ -32,7 +32,7 @@ public sealed class HttpAnalyticsUserContextTests
     }
 
     [Fact]
-    public void TryGetUserId_ReadsDevelopmentHeader()
+    public void TryGetUserId_ReadsSisgesHeader()
     {
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers["X-Sisges-User-Id"] = "16068";
@@ -46,7 +46,7 @@ public sealed class HttpAnalyticsUserContextTests
     }
 
     [Fact]
-    public void TryGetUserId_IgnoresDevelopmentHeaderOutsideDevelopment()
+    public void TryGetUserId_ReadsSisgesHeaderOutsideDevelopment()
     {
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers["X-Sisges-User-Id"] = "16068";
@@ -55,8 +55,8 @@ public sealed class HttpAnalyticsUserContextTests
 
         var result = context.TryGetUserId(out var userId);
 
-        Assert.False(result);
-        Assert.Equal(0, userId);
+        Assert.True(result);
+        Assert.Equal(16068, userId);
     }
 
     [Theory]
@@ -81,7 +81,7 @@ public sealed class HttpAnalyticsUserContextTests
     }
 
     [Fact]
-    public void TryGetGroupId_ReadsDevelopmentHeader()
+    public void TryGetGroupId_ReadsSisgesHeader()
     {
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers["X-Sisges-Group-Id"] = "156";
@@ -95,15 +95,15 @@ public sealed class HttpAnalyticsUserContextTests
     }
 
     [Fact]
-    public void TryGetGroupId_IgnoresDevelopmentHeaderOutsideDevelopment()
+    public void TryGetGroupId_ReadsSisgesHeaderOutsideDevelopment()
     {
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers["X-Sisges-Group-Id"] = "156";
         var accessor = new HttpContextAccessor { HttpContext = httpContext };
         var context = CreateContext(accessor, Environments.Production);
 
-        Assert.False(context.TryGetGroupId(out var groupId));
-        Assert.Equal(0, groupId);
+        Assert.True(context.TryGetGroupId(out var groupId));
+        Assert.Equal(156, groupId);
     }
 
     [Fact]
