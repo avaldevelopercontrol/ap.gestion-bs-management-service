@@ -1,7 +1,14 @@
+using System.Threading.RateLimiting;
+using GesMgmt.Application.DTOs.Analytics.PortfolioControlCenter;
+using GesMgmt.WebAPI.Controllers.Analytics;
+using Microsoft.AspNetCore.Http.Timeouts;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using NLog.Web;
 using GesMgmt.Infraestructure;
+using GesMgmt.Application.Interfaces.Analytics;
+using GesMgmt.WebAPI;
 using System.Text.Json.Serialization;
 
 
@@ -33,6 +40,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
     });
+
+builder.Services.AddProblemDetails();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -78,6 +87,41 @@ builder.Services.AddSwaggerGen(c =>
 // Add Infraestructure services
 builder.Services.AddInfraestructure(builder.Configuration);
 
+// Analytics consume la identidad del host sin registrar un esquema de autenticación propio.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAnalyticsUserContext, HttpAnalyticsUserContext>();
+
+var portfolioPerformance = builder.Configuration
+    .GetSection(PortfolioControlCenterPerformanceOptions.SectionName)
+    .Get<PortfolioControlCenterPerformanceOptions>()
+    ?? new PortfolioControlCenterPerformanceOptions();
+
+portfolioPerformance.Validate();
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status503ServiceUnavailable;
+    options.AddConcurrencyLimiter(
+        AnalyticsControllerBase.PortfolioConcurrencyPolicyName,
+        limiter =>
+        {
+            limiter.PermitLimit = portfolioPerformance.MaxConcurrentRequests;
+            limiter.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            limiter.QueueLimit = portfolioPerformance.QueueLimit;
+        });
+});
+
+builder.Services.AddRequestTimeouts(options =>
+{
+    options.AddPolicy(
+        AnalyticsControllerBase.PortfolioRequestTimeoutPolicyName,
+        new RequestTimeoutPolicy
+        {
+            Timeout = TimeSpan.FromSeconds(portfolioPerformance.RequestTimeoutSeconds),
+            TimeoutStatusCode = StatusCodes.Status503ServiceUnavailable
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -90,10 +134,21 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+
+app.UseRouting();
 app.UseCors("ReactPolicy");
+
+app.UseRequestTimeouts();
+app.UseRateLimiter();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+}
