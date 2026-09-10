@@ -64,24 +64,23 @@ namespace GesMgmt.WebAPI
                 }
             }
 
-            // Sólo en Development se acepta el contexto SISGES propagado por el
-            // frontend legacy. En otros ambientes debe provenir del host autenticado.
-            if (hostEnvironment.IsDevelopment())
+            // El frontend SISGES propaga el usuario/grupo real mediante headers.
+            // Los claims autenticados mantienen prioridad cuando estén disponibles.
+            var headerValue = httpContextAccessor.HttpContext?
+                .Request.Headers[developmentHeader]
+                .FirstOrDefault();
+
+            if (int.TryParse(headerValue, out identifier) && identifier > 0)
             {
-                var headerValue = httpContextAccessor.HttpContext?
-                    .Request.Headers[developmentHeader]
-                    .FirstOrDefault();
+                return true;
+            }
 
-                if (int.TryParse(headerValue, out identifier) && identifier > 0)
-                {
-                    return true;
-                }
-
-                if (int.TryParse(configuration[localTestingKey], out identifier) &&
-                    identifier > 0)
-                {
-                    return true;
-                }
+            // Los valores configurados son exclusivamente un fallback de pruebas locales.
+            if (hostEnvironment.IsDevelopment() &&
+                int.TryParse(configuration[localTestingKey], out identifier) &&
+                identifier > 0)
+            {
+                return true;
             }
 
             identifier = 0;
