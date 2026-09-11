@@ -238,6 +238,7 @@ namespace GesMgmt.Application.DTOs.Gestion
 
         public class GetGestionBotonesRequestDto
         {
+            public int nId_Cliente { get; set; } //ID_CLIENTE
             public int nId_Contrato { get; set; } //ID_CONTRATO
         }
 

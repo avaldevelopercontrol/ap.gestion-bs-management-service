@@ -56,7 +56,8 @@ namespace GesMgmt.Infraestructure
         {
             // Configuración de la cadena de conexión
             var connectionString = configuration.GetConnectionString("AvalCobConnection");
-            var analyticsConnectionString = configuration.GetConnectionString("AvalAnalyticsConnection");
+            var analyticsConnectionString = configuration.GetConnectionString("AvalAnalyticsConnection");
+
             var analyticsCommandTimeoutSeconds =
                 configuration.GetValue<int?>("AnalyticsDatabase:CommandTimeoutSeconds") ?? 15;
 

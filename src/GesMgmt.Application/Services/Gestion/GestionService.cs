@@ -604,14 +604,9 @@ namespace GesMgmt.Application.Services.Gestion
         #region "Lista de Botones"
         public async Task<ResultListDto<IEnumerable<GetGestionBotonesResponseDto>>> GetGestionBotonesAsync(GetGestionBotonesRequestDto gestionBotonesDto)
         {
-            var filterdc = new av_DocxCobrarOpe
-            {
-                nId_Contrato = gestionBotonesDto.nId_Contrato
-            };
-
             try
             {
-                var q_repBot = await _unitOfWork.av_ContFormularioRptcs.Query();
+                var q_repBot = await _unitOfWork.av_BotonClientes.Query();
 
                 IEnumerable<GetGestionBotonesResponseDto> data = Enumerable.Empty<GetGestionBotonesResponseDto>();
                 if (q_repBot != null)
@@ -619,18 +614,20 @@ namespace GesMgmt.Application.Services.Gestion
                     data = await (
                                     from s in q_repBot
                                     where s.bEstado == true
+                                    && s.nId_Cliente == gestionBotonesDto.nId_Cliente
                                     && s.nId_Contrato == gestionBotonesDto.nId_Contrato
                                     select new GetGestionBotonesResponseDto
                                     {
-                                        nId_ContFormRptc = s.nId_ContFormRptc,
+                                        nId_Cliente = s.nId_Cliente,
                                         nId_Contrato = s.nId_Contrato,
-                                        nTipoFormCrud = s.nTipoFormCrud,
-                                        cScriptStoreParamList = s.cScriptStoreParamList,
-                                        nTipoFormParamOpe = s.nTipoFormParamOpe,
-                                        nId_ReporteFormParam = s.nId_ReporteFormParam,
-                                        cScriptStoreParamEdit = s.cScriptStoreParamEdit,
+                                        nId_Boton = s.nId_Boton,
+                                        nombreBoton = s.nombreBoton,
+                                        descripcionBoton = s.descripcionBoton,
                                         bEstado = s.bEstado,
-                                        cNombreFormLink = s.cNombreFormLink
+                                        nCrea = s.nCrea,
+                                        dFechaCrea = s.dFechaCrea,
+                                        nModifica = s.nModifica,
+                                        dFechaModifica = s.dFechaModifica,
                                     }
                     )
                     .ToListAsync();

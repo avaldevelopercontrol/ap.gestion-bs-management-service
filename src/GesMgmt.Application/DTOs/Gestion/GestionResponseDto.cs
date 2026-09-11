@@ -460,15 +460,16 @@ namespace GesMgmt.Application.DTOs.Gestion
 
         public class GetGestionBotonesResponseDto
         {
-            public int nId_ContFormRptc { get; set; }
+            public int nId_Boton { get; set; }
+            public int nId_Cliente { get; set; }
             public int nId_Contrato { get; set; }
-            public int nTipoFormCrud { get; set; }
-            public string? cScriptStoreParamList { get; set; }
-            public int nTipoFormParamOpe { get; set; }
-            public int nId_ReporteFormParam { get; set; }
-            public string? cScriptStoreParamEdit { get; set; }
+            public string nombreBoton { get; set; }
+            public string descripcionBoton { get; set; }
             public bool bEstado { get; set; }
-            public string? cNombreFormLink { get; set; }
+            public int nCrea { get; set; }
+            public DateTime dFechaCrea { get; set; }
+            public int? nModifica { get; set; }
+            public DateTime? dFechaModifica { get; set; }
         }
 
         public class GetGestionCabeceraResponseDto

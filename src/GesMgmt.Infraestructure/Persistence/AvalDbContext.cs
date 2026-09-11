@@ -8,6 +8,7 @@ namespace GesMgmt.Infraestructure.Persistence
     {
         public DbSet<av_Agenda> av_Agendas { get; set; }
         public DbSet<av_asigUsuario> av_asigUsuarios { get; set; }
+        public DbSet<av_BotonCliente> av_BotonClientes { get; set; }
         public DbSet<av_CabPantallaCob> av_CabPantallaCobs { get; set; }
         public DbSet<av_CampanaDiscador> av_CampanaDiscadors { get; set; }
         public DbSet<av_Cartera> av_Carteras { get; set; }
@@ -80,6 +81,7 @@ namespace GesMgmt.Infraestructure.Persistence
         {
             modelBuilder.ApplyConfiguration(new av_AgendaConfiguration());
             modelBuilder.ApplyConfiguration(new av_asigUsuarioConfiguration());
+            modelBuilder.ApplyConfiguration(new av_BotonClienteConfiguration());
             modelBuilder.ApplyConfiguration(new av_CabPantallaCobConfiguration());
             modelBuilder.ApplyConfiguration(new av_CampanaDiscadorConfiguration());
             modelBuilder.ApplyConfiguration(new av_CarteraConfiguration());
