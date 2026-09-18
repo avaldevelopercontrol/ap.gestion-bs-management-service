@@ -26,6 +26,7 @@ public sealed class EvolucionDiariaCampanaAnalitica
     public int? ClientesAsignados { get; set; }
     public int? ClientesGestionados { get; set; }
     public int? ClientesPendientes { get; set; }
+    public int? ClientesContactados { get; set; }
     public decimal? MontoRecuperadoAcumulado { get; set; }
     public DateTime? FechaCarga { get; set; }
 }

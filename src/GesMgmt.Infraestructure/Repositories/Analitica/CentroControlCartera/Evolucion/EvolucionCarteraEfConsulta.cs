@@ -6,6 +6,7 @@ namespace GesMgmt.Infraestructure.Repositories.Analitica.CentroControlCartera;
 
 internal static class EvolucionCarteraEfConsulta
 {
+    private const int IdClienteCrmMaf = 59;
     public static async Task<EvolucionCarteraContexto?> ResolverContextoAsync(
         AnaliticaDbContext context,
         int idClienteCrm,
@@ -139,7 +140,14 @@ internal static class EvolucionCarteraEfConsulta
             .AddDays(1)
             .ToDateTime(TimeOnly.MinValue);
 
-        if (idSubCartera is null && unidadNegocio is null)
+        var usarEvolucionCampana = idSubCartera is null
+            && (unidadNegocio is null
+                || await EsClienteMafAsync(
+                    context,
+                    claveCliente,
+                    cancellationToken));
+
+        if (usarEvolucionCampana)
         {
             var rows = await context.EvolucionDiariaCampanaAnalitica
                 .AsNoTracking()
@@ -329,6 +337,18 @@ internal static class EvolucionCarteraEfConsulta
                 item => item.LatestDate,
                 cancellationToken);
     }
+
+    private static Task<bool> EsClienteMafAsync(
+        AnaliticaDbContext context,
+        int claveCliente,
+        CancellationToken cancellationToken) =>
+        context.ClientesAnalitica
+            .AsNoTracking()
+            .AnyAsync(
+                client =>
+                    client.ClaveCliente == claveCliente
+                    && client.IdClienteCrm == IdClienteCrmMaf,
+                cancellationToken);
 
     private static decimal RedondearMonto(decimal value) =>
         decimal.Round(value, 4, MidpointRounding.AwayFromZero);

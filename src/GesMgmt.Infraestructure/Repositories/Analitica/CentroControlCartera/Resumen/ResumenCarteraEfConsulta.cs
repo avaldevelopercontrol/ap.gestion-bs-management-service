@@ -6,6 +6,9 @@ namespace GesMgmt.Infraestructure.Repositories.Analitica.CentroControlCartera;
 
 internal static class ResumenCarteraEfConsulta
 {
+    private const int IdClienteCrmMaf = 59;
+    private const string CodigoOrigenMaf = "MAF_DAILY";
+
     private static readonly string[] EstadosCumplidos =
     [
         "FULFILLED",
@@ -43,12 +46,20 @@ internal static class ResumenCarteraEfConsulta
             .AddDays(1)
             .ToDateTime(TimeOnly.MinValue);
 
+        var esMaf = await EsClienteMafAsync(
+            context,
+            claveCliente,
+            cancellationToken);
+
+        var usarDeduplicacionCampana = esMaf && !idSubCartera.HasValue;
+
         var snapshot = await ObtenerCorteAsync(
             context,
             claveCliente,
             claveCampana,
             idSubCartera,
             unidadNegocio,
+            usarDeduplicacionCampana,
             fechaDesde,
             dateToExclusive,
             cancellationToken);
@@ -69,6 +80,7 @@ internal static class ResumenCarteraEfConsulta
             claveCampana,
             idSubCartera,
             unidadNegocio,
+            usarDeduplicacionCampana,
             fechaDesde,
             dateToExclusive,
             cancellationToken);
@@ -79,6 +91,7 @@ internal static class ResumenCarteraEfConsulta
             claveCampana,
             idSubCartera,
             unidadNegocio,
+            usarDeduplicacionCampana,
             fechaDesde,
             dateToExclusive,
             cancellationToken);
@@ -89,11 +102,15 @@ internal static class ResumenCarteraEfConsulta
             claveCampana,
             idSubCartera,
             unidadNegocio,
+            usarDeduplicacionCampana,
             fechaDesde,
             dateToExclusive,
             cancellationToken);
 
-        var vigencia = await ObtenerVigenciaAsync(context, cancellationToken);
+        var vigencia = await ObtenerVigenciaAsync(
+            context,
+            esMaf,
+            cancellationToken);
 
         var fechaActualizacionUtc = new DateTime?[]
         {
@@ -136,10 +153,36 @@ internal static class ResumenCarteraEfConsulta
         int claveCampana,
         long? idSubCartera,
         string? unidadNegocio,
+        bool usarDeduplicacionCampana,
         DateTime fechaDesde,
         DateTime dateToExclusive,
         CancellationToken cancellationToken)
     {
+        if (usarDeduplicacionCampana)
+        {
+            var corteCampana = await context.EvolucionDiariaCampanaAnalitica
+                .AsNoTracking()
+                .Where(row =>
+                    row.ClaveCliente == claveCliente
+                    && row.ClaveCampana == claveCampana
+                    && row.FechaCalendario >= fechaDesde
+                    && row.FechaCalendario < dateToExclusive)
+                .OrderByDescending(row => row.FechaCalendario)
+                .Select(row => new MetricasCorte(
+                    row.FechaCalendario,
+                    row.ClientesAsignados ?? 0,
+                    row.ClientesGestionados ?? 0,
+                    row.ClientesPendientes ?? 0,
+                    row.ClientesContactados,
+                    row.FechaCarga))
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (corteCampana is not null)
+            {
+                return corteCampana;
+            }
+        }
+
         var realSnapshot = await (
             from fact in context.HechosDiariosCarteraAnalitica.AsNoTracking()
             join date in context.FechasAnalitica.AsNoTracking()
@@ -240,6 +283,7 @@ internal static class ResumenCarteraEfConsulta
         int claveCampana,
         long? idSubCartera,
         string? unidadNegocio,
+        bool usarDeduplicacionCampana,
         DateTime fechaDesde,
         DateTime dateToExclusive,
         CancellationToken cancellationToken)
@@ -259,6 +303,9 @@ internal static class ResumenCarteraEfConsulta
                         && portfolio.UnidadNegocioOrigen == unidadNegocio))
             select fact;
 
+        // Los hechos detallados aún no persisten clave_cliente_maf.
+        // Deduplicar solo por IdDeudorOrigen fusiona clientes MAF distintos.
+        // Conservamos el grano físico hasta persistir la clave de negocio.
         var directContactClients = await contacts
             .Where(row => row.TuvoContactoDirecto)
             .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
@@ -290,6 +337,7 @@ internal static class ResumenCarteraEfConsulta
         int claveCampana,
         long? idSubCartera,
         string? unidadNegocio,
+        bool usarDeduplicacionCampana,
         DateTime fechaDesde,
         DateTime dateToExclusive,
         CancellationToken cancellationToken)
@@ -346,6 +394,7 @@ internal static class ResumenCarteraEfConsulta
         int claveCampana,
         long? idSubCartera,
         string? unidadNegocio,
+        bool usarDeduplicacionCampana,
         DateTime fechaDesde,
         DateTime dateToExclusive,
         CancellationToken cancellationToken)
@@ -379,8 +428,25 @@ internal static class ResumenCarteraEfConsulta
 
     private static async Task<MetricasVigencia> ObtenerVigenciaAsync(
         AnaliticaDbContext context,
+        bool esMaf,
         CancellationToken cancellationToken)
     {
+        if (esMaf)
+        {
+            var watermarkMaf = await context.ControlesCargaAnalitica
+                .AsNoTracking()
+                .Where(row => row.CodigoOrigen == CodigoOrigenMaf)
+                .OrderByDescending(row => row.FechaUltimoExito)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            return watermarkMaf is null
+                ? new MetricasVigencia(null, null, null)
+                : new MetricasVigencia(
+                    watermarkMaf.FechaHoraUltimoOrigen,
+                    watermarkMaf.FechaUltimoExito,
+                    watermarkMaf.FechaUltimoExito);
+        }
+
         var watermarks = await context.ControlesCargaAnalitica
             .AsNoTracking()
             .Where(row => CodigosOrigenVigencia.Contains(row.CodigoOrigen))
@@ -420,6 +486,18 @@ internal static class ResumenCarteraEfConsulta
             fechaActualizacionBaseCarteraUtc,
             fechaActualizacionDatosUtc);
     }
+
+    private static Task<bool> EsClienteMafAsync(
+        AnaliticaDbContext context,
+        int claveCliente,
+        CancellationToken cancellationToken) =>
+        context.ClientesAnalitica
+            .AsNoTracking()
+            .AnyAsync(
+                client =>
+                    client.ClaveCliente == claveCliente
+                    && client.IdClienteCrm == IdClienteCrmMaf,
+                cancellationToken);
 
     private static decimal? Dividir(long numerator, long denominator)
     {

@@ -144,6 +144,7 @@ namespace GesMgmt.Infraestructure.Persistence
                 builder.Property(row => row.ClientesAsignados).HasColumnName("clientes_asignados");
                 builder.Property(row => row.ClientesGestionados).HasColumnName("clientes_gestionados");
                 builder.Property(row => row.ClientesPendientes).HasColumnName("clientes_pendientes");
+                builder.Property(row => row.ClientesContactados).HasColumnName("clientes_contactados");
                 builder.Property(row => row.MontoRecuperadoAcumulado).HasColumnName("monto_recuperado_acumulado");
                 builder.Property(row => row.FechaCarga).HasColumnName("fecha_carga");
             });

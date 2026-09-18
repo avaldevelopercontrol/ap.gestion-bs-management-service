@@ -6,6 +6,8 @@ namespace GesMgmt.Infraestructure.Repositories.Analitica.CentroControlCartera;
 
 internal static class RendimientoCampanaCarteraEfConsulta
 {
+    private const int IdClienteCrmMaf = 59;
+
     private static readonly string[] EstadosCumplidos =
     [
         "FULFILLED",
@@ -37,6 +39,10 @@ internal static class RendimientoCampanaCarteraEfConsulta
         {
             return null;
         }
+
+        var usarDeduplicacionCampana =
+            idClienteCrm == IdClienteCrmMaf
+            && !request.IdSubCartera.HasValue;
 
         var eligibleCampaigns = ConstruirCampanasElegibles(
             context,
@@ -76,6 +82,7 @@ internal static class RendimientoCampanaCarteraEfConsulta
             context,
             claveCliente.Value,
             request,
+            usarDeduplicacionCampana,
             snapshotDates,
             cancellationToken);
 
@@ -90,6 +97,7 @@ internal static class RendimientoCampanaCarteraEfConsulta
             context,
             claveCliente.Value,
             request,
+            usarDeduplicacionCampana,
             eligibleCampaigns,
             cancellationToken);
 
@@ -97,6 +105,7 @@ internal static class RendimientoCampanaCarteraEfConsulta
             context,
             claveCliente.Value,
             request,
+            usarDeduplicacionCampana,
             eligibleCampaigns,
             cancellationToken);
 
@@ -104,6 +113,7 @@ internal static class RendimientoCampanaCarteraEfConsulta
             context,
             claveCliente.Value,
             request,
+            usarDeduplicacionCampana,
             eligibleCampaigns,
             cancellationToken);
 
@@ -276,10 +286,36 @@ internal static class RendimientoCampanaCarteraEfConsulta
         AnaliticaDbContext context,
         int claveCliente,
         RendimientoCampanaCarteraRequest request,
+        bool usarDeduplicacionCampana,
         IReadOnlyDictionary<int, DateTime> snapshotDates,
         CancellationToken cancellationToken)
     {
         var campaignKeys = snapshotDates.Keys.ToArray();
+
+        if (usarDeduplicacionCampana)
+        {
+            var campaignRows = await context.EvolucionDiariaCampanaAnalitica
+                .AsNoTracking()
+                .Where(row =>
+                    row.ClaveCliente == claveCliente
+                    && campaignKeys.Contains(row.ClaveCampana))
+                .ToListAsync(cancellationToken);
+
+            return campaignRows
+                .Where(row =>
+                    snapshotDates.TryGetValue(row.ClaveCampana, out var fechaCorte)
+                    && row.FechaCalendario == fechaCorte)
+                .ToDictionary(
+                    row => row.ClaveCampana,
+                    row => new MetricasCorteCampana(
+                        snapshotDates[row.ClaveCampana],
+                        row.ClientesAsignados ?? 0,
+                        row.ClientesGestionados ?? 0,
+                        row.ClientesPendientes ?? 0,
+                        row.ClientesContactados ?? 0,
+                        row.FechaCarga));
+        }
+
         var rows = await context.MetricasDiariasCarteraAnalitica
             .AsNoTracking()
             .Where(metric =>
@@ -357,6 +393,7 @@ internal static class RendimientoCampanaCarteraEfConsulta
         AnaliticaDbContext context,
         int claveCliente,
         RendimientoCampanaCarteraRequest request,
+        bool usarDeduplicacionCampana,
         IQueryable<RangoCampana> eligibleCampaigns,
         CancellationToken cancellationToken)
     {
@@ -386,6 +423,8 @@ internal static class RendimientoCampanaCarteraEfConsulta
                 fact.FechaCarga
             };
 
+        // Los hechos detallados aún no persisten clave_cliente_maf.
+        // Mantener el grano cartera/deudor evita fusionar clientes distintos.
         var directCounts = await contacts
             .Where(row => row.TuvoContactoDirecto)
             .Select(row => new
@@ -438,6 +477,7 @@ internal static class RendimientoCampanaCarteraEfConsulta
         AnaliticaDbContext context,
         int claveCliente,
         RendimientoCampanaCarteraRequest request,
+        bool usarDeduplicacionCampana,
         IQueryable<RangoCampana> eligibleCampaigns,
         CancellationToken cancellationToken)
     {
@@ -514,6 +554,7 @@ internal static class RendimientoCampanaCarteraEfConsulta
         AnaliticaDbContext context,
         int claveCliente,
         RendimientoCampanaCarteraRequest request,
+        bool usarDeduplicacionCampana,
         IQueryable<RangoCampana> eligibleCampaigns,
         CancellationToken cancellationToken)
     {

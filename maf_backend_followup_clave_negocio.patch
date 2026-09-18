@@ -1,0 +1,291 @@
+--- a/src/GesMgmt.Infraestructure/Repositories/Analitica/CentroControlCartera/Resumen/ResumenCarteraEfConsulta.cs
++++ b/src/GesMgmt.Infraestructure/Repositories/Analitica/CentroControlCartera/Resumen/ResumenCarteraEfConsulta.cs
+@@ -303,35 +303,23 @@
+                         && portfolio.UnidadNegocioOrigen == unidadNegocio))
+             select fact;
+ 
+-        var directContactClients = usarDeduplicacionCampana
+-            ? await contacts
+-                .Where(row => row.TuvoContactoDirecto)
+-                .Select(row => row.IdDeudorOrigen)
+-                .Distinct()
+-                .LongCountAsync(cancellationToken)
+-            : await contacts
+-                .Where(row => row.TuvoContactoDirecto)
+-                .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
+-                .Distinct()
+-                .LongCountAsync(cancellationToken);
+-
+-        var classifiableClients = usarDeduplicacionCampana
+-            ? await contacts
+-                .Where(row =>
+-                    row.TuvoContactoDirecto
+-                    || row.TuvoContactoIndirecto
+-                    || row.TuvoSinContacto)
+-                .Select(row => row.IdDeudorOrigen)
+-                .Distinct()
+-                .LongCountAsync(cancellationToken)
+-            : await contacts
+-                .Where(row =>
+-                    row.TuvoContactoDirecto
+-                    || row.TuvoContactoIndirecto
+-                    || row.TuvoSinContacto)
+-                .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
+-                .Distinct()
+-                .LongCountAsync(cancellationToken);
++        // Los hechos detallados aún no persisten clave_cliente_maf.
++        // Deduplicar solo por IdDeudorOrigen fusiona clientes MAF distintos.
++        // Conservamos el grano físico hasta persistir la clave de negocio.
++        var directContactClients = await contacts
++            .Where(row => row.TuvoContactoDirecto)
++            .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
++            .Distinct()
++            .LongCountAsync(cancellationToken);
++
++        var classifiableClients = await contacts
++            .Where(row =>
++                row.TuvoContactoDirecto
++                || row.TuvoContactoIndirecto
++                || row.TuvoSinContacto)
++            .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
++            .Distinct()
++            .LongCountAsync(cancellationToken);
+ 
+         var fechaCargaUtc = await contacts
+             .Select(row => row.FechaCarga)
+@@ -385,15 +373,10 @@
+             })
+             .SingleOrDefaultAsync(cancellationToken);
+ 
+-        var validPromiseClients = usarDeduplicacionCampana
+-            ? await promises
+-                .Select(row => row.IdDeudorOrigen)
+-                .Distinct()
+-                .LongCountAsync(cancellationToken)
+-            : await promises
+-                .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
+-                .Distinct()
+-                .LongCountAsync(cancellationToken);
++        var validPromiseClients = await promises
++            .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
++            .Distinct()
++            .LongCountAsync(cancellationToken);
+ 
+         return aggregate is null
+             ? new MetricasPromesa(0L, validPromiseClients, 0m, 0m, null)
+@@ -431,15 +414,10 @@
+                         && portfolio.UnidadNegocioOrigen == unidadNegocio))
+             select fact;
+ 
+-        var cantidadPagos = usarDeduplicacionCampana
+-            ? await payments
+-                .Select(row => row.IdDeudorOrigen)
+-                .Distinct()
+-                .LongCountAsync(cancellationToken)
+-            : await payments
+-                .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
+-                .Distinct()
+-                .LongCountAsync(cancellationToken);
++        var cantidadPagos = await payments
++            .Select(row => new { row.ClaveCartera, row.IdDeudorOrigen })
++            .Distinct()
++            .LongCountAsync(cancellationToken);
+ 
+         var fechaCargaUtc = await payments
+             .Select(row => row.FechaCarga)
+--- a/src/GesMgmt.Infraestructure/Repositories/Analitica/CentroControlCartera/RendimientoCampana/RendimientoCampanaCarteraEfConsulta.cs
++++ b/src/GesMgmt.Infraestructure/Repositories/Analitica/CentroControlCartera/RendimientoCampana/RendimientoCampanaCarteraEfConsulta.cs
+@@ -423,71 +423,37 @@
+                 fact.FechaCarga
+             };
+ 
+-        Dictionary<int, MetricaCantidadCampana> directCounts;
+-        Dictionary<int, MetricaCantidadCampana> classifiableCounts;
++        // Los hechos detallados aún no persisten clave_cliente_maf.
++        // Mantener el grano cartera/deudor evita fusionar clientes distintos.
++        var directCounts = await contacts
++            .Where(row => row.TuvoContactoDirecto)
++            .Select(row => new
++            {
++                row.ClaveCampana,
++                row.ClaveCartera,
++                row.IdDeudorOrigen
++            })
++            .Distinct()
++            .GroupBy(row => row.ClaveCampana)
++            .Select(group => new MetricaCantidadCampana(
++                group.Key,
++                group.LongCount()))
++            .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+ 
+-        if (usarDeduplicacionCampana)
+-        {
+-            directCounts = await contacts
+-                .Where(row => row.TuvoContactoDirecto)
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+-
+-            classifiableCounts = await contacts
+-                .Where(row => row.TuvoContactoDirecto || row.TuvoContactoIndirecto || row.TuvoSinContacto)
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+-        }
+-        else
+-        {
+-            directCounts = await contacts
+-                .Where(row => row.TuvoContactoDirecto)
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.ClaveCartera,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+-
+-            classifiableCounts = await contacts
+-                .Where(row => row.TuvoContactoDirecto || row.TuvoContactoIndirecto || row.TuvoSinContacto)
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.ClaveCartera,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+-        }
++        var classifiableCounts = await contacts
++            .Where(row => row.TuvoContactoDirecto || row.TuvoContactoIndirecto || row.TuvoSinContacto)
++            .Select(row => new
++            {
++                row.ClaveCampana,
++                row.ClaveCartera,
++                row.IdDeudorOrigen
++            })
++            .Distinct()
++            .GroupBy(row => row.ClaveCampana)
++            .Select(group => new MetricaCantidadCampana(
++                group.Key,
++                group.LongCount()))
++            .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+ 
+         var fechaCarga = await contacts
+             .GroupBy(row => row.ClaveCampana)
+@@ -554,32 +520,19 @@
+                 group.Max(row => row.FechaCarga)))
+             .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+ 
+-        var debtorCounts = usarDeduplicacionCampana
+-            ? await promises
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken)
+-            : await promises
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.ClaveCartera,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
++        var debtorCounts = await promises
++            .Select(row => new
++            {
++                row.ClaveCampana,
++                row.ClaveCartera,
++                row.IdDeudorOrigen
++            })
++            .Distinct()
++            .GroupBy(row => row.ClaveCampana)
++            .Select(group => new MetricaCantidadCampana(
++                group.Key,
++                group.LongCount()))
++            .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+ 
+         return totals.Keys
+             .Union(debtorCounts.Keys)
+@@ -628,32 +581,19 @@
+                 fact.FechaCarga
+             };
+ 
+-        var counts = usarDeduplicacionCampana
+-            ? await payments
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken)
+-            : await payments
+-                .Select(row => new
+-                {
+-                    row.ClaveCampana,
+-                    row.ClaveCartera,
+-                    row.IdDeudorOrigen
+-                })
+-                .Distinct()
+-                .GroupBy(row => row.ClaveCampana)
+-                .Select(group => new MetricaCantidadCampana(
+-                    group.Key,
+-                    group.LongCount()))
+-                .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
++        var counts = await payments
++            .Select(row => new
++            {
++                row.ClaveCampana,
++                row.ClaveCartera,
++                row.IdDeudorOrigen
++            })
++            .Distinct()
++            .GroupBy(row => row.ClaveCampana)
++            .Select(group => new MetricaCantidadCampana(
++                group.Key,
++                group.LongCount()))
++            .ToDictionaryAsync(row => row.ClaveCampana, cancellationToken);
+ 
+         var fechaCarga = await payments
+             .GroupBy(row => row.ClaveCampana)
