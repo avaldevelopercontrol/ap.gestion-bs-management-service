@@ -39,11 +39,11 @@ namespace GesMgmt.Application.Validators.Boton
                 return validationNID_CARTERA;
             }
 
-            var validationNID_DOCXCOBRAR = await Validate_nId_DocXCobrar();
-            if (validationNID_DOCXCOBRAR.Code != Const.SUCCESS_CODE)
-            {
-                return validationNID_DOCXCOBRAR;
-            }
+            //var validationNID_DOCXCOBRAR = await Validate_nId_DocXCobrar();
+            //if (validationNID_DOCXCOBRAR.Code != Const.SUCCESS_CODE)
+            //{
+            //    return validationNID_DOCXCOBRAR;
+            //}
 
             var validationNID_USUARIO = await Validate_nId_UsuOpe();
             if (validationNID_USUARIO.Code != Const.SUCCESS_CODE)

@@ -53,6 +53,8 @@ using GesMgmt.Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using GesMgmt.Application.Interfaces.Produccion;
+using GesMgmt.Application.Services.Produccion;
 
 namespace GesMgmt.Infraestructure
 {
@@ -65,9 +67,9 @@ namespace GesMgmt.Infraestructure
             // Configuración de la cadena de conexión
             var connectionString = configuration.GetConnectionString("AvalCobConnection");
             var cadenaConexionAnalitica = configuration.GetConnectionString("AvalAnalyticsConnection");
+            var cadenaConexionHistorica = configuration.GetConnectionString("AvalCobHisConnection");
 
-            var segundosTimeoutComandoAnalitica =
-                configuration.GetValue<int?>("AnalyticsDatabase:CommandTimeoutSeconds") ?? 15;
+            var segundosTimeoutComandoAnalitica = configuration.GetValue<int?>("AnalyticsDatabase:CommandTimeoutSeconds") ?? 15;
 
             if (segundosTimeoutComandoAnalitica is <= 0 or > 120)
             {
@@ -75,8 +77,11 @@ namespace GesMgmt.Infraestructure
                     "AnalyticsDatabase:CommandTimeoutSeconds debe estar entre 1 y 120.");
             }
 
-            services.AddDbContext<AvalDbContext>(options =>
+            services.AddDbContext<AvalDbContext>(options => 
                 options.UseSqlServer(connectionString));
+            
+            services.AddDbContext<AvalHisDbContext>(options => 
+                options.UseSqlServer(cadenaConexionHistorica));
 
             services.AddDbContext<AnaliticaDbContext>(options =>
                 options.UseSqlServer(
@@ -107,6 +112,7 @@ namespace GesMgmt.Infraestructure
             services.AddScoped<IGrupoService, GrupoService>();
             services.AddScoped<IOpcionService, OpcionService>();
             services.AddScoped<IPerfilService, PerfilService>();
+            services.AddScoped<IProduccionService, ProduccionService>();
             services.AddScoped<IPerfilOpcionService, PerfilOpcionService>();
             services.AddScoped<ITelefonoService, TelefonoService>();
             services.AddScoped<IUGrupoService, UGrupoService>();

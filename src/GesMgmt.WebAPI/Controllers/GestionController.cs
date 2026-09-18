@@ -229,85 +229,9 @@ namespace GesMgmt.WebAPI.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        /// <summary>
-        /// Obtiene el listado de AGENDAS, botón +AGENDAS.
-        /// </summary>
-        /// <remarks>
-        /// Obtiene el listado de AGENDAS, botón +AGENDAS.
-        /// </remarks>
-        /// <response code="200">Obtiene el listado de AGENDAS, BOTÓN +AGENDAS.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Agendadas")]
-        [HttpGet("GetGestionAgendasDeudor")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionAgendaResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGestionAgendasDeudorAsync([FromQuery] GetGestionAgendaRequestDto gestionAgendaDto)
-        {
-            _Logger.LogInfo($"GetGestionAgendasDeudor|Begin|GetGestionAgendasDeudorAsync|request: {JsonSerializer.Serialize(gestionAgendaDto)}");
-            var result = await _gestionService.GetGestionAgendasDeudorAsync(gestionAgendaDto);
-            _Logger.LogInfo($"GetGestionAgendasDeudor|End|GetGestionAgendasDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
-        }
+        
 
-        /// <summary>
-        /// Obtiene el listado de PAGOS, BOTÓN +PAGOS.
-        /// </summary>
-        /// <remarks>
-        /// Obtiene el listado de PAGOS, BOTÓN +PAGOS.
-        /// </remarks>
-        /// <response code="200">Obtiene el listado de PAGOS, BOTÓN +PAGOS.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Pagos")]
-        [HttpGet("GetGestionPagosDeudor")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionPagosResponsetDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGestionPagosDeudorAsync([FromQuery] GetGestionPagosRequestDto gestionPagoDto)
-        {
-            _Logger.LogInfo($"GetGestionPagosDeudor|Begin|GetGestionPagosDeudorAsync|request: {JsonSerializer.Serialize(gestionPagoDto)}");
-            var result = await _gestionService.GetGestionPagosDeudorAsync(gestionPagoDto);
-            _Logger.LogInfo($"GetGestionPagosDeudor|End|GetGestionPagosDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
-        }
-
-        /// <summary>
-        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.
-        /// </summary>
-        /// <remarks>
-        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.
-        /// </remarks>
-        /// <response code="200">Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor")]
-        [HttpGet("GetGestionInformacionDeudor")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionInformacionDeudorRespondeDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGestionInformacionDeudorAsync([FromQuery] GetGestionInformacionDeudorRequestDto gestionInfoDeudor)
-        {
-            _Logger.LogInfo($"GetGestionInformacionDeudor|Begin|GetGestionInformacionDeudorAsync|request: {JsonSerializer.Serialize(gestionInfoDeudor)}");
-            var result = await _gestionService.GetGestionInformacionDeudorAsync(gestionInfoDeudor);
-            _Logger.LogInfo($"GetGestionInformacionDeudor|End|GetGestionInformacionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
-        }
-
-        /// <summary>
-        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / Tercer registro de la lista.
-        /// </summary>
-        /// <remarks>
-        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / Tercer registro de la lista.
-        /// </remarks>
-        /// <response code="200">Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / Tercer registro de la lista.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor Param")]
-        [HttpGet("GetGestionInformacionDeudorParam")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionInformacionDeudorParamRespondeDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGestionInformacionDeudorParamAsync([FromQuery] GetGestionInformacionDeudorParamRequestDto gestionInfoDeudorParam)
-        {
-            _Logger.LogInfo($"GetGestionInformacionDeudorParam|Begin|GetGestionInformacionDeudorParamAsync|request: {JsonSerializer.Serialize(gestionInfoDeudorParam)}");
-            var result = await _gestionService.GetGestionInformacionDeudorParamAsync(gestionInfoDeudorParam);
-            _Logger.LogInfo($"GetGestionInformacionDeudorParam|End|GetGestionInformacionDeudorParamAsync|response: {JsonSerializer.Serialize(result)}");
-            return StatusCode(result.StatusCode, result);
-        }
+        
 
         /// <summary>
         /// Obtiene el Listado de Tipo de Gestiones.
@@ -407,26 +331,6 @@ namespace GesMgmt.WebAPI.Controllers
             var result = await _gestionService.GetGestionMotivoNoPagoAsync(motivoNoPagoDto);
             _Logger.LogInfo($"GetGestionMotivoNoPago|End|GetGestionMotivoNoPagoAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
-        }
-
-        /// <summary>
-        /// Para poder realizar la descarga del archivo excel de estado de cuenta.
-        /// </summary>
-        /// <remarks>
-        /// Para poder realizar la descarga del archivo excel de estado de cuenta.
-        /// </remarks>
-        /// <response code="200">Para poder realizar la descarga del archivo excel de estado de cuenta.</response>
-        [SwaggerOperation(Summary = "[API]: Endpoint Para exportar el estado de cuenta")]
-        [HttpGet("ExportGestionEstadoCuenta")]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaRequestDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionEstadoCuentaResponseDto>>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ExportGestionEstadoCuentaAsync([FromQuery] GetGestionEstadoCuentaRequestDto estadoCuentaDto)
-        {
-            _Logger.LogInfo($"ExportGestionEstadoCuenta|Begin|ExportGestionEstadoCuentaAsync|request: {JsonSerializer.Serialize(estadoCuentaDto)}");
-            var excel = await _gestionService.ExportGestionEstadoCuentaAsync(estadoCuentaDto);
-            _Logger.LogInfo($"ExportGestionEstadoCuenta|End|ExportGestionEstadoCuentaAsync|response: {JsonSerializer.Serialize(excel)}");
-            return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"EstadoCuenta_{DateTime.Now:yyyyMMddHHmmss}.xlsx");
         }
 
         [HttpPost("CreateGestionOpeGesContratos")]

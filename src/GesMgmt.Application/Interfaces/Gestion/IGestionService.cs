@@ -17,17 +17,16 @@ namespace GesMgmt.Application.Interfaces.Gestion
         Task<ResultListDto<IEnumerable<GetGestionGestionesCarteraDeudorResponseDto>>> GetGestionGestionesCarteraDeudorAsync(GetGestionGestionesCarteraDeudorRequestDto gestionCarteraDeudorDto);
         Task<ResultListDto<IEnumerable<GetGestionEstadoGestionCarteraDeudorResponseDto>>> GetGestionEstadosGestionesCarteraDeudorAsync(GetGestionEstadoGestionCarteraDeudorRequestDto gestionEstadosCarteraDeudorDto);
         Task<ResultListDto<IEnumerable<GestionCarteraDeudorEstadoHistoricaResponseDto>>> GetGestionEstadosGestionesCarteraDeudorHistoricaAsync(GestionCarteraDeudorEstadoHistoricaRequestDto gestionEstadosCarteraDeudorHistoricoDto);
-        Task<ResultListDto<IEnumerable<GetGestionAgendaResponseDto>>> GetGestionAgendasDeudorAsync(GetGestionAgendaRequestDto gestionAgendaDto);
-        Task<ResultListDto<IEnumerable<GetGestionPagosResponsetDto>>> GetGestionPagosDeudorAsync(GetGestionPagosRequestDto gestionPagosDto);
-        Task<ResultDto<GetGestionInformacionDeudorRespondeDto>> GetGestionInformacionDeudorAsync(GetGestionInformacionDeudorRequestDto gestionInformacionDeudorDto);
-        Task<ResultDto<GetGestionInformacionDeudorParamRespondeDto>> GetGestionInformacionDeudorParamAsync(GetGestionInformacionDeudorParamRequestDto gestionInformacionDeudorParamDto);
+        
+        
+        
+        
         Task<ResultListDto<IEnumerable<GetGestionTipoGestionResponseDto>>> GetGestionTipoGestionAsync();
         Task<ResultListDto<IEnumerable<GetGestionEstadoGestionResponseDto>>> GetGestionEstadoGestionAsync(GetGestionEstadoGestionRequestDto estadoGestionDto);
         Task<ResultListDto<IEnumerable<GetGestionPaletaRespuestaResponseDto>>> GetGestionPaletaRespuestaAsync(GetGestionPaletaRespuestaRequestDto paletaGestionDto);
         Task<ResultListDto<IEnumerable<GetGestionEstadoGestionClaroResponseDto>>> GetGestionEstadoGestionClaroAsync(GetGestionEstadoGestionClaroRequestDto estadoGestionClaroDto);
         Task<ResultListDto<IEnumerable<GetGestionMotivoNoPagoResponseDto>>> GetGestionMotivoNoPagoAsync(GetGestionMotivoNoPagoRequestDto motivoNoPagoDto);
         Task<ResultListDto<IEnumerable<CreateGestionOpeGesResponseDto>>> CreateGestionOpeGesContratosAsync(CreateGestionOpeGesRequestDto OpeGesCreateDto);
-        Task<byte[]> ExportGestionEstadoCuentaAsync(GetGestionEstadoCuentaRequestDto dto);
         Task<ResultListDto<IEnumerable<GetGestionToDayResponseDto>>> GetGestionToDayAsync(GetGestionToDayRequestDto gestionToDayDto);
     }
 }

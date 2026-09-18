@@ -1,0 +1,15 @@
+﻿using GesMgmt.Domain.Entities.Historico;
+
+namespace GesMgmt.Domain.Interfaces.Historico
+{
+    public interface Iav_CarteraRepository
+    {
+        Task<IQueryable<av_Cartera>> Query();
+        Task<av_Cartera> GetCarteraByIdClienteIdCarteraAsync(int nId_Cliente, int nId_Cartera);
+        Task<IQueryable<av_Cartera?>> GetCarteraByClienteCarteraAsync(int nId_Cliente, int nId_Cartera);
+        Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteActivoAsync(int nId_Cliente);
+        Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteAsync(int nId_Cliente);
+        Task<IQueryable<av_Cartera>> GetCarterasParametrosByIdClienteAnnioAsync(int nId_Cliente, int Annio);
+        Task<IQueryable<av_Cartera?>> GetCarterasByIdClienteAndIdCarteraAsync(int nId_Cliente, int nId_Cartera);
+    }
+}

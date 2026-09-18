@@ -1,7 +1,6 @@
-﻿
-namespace GesMgmt.Domain.Entities
+﻿namespace GesMgmt.Domain.Entities
 {
-    public class av_PersDeudor //: BaseEntity
+    public class av_PersDeudor
     {
         public int nId_PersDeudor { get; set; }
         public string? cPers_DNI { get; set; }
@@ -37,8 +36,5 @@ namespace GesMgmt.Domain.Entities
         public string? cPers_PTP { get; set; }
         public string? cPers_CE { get; set; }
         public string? cPers_Pasaporte { get; set; }
-
-        //Relaciones de navegación
-        //public ICollection<av_DocxCobrar> av_DocxCobrars { get; set; }
     }
 }

@@ -7,6 +7,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Boton.BotonRequestDto;
 using static GesMgmt.Application.DTOs.Boton.BotonResponseDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
+using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -29,6 +31,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo("| ** API.BS.GestionManagement ** |");
         }
 
+        #region "LISTA DE BOTONES"
         /// <summary>
         /// Obtiene la Lista de los botones por Cliente y Contrato.
         /// </summary>
@@ -48,7 +51,9 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetBotonesByClienteAndContratoAsync|End|GetBotonesByClienteAndContratoAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
+        #endregion
 
+        #region "MAF"
         /// <summary>
         /// Lista de Reportar Casos: + REPORTAR CASO - CLIENTE MAF.
         /// </summary>
@@ -77,7 +82,7 @@ namespace GesMgmt.WebAPI.Controllers
         /// </remarks>
         /// <response code="200">Obtiene el REPORTAR CASO - CLIENTE MAF.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Obtiene el REPORTAR CASO - CLIENTE MAF")]
-        [HttpGet("{nId_DocxCobrarOpeResult}")]
+        [HttpGet("GetReportarCasos/{nId_DocxCobrarOpeResult}")]
         [ProducesResponseType(typeof(ResultDto<GetReportarCasosByIdResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
@@ -96,7 +101,7 @@ namespace GesMgmt.WebAPI.Controllers
         /// Crear registro de REPORTAR CASO - CLIENTE MAF.
         /// </remarks>
         /// <response code="200">Crear registro de REPORTAR CASO - CLIENTE MAF.</response>
-        [HttpPost]
+        [HttpPost("CreateReportarCasos")]
         [ProducesResponseType(typeof(ResultDto<CreateReportarCasosResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
@@ -115,7 +120,7 @@ namespace GesMgmt.WebAPI.Controllers
         /// Editar registro de REPORTAR CASO - CLIENTE MAF.
         /// </remarks>
         /// <response code="200">Editar registro de REPORTAR CASO - CLIENTE MAF.</response>
-        [HttpPut]
+        [HttpPut("EditReportarCasos")]
         [ProducesResponseType(typeof(ResultDto<EditReportarCasosResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
@@ -126,5 +131,124 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"EditReportarCasos|End|EditReportarCasosAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
+        #endregion
+
+        #region "CLARO"
+
+        #region "+ESTADO CUENTA - CLARO"
+        /// <summary>
+        /// Para poder realizar la descarga del archivo excel de estado de cuenta +ESTADO CUENTA - CLIENTE CLARO.
+        /// </summary>
+        /// <remarks>
+        /// Para poder realizar la descarga del archivo excel de estado de cuenta +ESTADO CUENTA - CLIENTE CLARO.
+        /// </remarks>
+        /// <response code="200">Para poder realizar la descarga del archivo excel de estado de cuenta +ESTADO CUENTA - CLIENTE CLARO.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Para exportar el estado de cuenta +ESTADO CUENTA - CLIENTE CLARO")]
+        [HttpGet("ExportGestionEstadoCuenta")]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetEstadoCuentaResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetEstadoCuentaResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetEstadoCuentaResponseDto>>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ExportGestionEstadoCuentaAsync([FromQuery] GetEstadoCuentaRequestDto estadoCuentaDto)
+        {
+            _Logger.LogInfo($"ExportGestionEstadoCuenta|Begin|ExportGestionEstadoCuentaAsync|request: {JsonSerializer.Serialize(estadoCuentaDto)}");
+            var excel = await _botonService.ExportGestionEstadoCuentaAsync(estadoCuentaDto);
+            _Logger.LogInfo($"ExportGestionEstadoCuenta|End|ExportGestionEstadoCuentaAsync|response: {JsonSerializer.Serialize(excel)}");
+            return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"EstadoCuenta_{DateTime.Now:yyyyMMddHHmmss}.xlsx");
+        }
+        #endregion
+
+        #region "+PAGOS - CLARO"
+        /// <summary>
+        /// Obtiene el listado de PAGOS, BOTÓN +PAGOS - CLIENTE CLARO.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de PAGOS, BOTÓN +PAGOS - CLIENTE CLARO.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de PAGOS, BOTÓN +PAGOS - CLIENTE CLARO.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Obtiene el listado de PAGOS, BOTÓN +PAGOS - CLIENTE CLARO")]
+        [HttpGet("GetPagosDeudor")]
+        [ProducesResponseType(typeof(ResultDto<GetPagosResponsetDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPagosDeudorAsync([FromQuery] GetPagosRequestDto gestionPagoDto)
+        {
+            _Logger.LogInfo($"GetPagosDeudor|Begin|GetPagosDeudorAsync|request: {JsonSerializer.Serialize(gestionPagoDto)}");
+            var result = await _botonService.GetPagosDeudorAsync(gestionPagoDto);
+            _Logger.LogInfo($"GetPagosDeudor|End|GetPagosDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+        #endregion
+
+        #region "+EMAIL - CLARO"
+        //ESTE METODO ESTA EN EL CONTROLLER DE EMAIL
+        #endregion
+
+        #region "+AGENDAS - CLARO"
+
+        /// <summary>
+        /// Obtiene el listado de AGENDAS, botón +AGENDAS - CLIENTE CLARO.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de AGENDAS, botón +AGENDAS - CLIENTE CLARO.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de AGENDAS, BOTÓN +AGENDAS - CLIENTE CLARO.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Listado Gestiones Agendadas - CLIENTE CLARO")]
+        [HttpGet("GetAgendasDeudor")]
+        [ProducesResponseType(typeof(ResultDto<GetAgendaResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAgendasDeudorAsync([FromQuery] GetAgendaRequestDto gestionAgendaDto)
+        {
+            _Logger.LogInfo($"GetAgendasDeudor|Begin|GetAgendasDeudorAsync|request: {JsonSerializer.Serialize(gestionAgendaDto)}");
+            var result = await _botonService.GetAgendasDeudorAsync(gestionAgendaDto);
+            _Logger.LogInfo($"GetAgendasDeudor|End|GetAgendasDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        #endregion
+
+        #region "+INF. DEUDOR - CLARO"
+        /// <summary>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor")]
+        [HttpGet("GetInformacionDeudor")]
+        [ProducesResponseType(typeof(ResultDto<GetInformacionDeudorRespondeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetInformacionDeudorAsync([FromQuery] GetInformacionDeudorRequestDto gestionInfoDeudor)
+        {
+            _Logger.LogInfo($"GetInformacionDeudor|Begin|GetInformacionDeudorAsync|request: {JsonSerializer.Serialize(gestionInfoDeudor)}");
+            var result = await _botonService.GetInformacionDeudorAsync(gestionInfoDeudor);
+            _Logger.LogInfo($"GetInformacionDeudor|End|GetGestionInformacionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+        
+        /// <summary>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR - CLIENTE CLARO / Tercer registro de la lista.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR - CLIENTE CLARO / Tercer registro de la lista.
+        /// </remarks>
+        /// <response code="200">Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR - CLIENTE CLARO / Tercer registro de la lista.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtener Cabecera de Información de Deudor Param - CLIENTE CLARO")]
+        [HttpGet("GetInformacionDeudorParam")]
+        [ProducesResponseType(typeof(ResultDto<GetInformacionDeudorParamRespondeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetInformacionDeudorParamAsync([FromQuery] GetInformacionDeudorParamRequestDto gestionInfoDeudorParam)
+        {
+            _Logger.LogInfo($"GetInformacionDeudorParam|Begin|GetInformacionDeudorParamAsync|request: {JsonSerializer.Serialize(gestionInfoDeudorParam)}");
+            var result = await _botonService.GetInformacionDeudorParamAsync(gestionInfoDeudorParam);
+            _Logger.LogInfo($"GetInformacionDeudorParam|End|GetInformacionDeudorParamAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+        #endregion
+
+        #endregion
     }
 }

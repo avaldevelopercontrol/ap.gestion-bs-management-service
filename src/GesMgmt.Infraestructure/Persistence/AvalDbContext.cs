@@ -25,6 +25,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
         public DbSet<av_DocxCobrarCarta> av_DocxCobrarCartas { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
+        public DbSet<av_DocxCobrarParamOpe> av_DocxCobrarParamOpes { get; set; }
         public DbSet<av_DocxCobrarOpeEst> av_DocxCobrarOpeEsts { get; set; }
         public DbSet<av_DocxCobrarOpeGes> av_DocxCobrarOpeGess { get; set; }
         public DbSet<av_DocxCobrarOpeResult> av_DocxCobrarOpeResults { get; set; }
@@ -59,6 +60,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_PersTelef> av_PersTelefs { get; set; }
         public DbSet<av_PersTelefOpeDetalle> av_PersTelefOpeDetalles { get; set; }
         public DbSet<av_PersTelefOpe> av_PersTelefOpes { get; set; }
+        public DbSet<av_ProduccionDia> av_ProduccionDias { get; set; }
         public DbSet<av_SubZonaGeneral> av_SubZonaGenerals { get; set; }
         public DbSet<av_TablaCampoGeneral> av_TablaCampoGenerals { get; set; }
         public DbSet<av_TipoGestion> av_TipoGestions { get; set; }
@@ -103,6 +105,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeGesConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeResultConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarParamConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DocxCobrarParamOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxPagoConfiguration());
             modelBuilder.ApplyConfiguration(new av_EstadoAsteriskAvalConfiguration());
             modelBuilder.ApplyConfiguration(new av_EstadoEnvioEmailGenConfiguration());
@@ -134,6 +137,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_PersTelefConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersTelefOpeDetalleConfiguration());
             modelBuilder.ApplyConfiguration(new av_PersTelefOpeConfiguration());
+            modelBuilder.ApplyConfiguration(new av_ProduccionDiaConfiguration());
             modelBuilder.ApplyConfiguration(new av_SubZonaGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_TablaCampoGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_TipoGestionConfiguration());

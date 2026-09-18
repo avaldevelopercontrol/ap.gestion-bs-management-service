@@ -7,11 +7,18 @@ namespace GesMgmt.Infraestructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
+        #region Variables Historicas
+        private readonly AvalHisDbContext _contextHis;
+        private Domain.Interfaces.Historico.Iav_CarteraRepository? _av_CarteraHiss;
+        private Domain.Interfaces.Historico.Iav_DocxCobrarRepository? _av_DocxCobrarHiss;
+        private Domain.Interfaces.Historico.Iav_DocxCobrarOpeRepository? _av_DocxCobrarOpeHiss;
+        private Domain.Interfaces.Historico.Iav_DocxPagoRepository? _av_DocxPagoHiss;
+        #endregion
+
         #region Variables
         private readonly AvalDbContext _context;
         private readonly IMemoryCache _cache;
         private IDbContextTransaction? _transaction;
-
         private Iav_AgendaRepository? _av_Agendas;
         private Iav_asigUsuarioRepository? _av_asigUsuarios;
         private Iav_BotonClienteRepository? _av_BotonClientes;
@@ -31,6 +38,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_DocxCobrarCartaRepository? _av_DocxCobrarCartas;
         private Iav_DocxCobrarOpeEstRepository? _av_DocxCobrarOpeEsts;
         private Iav_DocxCobrarOpeGesRepository? _av_DocxCobrarOpeGess;
+        private Iav_DocxCobrarParamOpeRepository? _av_DocxCobrarParamOpes;
         private Iav_DocxCobrarOpeRepository? _av_DocxCobrarOpes;
         private Iav_DocxCobrarOpeResultRepository? _av_DocxCobrarOpeResults;
         private Iav_DocxCobrarParamRepository? _av_DocxCobrarParams;
@@ -66,6 +74,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_PersTelefOpeDetalleRepository? _av_PersTelefOpeDetalles;
         private Iav_PersTelefOpeRepository? _av_PersTelefOpes;
         private Iav_PersTelefRepository? _av_PersTelefs;
+        private Iav_ProduccionDiaRepository? _av_ProduccionDias;
         private Iav_SubZonaGeneralRepository? _av_SubZonaGenerals;
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
         private Iav_TipoGestionRepository? _av_TipoGestions;
@@ -76,15 +85,15 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_ZonaCarteraRepository? _av_ZonaCarteras;
         private Iav_ZonaGeneralRepository? _av_ZonaGenerals;
         private IRPTC_ReportexClienteRepository? _rPTC_ReportexClientes;
-
         private IValidationMessageRepository? _validationMessages;
         #endregion
 
         #region Constructor
-        public UnitOfWork(AvalDbContext context, IMemoryCache cache)
+        public UnitOfWork(AvalDbContext context, IMemoryCache cache, AvalHisDbContext contextHis)
         {
             _context = context;
             _cache = cache;
+            _contextHis = contextHis;
         }
         #endregion
 
@@ -111,6 +120,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_DocxCobrarOpeResultRepository av_DocxCobrarOpeResults => _av_DocxCobrarOpeResults ??= new av_DocxCobrarOpeResultRepository(_context);
         public Iav_DocxCobrarOpeRepository av_DocxCobrarOpes => _av_DocxCobrarOpes ??= new av_DocxCobrarOpeRepository(_context);
         public Iav_DocxCobrarParamRepository av_DocxCobrarParams => _av_DocxCobrarParams ??= new av_DocxCobrarParamRepository(_context);
+        public Iav_DocxCobrarParamOpeRepository av_DocxCobrarParamOpes => _av_DocxCobrarParamOpes ??= new av_DocxCobrarParamOpeRepository(_context);
         public Iav_DocxCobrarRepository av_DocxCobrars => _av_DocxCobrars ??= new av_DocxCobrarRepository(_context);
         public Iav_DocxPagoRepository av_DocxPagos => _av_DocxPagos ??= new av_DocxPagoRepository(_context);
         public Iav_EstadoAsteriskAvalRepository av_EstadoAsteriskAvals => _av_EstadoAsteriskAvals ??= new av_EstadoAsteriskAvalRepository(_context);
@@ -143,6 +153,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles => _av_PersTelefOpeDetalles ??= new av_PersTelefOpeDetalleRepository(_context);
         public Iav_PersTelefOpeRepository av_PersTelefOpes => _av_PersTelefOpes ??= new av_PersTelefOpeRepository(_context);
         public Iav_PersTelefRepository av_PersTelefs => _av_PersTelefs ??= new av_PersTelefRepository(_context);
+        public Iav_ProduccionDiaRepository av_ProduccionDias => _av_ProduccionDias ??= new av_ProduccionDiaRepository(_context);
         public Iav_SubZonaGeneralRepository av_SubZonaGenerals => _av_SubZonaGenerals ??= new av_SubZonaGeneralRepository(_context);
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
         public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
@@ -154,6 +165,13 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_ZonaGeneralRepository av_ZonaGenerals => _av_ZonaGenerals ??= new av_ZonaGeneralRepository(_context);
         public IRPTC_ReportexClienteRepository RPTC_ReportexClientes => _rPTC_ReportexClientes ??= new RPTC_ReportexClienteRepository(_context);
         public IValidationMessageRepository ValidationMessages => _validationMessages ??= new ValidationMessageRespository(_context);
+        #endregion
+
+        #region Properties Historicas
+        public Domain.Interfaces.Historico.Iav_CarteraRepository av_CarteraHiss => _av_CarteraHiss ??= new Historico.av_CarteraRepository(_contextHis);
+        public Domain.Interfaces.Historico.Iav_DocxCobrarRepository av_DocxCobrarHiss => _av_DocxCobrarHiss ??= new Historico.av_DocxCobrarRepository(_contextHis);
+        public Domain.Interfaces.Historico.Iav_DocxCobrarOpeRepository av_DocxCobrarOpeHiss => _av_DocxCobrarOpeHiss ??= new Historico.av_DocxCobrarOpeRepository(_contextHis);
+        public Domain.Interfaces.Historico.Iav_DocxPagoRepository av_DocxPagoHiss => _av_DocxPagoHiss ??= new Historico.av_DocxPagoRepository(_contextHis);
         #endregion
 
         #region Methods

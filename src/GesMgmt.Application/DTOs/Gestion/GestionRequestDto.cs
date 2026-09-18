@@ -11,22 +11,7 @@ namespace GesMgmt.Application.DTOs.Gestion
             public int nId_Usuario { get; set; } //ID_USUARIO
         }
 
-        public class GetGestionEstadoCuentaRequestDto
-        {
-            public int nId_Cliente { get; set; } //ID_CLIENTE
-            public int nId_Cartera { get; set; } //ID_CARTERA
-            public int nId_Persdeudor { get; set; } //ID_DEUDOR
-
-            // 🔹 PAGINACIÓN
-            public int PageNumber { get; set; } = 1;
-            private int _pageSize = 10;
-
-            public int PageSize
-            {
-                get => _pageSize;
-                set => _pageSize = value > 1000 ? 1000 : value; // Máximo 50
-            }
-        }
+        
 
         public class GetGestionMotivoNoPagoRequestDto
         {
@@ -128,46 +113,13 @@ namespace GesMgmt.Application.DTOs.Gestion
             public bool? bEstado { get; set; }
         }
 
-        public class GetGestionInformacionDeudorParamRequestDto
-        {
-            public int nId_Persdeudor { get; set; }
-        }
+        
 
-        public class GetGestionInformacionDeudorRequestDto
-        {
-            public bool? bTipo_Cabecera { get; set; }
-        }
+        
 
-        public class GetGestionPagosRequestDto
-        {
-            public int nId_Cliente { get; set; }
-            public int nId_Cartera { get; set; }
-            public int nId_Persdeudor { get; set; } //ID_DEUDOR
-            // 🔹 PAGINACIÓN
-            public int PageNumber { get; set; } = 1;
-            private int _pageSize = 10;
-            public int PageSize
-            {
-                get => _pageSize;
-                set => _pageSize = value > 1000 ? 1000 : value; // Máximo 1000
-            }
-        }
+        
 
-        public class GetGestionAgendaRequestDto
-        {
-            public int nId_Cliente { get; set; }
-            public int nId_Cartera { get; set; }
-            public int nId_Persdeudor { get; set; } //ID_DEUDOR
-            public int nId_PerfilUsuario { get; set; } //ID_PERFIL_USUARIO
-            // 🔹 PAGINACIÓN
-            public int PageNumber { get; set; } = 1;
-            private int _pageSize = 10;
-            public int PageSize
-            {
-                get => _pageSize;
-                set => _pageSize = value > 1000 ? 1000 : value; // Máximo 1000
-            }
-        }
+        
 
         public class GetGestionZonaCarteraCampannaRequestDto
         {

@@ -146,8 +146,23 @@ namespace GesMgmt.Application.Services.Usuario
 
             // Validaciones
             var validationResult = await validator.Validate();
-            
-            if (validationResult.Code != Const.SUCCESS_CODE)
+
+            if (validationResult.Code == "093") //CLAVE_PROXIMA_VENCER
+            {
+                var validationResultLoginUser = await validator.ValidateIntentoLogin();
+                if (validationResultLoginUser.Code != Const.SUCCESS_CODE)
+                {
+                    return validationResultLoginUser;
+                }
+                if (validator.nUsr_NroIntentoAcc > validator.nIntentosMaximo)
+                {
+                    await _unitOfWork.BeginTransactionAsync();
+                    var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoLoginAsync(usuarioLoginDto.cUsr_Login);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitTransactionAsync();
+                }
+            } 
+            else if (validationResult.Code != Const.SUCCESS_CODE)
             {
                 if (validationResult.Code == "038") //USUARIO_LOGIN_INCORRECT
                 {
@@ -208,6 +223,7 @@ namespace GesMgmt.Application.Services.Usuario
                         nId_UEstado = validator.usuario.nId_UEstado ?? null,
                         nid_perfil = validator.usuario.nid_perfil ?? 0,
                         per_Nombre = q_perfil?.per_Nombre ?? "",
+                        MessageUser = validationResult.MessageUser ?? ""
                     };
                     await _unitOfWork.BeginTransactionAsync();
                     var usuarioIntento = await _unitOfWork.av_Usuarios.UpdateIntentoZeroLoginAsync(usuarioLoginDto.cUsr_Login);

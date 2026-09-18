@@ -1,6 +1,4 @@
 ﻿
-using GesMgmt.Domain.Entities;
-
 namespace GesMgmt.Domain.Interfaces
 {
     public interface IUnitOfWork : IDisposable
@@ -27,6 +25,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_DocxCobrarOpeGesRepository av_DocxCobrarOpeGess { get; }
         Iav_DocxCobrarOpeResultRepository av_DocxCobrarOpeResults { get; }
         Iav_DocxCobrarParamRepository av_DocxCobrarParams { get; }
+        Iav_DocxCobrarParamOpeRepository av_DocxCobrarParamOpes { get; }
         Iav_DocxCobrarRepository av_DocxCobrars { get; }
         Iav_DocxPagoRepository av_DocxPagos { get; }
         Iav_EstadoAsteriskAvalRepository av_EstadoAsteriskAvals { get; }
@@ -59,6 +58,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_PersTelefOpeRepository av_PersTelefOpes { get; }
         Iav_PersTelefOpeDetalleRepository av_PersTelefOpeDetalles { get; }
         Iav_PersTelefRepository av_PersTelefs { get; }
+        Iav_ProduccionDiaRepository av_ProduccionDias { get; }
         Iav_SubZonaGeneralRepository av_SubZonaGenerals { get; }
         Iav_TablaCampoGeneralRepository av_TablaCampoGenerals { get; }
         Iav_TipoGestionRepository av_TipoGestions { get; }
@@ -71,6 +71,13 @@ namespace GesMgmt.Domain.Interfaces
         IRPTC_ReportexClienteRepository RPTC_ReportexClientes { get; }
 
         IValidationMessageRepository ValidationMessages { get; }
+
+        #region Repositories for Historico
+        Historico.Iav_CarteraRepository av_CarteraHiss { get; }
+        Historico.Iav_DocxCobrarRepository av_DocxCobrarHiss { get; }
+        Historico.Iav_DocxCobrarOpeRepository av_DocxCobrarOpeHiss { get; }
+        Historico.Iav_DocxPagoRepository av_DocxPagoHiss { get; }
+        #endregion
 
         Task<int> SaveChangesAsync();
         Task BeginTransactionAsync();

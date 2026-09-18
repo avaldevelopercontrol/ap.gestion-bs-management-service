@@ -5,7 +5,6 @@ using GesMgmt.Application.Logger;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using static GesMgmt.Application.DTOs.Cartera.CarteraRequestDto;
 using static GesMgmt.Application.DTOs.Cartera.CarteraResponseDto;
 
 namespace GesMgmt.Application.Services.Cartera

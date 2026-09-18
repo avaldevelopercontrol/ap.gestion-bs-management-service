@@ -1,5 +1,4 @@
-﻿
-namespace GesMgmt.Domain.Entities
+﻿namespace GesMgmt.Domain.Entities
 {
     public class av_Usuario
     {

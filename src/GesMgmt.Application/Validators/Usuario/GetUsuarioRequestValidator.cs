@@ -163,7 +163,7 @@ namespace GesMgmt.Application.Validators.Usuario
             if (nResult > 0)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.CLAVE_PROXIMA_VENCER, "ESP");
-                string strMessage = _oValMsgDto.Message.Replace("{DIAS_PREVIOS}", nResult.ToString());
+                string strMessage = _oValMsgDto.Message.Replace("DIAS_PREVIOS", nResult.ToString());
                 return ResultDto<GetUsuarioLoginResponseDto>.Failure(_oValMsgDto.Code, strMessage, strMessage, Const.BAD_REQUEST_CODE);
             }
             // FIN - Validar si la clave está próxima a vencer

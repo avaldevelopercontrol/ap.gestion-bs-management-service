@@ -11,6 +11,14 @@ namespace GesMgmt.Infraestructure.Configurations
             builder.ToTable("av_DocxCobrarOpeResult", "dbo");
             builder.HasKey(doc => doc.nId_DocxCobrarOpeResult);
 
+            builder.HasOne(car => car.av_Cliente)
+                .WithMany()
+                .HasForeignKey(car => car.nId_Cliente);
+
+            builder.HasOne(car => car.av_Cartera)
+                .WithMany()
+                .HasForeignKey(car => car.nId_Cartera);
+
             builder.HasOne(car => car.av_DocxCobrar)
                 .WithMany()
                 .HasForeignKey(car => car.nId_DocxCobrar);

@@ -149,7 +149,7 @@ namespace GesMgmt.Application.Validators.Usuario
                 return ResultDto<CreateUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            if (_requestDto.cUsr_ApePat.Length <= 5)
+            if (_requestDto.cUsr_ApePat.Length <= 2)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.APELLIDO_PATERNO_MENOR_LONGITUD, "ESP");
                 return ResultDto<CreateUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
@@ -173,7 +173,7 @@ namespace GesMgmt.Application.Validators.Usuario
                 return ResultDto<CreateUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);
             }
 
-            if (_requestDto.cUsr_ApeMat.Length <= 5)
+            if (_requestDto.cUsr_ApeMat.Length <= 2)
             {
                 _oValMsgDto = await _validationMessageService.GetByCode(ConstMsgVal.APELLIDO_MATERNO_MENOR_LONGITUD, "ESP");
                 return ResultDto<CreateUsuarioResponseDto>.Failure(_oValMsgDto.Code, _oValMsgDto.Message, _oValMsgDto.MessageFriendly, Const.BAD_REQUEST_CODE);

@@ -140,6 +140,7 @@ namespace GesMgmt.Application.DTOs.Usuario
             public string? cEmailVerificacion_codigo { get; set; }
             public string? cUsr_EmailVerificacion { get; set; }
             public DateTime? dFechaHora_Codigo { get; set; }
+            public string? MessageUser { get; set; }
         }
 
         public class CreateUsuarioResponseDto
