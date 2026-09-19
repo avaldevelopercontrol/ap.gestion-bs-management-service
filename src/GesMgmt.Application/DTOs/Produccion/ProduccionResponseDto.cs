@@ -25,10 +25,27 @@
         {
             public string nombresUsu { get; set; } = string.Empty;
             public string clienteNom { get; set; } = string.Empty;
+
             public int minutosGes { get; set; }
             public int contactGes { get; set; }
             public int totalesGes { get; set; }
             public int contactGesProm { get; set; }
+
+            public decimal porcentContact
+            {
+                get
+                {
+                    if (minutosGes <= 60)
+                    {
+                        return Math.Round((decimal)contactGes, 2);
+                    }
+
+                    return Math.Round(
+                        contactGes / ((decimal)minutosGes / 60m),
+                        2
+                    );
+                }
+            }
         }
     }
 }

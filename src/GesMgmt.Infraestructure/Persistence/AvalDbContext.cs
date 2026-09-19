@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using GesMgmt.Domain.Entities;
+using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace GesMgmt.Infraestructure.Persistence
 {
@@ -13,16 +14,19 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_CampanaDiscador> av_CampanaDiscadors { get; set; }
         public DbSet<av_Cartera> av_Carteras { get; set; }
         public DbSet<av_Cliente> av_Clientes { get; set; }
+        public DbSet<av_CobZonaGeneral> av_CobZonaGenerals { get; set; }
         public DbSet<av_ConfigSistema> av_ConfigSistemas { get; set; }
         public DbSet<av_ContFormTipoParamOpe> av_ContFormTipoParamOpes { get; set; }
         public DbSet<av_ContFormTipoCrud> av_ContFormTipoCruds { get; set; }
         public DbSet<av_ContFormularioRptc> av_ContFormularioRptcs { get; set; }
         public DbSet<av_Contrato> av_Contratos { get; set; }
         public DbSet<av_DetallePersTelef> av_DetallePersTelefs { get; set; }
+        public DbSet<av_DetCobZonaGeneral> av_DetCobZonaGenerals { get; set; }
         public DbSet<av_Discador> av_Discadors { get; set; }
         public DbSet<av_Divisional> av_Divisionals { get; set; }
         public DbSet<av_DocxCobrarAdicional> av_DocxCobrars { get; set; }
         public DbSet<av_DocxCobrar> av_DocxCobrarAdcionals { get; set; }
+        public DbSet<av_docxcobrar_direccAsig> av_docxcobrar_direccAsigs { get; set; }
         public DbSet<av_DocxCobrarCarta> av_DocxCobrarCartas { get; set; }
         public DbSet<av_DocxCobrarOpe> av_DocxCobrarOpes { get; set; }
         public DbSet<av_DocxCobrarParamOpe> av_DocxCobrarParamOpes { get; set; }
@@ -63,6 +67,7 @@ namespace GesMgmt.Infraestructure.Persistence
         public DbSet<av_ProduccionDia> av_ProduccionDias { get; set; }
         public DbSet<av_SubZonaGeneral> av_SubZonaGenerals { get; set; }
         public DbSet<av_TablaCampoGeneral> av_TablaCampoGenerals { get; set; }
+        public DbSet<av_TipoContacto> av_TipoContactos { get; set; }
         public DbSet<av_TipoGestion> av_TipoGestions { get; set; }
         public DbSet<av_UGrupo> av_UGrupos { get; set; }
         public DbSet<av_Ubigeo> av_Ubigeos { get; set; }
@@ -89,15 +94,18 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_CampanaDiscadorConfiguration());
             modelBuilder.ApplyConfiguration(new av_CarteraConfiguration());
             modelBuilder.ApplyConfiguration(new av_ClienteConfiguration());
+            modelBuilder.ApplyConfiguration(new av_CobZonaGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_ConfigSistemaConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContFormTipoParamOpeConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContFormTipoCrudConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContFormularioRptcConfiguration());
             modelBuilder.ApplyConfiguration(new av_ContratoConfiguration());
             modelBuilder.ApplyConfiguration(new av_DetallePersTelefConfiguration());
+            modelBuilder.ApplyConfiguration(new av_DetCobZonaGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_DiscadorConfiguration());
             modelBuilder.ApplyConfiguration(new av_DivisionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarConfiguration());
+            modelBuilder.ApplyConfiguration(new av_docxcobrar_direccAsigsConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarAdicionalConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarCartaConfiguration());
             modelBuilder.ApplyConfiguration(new av_DocxCobrarOpeConfiguration());
@@ -140,6 +148,7 @@ namespace GesMgmt.Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new av_ProduccionDiaConfiguration());
             modelBuilder.ApplyConfiguration(new av_SubZonaGeneralConfiguration());
             modelBuilder.ApplyConfiguration(new av_TablaCampoGeneralConfiguration());
+            modelBuilder.ApplyConfiguration(new av_TipoContactoConfiguration());
             modelBuilder.ApplyConfiguration(new av_TipoGestionConfiguration());
             modelBuilder.ApplyConfiguration(new av_UbigeoConfiguration());
             modelBuilder.ApplyConfiguration(new av_UGrupoConfiguration());

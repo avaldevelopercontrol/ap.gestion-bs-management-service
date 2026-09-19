@@ -131,5 +131,14 @@ namespace GesMgmt.Infraestructure.Repositories
                 s.bEstado == true)
             .AsNoTracking();
         }
+
+        public async Task<IQueryable<av_DocxCobrarOpe?>> GetGestionesByIdClienteAndIdCarteraAndIdDeudor(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            return _dbSet
+            .Include(dc => dc.av_OpeCodCliOut)
+            .Where(s => s.nId_Cliente == nId_Cliente &&
+                s.nId_Cartera == nId_Cartera)
+            .AsNoTracking();
+        }
     }
 }

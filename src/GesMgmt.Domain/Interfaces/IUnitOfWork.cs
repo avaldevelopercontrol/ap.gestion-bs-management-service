@@ -1,4 +1,6 @@
 ﻿
+using GesMgmt.Domain.Entities;
+
 namespace GesMgmt.Domain.Interfaces
 {
     public interface IUnitOfWork : IDisposable
@@ -10,11 +12,13 @@ namespace GesMgmt.Domain.Interfaces
         Iav_CampanaDiscadorRepository av_CampanaDiscadors { get; }
         Iav_CarteraRepository av_Carteras { get; }
         Iav_ClienteRepository av_Clientes { get; }
+        Iav_CobZonaGeneralRepository av_CobZonaGenerals { get; }
         Iav_ConfigSistemaRepository av_ConfigSistemas { get; }
         Iav_ContFormTipoCrudRepository av_ContFormTipoCruds { get; }
         Iav_ContFormTipoParamOpeRepository av_ContFormTipoParamOpes { get; }
         Iav_ContFormularioRptcRepository av_ContFormularioRptcs { get; }
         Iav_ContratoRepository av_Contratos { get; }
+        Iav_DetCobZonaGeneralRepository av_DetCobZonaGenerals { get; }
         Iav_DiscadorRepository av_Discadors { get; }
         Iav_DivisionalRepository av_Divisionals { get; }
         Iav_DetallePersTelefRepository av_DetallePersTelefs { get; }
@@ -27,6 +31,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_DocxCobrarParamRepository av_DocxCobrarParams { get; }
         Iav_DocxCobrarParamOpeRepository av_DocxCobrarParamOpes { get; }
         Iav_DocxCobrarRepository av_DocxCobrars { get; }
+        Iav_docxcobrar_direccAsigRepository av_docxcobrar_direccAsigs { get; }
         Iav_DocxPagoRepository av_DocxPagos { get; }
         Iav_EstadoAsteriskAvalRepository av_EstadoAsteriskAvals { get; }
         Iav_EstadoEnvioEmailGenRepository av_EstadoEnvioEmailGens { get; }
@@ -61,6 +66,7 @@ namespace GesMgmt.Domain.Interfaces
         Iav_ProduccionDiaRepository av_ProduccionDias { get; }
         Iav_SubZonaGeneralRepository av_SubZonaGenerals { get; }
         Iav_TablaCampoGeneralRepository av_TablaCampoGenerals { get; }
+        Iav_TipoContactoRepository av_TipoContactos { get; }
         Iav_TipoGestionRepository av_TipoGestions { get; }
         Iav_UbigeoRepository av_Ubigeos { get; }
         Iav_UGrupoRepository av_UGrupos { get; }

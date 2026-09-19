@@ -7,6 +7,7 @@ namespace GesMgmt.Application.DTOs.Boton
 {
     public class BotonResponseDto
     {
+        #region "BOTONES MAF"
         public class GetGestionBotonesResponseDto
         {
             public int nId_Boton { get; set; }
@@ -62,7 +63,91 @@ namespace GesMgmt.Application.DTOs.Boton
             public int nId_DocxCobrar { get; set; }
         }
 
-        #region "CLARO"
+        public class GetOperativasMafResponseDto
+        {
+            public int? numeroDiasNoContacto { get; set; }
+
+            public DateTime? fechaUltimoContacto { get; set; }
+
+            public int cantidadTotalVino { get; set; }
+
+            public int cantidadTotalPago { get; set; }
+
+            public int? cantidadTotalVino6Meses { get; set; }
+
+            public int? cantidadTotalPago6Meses { get; set; }
+
+            public string? cobertura { get; set; }
+
+            public List<MejorGestionResponseDto> mejoresGestiones { get; set; }
+                = new();
+
+            public List<OperacionMafResponseDto> operaciones { get; set; }
+                = new();
+        }
+
+        public class MejorGestionResponseDto
+        {
+            public int ventanaMeses { get; set; }
+
+            // 1 = CALL
+            // 2 = CAMPO
+            public int canal { get; set; }
+
+            public string canalNombre { get; set; } = string.Empty;
+
+            public int? nId_DocxCobrarOpe { get; set; }
+
+            public int? nId_DocxCobrar { get; set; }
+
+            public DateTime? fecha { get; set; }
+
+            public string? estatus { get; set; }
+
+            public int? peso { get; set; }
+
+            public string? telefono { get; set; }
+
+            public string? comentario { get; set; }
+
+            public int intentos { get; set; }
+
+            public int intentosRobot { get; set; }
+
+            public int contactosDirectos { get; set; }
+
+            // Para CAMPO
+            public string? origenDireccion { get; set; }
+
+            public string? direccion { get; set; }
+        }
+
+        public class OperacionMafResponseDto
+        {
+            public string operacion { get; set; } = string.Empty;
+
+            public string? placa { get; set; }
+
+            public int? diasAtraso { get; set; }
+
+            public int? nId_Ubigeo { get; set; }
+
+            public string? estadoOperacion { get; set; }
+
+            public string? avanceCredito { get; set; }
+
+            public string? direccionLegal { get; set; }
+
+            public string? distritoLegal { get; set; }
+
+            public string? provinciaLegal { get; set; }
+
+            public string? departamentoLegal { get; set; }
+        }
+
+        #endregion
+
+        #region "BOTONES CLARO"
         public class GetEstadoCuentaResponseDto
         {
             public int nId_DocxCobrar { get; set; }

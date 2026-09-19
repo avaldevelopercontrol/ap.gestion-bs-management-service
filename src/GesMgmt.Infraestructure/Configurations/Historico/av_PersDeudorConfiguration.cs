@@ -1,0 +1,15 @@
+﻿using GesMgmt.Domain.Entities.Historico;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace GesMgmt.Infraestructure.Configurations.Historico
+{
+    public class av_PersDeudorConfiguration : IEntityTypeConfiguration<av_PersDeudor>
+    {
+        public void Configure(EntityTypeBuilder<av_PersDeudor> builder)
+        {
+            builder.ToTable("av_PersDeudor", "dbo");
+            builder.HasKey(car => car.nId_PersDeudor);
+        }
+    }
+}

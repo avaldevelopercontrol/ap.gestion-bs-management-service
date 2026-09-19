@@ -3,6 +3,7 @@ namespace GesMgmt.Application.DTOs.Boton
 {
     public class BotonRequestDto
     {
+        #region "BOTONES CLARO"
         public class GetGestionBotonesRequestDto
         {
             public int nId_Cliente { get; set; } //ID_CLIENTE
@@ -52,6 +53,15 @@ namespace GesMgmt.Application.DTOs.Boton
             public string? cDocParam01 { get; set; }
             public string? cDocParam04 { get; set; }
         }
+
+        public class GetOperativasMafRequestDto
+        {
+            public int nId_PersDeudor { get; set; }
+            public int nId_Cartera { get; set; }
+            public int nId_Cliente { get; set; }
+        }
+        #endregion
+
 
         #region "CLARO"
 

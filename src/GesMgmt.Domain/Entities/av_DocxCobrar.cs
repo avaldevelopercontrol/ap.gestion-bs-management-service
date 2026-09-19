@@ -61,7 +61,7 @@ namespace GesMgmt.Domain.Entities
         //public int? nDoc_TipoDeuda { get; set; }
         //public bool? nDoc_FlagControl { get; set; }
         //public bool? nDoc_FlagCancelado { get; set; }
-        //public int? nId_Ubigeo { get; set; }
+        public int? nId_Ubigeo { get; set; }
         //public string? campo_filtro { get; set; }
         //public DateTime? dDoc_FecGesCam { get; set; }
         //public int? ult_status { get; set; }

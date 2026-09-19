@@ -70,10 +70,6 @@ namespace GesMgmt.Application.DTOs.Gestion
             public int? nId_Usuario { get; set; }
         }
 
-        
-
-        
-
         public class GetGestionZonaCarteraCampannaResponseDto
         {
             public string Zona { get; set; }

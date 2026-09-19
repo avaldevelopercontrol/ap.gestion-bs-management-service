@@ -453,23 +453,12 @@ namespace GesMgmt.Application.Services.Produccion
 
                         return new GetProduccionResumenResponseDto
                         {
-                            nombresUsu =
-                                g.Key.nombresUsu,
-
-                            clienteNom =
-                                g.Key.clienteNom,
-
-                            minutosGes =
-                                minutos,
-
-                            contactGes =
-                                contactos,
-
-                            totalesGes =
-                                totalGestiones,
-
-                            contactGesProm =
-                                contactosPromesa
+                            nombresUsu = g.Key.nombresUsu,
+                            clienteNom = g.Key.clienteNom,
+                            minutosGes = minutos,
+                            contactGes = contactos,
+                            totalesGes = totalGestiones,
+                            contactGesProm = contactosPromesa
                         };
                     })
 

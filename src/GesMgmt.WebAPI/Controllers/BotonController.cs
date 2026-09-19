@@ -7,8 +7,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using static GesMgmt.Application.DTOs.Boton.BotonRequestDto;
 using static GesMgmt.Application.DTOs.Boton.BotonResponseDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
-using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
 namespace GesMgmt.WebAPI.Controllers
 {
@@ -53,7 +51,9 @@ namespace GesMgmt.WebAPI.Controllers
         }
         #endregion
 
-        #region "MAF"
+        #region "BOTONES MAF"
+
+        #region "+REPORTAR CASO - MAF"
         /// <summary>
         /// Lista de Reportar Casos: + REPORTAR CASO - CLIENTE MAF.
         /// </summary>
@@ -107,7 +107,7 @@ namespace GesMgmt.WebAPI.Controllers
         [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateReportarCasosAsync([FromBody] CreateReportarCasosRequestDto reportarCasoDto)
         {
-            _Logger.LogInfo($"CreateReportarCasos|Begin|CreateReportarCasosAsync|request: {JsonSerializer.Serialize(reportarCasoDto )}");
+            _Logger.LogInfo($"CreateReportarCasos|Begin|CreateReportarCasosAsync|request: {JsonSerializer.Serialize(reportarCasoDto)}");
             var result = await _botonService.CreateReportarCasosAsync(reportarCasoDto);
             _Logger.LogInfo($"CreateReportarCasos|End|CreateReportarCasosAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
@@ -133,7 +133,31 @@ namespace GesMgmt.WebAPI.Controllers
         }
         #endregion
 
-        #region "CLARO"
+        #region "+ADICIONAL MAF - MAF"
+        /// <summary>
+        /// Obtiene el ADICIONAL MAF - CLIENTE MAF.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene el ADICIONAL MAF - CLIENTE MAF.
+        /// </remarks>
+        /// <response code="200">Obtiene el ADICIONAL MAF - CLIENTE MAF.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene ADICIONAL MAF - CLIENTE MAF")]
+        [HttpGet("GetOperativasMaf")]
+        [ProducesResponseType(typeof(ResultDto<GetOperativasMafResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetOperativasMafAsync([FromQuery] GetOperativasMafRequestDto OperativasMafDto)
+        {
+            _Logger.LogInfo($"GetOperativasMaf|Begin|GetOperativasMafAsync|request:{OperativasMafDto}");
+            var result = await _botonService.GetOperativasMafAsync(OperativasMafDto);
+            _Logger.LogInfo($"GetOperativasMaf|End|GetOperativasMafAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+        #endregion
+
+        #endregion
+
+        #region "BOTONES CLARO"
 
         #region "+ESTADO CUENTA - CLARO"
         /// <summary>
@@ -157,7 +181,11 @@ namespace GesMgmt.WebAPI.Controllers
         }
         #endregion
 
-        #region "+PAGOS - CLARO"
+        #endregion
+
+        #region "BOTONES PUBLICOS"
+
+        #region "+PAGOS - CLARO / MAF"
         /// <summary>
         /// Obtiene el listado de PAGOS, BOTÓN +PAGOS - CLIENTE CLARO.
         /// </summary>
@@ -179,12 +207,11 @@ namespace GesMgmt.WebAPI.Controllers
         }
         #endregion
 
-        #region "+EMAIL - CLARO"
+        #region "+EMAIL - CLARO / MAF"
         //ESTE METODO ESTA EN EL CONTROLLER DE EMAIL
         #endregion
 
-        #region "+AGENDAS - CLARO"
-
+        #region "+AGENDAS - CLARO / MAF"
         /// <summary>
         /// Obtiene el listado de AGENDAS, botón +AGENDAS - CLIENTE CLARO.
         /// </summary>
@@ -204,10 +231,9 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetAgendasDeudor|End|GetAgendasDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
-
         #endregion
 
-        #region "+INF. DEUDOR - CLARO"
+        #region "+INF. DEUDOR - CLARO / MAF"
         /// <summary>
         /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR / FALSE = primer Registro / TRUE = segundo registro de la lista.
         /// </summary>
@@ -227,7 +253,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetInformacionDeudor|End|GetGestionInformacionDeudorAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
-        
+
         /// <summary>
         /// Obtiene el listado de información del Deudor, BOTÓN +INF DEUDOR - CLIENTE CLARO / Tercer registro de la lista.
         /// </summary>

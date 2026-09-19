@@ -77,9 +77,17 @@ namespace GesMgmt.Infraestructure
                     "AnalyticsDatabase:CommandTimeoutSeconds debe estar entre 1 y 120.");
             }
 
-            services.AddDbContext<AvalDbContext>(options => 
-                options.UseSqlServer(connectionString));
-            
+            services.AddDbContext<AvalDbContext>(options =>
+            {
+                options.UseSqlServer(
+                    connectionString,
+                    sqlOptions =>
+                    {
+                        sqlOptions.CommandTimeout(120);
+                    }
+                );
+            });
+
             services.AddDbContext<AvalHisDbContext>(options => 
                 options.UseSqlServer(cadenaConexionHistorica));
 

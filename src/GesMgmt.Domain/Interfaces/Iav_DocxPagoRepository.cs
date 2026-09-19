@@ -6,5 +6,6 @@ namespace GesMgmt.Domain.Interfaces
     {
         Task<IQueryable<av_DocxPago>> Query();
         IQueryable<av_DocxPago?> GetPagosByIdDeudorAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor);
+        Task<IQueryable<av_DocxPago?>> GetPagosByIdClienteAndIdCarteraAndIdDeudorAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor);
     }
 }

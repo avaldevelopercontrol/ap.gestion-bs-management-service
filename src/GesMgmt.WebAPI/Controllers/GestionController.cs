@@ -228,11 +228,7 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"GetGestionEstadosGestionesCarteraDeudorHistorica|End|GetGestionEstadosGestionesCarteraDeudorHistoricaAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
-
         
-
-        
-
         /// <summary>
         /// Obtiene el Listado de Tipo de Gestiones.
         /// </summary>

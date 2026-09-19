@@ -70,10 +70,10 @@ namespace GesMgmt.Application.Services.Boton
         }
         #endregion
 
-        #region "BOTONES ALFIN"
+        #region "BOTONES MAF"
 
-        #region "Lista de Reportar Casos: + REPORTAR CASO - MAF"
-        public async Task<ResultListDto<IEnumerable<GetReportarCasosResponseDto>>>GetReportarCasosAsync(GetReportarCasosRequestDto gestionZonaCartCamp)
+        #region "Lista de Reportar Casos: +REPORTAR CASO - MAF"
+        public async Task<ResultListDto<IEnumerable<GetReportarCasosResponseDto>>> GetReportarCasosAsync(GetReportarCasosRequestDto gestionZonaCartCamp)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace GesMgmt.Application.Services.Boton
                         Descripcion = x.Descripcion ?? "",
                         Cartera = x.Cartera?.Trim() ?? "",
                         Usuario = string.Join(" ", new[] { x.ApePat, x.ApeMat, x.Nombres }.Where(s => !string.IsNullOrWhiteSpace(s))),
-                        Fec_Ingreso = x.Fecha.HasValue? x.Fecha.Value.ToString("dd/MM/yyyy HH:mm") : ""
+                        Fec_Ingreso = x.Fecha.HasValue ? x.Fecha.Value.ToString("dd/MM/yyyy HH:mm") : ""
                     })
                     .ToList();
 
@@ -139,7 +139,7 @@ namespace GesMgmt.Application.Services.Boton
         }
         #endregion
 
-        #region "Obtener de Reportar Casos: + REPORTAR CASO - MAF"
+        #region "Obtener de Reportar Casos: +REPORTAR CASO - MAF"
         public async Task<ResultDto<GetReportarCasosByIdResponseDto>> GetReportarCasosByIdAsync(int nId_DocxCobrarOpeResult)
         {
             try
@@ -173,7 +173,7 @@ namespace GesMgmt.Application.Services.Boton
         }
         #endregion
 
-        #region "Crear Reportar Casos: + REPORTAR CASO - MAF"
+        #region "Crear Reportar Casos: +REPORTAR CASO - MAF"
         public async Task<ResultDto<CreateReportarCasosResponseDto>> CreateReportarCasosAsync(CreateReportarCasosRequestDto reportarCasosCreateDto)
         {
             CreateReportarCasosRequestValidator validator = new CreateReportarCasosRequestValidator(_unitOfWork, _validationMessageService, reportarCasosCreateDto);
@@ -227,7 +227,7 @@ namespace GesMgmt.Application.Services.Boton
         }
         #endregion
 
-        #region "Modificar Reportar Casos: + REPORTAR CASO - MAF"
+        #region "Modificar Reportar Casos: +REPORTAR CASO - MAF"
         public async Task<ResultDto<EditReportarCasosResponseDto>> EditReportarCasosAsync(EditReportarCasosRequestDto reportarCasosUpdateDto)
         {
             EditReportarCasosRequestValidator validator = new EditReportarCasosRequestValidator(_unitOfWork, _validationMessageService, reportarCasosUpdateDto);
@@ -260,7 +260,7 @@ namespace GesMgmt.Application.Services.Boton
                 };
                 var resEdit = await _unitOfWork.av_DocxCobrarOpeResults.UpdateAsync(editReportarCasos);
                 await _unitOfWork.SaveChangesAsync();
-                
+
                 var responseDto = new EditReportarCasosResponseDto
                 {
                     nId_DocxCobrarOpeResult = resEdit.nId_DocxCobrarOpeResult,
@@ -271,7 +271,7 @@ namespace GesMgmt.Application.Services.Boton
 
                 ResultDto<EditReportarCasosResponseDto> response = ResultDto<EditReportarCasosResponseDto>
                                                    .Success(responseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-                
+
                 await _unitOfWork.CommitTransactionAsync();
 
                 return response;
@@ -284,6 +284,1729 @@ namespace GesMgmt.Application.Services.Boton
             }
         }
         #endregion
+
+        #region "+ADICIONAL MAF - MAF"
+        private class CarteraTmp
+        {
+            public int IdCartera { get; set; }
+            public int Idx { get; set; }
+            public string Bd { get; set; } = string.Empty;
+            public bool Valida { get; set; }
+        }
+
+        private class GestionTmp
+        {
+            public int IdDocxCobrarOpe { get; set; }
+            public int IdDocxCobrar { get; set; }
+            public int IdCartera { get; set; }
+            public int Idx { get; set; }
+            public DateTime Fecha { get; set; }
+            public int TipGestion { get; set; }
+            public int? IdOpeCodOut { get; set; }
+            public int? IdUsuOpe { get; set; }
+            public string? Telefono { get; set; }
+            public string? Comentario { get; set; }
+            public int Peso { get; set; }
+            public string? Estatus { get; set; }
+            public bool EsContactoDirecto { get; set; }
+            public bool EsRobot { get; set; }
+        }
+
+        private class GestionVentanaTmp
+        {
+            public int Ventana { get; set; }
+            public int Canal { get; set; }
+            public GestionTmp Gestion { get; set; } = null!;
+        }
+
+        private class PagoTmp
+        {
+            public int Idx { get; set; }
+            public string Cobro { get; set; } = string.Empty;
+        }
+
+        private class OperacionTmp
+        {
+            public int IdDocumento { get; set; }
+            public string Operacion { get; set; } = string.Empty;
+            public string? Placa { get; set; }
+            public int? Atraso { get; set; }
+            public int? Ubigeo { get; set; }
+            public string? Estado { get; set; }
+            public string? Direccion { get; set; }
+            public string? Distrito { get; set; }
+            public string? Provincia { get; set; }
+            public string? Departamento { get; set; }
+            public double? Plazo { get; set; }
+            public int? Cuotas { get; set; }
+        }
+
+        public async Task<ResultDto<GetOperativasMafResponseDto>> GetOperativasMafAsync(GetOperativasMafRequestDto request)
+        {
+            try
+            {
+                // ============================================================
+                // PARAMETROS
+                // ============================================================
+                int nIdPersDeudor = request.nId_PersDeudor;
+                int nIdCartera = request.nId_Cartera;
+                int nIdCliente = request.nId_Cliente;
+
+                const int CONTRATO_MAF = 246;
+                const int CLIENTE_COBERTURA = 36;
+
+                DateTime hoy = DateTime.Today;
+
+                // ============================================================
+                // QUERYS BASE
+                //
+                // IMPORTANTE:
+                // NO filtrar aqui por nId_Cartera.
+                // El SP necesita recorrer todas las carteras del deudor.
+                // ============================================================
+                var qCarteras = (await _unitOfWork.av_Carteras.Query()).AsNoTracking();
+                var qDocumentos = (await _unitOfWork.av_DocxCobrars.Query()).AsNoTracking();
+                var qGestiones = (await _unitOfWork.av_DocxCobrarOpes.Query()).AsNoTracking();
+                var qPagos = (await _unitOfWork.av_DocxPagos.Query()).AsNoTracking();
+                var qOpeCod = (await _unitOfWork.av_OpeCodCliOuts.Query()).AsNoTracking();
+                var qTipoContacto = (await _unitOfWork.av_TipoContactos.Query()).AsNoTracking();
+                var qUsuarios = (await _unitOfWork.av_Usuarios.Query()).AsNoTracking();
+
+                // ============================================================
+                // 1. CARTERAS COB
+                // ============================================================
+                var carterasCobDb = await qCarteras
+                        .Where(c =>
+                            c.nId_Cliente == nIdCliente
+                            &&
+                            (c.nAnioCar ?? 0) > 0
+                            &&
+                            (c.nCampCar ?? 0) >= 1
+                            &&
+                            (c.nCampCar ?? 0) <= 12
+                        )
+                        .Select(c => new
+                        {
+                            c.nId_Cartera,
+                            c.nAnioCar,
+                            c.nCampCar,
+                            c.nId_Contrato,
+                            c.cCar_Nombre
+                        })
+                        .ToListAsync();
+
+                var carterasCob = carterasCobDb
+                        .Select(c =>
+                        {
+                            string nombre =
+                                (c.cCar_Nombre ?? "")
+                                    .Trim()
+                                    .ToUpperInvariant();
+
+                            bool valida =
+                                c.nId_Contrato == CONTRATO_MAF
+                                &&
+                                !nombre.Contains("BORRADOR")
+                                &&
+                                !nombre.Contains("BORRAR")
+                                &&
+                                !nombre.Contains("PRUEBA")
+                                &&
+                                !nombre.Contains("ELIMINAR");
+
+                            return new CarteraTmp
+                            {
+                                IdCartera = c.nId_Cartera,
+
+                                Idx =
+                                    (c.nAnioCar ?? 0) * 12
+                                    +
+                                    (c.nCampCar ?? 0),
+
+                                Bd = "cob",
+
+                                Valida = valida
+                            };
+                        }).ToList();
+
+                // ============================================================
+                // 2. CARTERAS HISTORICAS
+                // ============================================================
+                var qCarterasHis = (await _unitOfWork.av_CarteraHiss.Query()).AsNoTracking();
+
+                var carterasHisDb =
+                    await qCarterasHis
+                        .Where(c =>
+                            c.nId_Cliente == nIdCliente
+                            &&
+                            (c.nAnioCar ?? 0) > 0
+                            &&
+                            (c.nCampCar ?? 0) >= 1
+                            &&
+                            (c.nCampCar ?? 0) <= 12
+                        )
+                        .Select(c => new
+                        {
+                            c.nId_Cartera,
+                            c.nAnioCar,
+                            c.nCampCar,
+                            c.nId_Contrato,
+                            c.cCar_Nombre
+                        })
+                        .ToListAsync();
+
+                var idsCarteraCob =
+                    carterasCob
+                        .Select(x => x.IdCartera)
+                        .ToHashSet();
+
+                var carterasHis =
+                    carterasHisDb
+                        .Where(c =>
+                            !idsCarteraCob.Contains(
+                                c.nId_Cartera
+                            )
+                        )
+                        .Select(c =>
+                        {
+                            string nombre =
+                                (c.cCar_Nombre ?? "")
+                                    .Trim()
+                                    .ToUpperInvariant();
+
+                            bool valida =
+                                c.nId_Contrato == CONTRATO_MAF
+                                &&
+                                !nombre.Contains("BORRADOR")
+                                &&
+                                !nombre.Contains("BORRAR")
+                                &&
+                                !nombre.Contains("PRUEBA")
+                                &&
+                                !nombre.Contains("ELIMINAR");
+
+                            return new CarteraTmp
+                            {
+                                IdCartera =
+                                    c.nId_Cartera,
+
+                                Idx =
+                                    (c.nAnioCar ?? 0) * 12
+                                    +
+                                    (c.nCampCar ?? 0),
+
+                                Bd = "his",
+
+                                Valida = valida
+                            };
+                        })
+                        .ToList();
+
+                var carteras =
+                    carterasCob
+                        .Concat(carterasHis)
+                        .ToList();
+
+                // ============================================================
+                // 3. PERIODO M
+                //
+                // SP:
+                // 1 mes   = M
+                // 6 meses = M-6  ... M-1
+                // 12 meses= M-12 ... M-1
+                // ============================================================
+                int? idxM =
+                    carteras
+                        .Where(x =>
+                            x.IdCartera == nIdCartera
+                            &&
+                            x.Valida
+                        )
+                        .Select(x =>
+                            (int?)x.Idx
+                        )
+                        .FirstOrDefault();
+
+                int? ini1 = idxM;
+                int? fin1 = idxM;
+                int? ini6 = idxM.HasValue ? idxM.Value - 6 : null;
+                int? ini12 = idxM.HasValue ? idxM.Value - 12 : null;
+                int? fin = idxM.HasValue ? idxM.Value - 1 : null;
+
+                // ============================================================
+                // CARTERAS DE LA VENTANA
+                // M-12 HASTA M
+                // ============================================================
+                var ventana =
+                    idxM.HasValue
+
+                    ? carteras
+                        .Where(x =>
+                            x.Valida
+                            &&
+                            x.Idx >= ini12!.Value
+                            &&
+                            x.Idx <= fin1!.Value
+                        )
+                        .ToList()
+
+                    : new List<CarteraTmp>();
+
+                // ============================================================
+                // 4. CONTACTOS DIRECTOS
+                // ============================================================
+                var idsContactoDirecto =
+                    await (
+                        from ope in qOpeCod
+
+                        join tipo in qTipoContacto
+
+                            on ope.nId_TipoContacto
+                            equals tipo.nId_TipoContacto
+
+                        where
+                            ope.nId_Cliente == nIdCliente
+                            &&
+                            tipo.indicador_equiv == "CD"
+
+                        select
+                            ope.nId_OpeCodCliOut
+                    )
+                    .Distinct()
+                    .ToListAsync();
+
+                var contactoDirectoSet =
+                    idsContactoDirecto.ToHashSet();
+
+                // ============================================================
+                // 5. CARTERAS DEL DEUDOR - COB
+                //
+                // TODAS LAS CARTERAS DEL DEUDOR.
+                // NO SOLO nIdCartera ACTUAL.
+                // ============================================================
+                var docCarterasCob =
+                    await qDocumentos
+                        .Where(d =>
+                            d.nId_PersDeudor ==
+                                nIdPersDeudor
+                            &&
+                            d.nId_Cliente ==
+                                nIdCliente
+                        )
+                        .Select(d =>
+                            d.nId_Cartera
+                        )
+                        .Distinct()
+                        .ToListAsync();
+
+                // ============================================================
+                // DOCUMENTOS HISTORICOS
+                // ============================================================
+                var qDocumentosHis =
+                    (await _unitOfWork
+                        .av_DocxCobrarHiss
+                        .Query())
+                    .AsNoTracking();
+
+                var docCarterasHis =
+                    await qDocumentosHis
+                        .Where(d =>
+                            d.nId_PersDeudor ==
+                                nIdPersDeudor
+                            &&
+                            d.nId_Cliente ==
+                                nIdCliente
+                        )
+                        .Select(d =>
+                            d.nId_Cartera
+                        )
+                        .Distinct()
+                        .ToListAsync();
+
+
+                var docCobSet =
+                    docCarterasCob.ToHashSet();
+
+                var docHisSet =
+                    docCarterasHis.ToHashSet();
+
+                // ============================================================
+                // #DOCAR EQUIVALENTE
+                // ============================================================
+                var docar =
+                    carteras
+                        .Where(x =>
+                            (
+                                x.Bd == "cob"
+                                &&
+                                docCobSet.Contains(
+                                    x.IdCartera
+                                )
+                            )
+                            ||
+                            (
+                                x.Bd == "his"
+                                &&
+                                docHisSet.Contains(
+                                    x.IdCartera
+                                )
+                            )
+                        )
+                        .ToList();
+
+                // ============================================================
+                // 6. VECES QUE VINO
+                // ============================================================
+                int vinoTotal =
+                    docar
+                        .Where(x =>
+                            x.Valida
+                        )
+                        .Select(x =>
+                            x.Idx
+                        )
+                        .Distinct()
+                        .Count();
+
+                int? vino6Meses = null;
+
+                if (idxM.HasValue)
+                {
+                    vino6Meses =
+                        docar
+                            .Where(x =>
+                                x.Valida
+                                &&
+                                x.Idx >= ini6!.Value
+                                &&
+                                x.Idx <= fin!.Value
+                            )
+                            .Select(x =>
+                                x.Idx
+                            )
+                            .Distinct()
+                            .Count();
+                }
+
+                // ============================================================
+                // 7. GESTIONES COB
+                // SOLO CARTERAS DE M-12 ... M
+                // ============================================================
+                var ventanaCob =
+                    ventana
+                        .Where(x =>
+                            x.Bd == "cob"
+                        )
+                        .ToDictionary(
+                            x => x.IdCartera,
+                            x => x.Idx
+                        );
+
+                var idsVentanaCob =
+                    ventanaCob.Keys.ToList();
+
+                var gestionesCobDb =
+                    idsVentanaCob.Count == 0
+                    ? new List<dynamic>()
+                    : null;
+
+                var gestionesCob =
+                    new List<GestionTmp>();
+
+                if (idsVentanaCob.Count > 0)
+                {
+                    var datosGestionesCob =
+                        await qGestiones
+                            .Where(g =>
+                                g.nId_Cliente == nIdCliente
+                                && g.nId_PersDeudor == nIdPersDeudor
+                                && g.nId_Cartera.HasValue
+                                && idsVentanaCob.Contains(g.nId_Cartera.Value)
+                                && (g.nId_TipoGestion == 1 || g.nId_TipoGestion == 2)
+                            )
+                            .Select(g => new
+                            {
+                                g.nId_DocxCobrarOpe,
+                                g.nId_DocxCobrar,
+                                g.nId_Cartera,
+                                g.dDocCobOpe_FecIni,
+                                g.nId_TipoGestion,
+                                g.nId_OpeCodCliOut,
+                                g.nId_Usuario,
+                                g.nTelef_Nro,
+                                g.cDocOpeCobOut_Descr
+                            })
+                            .ToListAsync();
+
+                    gestionesCob =
+                        datosGestionesCob
+                            .Where(g =>
+                                g.nId_Cartera.HasValue
+                                &&
+                                g.dDocCobOpe_FecIni.HasValue
+                                &&
+                                g.nId_TipoGestion.HasValue
+                            )
+                            .Select(g =>
+                                new GestionTmp
+                                {
+                                    IdDocxCobrarOpe = g.nId_DocxCobrarOpe,
+                                    IdDocxCobrar = g.nId_DocxCobrar,
+                                    IdCartera = g.nId_Cartera!.Value,
+                                    Idx = ventanaCob[g.nId_Cartera.Value],
+                                    Fecha = g.dDocCobOpe_FecIni!.Value,
+                                    TipGestion = g.nId_TipoGestion!.Value,
+                                    IdOpeCodOut = g.nId_OpeCodCliOut,
+                                    IdUsuOpe = g.nId_Usuario,
+                                    Telefono = g.nTelef_Nro,
+                                    Comentario = g.cDocOpeCobOut_Descr
+                                }
+                            )
+                            .ToList();
+                }
+
+                // ============================================================
+                // GESTIONES HISTORICAS
+                // ============================================================
+                var ventanaHis =
+                    ventana
+                        .Where(x =>
+                            x.Bd == "his"
+                        )
+                        .ToDictionary(
+                            x => x.IdCartera,
+                            x => x.Idx
+                        );
+
+                var gestionesHis = new List<GestionTmp>();
+
+                if (ventanaHis.Count > 0)
+                {
+                    var idsVentanaHis =
+                        ventanaHis.Keys.ToList();
+
+                    var qGestionesHis =
+                        (await _unitOfWork
+                            .av_DocxCobrarOpeHiss
+                            .Query())
+                        .AsNoTracking();
+
+                    var datosGestionesHis =
+                        await qGestionesHis
+                            .Where(g =>
+                                g.nId_Cliente == nIdCliente
+                                && g.nId_PersDeudor == nIdPersDeudor
+                                && g.nId_Cartera.HasValue
+                                && idsVentanaHis.Contains(g.nId_Cartera.Value)
+                                &&
+                                (
+                                    g.nId_TipoGestion == 1
+                                    ||
+                                    g.nId_TipoGestion == 2
+                                )
+                            )
+                            .Select(g => new
+                            {
+                                g.nId_DocxCobrarOpe,
+                                g.nId_DocxCobrar,
+                                g.nId_Cartera,
+                                g.dDocCobOpe_FecIni,
+                                g.nId_TipoGestion,
+                                g.nId_OpeCodCliOut,
+                                g.nId_Usuario,
+                                g.nTelef_Nro,
+                                g.cDocOpeCobOut_Descr
+                            })
+                            .ToListAsync();
+
+                    gestionesHis =
+                        datosGestionesHis
+                            .Where(g =>
+                                g.nId_Cartera.HasValue
+                                &&
+                                g.dDocCobOpe_FecIni.HasValue
+                            )
+                            .Select(g =>
+                                new GestionTmp
+                                {
+                                    IdDocxCobrarOpe = g.nId_DocxCobrarOpe,
+                                    IdDocxCobrar = g.nId_DocxCobrar,
+                                    IdCartera = g.nId_Cartera!.Value,
+                                    Idx = ventanaHis[g.nId_Cartera.Value],
+                                    Fecha = g.dDocCobOpe_FecIni!.Value,
+                                    TipGestion = g.nId_TipoGestion ?? 0,
+                                    IdOpeCodOut = g.nId_OpeCodCliOut,
+                                    IdUsuOpe = g.nId_Usuario,
+                                    Telefono = g.nTelef_Nro,
+                                    Comentario = g.cDocOpeCobOut_Descr
+                                }
+                            )
+                            .ToList();
+                }
+
+                var gestiones = gestionesCob.Concat(gestionesHis).ToList();
+
+                // ============================================================
+                // 8. CATALOGO DE RESPUESTAS
+                // ============================================================
+                var idsRespuestas =
+                    gestiones
+                        .Where(x =>
+                            x.IdOpeCodOut.HasValue
+                        )
+                        .Select(x =>
+                            x.IdOpeCodOut!.Value
+                        )
+                        .Distinct()
+                        .ToList();
+
+                var respuestas =
+                    idsRespuestas.Count == 0
+                        ? new List<dynamic>()
+                        : null;
+
+                var respuestaDiccionario =
+                    new Dictionary<int, (int Peso, string? Estatus)>();
+
+                if (idsRespuestas.Count > 0)
+                {
+                    var datosRespuestas =
+                        await qOpeCod
+                            .Where(x =>
+                                x.nId_Cliente == nIdCliente
+                                && idsRespuestas.Contains(x.nId_OpeCodCliOut)
+                            )
+                            .Select(x => new
+                            {
+                                x.nId_OpeCodCliOut,
+                                x.nPeso,
+                                x.cNombre_OpeCodCliOut
+                            })
+                            .ToListAsync();
+
+                    respuestaDiccionario =
+                        datosRespuestas
+                            .ToDictionary(
+                                x =>
+                                    x.nId_OpeCodCliOut,
+
+                                x => (
+                                    Peso:
+                                        x.nPeso ?? 5000,
+
+                                    Estatus:
+                                        x.cNombre_OpeCodCliOut
+                                )
+                            );
+                }
+
+                // ============================================================
+                // USUARIOS ROBOT
+                // ============================================================
+                var idsUsuarios =
+                    gestiones
+                        .Where(x =>
+                            x.IdUsuOpe.HasValue
+                        )
+                        .Select(x =>
+                            x.IdUsuOpe!.Value
+                        )
+                        .Distinct()
+                        .ToList();
+
+                var robotSet = new HashSet<int>();
+
+                if (idsUsuarios.Count > 0)
+                {
+                    var usuariosRobot =
+                        await qUsuarios
+                            .Where(x =>
+                                idsUsuarios.Contains(
+                                    x.nId_Usuario
+                                )
+                                &&
+                                x.nId_PerfilGest != null
+                            )
+                            .Select(x =>
+                                x.nId_Usuario
+                            )
+                            .ToListAsync();
+
+                    robotSet =
+                        usuariosRobot.ToHashSet();
+                }
+
+                // ============================================================
+                // ENRIQUECER GESTIONES
+                // ============================================================
+
+                foreach (var gestion in gestiones)
+                {
+                    if (
+                        gestion.IdOpeCodOut.HasValue
+                        &&
+                        respuestaDiccionario.TryGetValue(
+                            gestion.IdOpeCodOut.Value,
+                            out var respuesta
+                        )
+                    )
+                    {
+                        gestion.Peso = respuesta.Peso;
+                        gestion.Estatus = respuesta.Estatus;
+                    }
+                    else
+                    {
+                        gestion.Peso = 5000;
+                        gestion.Estatus = null;
+                    }
+
+                    gestion.EsContactoDirecto =
+                        gestion.IdOpeCodOut.HasValue
+                        &&
+                        contactoDirectoSet.Contains(
+                            gestion.IdOpeCodOut.Value
+                        );
+
+                    gestion.EsRobot =
+                        gestion.IdUsuOpe.HasValue
+                        &&
+                        robotSet.Contains(
+                            gestion.IdUsuOpe.Value
+                        );
+                }
+
+                // ============================================================
+                // 9. ELIMINAR GESTIONES DUPLICADAS
+                // EXACTAMENTE LA CLAVE LOGICA DEL SP
+                // ============================================================
+                gestiones =
+                    gestiones
+                        .GroupBy(x => new
+                        {
+                            x.Fecha,
+                            x.TipGestion,
+                            Ope = x.IdOpeCodOut ?? -1,
+                            Telefono = x.Telefono ?? "",
+                            Usuario = x.IdUsuOpe ?? -1,
+                            Comentario = x.Comentario ?? ""
+                        })
+                        .Select(g =>
+                            g.OrderBy(x =>
+                                x.IdDocxCobrarOpe
+                            )
+                            .First()
+                        )
+                        .ToList();
+
+                // ============================================================
+                // 10. ULTIMO CONTACTO DIRECTO
+                //
+                // HISTORICO COMPLETO:
+                // NO SOLO VENTANA 12 MESES
+                // ============================================================
+                var idsDocarCob =
+                    docar
+                        .Where(x =>
+                            x.Bd == "cob"
+                        )
+                        .Select(x =>
+                            x.IdCartera
+                        )
+                        .Distinct()
+                        .ToList();
+
+                DateTime? ultimoContactoCob = null;
+
+                if (idsDocarCob.Count > 0 && idsContactoDirecto.Count > 0)
+                {
+                    ultimoContactoCob =
+                        await qGestiones
+                            .Where(g =>
+                                g.nId_Cliente == nIdCliente
+                                && g.nId_PersDeudor == nIdPersDeudor
+                                && g.nId_Cartera.HasValue 
+                                && idsDocarCob.Contains(g.nId_Cartera.Value)
+                                && (g.nId_TipoGestion == 1 || g.nId_TipoGestion == 2 || g.nId_TipoGestion == 4 || g.nId_TipoGestion == 5)
+                                && g.nId_OpeCodCliOut > 0
+                                && idsContactoDirecto.Contains(g.nId_OpeCodCliOut)
+                            )
+                            .Select(g =>
+                                (DateTime?)
+                                g.dDocCobOpe_FecIni
+                            )
+                            .MaxAsync();
+                }
+
+                // ============================================================
+                // CONTACTO HISTORICO
+                // ============================================================
+                DateTime? ultimoContactoHis = null;
+
+                var docarHis =
+                    docar
+                        .Where(x =>
+                            x.Bd == "his"
+                        )
+                        .ToList();
+
+                var idsDocarHis =
+                    docarHis
+                        .Select(x =>
+                            x.IdCartera
+                        )
+                        .Distinct()
+                        .ToList();
+
+                bool consultarHistoricoContacto = idsDocarHis.Count > 0 && idsContactoDirecto.Count > 0;
+
+                // Misma optimizacion del SP:
+                // solo consultar HIS si puede aportar una fecha superior.
+                if (consultarHistoricoContacto && ultimoContactoCob.HasValue)
+                {
+                    int? idxHisMax =
+                        docarHis
+                            .Select(x =>
+                                (int?)x.Idx
+                            )
+                            .Max();
+
+                    if (idxHisMax.HasValue)
+                    {
+                        int anioHis =
+                            (idxHisMax.Value - 1) / 12;
+
+                        int mesHis =
+                            idxHisMax.Value
+                            -
+                            anioHis * 12;
+
+                        DateTime limiteHis =
+                            new DateTime(
+                                anioHis,
+                                mesHis,
+                                1
+                            )
+                            .AddMonths(3);
+
+                        consultarHistoricoContacto =
+                            ultimoContactoCob.Value
+                            <
+                            limiteHis;
+                    }
+                }
+
+                if (consultarHistoricoContacto)
+                {
+                    var qGestionesHisContacto = (await _unitOfWork.av_DocxCobrarOpeHiss.Query()).AsNoTracking();
+
+                    ultimoContactoHis =
+                        await qGestionesHisContacto
+                            .Where(g =>
+                                g.nId_Cliente ==
+                                    nIdCliente
+
+                                &&
+                                g.nId_PersDeudor ==
+                                    nIdPersDeudor
+
+                                &&
+                                g.nId_Cartera.HasValue
+
+                                &&
+                                idsDocarHis.Contains(
+                                    g.nId_Cartera.Value
+                                )
+
+                                &&
+                                (
+                                    g.nId_TipoGestion == 1
+                                    ||
+                                    g.nId_TipoGestion == 2
+                                    ||
+                                    g.nId_TipoGestion == 4
+                                    ||
+                                    g.nId_TipoGestion == 5
+                                )
+
+                                &&
+                                g.nId_OpeCodCliOut > 0
+
+                                &&
+                                idsContactoDirecto.Contains(
+                                    g.nId_OpeCodCliOut
+                                )
+                            )
+                            .Select(g =>
+                                (DateTime?)
+                                g.dDocCobOpe_FecIni
+                            )
+                            .MaxAsync();
+                }
+
+                DateTime? fechaUltimoContacto;
+
+                if (ultimoContactoCob.HasValue && ultimoContactoHis.HasValue)
+                {
+                    fechaUltimoContacto =
+                        ultimoContactoCob.Value
+                        >
+                        ultimoContactoHis.Value
+
+                        ? ultimoContactoCob
+                        : ultimoContactoHis;
+                }
+                else
+                {
+                    fechaUltimoContacto =
+                        ultimoContactoCob
+                        ??
+                        ultimoContactoHis;
+                }
+
+                int? diasNoContacto =
+                    fechaUltimoContacto.HasValue
+                    ? (
+                        hoy
+                        -
+                        fechaUltimoContacto
+                            .Value.Date
+                      ).Days
+                    : null;
+
+                // ============================================================
+                // 11. PAGOS COB
+                // HISTORICO COMPLETO DEL DEUDOR
+                // ============================================================
+                var carteraPeriodoCob =
+                    docar
+                        .Where(x =>
+                            x.Bd == "cob"
+                            &&
+                            x.Valida
+                        )
+                        .ToDictionary(
+                            x => x.IdCartera,
+                            x => x.Idx
+                        );
+
+                var pagos = new List<PagoTmp>();
+
+                if (carteraPeriodoCob.Count > 0)
+                {
+                    var idsPagoCob = carteraPeriodoCob.Keys.ToList();
+                    var pagosCobDb = 
+                        await qPagos
+                            .Where(p =>
+                                p.nId_Cliente == nIdCliente
+                                && p.nId_PersDeudor == nIdPersDeudor
+                                && p.bEstado == true
+                                && p.dDoc_FecPago != null
+                                && (p.nDoc_ImpPago ?? 0) > 0
+                                && idsPagoCob.Contains(p.nId_Cartera)
+                            )
+                            .Select(p => new
+                            {
+                                p.nId_Cartera,
+                                p.cDoc_Numero,
+                                p.nDoc_ImpPago,
+                                p.dDoc_FecPago
+                            })
+                            .ToListAsync();
+
+                    pagos.AddRange(
+                        pagosCobDb
+                            .Select(p =>
+                                new PagoTmp
+                                {
+                                    Idx = carteraPeriodoCob[p.nId_Cartera],
+                                    Cobro = (p.cDoc_Numero ?? "") + "|" + Convert.ToString(p.nDoc_ImpPago) + "|" + p.dDoc_FecPago.ToString("yyyyMMdd")
+                                }
+                            )
+                    );
+                }
+
+                // ============================================================
+                // PAGOS HISTORICOS
+                // ============================================================
+                var carteraPeriodoHis =
+                    docar
+                        .Where(x =>
+                            x.Bd == "his"
+                            &&
+                            x.Valida
+                        )
+                        .ToDictionary(
+                            x => x.IdCartera,
+                            x => x.Idx
+                        );
+
+                if (carteraPeriodoHis.Count > 0)
+                {
+                    var idsPagoHis = carteraPeriodoHis.Keys.ToList();
+                    var qPagosHis = (await _unitOfWork.av_DocxPagoHiss.Query()).AsNoTracking();
+
+                    var pagosHisDb =
+                        await qPagosHis
+                            .Where(p =>
+                                p.nId_Cliente == nIdCliente
+                                && p.nId_PersDeudor == nIdPersDeudor
+                                && p.bEstado == true
+                                && p.dDoc_FecPago != null
+                                && (p.nDoc_ImpPago ?? 0) > 0
+                                && idsPagoHis.Contains(p.nId_Cartera)
+                            )
+                            .Select(p => new
+                            {
+                                p.nId_Cartera,
+                                p.cDoc_Numero,
+                                p.nDoc_ImpPago,
+                                p.dDoc_FecPago
+                            })
+                            .ToListAsync();
+
+                    pagos.AddRange(
+                        pagosHisDb
+                            .Select(p =>
+                                new PagoTmp
+                                {
+                                    Idx = carteraPeriodoHis[p.nId_Cartera],
+                                    Cobro = (p.cDoc_Numero ?? "") + "|" + Convert.ToString(p.nDoc_ImpPago) + "|" + p.dDoc_FecPago.ToString("yyyyMMdd")
+                                }
+                            )
+                    );
+                }
+
+                int pagoTotal =
+                    pagos
+                        .Select(x =>
+                            x.Cobro
+                        )
+                        .Distinct()
+                        .Count();
+
+                int? pago6Meses = null;
+
+                if (idxM.HasValue)
+                {
+                    pago6Meses =
+                        pagos
+                            .Where(x =>
+                                x.Idx >= ini6!.Value
+                                &&
+                                x.Idx <= fin!.Value
+                            )
+                            .Select(x =>
+                                x.Cobro
+                            )
+                            .Distinct()
+                            .Count();
+                }
+
+                // ============================================================
+                // 12. EXPANSION
+                //
+                // 12 = M-12 ... M-1
+                //  6 = M-6  ... M-1
+                //  1 = M
+                //
+                // ESTA ES LA LOGICA EXACTA DEL SP.
+                // ============================================================
+                var exp = new List<GestionVentanaTmp>();
+
+                if (idxM.HasValue)
+                {
+                    foreach (var gestion in gestiones)
+                    {
+                        // ----------------------------
+                        // 12 MESES
+                        // ----------------------------
+                        if (gestion.Idx >= ini12!.Value && gestion.Idx <= fin!.Value)
+                        {
+                            exp.Add(
+                                new GestionVentanaTmp
+                                {
+                                    Ventana = 12,
+                                    Canal = gestion.TipGestion,
+                                    Gestion = gestion
+                                }
+                            );
+                        }
+
+                        // ----------------------------
+                        // 6 MESES
+                        // ----------------------------
+                        if (gestion.Idx >= ini6!.Value && gestion.Idx <= fin.Value)
+                        {
+                            exp.Add(
+                                new GestionVentanaTmp
+                                {
+                                    Ventana = 6,
+                                    Canal = gestion.TipGestion,
+                                    Gestion = gestion
+                                }
+                            );
+                        }
+
+                        // ----------------------------
+                        // 1 MES = CAMPAÑA M
+                        // ----------------------------
+                        if (gestion.Idx >= ini1!.Value && gestion.Idx <= fin1!.Value)
+                        {
+                            exp.Add(
+                                new GestionVentanaTmp
+                                {
+                                    Ventana = 1,
+                                    Canal = gestion.TipGestion,
+                                    Gestion = gestion
+                                }
+                            );
+                        }
+                    }
+                }
+
+                // ============================================================
+                // 13. INTENTOS
+                // ============================================================
+                var intentos =
+                    exp
+                        .GroupBy(x => new
+                        {
+                            x.Ventana,
+                            x.Canal
+                        })
+                        .ToDictionary(
+                            x => (
+                                x.Key.Ventana,
+                                x.Key.Canal
+                            ),
+
+                            x => new
+                            {
+                                Total =
+                                    x.Count(),
+
+                                Robot =
+                                    x.Count(y =>
+                                        y.Gestion.EsRobot
+                                    ),
+
+                                ContactoDirecto =
+                                    x.Count(y =>
+                                        y.Gestion
+                                            .EsContactoDirecto
+                                    )
+                            }
+                        );
+
+                // ============================================================
+                // 14. MEJOR GESTION
+                //
+                // MENOR PESO
+                // FECHA DESC
+                // ID DESC
+                // ============================================================
+                var ganadoras =
+                    exp
+                        .Where(x =>
+                            !string.IsNullOrWhiteSpace(
+                                x.Gestion.Estatus
+                            )
+                        )
+                        .GroupBy(x => new
+                        {
+                            x.Ventana,
+                            x.Canal
+                        })
+                        .ToDictionary(
+                            x => (
+                                x.Key.Ventana,
+                                x.Key.Canal
+                            ),
+
+                            x =>
+                                x
+                                    .OrderBy(y =>
+                                        y.Gestion.Peso
+                                    )
+                                    .ThenByDescending(y =>
+                                        y.Gestion.Fecha
+                                    )
+                                    .ThenByDescending(y =>
+                                        y.Gestion
+                                            .IdDocxCobrarOpe
+                                    )
+                                    .First()
+                                    .Gestion
+                        );
+
+                // ============================================================
+                // 15. DIRECCION DEL DEUDOR
+                // ============================================================
+                var qPersDirecciones = (await _unitOfWork.av_PersDireccs.Query()).AsNoTracking();
+
+                // Traemos pocas candidatas para poder descartar
+                // direcciones puramente numericas como hace ISNUMERIC del SP.
+                var direccionesDeudorDb =
+                    await qPersDirecciones
+                        .Where(x =>
+                            x.nId_PersDeudor == nIdPersDeudor
+                            && x.nId_Cliente == nIdCliente
+                            && x.bOrigen_Base == true
+                            && x.bEstado == true
+                            && x.cDirecc_Nomb != null
+                            && x.cDirecc_Nomb != ""
+                        )
+                        .OrderByDescending(x =>
+                            x.dFec_Actualizacion
+                        )
+                        .ThenByDescending(x =>
+                            x.nId_PersDirecc
+                        )
+                        .Select(x => new
+                        {
+                            x.cDirecc_Nomb,
+                            x.cCli_UbigeoDistr,
+                            x.cCli_UbigeoProv
+                        })
+                        .Take(20)
+                        .ToListAsync();
+
+
+                var direccionDeudor =
+                    direccionesDeudorDb
+                        .FirstOrDefault(x =>
+                        {
+                            if (
+                                string.IsNullOrWhiteSpace(
+                                    x.cDirecc_Nomb
+                                )
+                            )
+                            {
+                                return false;
+                            }
+
+                            return !decimal.TryParse(
+                                x.cDirecc_Nomb.Trim(),
+                                out _
+                            );
+                        });
+
+                // ============================================================
+                // DIRECCIONES ASIGNADAS
+                //
+                // UNA SOLA CONSULTA.
+                // NO HACER QUERY DENTRO DEL FOREACH.
+                // ============================================================
+                var idsDocumentosCampo =
+                    ganadoras
+                        .Where(x =>
+                            x.Key.Item2 == 2
+                        )
+                        .Select(x =>
+                            x.Value.IdDocxCobrar
+                        )
+                        .Distinct()
+                        .ToList();
+
+                var direccionAsignadaDic =
+                    new Dictionary<
+                        int,
+                        (
+                            string? Direccion,
+                            string? Distrito,
+                            string? Provincia
+                        )
+                    >();
+
+                if (idsDocumentosCampo.Count > 0)
+                {
+                    var qDireccionesAsignadas = (await _unitOfWork.av_docxcobrar_direccAsigs.Query()).AsNoTracking();
+                    
+                    var direccionesAsignadas =
+                        await qDireccionesAsignadas
+                            .Where(x =>
+                                x.nId_docxcobrar.HasValue
+                                && idsDocumentosCampo.Contains(x.nId_docxcobrar.Value)
+                                && x.direccion_camp != null
+                                && x.direccion_camp != ""
+                            )
+                            .Select(x => new
+                            {
+                                Documento = x.nId_docxcobrar!.Value,
+                                Direccion = x.direccion_camp,
+                                Distrito = x.distrito_camp,
+                                Provincia = x.provincia_camp
+                            })
+                            .ToListAsync();
+
+                    direccionAsignadaDic = 
+                        direccionesAsignadas
+                            .GroupBy(x =>
+                                x.Documento
+                            )
+                            .ToDictionary(
+                                x =>
+                                    x.Key,
+
+                                x =>
+                                {
+                                    var item =
+                                        x.First();
+
+                                    return (
+                                        item.Direccion,
+                                        item.Distrito,
+                                        item.Provincia
+                                    );
+                                }
+                            );
+                }
+
+                // ============================================================
+                // RESULTADO DE MEJORES GESTIONES
+                //
+                // SOLO UN FOREACH.
+                // EL SEGUNDO FOREACH QUE TENIAS SE ELIMINA.
+                // ============================================================
+                var mejoresGestiones = new List<MejorGestionResponseDto>();
+
+                var bloques = new[]
+                {
+                    (Ventana: 12, Canal: 1),
+                    (Ventana: 6,  Canal: 1),
+                    (Ventana: 1,  Canal: 1),
+
+                    (Ventana: 12, Canal: 2),
+                    (Ventana: 6,  Canal: 2),
+                    (Ventana: 1,  Canal: 2)
+                };
+
+                foreach (var bloque in bloques)
+                {
+                    if (!ganadoras.TryGetValue((bloque.Ventana, bloque.Canal), out var ganadora))
+                    {
+                        mejoresGestiones.Add(
+                            new MejorGestionResponseDto
+                            {
+                                ventanaMeses = bloque.Ventana,
+                                canal = bloque.Canal,
+                                canalNombre = bloque.Canal == 1 ? "CALL" : "CAMPO",
+                                nId_DocxCobrarOpe = 0,
+                                nId_DocxCobrar = 0,
+                                fecha = null,
+                                estatus = "Sin gestión en el periodo",
+                                peso = 0,
+                                telefono = null,
+                                comentario = null,
+                                intentos = 0,
+                                intentosRobot = 0,
+                                contactosDirectos = 0,
+                                origenDireccion = null,
+                                direccion = null
+                            }
+                        );
+                        continue;
+                    }
+
+                    intentos.TryGetValue(
+                        (
+                            bloque.Ventana,
+                            bloque.Canal
+                        ),
+                        out var estadisticas
+                    );
+
+                    string? direccion = null;
+                    string? origenDireccion = null;
+
+                    // ========================================================
+                    // CAMPO
+                    // ========================================================
+
+                    if (bloque.Canal == 2)
+                    {
+                        if (
+                            direccionAsignadaDic.TryGetValue(
+                                ganadora.IdDocxCobrar,
+                                out var asignada
+                            )
+                            &&
+                            !string.IsNullOrWhiteSpace(
+                                asignada.Direccion
+                            )
+                        )
+                        {
+                            origenDireccion = "ASIGNADA";
+                            direccion = asignada.Direccion!.Trim();
+                            if (
+                                !string.IsNullOrWhiteSpace(
+                                    asignada.Distrito
+                                )
+                            )
+                            {
+                                direccion += " - " + asignada.Distrito!.Trim();
+                            }
+                            if (
+                                !string.IsNullOrWhiteSpace(
+                                    asignada.Provincia
+                                )
+                            )
+                            {
+                                direccion += " - " + asignada.Provincia!.Trim();
+                            }
+                        }
+
+                        else if (direccionDeudor != null)
+                        {
+                            origenDireccion = "DEUDOR";
+                            direccion = direccionDeudor.cDirecc_Nomb?.Trim();
+                            if (
+                                !string.IsNullOrWhiteSpace(
+                                    direccionDeudor
+                                        .cCli_UbigeoDistr
+                                )
+                                &&
+                                !(direccion ?? "")
+                                    .Contains(
+                                        direccionDeudor
+                                            .cCli_UbigeoDistr,
+
+                                        StringComparison
+                                            .OrdinalIgnoreCase
+                                    )
+                            )
+                            {
+                                direccion +=
+                                    " - "
+                                    +
+                                    direccionDeudor
+                                        .cCli_UbigeoDistr;
+                            }
+                            if (
+                                !string.IsNullOrWhiteSpace(
+                                    direccionDeudor
+                                        .cCli_UbigeoProv
+                                )
+
+                                &&
+                                !(direccion ?? "")
+                                    .Contains(
+                                        direccionDeudor
+                                            .cCli_UbigeoProv,
+
+                                        StringComparison
+                                            .OrdinalIgnoreCase
+                                    )
+                            )
+                            {
+                                direccion +=
+                                    " - "
+                                    +
+                                    direccionDeudor
+                                        .cCli_UbigeoProv;
+                            }
+                        }
+                        else
+                        {
+                            origenDireccion = "SIN DATO";
+                        }
+                    }
+
+                    mejoresGestiones.Add(
+                        new MejorGestionResponseDto
+                        {
+                            ventanaMeses = bloque.Ventana,
+                            canal = bloque.Canal,
+                            canalNombre = bloque.Canal == 1 ? "CALL" : "CAMPO", 
+                            nId_DocxCobrarOpe = ganadora.IdDocxCobrarOpe,
+                            nId_DocxCobrar = ganadora.IdDocxCobrar,
+                            fecha = ganadora.Fecha,
+                            estatus = ganadora.Estatus,
+                            peso = ganadora.Peso,
+                            telefono = ganadora.Telefono,
+                            comentario = ganadora.Comentario,
+                            intentos = estadisticas?.Total ?? 0,
+                            intentosRobot = estadisticas?.Robot ?? 0,
+                            contactosDirectos = estadisticas?.ContactoDirecto ?? 0,
+                            origenDireccion = origenDireccion,
+                            direccion = direccion
+                        }
+                    );
+                }
+
+                // ============================================================
+                // 16. OPERACIONES
+                // SOLO CARTERA ACTUAL
+                // ============================================================
+                var operaciones = new List<OperacionMafResponseDto>();
+                string? cobertura = null;
+
+                if (idxM.HasValue)
+                {
+                    var qParametros = (await _unitOfWork.av_DocxCobrarParams.Query()).AsNoTracking();
+                    var operacionesDb =
+                        await (
+                            from documento in qDocumentos
+                            join parametro in qParametros
+                                on new
+                                {
+                                    Documento = (int?)documento.nId_DocxCobrar,
+                                    Cliente = (int?)documento.nId_Cliente,
+                                    Cartera = (int?)documento.nId_Cartera
+                                }
+                                equals new
+                                {
+                                    Documento = (int?)parametro.nId_DocxCobrar,
+                                    Cliente = (int?)parametro.nId_Cliente,
+                                    Cartera = (int?)parametro.nId_Cartera
+                                }
+                            where
+                                documento.nId_Cliente == nIdCliente
+                                && documento.nId_Cartera == nIdCartera
+                                && documento.nId_PersDeudor == nIdPersDeudor
+                            select new
+                            {
+                                documento.nId_DocxCobrar,
+                                documento.nId_Ubigeo,
+                                parametro.cDocParam15,
+                                parametro.cDocParam18,
+                                parametro.cDocParam33,
+                                parametro.cDocParam36,
+                                parametro.cDocParam37,
+                                parametro.cDocParam38,
+                                parametro.cDocParam47,
+                                parametro.cDocParam48,
+                                parametro.cDocParam50,
+                                parametro.cDocParam53
+                            }
+                        )
+                        .ToListAsync();
+
+                    // ========================================================
+                    // ROW_NUMBER
+                    // PARTITION BY OPERACION
+                    // ORDER BY nId_DocxCobrar DESC
+                    // ========================================================
+                    var operacionesTmp =
+                        operacionesDb
+                            .Select(x =>
+                            {
+                                string operacion =
+                                    string.IsNullOrWhiteSpace(
+                                        x.cDocParam15
+                                    )
+                                    ? $"DOC {x.nId_DocxCobrar}"
+
+                                    : x.cDocParam15
+                                        .Trim();
+
+                                int? atraso =
+                                    int.TryParse(
+                                        x.cDocParam53,
+                                        out int atrasoResult
+                                    )
+                                    ? atrasoResult
+                                    : null;
+
+                                double? plazo =
+                                    double.TryParse(
+                                        x.cDocParam48,
+                                        out double plazoResult
+                                    )
+
+                                    ? plazoResult
+                                    : null;
+
+                                int? cuotas =
+                                    int.TryParse(
+                                        x.cDocParam50,
+                                        out int cuotasResult
+                                    )
+
+                                    ? cuotasResult
+                                    : null;
+
+                                return new OperacionTmp
+                                {
+                                    IdDocumento = x.nId_DocxCobrar,
+                                    Operacion = operacion,
+                                    Placa = string.IsNullOrWhiteSpace(x.cDocParam47) ? null : x.cDocParam47.Trim(),
+                                    Atraso = atraso,
+                                    Ubigeo = x.nId_Ubigeo,
+                                    Estado = x.cDocParam18,
+                                    Direccion = x.cDocParam33,
+                                    Distrito = x.cDocParam36,
+                                    Provincia = x.cDocParam37,
+                                    Departamento = x.cDocParam38,
+                                    Plazo = plazo,
+                                    Cuotas = cuotas
+                                };
+                            })
+                            .GroupBy(x =>
+                                x.Operacion
+                            )
+                            .Select(g =>
+                                g.OrderByDescending(x =>
+                                    x.IdDocumento
+                                )
+                                .First()
+                            )
+                            .ToList();
+
+                    // ========================================================
+                    // RESPUESTA OPERACIONES
+                    // ========================================================
+                    operaciones =
+                        operacionesTmp
+                            .Select(x =>
+                            {
+                                string? avance;
+
+                                if (
+                                    string.Equals(
+                                        x.Estado,
+                                        "Normal",
+                                        StringComparison
+                                            .OrdinalIgnoreCase
+                                    )
+                                )
+                                {
+                                    if (
+                                        !x.Plazo.HasValue
+                                        ||
+                                        !x.Cuotas.HasValue
+                                    )
+                                    {
+                                        avance = "";
+                                    }
+                                    else if (
+                                        x.Cuotas.Value
+                                        <=
+                                        x.Plazo.Value / 3
+                                    )
+                                    {
+                                        avance = "Tramo Inicial";
+                                    }
+                                    else if (
+                                        x.Cuotas.Value
+                                        <=
+                                        x.Plazo.Value * 2 / 3
+                                    )
+                                    {
+                                        avance = "Tramo Intermedio";
+                                    }
+                                    else
+                                    {
+                                        avance = "Tramo Final";
+                                    }
+                                }
+                                else
+                                {
+                                    avance = x.Estado;
+                                }
+
+                                return new OperacionMafResponseDto
+                                {
+                                    operacion = x.Operacion,
+                                    placa = x.Placa,
+                                    diasAtraso = x.Atraso,
+                                    nId_Ubigeo = x.Ubigeo,
+                                    estadoOperacion = x.Estado,
+                                    avanceCredito = avance,
+                                    direccionLegal = x.Direccion,
+                                    distritoLegal = x.Distrito,
+                                    provinciaLegal = x.Provincia,
+                                    departamentoLegal = x.Departamento
+                                };
+                            })
+                            .OrderByDescending(x =>
+                                x.diasAtraso.HasValue
+                            )
+                            .ThenByDescending(x =>
+                                x.diasAtraso
+                            )
+                            .ThenBy(x =>
+                                x.operacion
+                            )
+                            .ToList();
+
+                    // ========================================================
+                    // COBERTURA
+                    //
+                    // IMPORTANTE:
+                    // EL SP USA nId_Cliente = 36 EN ESTA TABLA,
+                    // NO EL CLIENTE 59 DE LA CARTERA.
+                    // ========================================================
+                    var ubigeos =
+                        operaciones
+                            .Where(x =>
+                                x.nId_Ubigeo.HasValue
+                            )
+                            .Select(x =>
+                                x.nId_Ubigeo!.Value
+                            )
+                            .Distinct()
+                            .ToList();
+
+                    if (ubigeos.Count > 0)
+                    {
+                        var qDetalleCobertura = (await _unitOfWork.av_DetCobZonaGenerals.Query()).AsNoTracking();
+                        var qCobertura = (await _unitOfWork.av_CobZonaGenerals.Query()).AsNoTracking();
+
+                        cobertura =
+                            await (
+                                from detalle
+                                    in qDetalleCobertura
+
+                                join cob
+                                    in qCobertura
+                                    on detalle.nId_Cobertura
+                                    equals cob.nId_Cobertura
+
+                                where
+                                    detalle.nId_Cliente == CLIENTE_COBERTURA
+                                    && ubigeos.Contains(detalle.nId_Ubigeo)
+                                select
+                                    cob.cCob_Nombre
+                            )
+                            .FirstOrDefaultAsync();
+                    }
+                }
+
+                // ============================================================
+                // RESULTADO FINAL
+                // ============================================================
+                var resultado =
+                    new GetOperativasMafResponseDto
+                    {
+                        numeroDiasNoContacto = diasNoContacto,
+                        fechaUltimoContacto = fechaUltimoContacto,
+                        cantidadTotalVino = vinoTotal,
+                        cantidadTotalPago = pagoTotal,
+                        cantidadTotalVino6Meses = vino6Meses,
+                        cantidadTotalPago6Meses = pago6Meses,
+                        cobertura = idxM.HasValue ? cobertura : null,
+                        mejoresGestiones = mejoresGestiones,
+                        operaciones = operaciones
+                    };
+
+                return ResultDto<GetOperativasMafResponseDto>.Success(resultado, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(
+                    ex,
+                    $"GetOperativasMafAsync|" +
+                    $"Cliente={request.nId_Cliente}|" +
+                    $"Cartera={request.nId_Cartera}|" +
+                    $"Deudor={request.nId_PersDeudor}"
+                );
+                return ResultDto<GetOperativasMafResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region "BOTONES CLARO"
@@ -484,7 +2207,7 @@ namespace GesMgmt.Application.Services.Boton
         //ESTE METODO ESTA EN EL CONTROLLER DE EMAIL
         #endregion
 
-        #region "INF. DEUDOR - CLARO / MAF"
+        #region "+INF. DEUDOR - CLARO / MAF"
         public async Task<ResultDto<GetInformacionDeudorRespondeDto>> GetInformacionDeudorAsync(GetInformacionDeudorRequestDto InformacionDeudorDto)
         {
             try

@@ -122,5 +122,17 @@ namespace GesMgmt.Infraestructure.Repositories
                                     && s.bEstado == 1);
         }
 
+        public async Task<IQueryable<av_DocxCobrar>> GetDocxCobByClienteAndCarteraAndDeudorAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        {
+            return _dbSet
+                .Include(cl => cl.av_Cliente)
+                .Include(c => c.av_Cartera)
+                .Include(d => d.av_PersDeudor)
+                .AsNoTracking()
+                .Where(d => d.nId_Cliente == nId_Cliente
+                       && d.nId_Cartera == nId_Cartera
+                       && d.nId_PersDeudor == nId_PersDeudor);
+        }
+
     }
 }

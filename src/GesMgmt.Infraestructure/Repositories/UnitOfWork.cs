@@ -26,12 +26,14 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_CampanaDiscadorRepository? _av_CampanaDiscadors;
         private Iav_CarteraRepository? _av_Carteras;
         private Iav_ClienteRepository? _av_Clientes;
+        private Iav_CobZonaGeneralRepository? _av_CobZonaGenerals;
         private Iav_ConfigSistemaRepository? _av_ConfigSistemas;
         private Iav_ContFormTipoParamOpeRepository? _av_ContFormTipoParamOpes;
         private Iav_ContFormTipoCrudRepository? _av_ContFormTipoCruds;
         private Iav_ContFormularioRptcRepository? _av_ContFormularioRptcs;
         private Iav_ContratoRepository? _av_Contratos;
         private Iav_DetallePersTelefRepository _av_DetallePersTelefs;
+        private Iav_DetCobZonaGeneralRepository _av_DetCobZonaGenerals;
         private Iav_DiscadorRepository? _av_Discadors;
         private Iav_DivisionalRepository _av_Divisionals;
         private Iav_DocxCobrarAdicionalRepository? _av_DocxCobrarAdicionals;
@@ -43,6 +45,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_DocxCobrarOpeResultRepository? _av_DocxCobrarOpeResults;
         private Iav_DocxCobrarParamRepository? _av_DocxCobrarParams;
         private Iav_DocxCobrarRepository? _av_DocxCobrars;
+        private Iav_docxcobrar_direccAsigRepository? _av_docxcobrar_direccAsigs;
         private Iav_DocxPagoRepository? _av_DocxPagos;
         private Iav_EstadoAsteriskAvalRepository? _av_EstadoAsteriskAvals;
         private Iav_EstadoEnvioEmailGenRepository? _av_EstadoEnvioEmailGens;
@@ -77,6 +80,7 @@ namespace GesMgmt.Infraestructure.Repositories
         private Iav_ProduccionDiaRepository? _av_ProduccionDias;
         private Iav_SubZonaGeneralRepository? _av_SubZonaGenerals;
         private Iav_TablaCampoGeneralRepository? _av_TablaCampoGenerals;
+        private Iav_TipoContactoRepository? _av_TipoContactos;
         private Iav_TipoGestionRepository? _av_TipoGestions;
         private Iav_UbigeoRepository? _av_Ubigeos;
         private Iav_UGrupoRepository? _av_UGrupos;
@@ -105,12 +109,14 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_CampanaDiscadorRepository av_CampanaDiscadors => _av_CampanaDiscadors ??= new av_CampanaDiscadorRepository(_context);
         public Iav_CarteraRepository av_Carteras => _av_Carteras ??= new av_CarteraRepository(_context);
         public Iav_ClienteRepository av_Clientes => _av_Clientes ??= new av_ClienteRepository(_context);
+        public Iav_CobZonaGeneralRepository av_CobZonaGenerals => _av_CobZonaGenerals ??= new av_CobZonaGeneralRepository(_context);
         public Iav_ConfigSistemaRepository av_ConfigSistemas => _av_ConfigSistemas ??= new av_ConfigSistemaRepository(_context);
         public Iav_ContFormTipoParamOpeRepository av_ContFormTipoParamOpes => _av_ContFormTipoParamOpes ??= new av_ContFormTipoParamOpeRepository(_context);
         public Iav_ContFormTipoCrudRepository av_ContFormTipoCruds => _av_ContFormTipoCruds ??= new av_ContFormTipoCrudRepository(_context);
         public Iav_ContFormularioRptcRepository av_ContFormularioRptcs => _av_ContFormularioRptcs ??= new av_ContFormularioRptcRepository(_context);
         public Iav_ContratoRepository av_Contratos => _av_Contratos ??= new av_ContratoRepository(_context);
         public Iav_DetallePersTelefRepository av_DetallePersTelefs => _av_DetallePersTelefs ??= new av_DetallePersTelefRepository(_context);
+        public Iav_DetCobZonaGeneralRepository av_DetCobZonaGenerals => _av_DetCobZonaGenerals ??= new av_DetCobZonaGeneralRepository(_context);
         public Iav_DiscadorRepository av_Discadors => _av_Discadors ??= new av_DiscadorRepository(_context);
         public Iav_DivisionalRepository av_Divisionals => _av_Divisionals ??= new av_DivisionalRepository(_context);
         public Iav_DocxCobrarAdicionalRepository av_DocxCobrarAdicionals => _av_DocxCobrarAdicionals ??= new av_DocxCobrarAdicionalRepository(_context);
@@ -122,6 +128,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_DocxCobrarParamRepository av_DocxCobrarParams => _av_DocxCobrarParams ??= new av_DocxCobrarParamRepository(_context);
         public Iav_DocxCobrarParamOpeRepository av_DocxCobrarParamOpes => _av_DocxCobrarParamOpes ??= new av_DocxCobrarParamOpeRepository(_context);
         public Iav_DocxCobrarRepository av_DocxCobrars => _av_DocxCobrars ??= new av_DocxCobrarRepository(_context);
+        public Iav_docxcobrar_direccAsigRepository av_docxcobrar_direccAsigs => _av_docxcobrar_direccAsigs ??= new av_docxcobrar_direccAsigRepository(_context);
         public Iav_DocxPagoRepository av_DocxPagos => _av_DocxPagos ??= new av_DocxPagoRepository(_context);
         public Iav_EstadoAsteriskAvalRepository av_EstadoAsteriskAvals => _av_EstadoAsteriskAvals ??= new av_EstadoAsteriskAvalRepository(_context);
         public Iav_EstadoEnvioEmailGenRepository av_EstadoEnvioEmailGens => _av_EstadoEnvioEmailGens ??= new av_EstadoEnvioEmailGenRepository(_context);
@@ -156,6 +163,7 @@ namespace GesMgmt.Infraestructure.Repositories
         public Iav_ProduccionDiaRepository av_ProduccionDias => _av_ProduccionDias ??= new av_ProduccionDiaRepository(_context);
         public Iav_SubZonaGeneralRepository av_SubZonaGenerals => _av_SubZonaGenerals ??= new av_SubZonaGeneralRepository(_context);
         public Iav_TablaCampoGeneralRepository av_TablaCampoGenerals => _av_TablaCampoGenerals ??= new av_TablaCampoGeneralRepository(_context);
+        public Iav_TipoContactoRepository av_TipoContactos => _av_TipoContactos ??= new av_TipoContactoRepository(_context);
         public Iav_TipoGestionRepository av_TipoGestions => _av_TipoGestions ??= new av_TipoGestionRepository(_context);
         public Iav_UbigeoRepository av_Ubigeos => _av_Ubigeos ??= new av_UbigeoRepository(_context);
         public Iav_UGrupoRepository av_UGrupos => _av_UGrupos ??= new av_UGrupoRepository(_context);
