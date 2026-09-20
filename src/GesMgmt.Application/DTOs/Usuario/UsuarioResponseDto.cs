@@ -185,5 +185,21 @@ namespace GesMgmt.Application.DTOs.Usuario
             public bool? bestado { get; set; }
             public string? region { get; set; }
         }
+
+        public class CreateAsignaUsuarioResponseDto
+        {
+            public int nid_asignacion { get; set; }
+            public int? nid_usuario { get; set; }
+            public int? nid_cliente { get; set; }
+            public string? zona { get; set; }
+        }
+
+        public class EditAsignaUsuarioResponseDto
+        {
+            public int nid_asignacion { get; set; }
+            public int? nid_usuario { get; set; }
+            public int? nid_cliente { get; set; }
+            public string? zona { get; set; }
+        }
     }
 }

@@ -1382,19 +1382,9 @@ namespace GesMgmt.Application.Services.Boton
 
                             x => new
                             {
-                                Total =
-                                    x.Count(),
-
-                                Robot =
-                                    x.Count(y =>
-                                        y.Gestion.EsRobot
-                                    ),
-
-                                ContactoDirecto =
-                                    x.Count(y =>
-                                        y.Gestion
-                                            .EsContactoDirecto
-                                    )
+                                Total = x.Count(),
+                                Robot = x.Count(y => y.Gestion.EsRobot),
+                                ContactoDirecto = x.Count(y => y.Gestion.EsContactoDirecto)
                             }
                         );
 
@@ -1471,16 +1461,11 @@ namespace GesMgmt.Application.Services.Boton
                         .Take(20)
                         .ToListAsync();
 
-
                 var direccionDeudor =
                     direccionesDeudorDb
                         .FirstOrDefault(x =>
                         {
-                            if (
-                                string.IsNullOrWhiteSpace(
-                                    x.cDirecc_Nomb
-                                )
-                            )
+                            if (string.IsNullOrWhiteSpace(x.cDirecc_Nomb))
                             {
                                 return false;
                             }
@@ -1545,14 +1530,10 @@ namespace GesMgmt.Application.Services.Boton
                                 x.Documento
                             )
                             .ToDictionary(
-                                x =>
-                                    x.Key,
-
+                                x => x.Key,
                                 x =>
                                 {
-                                    var item =
-                                        x.First();
-
+                                    var item = x.First();
                                     return (
                                         item.Direccion,
                                         item.Distrito,
@@ -1638,19 +1619,11 @@ namespace GesMgmt.Application.Services.Boton
                         {
                             origenDireccion = "ASIGNADA";
                             direccion = asignada.Direccion!.Trim();
-                            if (
-                                !string.IsNullOrWhiteSpace(
-                                    asignada.Distrito
-                                )
-                            )
+                            if (!string.IsNullOrWhiteSpace(asignada.Distrito))
                             {
                                 direccion += " - " + asignada.Distrito!.Trim();
                             }
-                            if (
-                                !string.IsNullOrWhiteSpace(
-                                    asignada.Provincia
-                                )
-                            )
+                            if (!string.IsNullOrWhiteSpace(asignada.Provincia))
                             {
                                 direccion += " - " + asignada.Provincia!.Trim();
                             }
@@ -1871,27 +1844,15 @@ namespace GesMgmt.Application.Services.Boton
                                     )
                                 )
                                 {
-                                    if (
-                                        !x.Plazo.HasValue
-                                        ||
-                                        !x.Cuotas.HasValue
-                                    )
+                                    if (!x.Plazo.HasValue || !x.Cuotas.HasValue)
                                     {
                                         avance = "";
                                     }
-                                    else if (
-                                        x.Cuotas.Value
-                                        <=
-                                        x.Plazo.Value / 3
-                                    )
+                                    else if (x.Cuotas.Value <= x.Plazo.Value / 3)
                                     {
                                         avance = "Tramo Inicial";
                                     }
-                                    else if (
-                                        x.Cuotas.Value
-                                        <=
-                                        x.Plazo.Value * 2 / 3
-                                    )
+                                    else if (x.Cuotas.Value <= x.Plazo.Value * 2 / 3)
                                     {
                                         avance = "Tramo Intermedio";
                                     }

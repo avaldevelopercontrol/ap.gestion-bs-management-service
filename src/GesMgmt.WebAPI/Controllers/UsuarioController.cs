@@ -225,5 +225,43 @@ namespace GesMgmt.WebAPI.Controllers
             _Logger.LogInfo($"ZonasAsignadosByIdClienteAndIdUsuario|End|ZonasAsignadosByIdClienteAndIdUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
             return StatusCode(result.StatusCode, result);
         }
+
+        /// <summary>
+        /// Crear registro de ASIGNA USUARIO.
+        /// </summary>
+        /// <remarks>
+        /// Crear registro de ASIGNA USUARIO.
+        /// </remarks>
+        /// <response code="200">Crear registro de ASIGNA USUARIO.</response>
+        [HttpPost("CreateAsignaUsuario")]
+        [ProducesResponseType(typeof(ResultDto<CreateAsignaUsuarioResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateAsignaUsuarioAsync([FromBody] CreateAsignaUsuarioRequestDto usuarioAsignaDto)
+        {
+            _Logger.LogInfo($"CreateAsignaUsuario|Begin|CreateAsignaUsuarioAsync|request: {JsonSerializer.Serialize(usuarioAsignaDto)}");
+            var result = await _usuarioService.CreateAsignaUsuarioAsync(usuarioAsignaDto);
+            _Logger.LogInfo($"CreateAsignaUsuario|End|CreateAsignaUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// Editar registro de ASIGNA USUARIO.
+        /// </summary>
+        /// <remarks>
+        /// Editar registro de ASIGNA USUARIO.
+        /// </remarks>
+        /// <response code="200">Editar registro de ASIGNA USUARIO.</response>
+        [HttpPut("EditAsignaUsuario")]
+        [ProducesResponseType(typeof(ResultDto<EditAsignaUsuarioResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditAsignaUsuarioAsync([FromBody] EditAsignaUsuarioRequestDto usuarioAsignaDto)
+        {
+            _Logger.LogInfo($"EditAsignaUsuario|Begin|EditAsignaUsuarioAsync|request: {JsonSerializer.Serialize(usuarioAsignaDto)}");
+            var result = await _usuarioService.EditAsignaUsuarioAsync(usuarioAsignaDto);
+            _Logger.LogInfo($"EditAsignaUsuario|End|EditAsignaUsuarioAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }

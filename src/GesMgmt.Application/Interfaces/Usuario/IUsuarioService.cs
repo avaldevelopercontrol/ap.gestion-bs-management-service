@@ -16,5 +16,7 @@ namespace GesMgmt.Application.Interfaces.Usuario
         Task<ResultDto<ResetearUsuarioResponseDto>> ResetearClaveUsuarioAsync(ResetearUsuarioRequestDto usuarioResetDto);
         Task<ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>> ZonasFaltantesByIdClienteAndIdUsuarioAsync(GetZonasFaltantesByIdClienteIdUsuarioRequestDto clienteUsuarioDto);
         Task<ResultListDto<IEnumerable<GetZonasAsignadosByIdClienteIdUsuarioResponseDto>>> ZonasAsignadosByIdClienteAndIdUsuarioAsync(GetZonasAsignadosByIdClienteIdUsuarioRequestDto clienteUsuarioDto);
+        Task<ResultDto<CreateAsignaUsuarioResponseDto>> CreateAsignaUsuarioAsync(CreateAsignaUsuarioRequestDto usuarioAsignaCreateDto);
+        Task<ResultDto<EditAsignaUsuarioResponseDto>> EditAsignaUsuarioAsync(EditAsignaUsuarioRequestDto usuarioAsignaEditDto);
     }
 }

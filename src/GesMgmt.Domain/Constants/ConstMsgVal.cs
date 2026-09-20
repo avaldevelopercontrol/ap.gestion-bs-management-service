@@ -120,5 +120,6 @@ namespace GesMgmt.Domain.Constants
         public const string NID_DOCXCOBRAR_REQUIRED = "095";
         public const string REPORTAR_CASOS_REQUIRED = "096";
         public const string NID_DOCXCOBRAROPERESULT_REQUIRED = "097";
+        public const string ZONA_REQUIRED = "098";
     }
 }

@@ -89,5 +89,23 @@ namespace GesMgmt.Application.DTOs.Usuario
             public int nId_Cliente { get; set; }
             public int nId_Usuario { get; set; }
         }
+
+        public class CreateAsignaUsuarioRequestDto
+        {
+            public int nid_asignacion { get; set; }
+            public int? nid_usuario { get; set; }
+            public int? nid_cliente { get; set; }
+            public string? zona { get; set; }
+            public bool? bestado { get; set; }
+        }
+
+        public class EditAsignaUsuarioRequestDto
+        {
+            public int nid_asignacion { get; set; }
+            public int? nid_usuario { get; set; }
+            public int? nid_cliente { get; set; }
+            public string? zona { get; set; }
+            public bool? bestado { get; set; }
+        }
     }
 }

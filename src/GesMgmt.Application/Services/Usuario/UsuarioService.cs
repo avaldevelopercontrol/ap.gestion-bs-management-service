@@ -652,5 +652,106 @@ namespace GesMgmt.Application.Services.Usuario
             }
         }
         #endregion
+
+        #region "Zonas x Usuario Crear"
+        public async Task<ResultDto<CreateAsignaUsuarioResponseDto>> CreateAsignaUsuarioAsync(CreateAsignaUsuarioRequestDto usuarioAsignaCreateDto)
+        {
+            CreateAsignaUsuarioRequestValidator validator = new CreateAsignaUsuarioRequestValidator(_unitOfWork, _validationMessageService, usuarioAsignaCreateDto);
+
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_asigUsuario av_AsigUsuario = new av_asigUsuario
+                {
+                    nid_usuario = usuarioAsignaCreateDto.nid_usuario,
+                    nid_cliente = usuarioAsignaCreateDto.nid_cliente,
+                    zona = usuarioAsignaCreateDto.zona,
+                    bestado = true
+                };
+                var usuarioAsignaCreate = await _unitOfWork.av_asigUsuarios.AddAsync(av_AsigUsuario);
+                await _unitOfWork.SaveChangesAsync();
+
+                CreateAsignaUsuarioResponseDto createAsignaUsuarioResponseDto = new CreateAsignaUsuarioResponseDto
+                {
+                    nid_asignacion = usuarioAsignaCreate.nid_asignacion,
+                    nid_usuario = usuarioAsignaCreate.nid_usuario,
+                    nid_cliente = usuarioAsignaCreate.nid_cliente,
+                    zona = usuarioAsignaCreate.zona
+                };
+
+                ResultDto<CreateAsignaUsuarioResponseDto> response = ResultDto<CreateAsignaUsuarioResponseDto>
+                                                   .Success(createAsignaUsuarioResponseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"CreateAsignaUsuarioAsync|DatabaseError: {ex.Message}");
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<CreateAsignaUsuarioResponseDto>.Failure("500", "Error interno del servidor. " + ex.Message, "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+        #endregion
+
+        #region "Zonas x Usuario Editar"
+        public async Task<ResultDto<EditAsignaUsuarioResponseDto>> EditAsignaUsuarioAsync(EditAsignaUsuarioRequestDto usuarioAsignaEditDto)
+        {
+            EditAsignaUsuarioRequestValidator validator = new EditAsignaUsuarioRequestValidator(_unitOfWork, _validationMessageService, usuarioAsignaEditDto);
+            // Validaciones
+            var validationResult = await validator.Validate();
+
+            if (validationResult.Code != Const.SUCCESS_CODE)
+            {
+                return validationResult;
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                av_asigUsuario av_AsigUsuario = new av_asigUsuario
+                {
+                    nid_asignacion = usuarioAsignaEditDto.nid_asignacion,
+                    nid_usuario = usuarioAsignaEditDto.nid_usuario,
+                    nid_cliente = usuarioAsignaEditDto.nid_cliente,
+                    zona = usuarioAsignaEditDto.zona,
+                    bestado = false
+                };
+
+                var usuarioAsignaEditado = await _unitOfWork.av_asigUsuarios.UpdateAsync(av_AsigUsuario);
+                await _unitOfWork.SaveChangesAsync();
+
+                EditAsignaUsuarioResponseDto editAsignaUsuarioResponseDto = new EditAsignaUsuarioResponseDto
+                {
+                    nid_asignacion = usuarioAsignaEditado.nid_asignacion,
+                    nid_usuario = usuarioAsignaEditado.nid_usuario,
+                    nid_cliente = usuarioAsignaEditado.nid_cliente,
+                    zona = usuarioAsignaEditado.zona
+                };
+
+                ResultDto<EditAsignaUsuarioResponseDto> response = ResultDto<EditAsignaUsuarioResponseDto>
+                                                   .Success(editAsignaUsuarioResponseDto, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"EditAsignaUsuarioAsync|DatabaseError: {ex.Message}");
+                await _unitOfWork.RollbackTransactionAsync();
+                return ResultDto<EditAsignaUsuarioResponseDto>.Failure("500", "Error interno del servidor. " + ex.Message, "Ocurrió un error al procesar la solicitud.", 500);
+            }
+        }
+        #endregion
     }
 }
