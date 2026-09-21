@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace GesMgmt.Infraestructure.Repositories.Analitica.CentroControlCartera;
 
 internal sealed class PromesasVencenHoyCarteraRepository(
-    AnaliticaDbContext context)
+    AnaliticaDbContext context,
+    TimeProvider timeProvider)
     : IPromesasVencenHoyCarteraRepository
 {
     public Task<PromesasVencenHoyCarteraConsultaResult> ObtenerAsync(
@@ -41,6 +42,8 @@ internal sealed class PromesasVencenHoyCarteraRepository(
         string direccionOrden,
         CancellationToken cancellationToken)
     {
+        var rangoHoyPeru = PromesasCarteraFechaActual.ObtenerHoyPeru(timeProvider);
+
         var baseQuery = PromesaCarteraDetallesEfConsulta.AplicarAlcance(
             context,
             context.PromesaOperativaAnalitica
@@ -49,7 +52,8 @@ internal sealed class PromesasVencenHoyCarteraRepository(
                     row.ClaveCliente == claveCliente
                     && row.ClaveCampana == claveCampana
                     && row.EsPromesaValida
-                    && row.VenceHoy),
+                    && row.FechaVencimientoPromesa >= rangoHoyPeru.FechaDesde
+                    && row.FechaVencimientoPromesa < rangoHoyPeru.FechaHastaExclusiva),
             idSubCartera,
             unidadNegocio);
 
