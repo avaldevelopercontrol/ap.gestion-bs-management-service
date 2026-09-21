@@ -174,6 +174,8 @@ namespace GesMgmt.Application.DTOs.Usuario
         {
             public string Zona { get; set; }
             public string DescripcionZona { get; set; }
+            public bool? bEstado { get; set; }
+            public int? nid_asignacion { get; set; }
         }
 
         public class GetZonasAsignadosByIdClienteIdUsuarioResponseDto

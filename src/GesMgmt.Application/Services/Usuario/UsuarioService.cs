@@ -589,29 +589,57 @@ namespace GesMgmt.Application.Services.Usuario
         #endregion
 
         #region "Zonas x Usuario Faltantes"
-        public async Task<ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>> ZonasFaltantesByIdClienteAndIdUsuarioAsync(GetZonasFaltantesByIdClienteIdUsuarioRequestDto clienteUsuarioDto)
+        public async Task<ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>>ZonasFaltantesByIdClienteAndIdUsuarioAsync(GetZonasFaltantesByIdClienteIdUsuarioRequestDto clienteUsuarioDto)
         {
             try
             {
                 var q_zxc = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(clienteUsuarioDto.nId_Cliente);
-                var q_asig = await _unitOfWork.av_asigUsuarios.GetAsignacionesByIdClienteAndIdUsuarioAsync(clienteUsuarioDto.nId_Cliente, clienteUsuarioDto.nId_Usuario);
+                var q_asig = await _unitOfWork.av_asigUsuarios.GetAsignacionesActivasByIdClienteAndIdUsuarioAsync(clienteUsuarioDto.nId_Cliente, clienteUsuarioDto.nId_Usuario);
+                var q_zoasig = await _unitOfWork.av_asigUsuarios.GetAsignacionesByIdClienteAndIdUsuarioAsync(clienteUsuarioDto.nId_Cliente, clienteUsuarioDto.nId_Usuario);
 
-                var zonasAsignadas = q_asig.Select(x => x.zona).ToHashSet();
+                // =========================================================
+                // MATERIALIZAMOS PARA HACER EL JOIN EN MEMORIA
+                // =========================================================
+                var zonas = q_zxc.ToList();
+                var asignacionesActivas = q_asig.ToList();
+                var asignacionesTodas = q_zoasig.ToList();
 
-                var data = q_zxc
-                    .Where(x => !zonasAsignadas.Contains(x.zona))
-                    .Select(x => new GetZonasFaltantesByIdClienteIdUsuarioResponseDto
-                    {
-                        Zona = x.zona,
-                        DescripcionZona = $"{x.zona} {x.region}"
-                    })
+                // =========================================================
+                // ZONAS QUE YA ESTAN ACTIVAS PARA EL USUARIO
+                // =========================================================
+                var zonasAsignadas = asignacionesActivas.Select(x => x.zona).ToHashSet();
+
+                // =========================================================
+                // ZONAS FALTANTES + LEFT JOIN CON q_zoasig
+                // JOIN POR CAMPO zona
+                // =========================================================
+                var data =
+                    (
+                        from zona in zonas
+                            // Solo zonas que NO están activamente asignadas
+                        where !zonasAsignadas.Contains(zona.zona)
+                        // LEFT JOIN contra todas las asignaciones
+                        join zoasig in asignacionesTodas
+                            on zona.zona equals zoasig.zona
+                            into zonaAsignacion
+                        from zoasig in zonaAsignacion.DefaultIfEmpty()
+                        select new GetZonasFaltantesByIdClienteIdUsuarioResponseDto
+                        {
+                            Zona = zona.zona,
+                            DescripcionZona = $"{zona.zona} {zona.region}",
+                            // Si existe en q_zoasig trae su estado.
+                            // Si nunca fue asignada devuelve false.
+                            bEstado = zoasig != null ? (zoasig.bestado ?? false) : null,
+                            nid_asignacion = zoasig != null ? zoasig.nid_asignacion : null,
+                        }
+                    )
                     .ToList();
 
                 return ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
             {
-                _Logger.LogError($"ZonasFaltantesByIdClienteAndIdUsuario|DatabaseError: {ex.Message}");
+                _Logger.LogError($"ZonasFaltantesByIdClienteAndIdUsuario|" + $"DatabaseError: {ex.Message}");
                 return ResultListDto<IEnumerable<GetZonasFaltantesByIdClienteIdUsuarioResponseDto>>.Failure("500", "Error interno del servidor.", ex.Message, 500);
             }
         }

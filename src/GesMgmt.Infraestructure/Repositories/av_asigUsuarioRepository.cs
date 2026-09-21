@@ -21,7 +21,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public async Task<IEnumerable<av_asigUsuario>> GetAsignacionesByIdClienteAndIdUsuarioAsync(int nId_Cliente, int nId_Usuario)
+        public async Task<IEnumerable<av_asigUsuario>> GetAsignacionesActivasByIdClienteAndIdUsuarioAsync(int nId_Cliente, int nId_Usuario)
         {
             return await _dbSet
                 .Where(x =>
@@ -41,6 +41,25 @@ namespace GesMgmt.Infraestructure.Repositories
         {
             _dbSet.Update(av_asigUsuario);
             return av_asigUsuario;
+        }
+
+        public async Task<IEnumerable<av_asigUsuario>> GetAsignacionesInactivasByIdClienteAndIdUsuarioAsync(int nId_Cliente, int nId_Usuario)
+        {
+            return await _dbSet
+                .Where(x =>
+                    x.nid_cliente == nId_Cliente &&
+                    x.nid_usuario == nId_Usuario &&
+                    x.bestado == false)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<av_asigUsuario>> GetAsignacionesByIdClienteAndIdUsuarioAsync(int nId_Cliente, int nId_Usuario)
+        {
+            return await _dbSet
+                .Where(x =>
+                    x.nid_cliente == nId_Cliente &&
+                    x.nid_usuario == nId_Usuario)
+                .ToListAsync();
         }
 
     }
