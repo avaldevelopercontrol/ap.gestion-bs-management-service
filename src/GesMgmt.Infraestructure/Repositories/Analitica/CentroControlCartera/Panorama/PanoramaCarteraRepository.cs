@@ -5,7 +5,9 @@ using GesMgmt.Infraestructure.Persistence;
 
 namespace GesMgmt.Infraestructure.Repositories.Analitica.CentroControlCartera;
 
-internal sealed class PanoramaCarteraRepository(AnaliticaDbContext context)
+internal sealed class PanoramaCarteraRepository(
+    AnaliticaDbContext context,
+    TimeProvider timeProvider)
     : IPanoramaCarteraRepository
 {
     public Task<PanoramaCarteraContexto?> ResolverContextoAsync(
@@ -52,12 +54,15 @@ internal sealed class PanoramaCarteraRepository(AnaliticaDbContext context)
                 cancellationToken);
         }
 
+        var rangoHoyPeru = PromesasCarteraFechaActual.ObtenerHoyPeru(timeProvider);
+
         var promises = await PromesasCarteraEfConsulta.ObtenerOperacionalAsync(
             context,
             claveCliente,
             claveCampana,
             idSubCartera,
             unidadNegocio,
+            rangoHoyPeru,
             cancellationToken);
 
         var evolution = await EvolucionCarteraEfConsulta.ObtenerAsync(

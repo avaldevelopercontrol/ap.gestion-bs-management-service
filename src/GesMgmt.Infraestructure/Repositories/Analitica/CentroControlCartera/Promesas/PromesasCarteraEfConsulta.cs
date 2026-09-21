@@ -140,6 +140,7 @@ internal static class PromesasCarteraEfConsulta
         int claveCampana,
         long? idSubCartera,
         string? unidadNegocio,
+        PromesasCarteraRangoDia rangoHoyPeru,
         CancellationToken cancellationToken)
     {
         var rows = await AplicarAlcanceCartera(
@@ -154,7 +155,11 @@ internal static class PromesasCarteraEfConsulta
                 unidadNegocio)
             .ToListAsync(cancellationToken);
 
-        var dueToday = rows.Where(row => row.VenceHoy).ToArray();
+        var dueToday = rows
+            .Where(row =>
+                row.FechaVencimientoPromesa >= rangoHoyPeru.FechaDesde
+                && row.FechaVencimientoPromesa < rangoHoyPeru.FechaHastaExclusiva)
+            .ToArray();
         var fulfillmentRows = rows
             .Where(row => row.EstaCumplidaOParcial || row.EstaRota)
             .ToArray();
