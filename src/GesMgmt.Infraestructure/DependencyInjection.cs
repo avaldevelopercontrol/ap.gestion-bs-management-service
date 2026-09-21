@@ -195,6 +195,7 @@ namespace GesMgmt.Infraestructure
             performance.Validar();
 
             services.AddSingleton(performance);
+            services.AddSingleton(TimeProvider.System);
             services.AddSingleton<ICacheRendimientoCartera, RendimientoCarteraMemoryCache>();
 
             services.AddScoped<IAccesoCentroControlCarteraService, AccesoCentroControlCarteraService>();
