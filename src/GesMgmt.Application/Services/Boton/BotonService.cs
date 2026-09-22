@@ -2057,7 +2057,7 @@ namespace GesMgmt.Application.Services.Boton
 
             try
             {
-                var q_Agenda = _unitOfWork.av_Agendas.GetGestionAgendasDeudor(gestionAgendaDto.nId_Cliente, gestionAgendaDto.nId_Cartera, gestionAgendaDto.nId_Persdeudor, gestionAgendaDto.nId_PerfilUsuario);
+                var q_Agenda = await _unitOfWork.av_Agendas.GetGestionAgendasDeudor(gestionAgendaDto.nId_Cliente, gestionAgendaDto.nId_Cartera, gestionAgendaDto.nId_Persdeudor, gestionAgendaDto.nId_PerfilUsuario);
 
                 IEnumerable<GetAgendaResponseDto> data = Enumerable.Empty<GetAgendaResponseDto>();
                 if (q_Agenda != null)

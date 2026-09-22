@@ -43,5 +43,21 @@ namespace GesMgmt.Infraestructure.Repositories
             return query;
         }
 
+        public async Task<IQueryable<av_DocxCobrarParam>> GetGestionesParamByIdClienteAndIdCarteraAsync(int nId_Cliente, int nId_Cartera)
+        {
+            var query = _dbSet
+                .Include(c => c.av_Cartera)
+                .Include(dc => dc.av_DocxCobrar)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (nId_Cliente > 0)
+                query = query.Where(s => s.nId_Cliente == nId_Cliente);
+
+            if (nId_Cartera > 0)
+                query = query.Where(s => s.nId_Cartera == nId_Cartera);
+
+            return query;
+        }
     }
 }

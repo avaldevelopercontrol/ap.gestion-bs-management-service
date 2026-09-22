@@ -491,13 +491,15 @@ namespace GesMgmt.Application.Services.Gestion
         #endregion
 
         #region "Deudor"
-        public async Task<ResultDto<GetGestionDeudorResponseDto>> GetGestionDeudorAsync(GetGestionDeudorRequestDto gestionDeudorDto)
+        public async Task<ResultDto<GetGestionDeudorResponseDto>>GetGestionDeudorAsync(GetGestionDeudorRequestDto gestionDeudorDto)
         {
-            GetGestionDeudRequestValidator validator = new GetGestionDeudRequestValidator(_unitOfWork, _validationMessageService, gestionDeudorDto);
+            var validator = new GetGestionDeudRequestValidator(_unitOfWork, _validationMessageService, gestionDeudorDto);
 
-            // Validaciones
+            // ============================================================
+            // 1. VALIDACIONES
+            // ============================================================
+
             var validationResult = await validator.Validate();
-
             if (validationResult.Code != Const.SUCCESS_CODE)
             {
                 return validationResult;
@@ -505,97 +507,187 @@ namespace GesMgmt.Application.Services.Gestion
 
             try
             {
-                var q_Deudor = await _unitOfWork.av_PersDeudors.Query();
-                var q_Maestra = await _unitOfWork.av_MaeTablas.Query();
-                var maestras = await q_Maestra.Where(x => x.cod_tabla == 13).ToListAsync();
+                // ========================================================
+                // 2. CONSULTAS BASE
+                // ========================================================
+                var q_Deudor = (await _unitOfWork.av_PersDeudors.Query()).AsNoTracking();
+                var q_Maestra = (await _unitOfWork.av_MaeTablas.Query()).AsNoTracking();
+                //var q_DocPago = (await _unitOfWork.av_DocxPagos.Query()).AsNoTracking();
+                var q_DocPago = (await _unitOfWork.av_DocxPagos.GetPagosByIdClienteAndIdCarteraAndIdDeudorAsync(gestionDeudorDto.nId_Cliente, gestionDeudorDto.nId_Cartera, gestionDeudorDto.nId_Persdeudor)).AsNoTracking();
+                var q_Agenda = (await _unitOfWork.av_Agendas.GetGestionAgendasDeudor(gestionDeudorDto.nId_Cliente, gestionDeudorDto.nId_Cartera, gestionDeudorDto.nId_Persdeudor, 0)).AsNoTracking();
+                var q_EstadoAsteriskAval = (await _unitOfWork.av_EstadoAsteriskAvals.Query()).AsNoTracking();
+                var q_DocxCobrarParam = (await _unitOfWork.av_DocxCobrarParams.GetGestionesParamByIdClienteAndIdCarteraAsync(gestionDeudorDto.nId_Cliente, gestionDeudorDto.nId_Cartera)).AsNoTracking();
+                var q_DocxCobrar = (await _unitOfWork.av_DocxCobrars.GetDocxCobByClienteAndCarteraAndDeudorAsync(gestionDeudorDto.nId_Cliente, gestionDeudorDto.nId_Cartera, gestionDeudorDto.nId_Persdeudor)).AsNoTracking();
 
-                var q_DocPago = await _unitOfWork.av_DocxPagos.Query();
-                var q_Agenda = await _unitOfWork.av_Agendas.Query();
-                var q_EstadoAsterikAval = await _unitOfWork.av_EstadoAsteriskAvals.Query();
-                var q_DocxCobrarParam = await _unitOfWork.av_DocxCobrarParams.Query();
-                var q_DocxCobrar = await _unitOfWork.av_DocxCobrars.Query();
+                var fechaActual = DateTime.Today;
+                var fechaSiguiente = fechaActual.AddDays(1);
 
+                // ========================================================
+                // 3. PARÁMETROS DEL DOCUMENTO
+                // ========================================================
                 var docParamsQuery =
-                                        from dp in q_DocxCobrarParam
-                                        join dc in q_DocxCobrar
-                                            on new
-                                            {
-                                                dp.nId_DocxCobrar,
-                                                dp.nId_Cartera
-                                            }
-                                            equals new
-                                            {
-                                                nId_DocxCobrar = dc.nId_DocxCobrar,
-                                                nId_Cartera = (int?)dc.nId_Cartera
-                                            }
-                                        where dc.nId_Cartera == gestionDeudorDto.nId_Cartera
-                                              && dc.nId_Cliente == gestionDeudorDto.nId_Cliente
-                                              && dc.nId_PersDeudor == gestionDeudorDto.nId_Persdeudor
-                                        select new
-                                        {
-                                            dc.nId_PersDeudor,
-                                            dp.cDocParam39,
-                                            dp.cDocParam47,
-                                            dp.cDocParam44,
-                                            dp.cDocParam66,
-                                            dp.cDocParam160,
-                                            dp.cDocParam161,
-                                            dp.cDocParam162
-                                        };
+                    from dp in q_DocxCobrarParam
+                    join dc in q_DocxCobrar
+                        on new
+                        {
+                            Documento = (int?)dp.nId_DocxCobrar,
+                            Cartera = dp.nId_Cartera
+                        }
+                        equals new
+                        {
+                            Documento = (int?)dc.nId_DocxCobrar,
+                            Cartera = (int?)dc.nId_Cartera
+                        }
+                    where
+                        dc.nId_Cartera == gestionDeudorDto.nId_Cartera
+                        && dc.nId_Cliente == gestionDeudorDto.nId_Cliente
+                        && dc.nId_PersDeudor == gestionDeudorDto.nId_Persdeudor
+                    select new
+                    {
+                        dc.nId_PersDeudor,
 
-                GetGestionDeudorResponseDto data = new GetGestionDeudorResponseDto();
-                if (q_Deudor != null)
-                {
-                    data = await (
-                                    from d in q_Deudor
-                                    where d.nId_PersDeudor == gestionDeudorDto.nId_Persdeudor
-                                    select new GetGestionDeudorResponseDto
-                                    {
-                                        nId_PersDeudor = d.nId_PersDeudor,
-                                        dni = d.cPers_DNI,
-                                        ruc = d.cPers_RUC,
-                                        nombre = d.cPers_Nombres,
-                                        nombreCompleto = d.cNomCompleto,
-                                        gradoInstruccion = d.nGra_Instruccion.ToString(),
-                                        edad = d.dFecNacimiento.HasValue
-                                            ? ((DateTime.Now - d.dFecNacimiento.Value).Days / 365).ToString()
-                                            : "",
-                                        correo = d.cCorreo,
-                                        informacionAdicional = d.bInfoAdicional,
-                                        pagos = q_DocPago.Any(x =>
-                                                    x.nId_Cartera == gestionDeudorDto.nId_Cartera &&
-                                                    x.nId_PersDeudor == d.nId_PersDeudor &&
-                                                    x.nId_Cliente == gestionDeudorDto.nId_Cliente),
-                                        agendas = q_Agenda.Any(x =>
-                                                    x.nid_Cartera == gestionDeudorDto.nId_Cartera &&
-                                                    x.nid_PersDeudor == d.nId_PersDeudor),
-                                        llamadas = q_EstadoAsterikAval.Any(x =>
-                                                    x.nId_Cartera == gestionDeudorDto.nId_Cartera &&
-                                                    x.nId_PersDeudor == d.nId_PersDeudor &&
-                                                    x.dFec_Inicio.HasValue &&
-                                                    x.dFec_Inicio.Value.Date >= DateTime.Today),
-                                        fechaConsulta = DateTime.Now,
-                                        codigo = d.codigo,
-                                        asesorPostVenta = docParamsQuery.Max(x => x.cDocParam39) ?? "",
-                                        correoAsesorPostVenta = docParamsQuery.Max(x => x.cDocParam47) ?? "",
-                                        asesorComercial = docParamsQuery.Max(x => x.cDocParam44) ?? "",
-                                        correoAsesorComercial = docParamsQuery.Max(x => x.cDocParam66) ?? "",
-                                        validaCronograma = false,
-                                        clientePorVision = docParamsQuery.Max(x => x.cDocParam160) ?? "",
-                                        clienteListaBlanca = docParamsQuery.Max(x => x.cDocParam161) ?? "",
-                                        clienteConSinPe = docParamsQuery.Max(x => x.cDocParam162) ?? ""
-                                        // Se llena después
-                                        //nGra_Instruccion = d.nGra_Instruccion.ToString(),
+                        dp.cDocParam39,
+                        dp.cDocParam47,
+                        dp.cDocParam44,
+                        dp.cDocParam66,
 
-                                    }).FirstOrDefaultAsync();
-                }
-                var response = ResultDto<GetGestionDeudorResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
-                return response;
+                        dp.cDocParam160,
+                        dp.cDocParam161,
+                        dp.cDocParam162
+                    };
+
+                // ========================================================
+                // 4. DEUDOR + LEFT JOIN MAESTRA
+                //
+                // Equivale a:
+                //
+                // LEFT JOIN av_MaeTabla m
+                //   ON m.cod_tabla = 13
+                //  AND m.valor = p.nGra_Instruccion
+                // ========================================================
+                var data =
+                    await (
+                        from deudor in q_Deudor
+                        join maestra in q_Maestra
+                                .Where(x =>
+                                    x.cod_tabla == 13
+                                )
+                            on deudor.nGra_Instruccion.ToString()
+                            equals maestra.valor
+                            into maestraJoin
+                        from maestra in maestraJoin
+                            .DefaultIfEmpty()
+                        where
+                            deudor.nId_PersDeudor == gestionDeudorDto.nId_Persdeudor
+
+                        select new GetGestionDeudorResponseDto
+                        {
+                            nId_PersDeudor = deudor.nId_PersDeudor,
+                            dni = deudor.cPers_DNI ?? "",
+                            ruc = deudor.cPers_RUC ?? "",
+                            nombre = (deudor.cPers_Nombres ?? "") + " " + (deudor.cPers_ApePat ?? "") + " " + (deudor.cPers_ApeMat ?? ""),
+                            nombreCompleto = deudor.cNomCompleto ?? "",
+                            gradoInstruccion = maestra != null ? maestra.descripcion ?? "" : "",
+                            edad = deudor.dFecNacimiento.HasValue
+                                    ? (
+                                        DateTime.Today.Year
+                                        -
+                                        deudor.dFecNacimiento.Value.Year
+                                        -
+                                        (
+                                            deudor.dFecNacimiento.Value.Date
+                                            >
+                                            DateTime.Today.AddYears(
+                                                -(
+                                                    DateTime.Today.Year
+                                                    -
+                                                    deudor
+                                                        .dFecNacimiento
+                                                        .Value
+                                                        .Year
+                                                )
+                                            )
+                                                ? 1
+                                                : 0
+                                        )
+                                    ).ToString()
+
+                                    : "",
+                            correo = deudor.cCorreo ?? "",
+                            informacionAdicional = deudor.bInfoAdicional,
+                            pagos =
+                                q_DocPago.Any(x =>
+                                    x.nId_Cartera ==
+                                        gestionDeudorDto.nId_Cartera
+
+                                    && x.nId_PersDeudor ==
+                                        deudor.nId_PersDeudor
+
+                                    && x.nId_Cliente ==
+                                        gestionDeudorDto.nId_Cliente
+                                ),
+                            agendas =
+                                q_Agenda.Any(x =>
+                                    x.nid_Cartera ==
+                                        gestionDeudorDto.nId_Cartera
+
+                                    && x.nid_PersDeudor ==
+                                        deudor.nId_PersDeudor
+                                ),
+                            llamadas =
+                                q_EstadoAsteriskAval.Any(x =>
+                                    x.nId_Cartera ==
+                                        gestionDeudorDto.nId_Cartera
+
+                                    && x.nId_PersDeudor ==
+                                        deudor.nId_PersDeudor
+
+                                    && x.dFec_Inicio.HasValue
+
+                                    && x.dFec_Inicio.Value >=
+                                        fechaActual
+
+                                    && x.dFec_Inicio.Value <
+                                        fechaSiguiente
+                                ),
+                            fechaConsulta = DateTime.Now,
+                            codigo = deudor.codigo,
+                            asesorPostVenta = docParamsQuery.Max(x => x.cDocParam39) ?? "",
+                            correoAsesorPostVenta = docParamsQuery.Max(x => x.cDocParam47) ?? "",
+                            asesorComercial = docParamsQuery.Max(x => x.cDocParam44) ?? "",
+                            correoAsesorComercial = docParamsQuery.Max(x => x.cDocParam66) ?? "",
+                            validaCronograma = false,
+                            clientePorVision = docParamsQuery.Max(x => x.cDocParam160) ?? "",
+                            clienteListaBlanca = docParamsQuery.Max(x => x.cDocParam161) ?? "",
+                            clienteConSinPe = docParamsQuery.Max(x => x.cDocParam162) ?? ""
+                        }
+                    )
+                    .FirstOrDefaultAsync();
+
+                // ========================================================
+                // 5. RESPUESTA
+                // ========================================================
+                data ??= new GetGestionDeudorResponseDto();
+                return ResultDto<GetGestionDeudorResponseDto>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
             }
             catch (Exception ex)
             {
-                _Logger.LogError($"GetGestionDeudor|DatabaseError: {ex.Message}");
-                return ResultDto<GetGestionDeudorResponseDto>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+                _Logger.LogError(
+                    ex,
+                    "GetGestionDeudorAsync|Cliente={Cliente}|" +
+                    "Cartera={Cartera}|Deudor={Deudor}",
+                    gestionDeudorDto.nId_Cliente,
+                    gestionDeudorDto.nId_Cartera,
+                    gestionDeudorDto.nId_Persdeudor
+                );
+
+                return ResultDto<GetGestionDeudorResponseDto>
+                    .Failure(
+                        Const.ERROR_REQUEST_CODE.ToString(),
+                        "Error interno del servidor.",
+                        ex.Message,
+                        Const.ERROR_REQUEST_CODE
+                    );
             }
         }
         #endregion
