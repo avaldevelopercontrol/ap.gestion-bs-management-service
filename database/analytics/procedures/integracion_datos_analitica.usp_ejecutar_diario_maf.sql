@@ -8,7 +8,8 @@ Orden de carga:
 2. cargar corte diario de cartera;
 3. cargar corte de campaña;
 4. cargar promesas;
-5. cargar producción de asesores/contactos/pagos.
+5. sincronizar promesas detalle -> cartera/dia;
+6. cargar producción de asesores/contactos/pagos.
 
 La sincronizacion de carteras corre dentro de la misma transaccion del ETL para
 que una nueva cartera no deje hechos parcialmente cargados.
@@ -73,6 +74,11 @@ BEGIN
                 @FechaDesde = @FechaDesdePromesas,
                 @FechaCorte = @FechaCorte,
                 @Aplicar = 1;
+
+            EXEC integracion_datos_analitica.usp_sincronizar_promesas_cartera_diario_maf
+                @FechaDesde = @FechaDesdePromesas,
+                @FechaHasta = @FechaCorte,
+                @MostrarResultado = 0;
 
             EXEC integracion_datos_analitica.usp_cargar_asesor_diario_maf
                 @FechaCorte = @FechaCorte,
