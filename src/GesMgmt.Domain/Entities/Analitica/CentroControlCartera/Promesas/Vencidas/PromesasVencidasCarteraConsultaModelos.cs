@@ -36,11 +36,13 @@ public sealed record PromesaVencidaCarteraDbFila
 {
     public long IdPromesa { get; init; }
     public long IdDeudor { get; init; }
+    public string? NombreDeudor { get; init; }
     public DateTime? FechaVencimiento { get; init; }
     public int? DiasVencimiento { get; init; }
     public decimal MontoPromesa { get; init; }
     public decimal MontoPagado { get; init; }
     public decimal MontoPendiente { get; init; }
+    public required string ClaveSituacion { get; init; }
     public int? IdAsesor { get; init; }
     public string? NombreAsesor { get; init; }
     public int? IdSupervisor { get; init; }

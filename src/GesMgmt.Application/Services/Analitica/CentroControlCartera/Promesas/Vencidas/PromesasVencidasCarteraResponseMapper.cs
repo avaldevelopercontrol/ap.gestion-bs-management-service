@@ -48,17 +48,27 @@ internal static class PromesasVencidasCarteraResponseMapper
             result.Elementos.Select(item => new PromesaVencidaCarteraItem(
                 item.IdPromesa,
                 item.IdDeudor,
+                item.NombreDeudor,
                 item.FechaVencimiento.HasValue ? DateOnly.FromDateTime(item.FechaVencimiento.Value) : null,
                 item.DiasVencimiento,
                 item.MontoPromesa,
                 item.MontoPagado,
                 item.MontoPendiente,
+                item.ClaveSituacion,
+                ObtenerEtiquetaSituacion(item.ClaveSituacion),
                 item.ClaveAntiguedad,
                 item.IdAsesor,
                 item.NombreAsesor,
                 item.IdSupervisor,
                 item.NombreSupervisor)).ToArray());
     }
+
+    private static string ObtenerEtiquetaSituacion(string claveSituacion) =>
+        claveSituacion switch
+        {
+            PromesasCarteraEstadoOperativo.PagoParcial => "Pago parcial",
+            _ => "Sin pago registrado"
+        };
 
     private static int ObtenerOrdenAntiguedad(string claveAntiguedad) =>
         claveAntiguedad switch

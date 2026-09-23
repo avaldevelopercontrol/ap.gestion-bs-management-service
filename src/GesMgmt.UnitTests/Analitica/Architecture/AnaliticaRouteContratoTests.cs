@@ -9,7 +9,7 @@ namespace GesMgmt.UnitTests.Analitica.Architecture;
 public sealed class AnaliticaRouteContratoTests
 {
     [Fact]
-    public void Controllers_MantienenLasTreintaYOchoOperacionesPublicasDeAnalitica()
+    public void Controllers_MantienenLasTreintaYNueveOperacionesPublicasDeAnalitica()
     {
         var actual = typeof(AnaliticaControllerBase).Assembly
             .GetTypes()
@@ -46,6 +46,7 @@ public sealed class AnaliticaRouteContratoTests
             "GET /v1/Analitica/CentroControlCartera/Inicializacion",
             "GET /v1/Analitica/CentroControlCartera/RendimientoCampana",
             "GET /v1/Analitica/CentroControlCartera/Evolucion",
+            "GET /v1/Analitica/CentroControlCartera/Evolucion/Comparativa",
             "GET /v1/Analitica/CentroControlCartera/OpcionesFiltro",
             "GET /v1/Analitica/CentroControlCartera/Panorama",
             "GET /v1/Analitica/CentroControlCartera/Promesas",

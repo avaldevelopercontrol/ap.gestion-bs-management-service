@@ -176,7 +176,12 @@ internal static class PromesasCarteraEfConsulta
             CantidadVenceHoy = dueToday.LongLength,
             MontoVenceHoy = RedondearMonto(
                 dueToday.Sum(row => row.MontoPromesa ?? 0m)),
-            CantidadVencidas = rows.LongCount(row => row.EstaRota),
+            CantidadVencidas = rows.LongCount(row =>
+                PromesasCarteraEstadoOperativo.EsVencidaConSaldo(
+                    row.FechaVencimientoPromesa,
+                    row.MontoPromesa,
+                    row.MontoPagado,
+                    rangoHoyPeru.FechaDesde)),
             TasaCumplimiento = Dividir(
                 fulfillmentPaidAmount,
                 fulfillmentPromiseAmount),
