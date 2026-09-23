@@ -17,4 +17,12 @@ public interface IEvolucionCarteraRepository
         string? unidadNegocio,
         RangoEvolucionCartera range,
         CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<EvolucionCarteraSerieHistoricaDb>> ObtenerHistoricoComparableAsync(
+        EvolucionCarteraContexto referencia,
+        RangoEvolucionCartera rangoReferencia,
+        long? idSubCartera,
+        string? unidadNegocio,
+        int cantidadMeses,
+        CancellationToken cancellationToken);
 }

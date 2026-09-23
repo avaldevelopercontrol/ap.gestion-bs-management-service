@@ -36,4 +36,20 @@ internal sealed class EvolucionCarteraRepository(AnaliticaDbContext context)
             unidadNegocio,
             range,
             cancellationToken);
+
+    public Task<IReadOnlyList<EvolucionCarteraSerieHistoricaDb>> ObtenerHistoricoComparableAsync(
+        EvolucionCarteraContexto referencia,
+        RangoEvolucionCartera rangoReferencia,
+        long? idSubCartera,
+        string? unidadNegocio,
+        int cantidadMeses,
+        CancellationToken cancellationToken) =>
+        EvolucionCarteraEfConsulta.ObtenerHistoricoComparableAsync(
+            context,
+            referencia,
+            rangoReferencia,
+            idSubCartera,
+            unidadNegocio,
+            cantidadMeses,
+            cancellationToken);
 }

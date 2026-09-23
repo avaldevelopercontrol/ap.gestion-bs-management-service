@@ -272,8 +272,9 @@ internal sealed class SeguimientoPromesasCarteraRepository(
             .Distinct()
             .ToArray();
 
-        var nombresPorDeudor = await ObtenerNombresDeudorAsync(
-            idsDeudorOrigen,
+        var nombresPorDeudor = await PromesasCarteraDeudorEfConsulta.ObtenerNombresAsync(
+            avalContext,
+            itemRows.Select(row => row.IdDeudor),
             cancellationToken);
 
         var contactosPorDeudor = await ObtenerContactosAsync(
@@ -328,9 +329,7 @@ internal sealed class SeguimientoPromesasCarteraRepository(
                 {
                     IdPromesa = row.IdPromesa,
                     IdDeudor = row.IdDeudor,
-                    NombreDeudor = row.IdDeudor is > 0 and <= int.MaxValue
-                        ? nombresPorDeudor.GetValueOrDefault((int)row.IdDeudor)
-                        : null,
+                    NombreDeudor = nombresPorDeudor.GetValueOrDefault(row.IdDeudor),
                     FechaVencimiento = row.FechaVencimiento,
                     MontoPromesa = PromesaCarteraDetallesEfConsulta.RedondearMonto(row.MontoPromesa),
                     MontoPagado = PromesaCarteraDetallesEfConsulta.RedondearMonto(row.MontoPagado),
@@ -351,39 +350,6 @@ internal sealed class SeguimientoPromesasCarteraRepository(
                 };
             })
             .ToArray();
-    }
-
-    private async Task<IReadOnlyDictionary<int, string?>> ObtenerNombresDeudorAsync(
-        IReadOnlyCollection<int> idsDeudor,
-        CancellationToken cancellationToken)
-    {
-        if (idsDeudor.Count == 0)
-        {
-            return new Dictionary<int, string?>();
-        }
-
-        var rows = await avalContext.av_PersDeudors
-            .AsNoTracking()
-            .Where(row => idsDeudor.Contains(row.nId_PersDeudor))
-            .Select(row => new
-            {
-                row.nId_PersDeudor,
-                row.cNomCompleto,
-                row.cPers_Nombres,
-                row.cPers_ApePat,
-                row.cPers_ApeMat
-            })
-            .ToListAsync(cancellationToken);
-
-        return rows
-            .GroupBy(row => row.nId_PersDeudor)
-            .ToDictionary(
-                group => group.Key,
-                group => NormalizarNombreDeudor(
-                    group.Select(row => row.cNomCompleto).FirstOrDefault(),
-                    group.Select(row => row.cPers_Nombres).FirstOrDefault(),
-                    group.Select(row => row.cPers_ApePat).FirstOrDefault(),
-                    group.Select(row => row.cPers_ApeMat).FirstOrDefault()));
     }
 
     private async Task<IReadOnlyDictionary<(long ClaveCartera, long IdDeudor), string>> ObtenerContactosAsync(
@@ -484,26 +450,6 @@ internal sealed class SeguimientoPromesasCarteraRepository(
                         && row.FechaCompromisoPago.HasValue
                         && (row.MontoCompromiso ?? 0m) > 0m),
                     group.Max(row => row.FechaGestion)));
-    }
-
-    private static string? NormalizarNombreDeudor(
-        string? nombreCompleto,
-        string? nombres,
-        string? apellidoPaterno,
-        string? apellidoMaterno)
-    {
-        if (!string.IsNullOrWhiteSpace(nombreCompleto))
-        {
-            return nombreCompleto.Trim();
-        }
-
-        var compuesto = string.Join(
-            ' ',
-            new[] { nombres, apellidoPaterno, apellidoMaterno }
-                .Where(value => !string.IsNullOrWhiteSpace(value))
-                .Select(value => value!.Trim()));
-
-        return string.IsNullOrWhiteSpace(compuesto) ? null : compuesto;
     }
 
     private static IOrderedQueryable<SeguimientoItemProjection> AplicarOrden(

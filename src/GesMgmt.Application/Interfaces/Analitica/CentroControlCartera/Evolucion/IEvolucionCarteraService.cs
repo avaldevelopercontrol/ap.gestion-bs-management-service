@@ -12,4 +12,13 @@ public interface IEvolucionCarteraService
         string? unidadNegocio,
         int? idClienteCrm,
         CancellationToken cancellationToken);
+
+    Task<CarteraOperacionResult<EvolucionCarteraComparativaResponse>> ObtenerComparativaAsync(
+        string? campana,
+        string? idSubCartera,
+        string? fechaDesde,
+        string? fechaHasta,
+        string? unidadNegocio,
+        int? idClienteCrm,
+        CancellationToken cancellationToken);
 }
