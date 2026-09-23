@@ -39,104 +39,212 @@ namespace GesMgmt.Application.Services.Telefono
 
             try
             {
-
                 var filter = new av_PersTelef
                 {
                     nId_PersDeudor = TelefonosDto.nId_Persdeudor
                 };
 
-                var q_Telefono = _unitOfWork.av_PersTelefs.GetTelefonosAsync(filter);
+                var q_Telefono = await _unitOfWork.av_PersTelefs.GetTelefonosAsync(filter);
                 var totalContactados = await q_Telefono.SumAsync(x => x.ncontactados ?? 0);
                 var q_detalleTelefono = await _unitOfWork.av_DetallePersTelefs.Query();
+
                 var q_PerDeuGesHrs = await _unitOfWork.av_PersDeudorGestionHrss.Query();
                 var q_PerRefUbi = await _unitOfWork.av_PersRefUbis.Query();
                 var q_PerTelOpe = await _unitOfWork.av_PersTelefOpes.Query();
                 var q_fuBusTel = await _unitOfWork.av_FuenteBusTels.Query();
 
-                var data = await (
-                                    from pe in q_Telefono
+                var query =
+                    from pe in q_Telefono
 
-                                    join det in q_detalleTelefono
-                                    on new
-                                    {
-                                        pe.nId_PersTelef,
-                                        nId_Cliente = TelefonosDto.nId_Cliente
-                                    }
-                                    equals new
-                                    {
-                                        det.nId_PersTelef,
-                                        det.nId_Cliente
-                                    }
-                                    into detJoin
-                                    from det in detJoin.DefaultIfEmpty()
+                    // =====================================================
+                    // LEFT JOIN DETALLE TELEFONO
+                    // =====================================================
+                    join det in q_detalleTelefono
+                        on new
+                        {
+                            pe.nId_PersTelef,
+                            nId_Cliente = TelefonosDto.nId_Cliente
+                        }
+                        equals new
+                        {
+                            det.nId_PersTelef,
+                            det.nId_Cliente
+                        }
+                        into detJoin
 
-                                    join hrs in q_PerDeuGesHrs
-                                    on pe.nId_PersDeudorGestionHrs equals hrs.nId_PersDeudorGestionHrs
-                                    into hrsJoin
-                                    from hrs in hrsJoin.DefaultIfEmpty()
+                    from det in detJoin.DefaultIfEmpty()
 
-                                    join refUbi in q_PerRefUbi
-                                    on pe.nId_PersRefUbi equals refUbi.nId_PersRefUbi
-                                    into refUbiJoin
-                                    from refUbi in refUbiJoin.DefaultIfEmpty()
+                    // =====================================================
+                    // LEFT JOIN HORARIO
+                    // =====================================================
+                    join hrs in q_PerDeuGesHrs
+                        on pe.nId_PersDeudorGestionHrs
+                        equals hrs.nId_PersDeudorGestionHrs
+                        into hrsJoin
 
-                                    join pto in q_PerTelOpe
-                                    on pe.nId_PersTelefOpe equals pto.nId_PersTelefOpe
-                                    into ptoJoin
-                                    from pto in ptoJoin.DefaultIfEmpty()
+                    from hrs in hrsJoin.DefaultIfEmpty()
 
-                                    join fu in q_fuBusTel
-                                        on (det != null && det.nId_Fuente.HasValue
-                                                ? det.nId_Fuente
-                                                : pe.nId_Fuente)
-                                    equals fu.nId_Fuente
-                                    into fuJoin
-                                    from fu in fuJoin.DefaultIfEmpty()
+                    // =====================================================
+                    // LEFT JOIN REFERENCIA UBICACION
+                    // =====================================================
+                    join refUbi in q_PerRefUbi
+                        on pe.nId_PersRefUbi
+                        equals refUbi.nId_PersRefUbi
+                        into refUbiJoin
 
-                                    select new GetTelefonosResponseDto
-                                    {
-                                        nId_PersTelef = pe.nId_PersTelef,
-                                        prioridad = pe.nTelef_Prioridad ?? 0,
-                                        nroTelefono = pe.nTelef_Nro ?? "",
-                                        horario = hrs.cNombren_PersDeudorGestionHrs ?? "",
-                                        referenciaUbicacion = refUbi.cNombre_PersRefUbi ??"",
-                                        estado = pto.cNombre_PersTelefOpe ?? "",
-                                        fechaEstado = pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") ?? "",
-                                        fechaBase = det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") ?? "",
-                                        contactados = det.nId_Cliente == 95
-                                                    ? (
-                                                        totalContactados == 0
-                                                            ? "0%"
-                                                            : (((pe.ncontactados ?? 0) * 100m / totalContactados)
-                                                                .ToString("0.00") + "%")
-                                                      )
-                                                    : (pe.ncontactados ?? 0).ToString(),
-                                        noContactados = pe.nNoContactados ?? 0,
-                                        cantidadIvr = pe.nCant_Ivr ?? 0,
-                                        fuente = fu.cDescripcion ?? "",
-                                        ordenSearch = ""
-                                    }
-                                )
-                                .Skip((TelefonosDto.PageNumber - 1) * TelefonosDto.PageSize)
-                                .Take(TelefonosDto.PageSize)
-                                .ToListAsync();
+                    from refUbi in refUbiJoin.DefaultIfEmpty()
+
+                    // =====================================================
+                    // LEFT JOIN ESTADO TELEFONO
+                    // =====================================================
+                    join pto in q_PerTelOpe
+                        on pe.nId_PersTelefOpe
+                        equals pto.nId_PersTelefOpe
+                        into ptoJoin
+
+                    from pto in ptoJoin.DefaultIfEmpty()
+
+                    // =====================================================
+                    // DETERMINAR FUENTE
+                    //
+                    // 1. Si existe detalle y tiene fuente -> usa det.nId_Fuente
+                    // 2. Caso contrario -> usa pe.nId_Fuente
+                    // =====================================================
+                    let idFuente =
+                        det != null && det.nId_Fuente.HasValue
+                            ? det.nId_Fuente
+                            : pe.nId_Fuente
+
+                    // =====================================================
+                    // LEFT JOIN FUENTE
+                    // IMPORTANTE: NO ELIMINA TELEFONOS SIN FUENTE
+                    // =====================================================
+                    join fu in q_fuBusTel
+                        on idFuente equals (int?)fu.nId_Fuente
+                        into fuJoin
+
+                    from fu in fuJoin.DefaultIfEmpty()
+
+                    // =====================================================
+                    // RESULTADO
+                    // =====================================================
+                    select new GetTelefonosResponseDto
+                    {
+                        nId_PersTelef = pe.nId_PersTelef,
+                        prioridad = pe.nTelef_Prioridad ?? 0,
+                        nroTelefono = pe.nTelef_Nro ?? "",
+                        // HORARIO
+                        horario = hrs != null ? hrs.cNombren_PersDeudorGestionHrs ?? "" : "",
+                        // REFERENCIA
+                        referenciaUbicacion = refUbi != null ? refUbi.cNombre_PersRefUbi ?? "" : "",
+                        // ESTADO
+                        estado = pto != null ? pto.cNombre_PersTelefOpe ?? "" : "",
+                        // FECHA ESTADO
+                        fechaEstado = pe.dFecUlt_PerstelefOpe.HasValue ? pe.dFecUlt_PerstelefOpe.Value.ToString("yyyy-MM-dd") : "",
+                        // FECHA BASE
+                        fechaBase = det != null && det.dFec_Actualiza.HasValue ? det.dFec_Actualiza.Value.ToString("yyyy-MM-dd") : "",
+                        // CONTACTADOS
+                        contactados =
+                            det != null &&
+                            det.nId_Cliente == 95
+                                ? (
+                                    totalContactados == 0
+                                        ? "0%"
+                                        : (
+                                            (
+                                                (pe.ncontactados ?? 0)
+                                                * 100m
+                                                / totalContactados
+                                            )
+                                            .ToString("0.00")
+                                            + "%"
+                                          )
+                                  )
+                                : (pe.ncontactados ?? 0)
+                                    .ToString(),
+                        // NO CONTACTADOS
+                        noContactados = pe.nNoContactados ?? 0,
+                        // IVR
+                        cantidadIvr = pe.nCant_Ivr ?? 0,
+                        // =================================================
+                        // FUENTE
+                        // Si no existe en av_FuenteBusTel devuelve ""
+                        // pero NO elimina el teléfono.
+                        // =================================================
+                        fuente = fu != null
+                            ? fu.cDescripcion ?? ""
+                            : "",
 
 
-                int totalRecords = q_Telefono.Count();
+                        ordenSearch = ""
+                    };
 
-                var response = ResultListDto<IEnumerable<GetTelefonosResponseDto>>.Success(data, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+
+                // =========================================================
+                // TOTAL DE TELEFONOS
+                // =========================================================
+                int totalRecords =
+                    await q_Telefono.CountAsync();
+
+
+                // =========================================================
+                // PAGINACION
+                // =========================================================
+                var data = await query
+                    .Skip(
+                        (TelefonosDto.PageNumber - 1)
+                        * TelefonosDto.PageSize
+                    )
+                    .Take(TelefonosDto.PageSize)
+                    .ToListAsync();
+
+
+                // =========================================================
+                // RESPONSE
+                // =========================================================
+                var response =
+                    ResultListDto<IEnumerable<GetTelefonosResponseDto>>
+                        .Success(
+                            data,
+                            Const.SUCCESS_CODE,
+                            Const.SUCCESS_MESSAGE,
+                            Const.SUCCESS_MESSAGE,
+                            Const.OK_REQUEST_CODE
+                        );
+
 
                 response.TotalRecords = totalRecords;
-                response.PageNumber = TelefonosDto.PageNumber;
-                response.PageSize = TelefonosDto.PageSize;
-                response.TotalPages = (int)Math.Ceiling((double)totalRecords / TelefonosDto.PageSize);
+
+                response.PageNumber =
+                    TelefonosDto.PageNumber;
+
+                response.PageSize =
+                    TelefonosDto.PageSize;
+
+                response.TotalPages =
+                    (int)Math.Ceiling(
+                        (double)totalRecords
+                        / TelefonosDto.PageSize
+                    );
+
 
                 return response;
             }
             catch (Exception ex)
             {
-                _Logger.LogError($"GetTelefonos|DatabaseError: {ex.Message}");
-                return ResultListDto<IEnumerable<GetTelefonosResponseDto>>.Failure(Const.ERROR_REQUEST_CODE.ToString(), "Error interno del servidor.", ex.Message, Const.ERROR_REQUEST_CODE);
+                _Logger.LogError(
+                    ex,
+                    "GetTelefonos|DatabaseError: {Message}",
+                    ex.Message
+                );
+
+                return ResultListDto<IEnumerable<GetTelefonosResponseDto>>
+                    .Failure(
+                        Const.ERROR_REQUEST_CODE.ToString(),
+                        "Error interno del servidor.",
+                        ex.Message,
+                        Const.ERROR_REQUEST_CODE
+                    );
             }
         }
         #endregion

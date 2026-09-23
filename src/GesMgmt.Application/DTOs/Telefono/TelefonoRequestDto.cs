@@ -20,7 +20,6 @@ namespace GesMgmt.Application.DTOs.Telefono
         }
         public class CreateTelefonoRequestDto
         {
-            public int nId_PersTelef { get; set; }
             public int? nId_PersDeudor { get; set; }
             public string? nTelef_Pre { get; set; }
             public string? nTelef_Nro { get; set; }

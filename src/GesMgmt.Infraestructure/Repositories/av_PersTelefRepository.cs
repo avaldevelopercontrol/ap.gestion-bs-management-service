@@ -30,7 +30,7 @@ namespace GesMgmt.Infraestructure.Repositories
             return query;
         }
 
-        public IQueryable<av_PersTelef> GetTelefonosAsync(av_PersTelef av_PersTelef)
+        public async Task<IQueryable<av_PersTelef>> GetTelefonosAsync(av_PersTelef av_PersTelef)
         {
 
             var query = _dbSet
