@@ -1,3 +1,4 @@
+using System.Globalization;
 using GesMgmt.Domain.Entities.Analitica.CentroControlCartera;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -217,6 +218,234 @@ internal static class EvolucionCarteraEfConsulta
             .ToArray();
     }
 
+    public static async Task<IReadOnlyList<EvolucionCarteraSerieHistoricaDb>> ObtenerHistoricoComparableAsync(
+        AnaliticaDbContext context,
+        EvolucionCarteraContexto referencia,
+        RangoEvolucionCartera rangoReferencia,
+        long? idSubCartera,
+        string? unidadNegocio,
+        int cantidadMeses,
+        CancellationToken cancellationToken)
+    {
+        if (cantidadMeses <= 0)
+        {
+            return [];
+        }
+
+        var codigosHistoricos = Enumerable.Range(1, cantidadMeses)
+            .Select(offset => referencia.FechaInicio
+                .AddMonths(-offset)
+                .ToString("yyyy-MM", CultureInfo.InvariantCulture))
+            .ToArray();
+
+        var campanas = await context.CampanasAnalitica
+            .AsNoTracking()
+            .Where(campana =>
+                campana.ClaveCliente == referencia.ClaveCliente
+                && codigosHistoricos.Contains(campana.CodigoCampana))
+            .OrderByDescending(campana => campana.FechaInicio)
+            .ThenByDescending(campana => campana.ClaveCampana)
+            .ToListAsync(cancellationToken);
+
+        if (campanas.Count == 0)
+        {
+            return [];
+        }
+
+        var candidatos = campanas
+            .Select(campana => CrearCandidatoComparable(
+                campana,
+                referencia,
+                rangoReferencia))
+            .Where(candidato => candidato is not null)
+            .Select(candidato => candidato!)
+            .ToArray();
+
+        if (candidatos.Length == 0)
+        {
+            return [];
+        }
+
+        var campaignKeys = candidatos
+            .Select(item => item.Contexto.ClaveCampana)
+            .ToArray();
+        var fechaMinima = candidatos.Min(item => item.Rango.FechaDesde)
+            .ToDateTime(TimeOnly.MinValue);
+        var fechaMaximaExclusiva = candidatos.Max(item => item.Rango.FechaHasta)
+            .AddDays(1)
+            .ToDateTime(TimeOnly.MinValue);
+
+        var usarEvolucionCampana = idSubCartera is null
+            && (unidadNegocio is null
+                || await EsClienteMafAsync(
+                    context,
+                    referencia.ClaveCliente,
+                    cancellationToken));
+
+        Dictionary<int, IReadOnlyList<EvolucionCarteraDbFila>> filasPorCampana;
+
+        if (usarEvolucionCampana)
+        {
+            var rows = await context.EvolucionDiariaCampanaAnalitica
+                .AsNoTracking()
+                .Where(row =>
+                    row.ClaveCliente == referencia.ClaveCliente
+                    && campaignKeys.Contains(row.ClaveCampana)
+                    && row.FechaCalendario >= fechaMinima
+                    && row.FechaCalendario < fechaMaximaExclusiva)
+                .OrderBy(row => row.ClaveCampana)
+                .ThenBy(row => row.FechaCalendario)
+                .ToListAsync(cancellationToken);
+
+            filasPorCampana = rows
+                .GroupBy(row => row.ClaveCampana)
+                .ToDictionary(
+                    group => group.Key,
+                    group => (IReadOnlyList<EvolucionCarteraDbFila>)group
+                        .Select(row => new EvolucionCarteraDbFila
+                        {
+                            Periodo = row.FechaCalendario,
+                            CarteraAsignada = row.ClientesAsignados ?? 0,
+                            CarteraGestionada = row.ClientesGestionados ?? 0,
+                            CarteraPendiente = row.ClientesPendientes ?? 0,
+                            MontoRecuperado = RedondearMonto(
+                                row.MontoRecuperadoAcumulado ?? 0m),
+                            FechaCargaUtc = row.FechaCarga
+                        })
+                        .ToArray());
+        }
+        else
+        {
+            var query = AplicarAlcanceCartera(
+                context,
+                context.EvolucionDiariaCarteraAnalitica
+                    .AsNoTracking()
+                    .Where(row =>
+                        row.ClaveCliente == referencia.ClaveCliente
+                        && campaignKeys.Contains(row.ClaveCampana)
+                        && row.FechaCalendario >= fechaMinima
+                        && row.FechaCalendario < fechaMaximaExclusiva),
+                idSubCartera,
+                unidadNegocio);
+
+            var rows = await query
+                .OrderBy(row => row.ClaveCampana)
+                .ThenBy(row => row.FechaCalendario)
+                .ToListAsync(cancellationToken);
+
+            if (idSubCartera.HasValue)
+            {
+                filasPorCampana = rows
+                    .GroupBy(row => row.ClaveCampana)
+                    .ToDictionary(
+                        group => group.Key,
+                        group => (IReadOnlyList<EvolucionCarteraDbFila>)group
+                            .Select(row => new EvolucionCarteraDbFila
+                            {
+                                Periodo = row.FechaCalendario,
+                                CarteraAsignada = row.ClientesAsignados ?? 0,
+                                CarteraGestionada = row.ClientesGestionados ?? 0,
+                                CarteraPendiente = row.ClientesPendientes ?? 0,
+                                MontoRecuperado = RedondearMonto(
+                                    row.MontoRecuperadoAcumulado ?? 0m),
+                                FechaCargaUtc = row.FechaCarga
+                            })
+                            .ToArray());
+            }
+            else
+            {
+                filasPorCampana = rows
+                    .GroupBy(row => row.ClaveCampana)
+                    .ToDictionary(
+                        campaignGroup => campaignGroup.Key,
+                        campaignGroup => (IReadOnlyList<EvolucionCarteraDbFila>)campaignGroup
+                            .GroupBy(row => row.FechaCalendario)
+                            .OrderBy(group => group.Key)
+                            .Select(group => new EvolucionCarteraDbFila
+                            {
+                                Periodo = group.Key,
+                                CarteraAsignada = group.Sum(row =>
+                                    (long)(row.ClientesAsignados ?? 0)),
+                                CarteraGestionada = group.Sum(row =>
+                                    (long)(row.ClientesGestionados ?? 0)),
+                                CarteraPendiente = group.Sum(row =>
+                                    (long)(row.ClientesPendientes ?? 0)),
+                                MontoRecuperado = RedondearMonto(
+                                    group.Sum(row =>
+                                        row.MontoRecuperadoAcumulado ?? 0m)),
+                                FechaCargaUtc = group.Max(row => row.FechaCarga)
+                            })
+                            .ToArray());
+            }
+        }
+
+        return candidatos
+            .Select(candidato =>
+            {
+                var filasBase = filasPorCampana.TryGetValue(
+                    candidato.Contexto.ClaveCampana,
+                    out var filasCampana)
+                    ? filasCampana
+                    : Array.Empty<EvolucionCarteraDbFila>();
+
+                var filas = filasBase
+                    .Where(row =>
+                    {
+                        var fecha = DateOnly.FromDateTime(row.Periodo);
+                        return fecha >= candidato.Rango.FechaDesde
+                            && fecha <= candidato.Rango.FechaHasta;
+                    })
+                    .OrderBy(row => row.Periodo)
+                    .ToArray();
+
+                var cubrePeriodo = candidato.CubreHorizonteCalendario
+                    && filas.Length > 0
+                    && DateOnly.FromDateTime(filas[^1].Periodo)
+                        >= candidato.Rango.FechaHasta;
+
+                return new EvolucionCarteraSerieHistoricaDb(
+                    candidato.Contexto,
+                    candidato.Rango,
+                    cubrePeriodo,
+                    filas);
+            })
+            .Where(item => item.Filas.Count > 0)
+            .ToArray();
+    }
+
+    private static CandidatoComparable? CrearCandidatoComparable(
+        DimensionCampanaAnalitica campana,
+        EvolucionCarteraContexto referencia,
+        RangoEvolucionCartera rangoReferencia)
+    {
+        var inicioCampana = DateOnly.FromDateTime(campana.FechaInicio);
+        var finCampana = DateOnly.FromDateTime(campana.FechaFin);
+        var rangoComparable = EvolucionCarteraComparativaPeriodoPolicy.Resolver(
+            referencia,
+            rangoReferencia,
+            inicioCampana,
+            finCampana);
+
+        if (rangoComparable is null)
+        {
+            return null;
+        }
+
+        var contexto = new EvolucionCarteraContexto(
+            referencia.ClaveCliente,
+            campana.ClaveCampana,
+            campana.CodigoCampana,
+            campana.NombreCampana,
+            inicioCampana,
+            finCampana,
+            null);
+
+        return new CandidatoComparable(
+            contexto,
+            rangoComparable.Value.Rango,
+            rangoComparable.Value.CubreHorizonteCompleto);
+    }
+
     private static IQueryable<EvolucionDiariaCarteraAnalitica> AplicarAlcanceCartera(
         AnaliticaDbContext context,
         IQueryable<EvolucionDiariaCarteraAnalitica> query,
@@ -355,6 +584,11 @@ internal static class EvolucionCarteraEfConsulta
 
     private static string? NormalizarUnidadNegocio(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private sealed record CandidatoComparable(
+        EvolucionCarteraContexto Contexto,
+        RangoEvolucionCartera Rango,
+        bool CubreHorizonteCalendario);
 
     private sealed record CampanaSeleccionada(
         DimensionCampanaAnalitica Campana,

@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace GesMgmt.Infraestructure.Repositories.Analitica.CentroControlCartera;
 
 internal sealed class PromesasVencidasCarteraRepository(
-    AnaliticaDbContext context)
+    AnaliticaDbContext context,
+    AvalDbContext avalContext,
+    TimeProvider timeProvider)
     : IPromesasVencidasCarteraRepository
 {
     public Task<PromesasVencidasCarteraConsultaResult> ObtenerAsync(
@@ -41,15 +43,19 @@ internal sealed class PromesasVencidasCarteraRepository(
         string direccionOrden,
         CancellationToken cancellationToken)
     {
+        var rangoHoyPeru = PromesasCarteraFechaActual.ObtenerHoyPeru(timeProvider);
+        var fechaCorte = rangoHoyPeru.FechaDesde;
+
         var baseQuery = PromesaCarteraDetallesEfConsulta.AplicarAlcance(
             context,
-            context.PromesaOperativaSupervisorAnalitica
-                .AsNoTracking()
-                .Where(row =>
-                    row.ClaveCliente == claveCliente
-                    && row.ClaveCampana == claveCampana
-                    && row.EsPromesaValida
-                    && row.CodigoEstado == "BROKEN"),
+            PromesasCarteraEstadoOperativoEfConsulta.AplicarVencidasConSaldo(
+                context.PromesaOperativaSupervisorAnalitica
+                    .AsNoTracking()
+                    .Where(row =>
+                        row.ClaveCliente == claveCliente
+                        && row.ClaveCampana == claveCampana
+                        && row.EsPromesaValida),
+                fechaCorte),
             idSubCartera,
             unidadNegocio);
 
@@ -57,17 +63,16 @@ internal sealed class PromesasVencidasCarteraRepository(
         if (totalCount == 0)
         {
             return new PromesasVencidasCarteraConsultaResult(
-                new PromesasVencidasCarteraResumenDbFila(),
+                new PromesasVencidasCarteraResumenDbFila
+                {
+                    FechaCorte = fechaCorte
+                },
                 [],
                 [],
                 [],
                 [],
                 PromesasCarteraPaginacion.Crear(pagina, tamanoPagina, 0));
         }
-
-        var maxLoadedAt = await baseQuery
-            .MaxAsync(row => row.FechaCarga, cancellationToken);
-        var fechaCorte = maxLoadedAt?.Date ?? DateTime.UtcNow.Date;
 
         var itemQuery = baseQuery.Select(row => new OverdueItemProjection
         {
@@ -84,6 +89,9 @@ internal sealed class PromesasVencidasCarteraRepository(
             MontoPendiente = (row.MontoPromesa ?? 0m) > (row.MontoPagado ?? 0m)
                 ? (row.MontoPromesa ?? 0m) - (row.MontoPagado ?? 0m)
                 : 0m,
+            ClaveSituacion = (row.MontoPagado ?? 0m) > 0m
+                ? PromesasCarteraEstadoOperativo.PagoParcial
+                : PromesasCarteraEstadoOperativo.SinPagoRegistrado,
             IdAsesor = row.ClaveAsesor,
             NombreAsesor = row.NombreAsesor == null || row.NombreAsesor.Trim() == string.Empty
                 ? null
@@ -184,16 +192,23 @@ internal sealed class PromesasVencidasCarteraRepository(
             .Take(tamanoPagina)
             .ToListAsync(cancellationToken);
 
+        var nombresPorDeudor = await PromesasCarteraDeudorEfConsulta.ObtenerNombresAsync(
+            avalContext,
+            itemRows.Select(row => row.IdDeudor),
+            cancellationToken);
+
         var elementos = itemRows
             .Select(row => new PromesaVencidaCarteraDbFila
             {
                 IdPromesa = row.IdPromesa,
                 IdDeudor = row.IdDeudor,
+                NombreDeudor = nombresPorDeudor.GetValueOrDefault(row.IdDeudor),
                 FechaVencimiento = row.FechaVencimiento,
                 DiasVencimiento = row.DiasVencimiento,
                 MontoPromesa = PromesaCarteraDetallesEfConsulta.RedondearMonto(row.MontoPromesa),
                 MontoPagado = PromesaCarteraDetallesEfConsulta.RedondearMonto(row.MontoPagado),
                 MontoPendiente = PromesaCarteraDetallesEfConsulta.RedondearMonto(row.MontoPendiente),
+                ClaveSituacion = row.ClaveSituacion,
                 IdAsesor = row.IdAsesor,
                 NombreAsesor = PromesaCarteraDetallesEfConsulta.NormalizarNombre(row.NombreAsesor),
                 IdSupervisor = row.IdSupervisor,
@@ -258,6 +273,7 @@ internal sealed class PromesasVencidasCarteraRepository(
         public decimal MontoPromesa { get; init; }
         public decimal MontoPagado { get; init; }
         public decimal MontoPendiente { get; init; }
+        public string ClaveSituacion { get; init; } = string.Empty;
         public int? IdAsesor { get; init; }
         public string? NombreAsesor { get; init; }
         public int? IdSupervisor { get; init; }
