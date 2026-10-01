@@ -85,5 +85,15 @@ namespace GesMgmt.Infraestructure.Repositories
             return null;
         }
 
+        public async Task<IQueryable<av_PersTelef>> GetTelefonosIdDeudorAsync(int nId_PersDeudor)
+        {
+            var query = _dbSet
+                .Include(tel => tel.av_PersDeudor)
+                .Where(tel => tel.nId_PersDeudor.Equals(nId_PersDeudor))
+                .AsNoTracking()
+                .AsQueryable();
+            return query;
+        }
+
     }
 }

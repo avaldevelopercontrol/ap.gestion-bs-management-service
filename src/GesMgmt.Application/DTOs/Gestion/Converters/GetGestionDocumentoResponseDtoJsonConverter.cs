@@ -43,6 +43,9 @@ namespace GesMgmt.Application.DTOs.Gestion.Converters
                 case 59:
                     EscribirCliente59(writer, value);
                     break;
+                case 201:
+                    EscribirCliente201(writer, value);
+                    break;
                 default:
                     EscribirClienteGenerico(writer, value);
                     break;
@@ -126,7 +129,6 @@ namespace GesMgmt.Application.DTOs.Gestion.Converters
         // =========================================================
         // CLIENTE 95 - CLARO
         // =========================================================
-
         private static void EscribirCliente95(
             Utf8JsonWriter writer,
             GetGestionDocumentoResponseDto value)
@@ -270,11 +272,148 @@ namespace GesMgmt.Application.DTOs.Gestion.Converters
             );
         }
 
+        // =========================================================
+        // CLIENTE 201 - ALFIN
+        // =========================================================
+        private static void EscribirCliente201(
+            Utf8JsonWriter writer,
+            GetGestionDocumentoResponseDto value)
+        {
+            /*
+             * AQUÍ DEFINES EXACTAMENTE
+             * EL ORDEN PARA ALFIN.
+             *
+             * ESTE ORDEN PUEDE SER COMPLETAMENTE
+             * DIFERENTE AL CLIENTE 201.
+             */
+
+            // =====================================================
+            // CAMPOS ALFIN
+            // =====================================================
+
+            EscribirString(
+                writer,
+                "tramo",
+                value.tramo
+            );
+
+            writer.WriteNumber(
+                "nro",
+                value.nro
+            );
+
+            EscribirString(
+                writer,
+                "CUENTA_BIT",
+                value.CUENTA_BIT
+            );
+
+            EscribirString(
+                writer,
+                "CLASIFICACION_CLIENTE",
+                value.CLASIFICACION_CLIENTE
+            );
+
+            EscribirString(
+                writer,
+                "ESTADO",
+                value.ESTADO
+            );
+
+            EscribirString(
+                writer,
+                "ATRASO",
+                value.ATRASO
+            );
+
+            EscribirString(
+                writer,
+                "DNI",
+                value.DNI
+            );
+
+            EscribirString(
+                writer,
+                "siglaMoneda",
+                value.siglaMoneda
+            );
+
+            EscribirDecimal(
+                writer,
+                "importeSaldo",
+                value.importeSaldo
+            );
+
+            EscribirDecimal(
+                writer,
+                "CAPITAL",
+                value.CAPITAL
+            );
+
+            EscribirString(
+                writer,
+                "REQUERIDO",
+                value.REQUERIDO
+            );
+
+            EscribirString(
+                writer,
+                "CAMPANIA_LIQUIDACION",
+                value.CAMPANIA_LIQUIDACION
+            );
+
+            EscribirString(
+                writer,
+                "DESCUENTO_ESPECIAL",
+                value.DESCUENTO_ESPECIAL
+            );
+
+            EscribirString(
+                writer,
+                "DESCUENTO_ESPECIAL_DETALLE",
+                value.DESCUENTO_ESPECIAL_DETALLE
+            );
+
+            EscribirString(
+                writer,
+                "FINANCIAMIENTO_CAMPANIA_LIQUIDACION",
+                value.FINANCIAMIENTO_CAMPANIA_LIQUIDACION
+            );
+
+            EscribirString(
+                writer,
+                "FECHA_SURT",
+                value.FECHA_SURT
+            );
+
+            EscribirString(
+                writer,
+                "NUMERO_CUOTA_TOTAL",
+                value.NUMERO_CUOTA_TOTAL
+            );
+
+            EscribirString(
+                writer,
+                "NUMERO_CUOTA_PAGADO",
+                value.NUMERO_CUOTA_PAGADO
+            );
+
+            EscribirString(
+                writer,
+                "NUMERO_CUOTA_PENDIENTE",
+                value.NUMERO_CUOTA_PENDIENTE
+            );
+
+            EscribirString(
+                writer,
+                "NUMERO_CUOTA_SIN_PAGO",
+                value.NUMERO_CUOTA_SIN_PAGO
+            );
+        }
 
         // =========================================================
         // CLIENTE 59 - MAF
         // =========================================================
-
         private static void EscribirCliente59(
             Utf8JsonWriter writer,
             GetGestionDocumentoResponseDto value)

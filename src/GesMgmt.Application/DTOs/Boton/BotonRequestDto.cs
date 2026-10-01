@@ -123,5 +123,47 @@ namespace GesMgmt.Application.DTOs.Boton
             public int nId_Persdeudor { get; set; }
         }
         #endregion
+
+        #region "BOTONES ALFIN"
+
+        #region "CODIGO SIP"
+        public class GetCodigoSipRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Cartera { get; set; }
+            public int nId_Persdeudor { get; set; }
+        }
+        #endregion
+
+        #region "SOLICITUD DE DESCUENTO"
+        public class GetSolicitudDescuentoRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Cartera { get; set; }
+            public int nId_Persdeudor { get; set; }
+        }
+        #endregion
+
+        #region "LIQUIDACIÓN TOTAL"
+        public class GetPlantillaLiquidacionRequestDto
+        {
+            public int nId_Cliente { get; set; }
+            public int nId_Cartera { get; set; }
+            public int nId_Persdeudor { get; set; }
+        }
+        #endregion
+
+        #region "CRONOGRAMA CUOTAS"
+        public class GetCronogramaCuotasRequestDto
+        {
+            public int nId_Cliente { get; set; }
+
+            public int nId_Cartera { get; set; }
+
+            public int nId_Persdeudor { get; set; }
+        }
+        #endregion
+
+        #endregion
     }
 }

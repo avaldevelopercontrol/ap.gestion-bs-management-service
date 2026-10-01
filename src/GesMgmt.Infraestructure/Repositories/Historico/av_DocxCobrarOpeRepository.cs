@@ -75,7 +75,7 @@ namespace GesMgmt.Infraestructure.Repositories.Historico
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<av_DocxCobrarOpe?> GetGestionMejorGestionAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        public async Task<av_DocxCobrarOpe?> GetGestionMejorGestionActivoAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
         {
             return await _dbSet
                 .Include(dc => dc.av_DocxCobrar)

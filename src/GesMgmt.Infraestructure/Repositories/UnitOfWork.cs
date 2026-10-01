@@ -1,4 +1,5 @@
-﻿using GesMgmt.Domain.Interfaces;
+﻿using GesMgmt.Domain.Entities;
+using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
@@ -20,6 +21,8 @@ namespace GesMgmt.Infraestructure.Repositories
         private readonly IMemoryCache _cache;
         private IDbContextTransaction? _transaction;
         private Iav_AgendaRepository? _av_Agendas;
+        private Iav_AloEstadoDocumentalRepository? _av_AloEstadoDocumentals;
+        private Iav_AloTelefonoPerfilRepository? _av_AloTelefonoPerfils;
         private Iav_asigUsuarioRepository? _av_asigUsuarios;
         private Iav_BotonClienteRepository? _av_BotonClientes;
         private Iav_CabPantallaCobRepository? _av_CabPantallaCobs;
@@ -103,6 +106,8 @@ namespace GesMgmt.Infraestructure.Repositories
 
         #region Properties
         public Iav_AgendaRepository av_Agendas => _av_Agendas ??= new av_AgendaRepository(_context);
+        public Iav_AloEstadoDocumentalRepository av_AloEstadoDocumentals => _av_AloEstadoDocumentals ??= new av_AloEstadoDocumentalRepository(_context);
+        public Iav_AloTelefonoPerfilRepository av_AloTelefonoPerfils => _av_AloTelefonoPerfils ??= new av_AloTelefonoPerfilRepository(_context);
         public Iav_asigUsuarioRepository av_asigUsuarios => _av_asigUsuarios ??= new av_asigUsuarioRepository(_context);
         public Iav_BotonClienteRepository av_BotonClientes => _av_BotonClientes ??= new av_BotonClienteRepository(_context);
         public Iav_CabPantallaCobRepository av_CabPantallaCobs => _av_CabPantallaCobs ??= new av_CabPantallaCobRepository(_context);

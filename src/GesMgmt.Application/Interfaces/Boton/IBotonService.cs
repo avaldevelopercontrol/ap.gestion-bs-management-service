@@ -28,7 +28,27 @@ namespace GesMgmt.Application.Interfaces.Boton
         #region "+ESTADO CUENTA - CLARO"
         Task<byte[]> ExportGestionEstadoCuentaAsync(GetEstadoCuentaRequestDto dto);
         #endregion
-        
+
+        #endregion
+
+        #region "BOTONES ALFIN"
+
+        #region "+ CÓDIGO SIP"
+        Task<ResultDto<GetCodigoSipResponseDto>> GetCodigoSipAlfinAsync(GetCodigoSipRequestDto request);
+        #endregion
+
+        #region "+ SOLICITUD DE DESCUENTO"
+        Task<ResultDto<GetSolicitudDescuentoResponseDto>> GetSolicitudDescuentoAlfinAsync(GetSolicitudDescuentoRequestDto request);
+        #endregion
+
+        #region "+ PLANTILLA DE LIQUIDACIÓN TOTAL"
+        Task<ResultDto<GetPlantillaLiquidacionResponseDto>> GetPlantillaLiquidacionAlfinAsync(GetPlantillaLiquidacionRequestDto request);
+        #endregion
+
+        #region "+ CRONOGRAMA CUOTAS"
+        Task<ResultDto<GetCronogramaCuotasResponseDto>> GetCronogramaCuotasAlfinAsync(GetCronogramaCuotasRequestDto request);
+        #endregion
+
         #endregion
 
         #region "BOTONES PUBLICOS"

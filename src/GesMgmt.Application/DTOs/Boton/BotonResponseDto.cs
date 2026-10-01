@@ -66,24 +66,14 @@ namespace GesMgmt.Application.DTOs.Boton
         public class GetOperativasMafResponseDto
         {
             public int? numeroDiasNoContacto { get; set; }
-
             public DateTime? fechaUltimoContacto { get; set; }
-
             public int cantidadTotalVino { get; set; }
-
             public int cantidadTotalPago { get; set; }
-
             public int? cantidadTotalVino6Meses { get; set; }
-
             public int? cantidadTotalPago6Meses { get; set; }
-
             public string? cobertura { get; set; }
-
-            public List<MejorGestionResponseDto> mejoresGestiones { get; set; }
-                = new();
-
-            public List<OperacionMafResponseDto> operaciones { get; set; }
-                = new();
+            public List<MejorGestionResponseDto> mejoresGestiones { get; set; } = new();
+            public List<OperacionMafResponseDto> operaciones { get; set; } = new();
         }
 
         public class MejorGestionResponseDto
@@ -125,23 +115,14 @@ namespace GesMgmt.Application.DTOs.Boton
         public class OperacionMafResponseDto
         {
             public string operacion { get; set; } = string.Empty;
-
             public string? placa { get; set; }
-
             public int? diasAtraso { get; set; }
-
             public int? nId_Ubigeo { get; set; }
-
             public string? estadoOperacion { get; set; }
-
             public string? avanceCredito { get; set; }
-
             public string? direccionLegal { get; set; }
-
             public string? distritoLegal { get; set; }
-
             public string? provinciaLegal { get; set; }
-
             public string? departamentoLegal { get; set; }
         }
 
@@ -194,7 +175,6 @@ namespace GesMgmt.Application.DTOs.Boton
             public string? respuestaOEstado { get; set; }
             public string? usuario { get; set; }
         }
-
 
         public class GetInformacionDeudorRespondeDto
         {
@@ -280,6 +260,7 @@ namespace GesMgmt.Application.DTOs.Boton
             public string? cNombre_Param80 { get; set; }
             public bool? bTipo_Cabecera { get; set; }
         }
+
         public class GetInformacionDeudorParamRespondeDto
         {
             public string? cPersInf_Param01 { get; set; }
@@ -363,6 +344,74 @@ namespace GesMgmt.Application.DTOs.Boton
             public string? cPersInf_Param79 { get; set; }
             public string? cPersInf_Param80 { get; set; }
         }
+
+        #endregion
+
+        #region "BOTONES ALFIN"
+
+        #region "CODIGO SIP"
+        public class GetCodigoSipResponseDto
+        {
+            public string? DOC_IDENTIDAD { get; set; }
+            public string? DEUDOR { get; set; }
+            public string? MEJOR_CALL_TELEFONO_CONTACTO_ACTUAL { get; set; }
+            public decimal? MEJOR_CALL_MONTO_COMPROMISO_LO_ACTUAL { get; set; }
+            public string? MEJOR_CALL_FEC_COMPROMISO_ACTUAL { get; set; }
+            public string? MONTO_A_PAGAR { get; set; }
+            public string? MODALIDAD { get; set; }
+        }
+        #endregion
+
+        #region "SOLICITUD DE DESCUENTO"
+        public class GetSolicitudDescuentoResponseDto
+        {
+            public string? DOC_IDENTIDAD { get; set; }
+            public string? DEUDOR { get; set; }
+            public decimal CAPITAL_ACTUAL { get; set; }
+            public decimal CAMP_LIQUI { get; set; }
+            public decimal CAMPANA_ESPECIAL_MES { get; set; }
+            public string? FECHA_SURT { get; set; }
+            public string? SOLICITA_LIQ_CON { get; set; }
+            public string? FECHA_DE_PAGO { get; set; }
+            public string? AGENCIA { get; set; }
+        }
+        #endregion
+
+        #region "LIQUIDACIÓN TOTAL"
+        public class GetPlantillaLiquidacionResponseDto
+        {
+            public string? DOC_IDENTIDAD { get; set; }
+            public string? DEUDOR { get; set; }
+            public string? COD_DEUDOR { get; set; }
+            public string? DIRECCION { get; set; }
+            public decimal? SALDO_TOTAL_ACTUAL { get; set; }
+            public string? MONTO_A_DESCONTAR { get; set; }
+            public string? MONTO_CAMPANIA { get; set; }
+            public string? FECHA_SURT { get; set; }
+            public string? MONTO_EXCEPCION { get; set; }
+            public string? AGENCIA_PAGO { get; set; }
+            public string? FECHA_PAGO { get; set; }
+        }
+        #endregion
+
+        #region "CRONOGRAMA CUOTAS"
+        public class GetCronogramaCuotasResponseDto
+        {
+            public string? DOC_IDENTIDAD { get; set; }
+
+            public string? MEJOR_CALL_TELEFONO_CONTACTO_ACTUAL { get; set; }
+
+            public decimal MONTO_LIQUIDAR { get; set; }
+
+            public string? OFICINA { get; set; }
+
+            public string? CUOTAS { get; set; }
+
+            public string? MONTO_A_PAGAR { get; set; }
+
+            public string? FECHA_DE_PAGO { get; set; }
+        }
+        #endregion
 
         #endregion
 

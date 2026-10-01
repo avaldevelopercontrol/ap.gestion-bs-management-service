@@ -120,7 +120,6 @@ namespace GesMgmt.Application.DTOs.Gestion
             // =========================================================
             // CAMPOS CABECERA - COMUNES
             // =========================================================
-
             public int nId_DocxCobrar { get; set; }
             public int? mejorStatus { get; set; }
             public int nId_Moneda { get; set; }
@@ -133,84 +132,75 @@ namespace GesMgmt.Application.DTOs.Gestion
             // =========================================================
             // CAMPOS ADICIONALES / COMUNES DE GESTIÓN
             // =========================================================
-
             public string? tramo { get; set; }
             public int nro { get; set; }
-            public string? numeroDocumento { get; set; }
+            public string? numeroDocumento { get; set; } //201 - ALFIN:DNI
             public string? estado { get; set; }
             public string? fechaVencimiento { get; set; }
-            public string? siglaMoneda { get; set; }
+            public string? siglaMoneda { get; set; } //201 - ALFIN
             public decimal? importeTotal { get; set; }
-            public decimal? importeSaldo { get; set; }
-            public int diasAtrazo { get; set; }
+            public decimal? importeSaldo { get; set; } //201 - ALFIN
+            public int diasAtrazo { get; set; } //201 - ALFIN
             public string? gestorCall { get; set; }
 
             // =========================================================
             // CLIENTE 95 - CLARO
             // =========================================================
-
             public string? servicio { get; set; }
             public string? comentario { get; set; }
             public string? codigoCliente { get; set; }
             public string? estadoDocumento { get; set; }
-
             public string? fechaEstadoDocumento { get; set; }
-
             public string? estadoPago { get; set; }
-
             public string? statusDocumento { get; set; }
-
             public string? fechaStatusDocumento { get; set; }
-
             public string? bajaProvabilidad { get; set; }
-
 
             // =========================================================
             // CLIENTE 59 - MAF
             // =========================================================
-
             public string? numeroCuota { get; set; }
-
             // IMPORTANTE: nullable
             public decimal? deudaVencida { get; set; }
-
             public string? tipoCredito { get; set; }
-
             public string? COD_ACC_PREV { get; set; }
-
             public string? COD_ACC_PREJU { get; set; }
-
             public string? ultimoTramo { get; set; }
-
             public string? ultimoFechaPago { get; set; }
-
             public string? categoria { get; set; }
-
             public string? numeroReprogramaciones { get; set; }
-
             public string? gWhatsApp { get; set; }
-
             public string? cuotaActual { get; set; }
-
             public string? interesActual { get; set; }
-
             public string? placa { get; set; }
-
             public string? numeroCuenta { get; set; }
-
             public string? MARCA_ESPECIAL { get; set; }
-
             public string? plazoReprogramado { get; set; }
-
             public string? plazoMaximoReprogramado { get; set; }
-
             public string? MARCA_ESPECIAL2 { get; set; }
-
             public string? COMENTARIO_REPROG { get; set; }
-
             public string? TASA_INTERES { get; set; }
-
             public string? CAPITAL_ACTUAL { get; set; }
+
+            // =========================================================
+            // CLIENTE 201 - ALFIN
+            // =========================================================
+            public string? CUENTA_BIT { get; set; }
+            public string? CLASIFICACION_CLIENTE { get; set; }
+            public string? ESTADO { get; set; }
+            public string? ATRASO { get; set; }
+            public string? DNI { get; set; }
+            public decimal? CAPITAL { get; set; }
+            public string? REQUERIDO { get; set; }
+            public string? CAMPANIA_LIQUIDACION { get; set; }
+            public string? DESCUENTO_ESPECIAL { get; set; }
+            public string? DESCUENTO_ESPECIAL_DETALLE { get; set; }
+            public string? FINANCIAMIENTO_CAMPANIA_LIQUIDACION { get; set; }
+            public string? FECHA_SURT { get; set; }
+            public string? NUMERO_CUOTA_TOTAL { get; set; }
+            public string? NUMERO_CUOTA_PAGADO { get; set; }
+            public string? NUMERO_CUOTA_PENDIENTE { get; set; }
+            public string? NUMERO_CUOTA_SIN_PAGO { get; set; }
         }
 
         public class GetGestionDeudorResponseDto

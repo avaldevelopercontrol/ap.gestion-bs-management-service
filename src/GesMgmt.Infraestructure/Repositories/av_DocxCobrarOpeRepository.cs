@@ -75,7 +75,7 @@ namespace GesMgmt.Infraestructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<av_DocxCobrarOpe?> GetGestionMejorGestionAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        public async Task<av_DocxCobrarOpe?> GetGestionMejorGestionActivoAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
         {
             return await _dbSet
                 .Include(dc => dc.av_DocxCobrar)
@@ -86,7 +86,6 @@ namespace GesMgmt.Infraestructure.Repositories
                     s.nId_Cartera == nId_Cartera &&
                     s.nId_PersDeudor == nId_PersDeudor &&
                     s.bEstado == true)
-                //.OrderByDescending(s => s.av_OpeCodCliOut.nPeso)
                 .OrderBy(g => g.av_OpeCodCliOut.nPeso) // Menor peso primero
                 .FirstOrDefaultAsync();
         }
@@ -132,12 +131,13 @@ namespace GesMgmt.Infraestructure.Repositories
             .AsNoTracking();
         }
 
-        public async Task<IQueryable<av_DocxCobrarOpe?>> GetGestionesByIdClienteAndIdCarteraAndIdDeudor(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
+        public async Task<IQueryable<av_DocxCobrarOpe?>> GetGestionesByIdClienteAndIdCarteraAndIdDeudorAsync(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
         {
             return _dbSet
             .Include(dc => dc.av_OpeCodCliOut)
-            .Where(s => s.nId_Cliente == nId_Cliente &&
-                s.nId_Cartera == nId_Cartera)
+            .Where(s => s.nId_Cliente == nId_Cliente 
+            && s.nId_Cartera == nId_Cartera
+            && s.nId_PersDeudor == nId_PersDeudor)
             .AsNoTracking();
         }
     }

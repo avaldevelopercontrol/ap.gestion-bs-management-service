@@ -1,11 +1,11 @@
 ﻿
-using GesMgmt.Domain.Entities;
-
 namespace GesMgmt.Domain.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
         Iav_AgendaRepository av_Agendas { get; }
+        Iav_AloEstadoDocumentalRepository av_AloEstadoDocumentals { get; }
+        Iav_AloTelefonoPerfilRepository av_AloTelefonoPerfils { get; }
         Iav_asigUsuarioRepository av_asigUsuarios { get; }
         Iav_BotonClienteRepository av_BotonClientes { get; }
         Iav_CabPantallaCobRepository av_CabPantallaCobs { get; }

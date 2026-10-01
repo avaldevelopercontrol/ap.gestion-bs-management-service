@@ -40,5 +40,7 @@ namespace GesMgmt.Domain.Entities
         public string? Nombre { get; set; }
         public string? Contacto { get; set; }
         public string? Parentesco { get; set; }
+        public string? Alo { get; set; }
+        public string? AloI { get; set; }
     }
 }

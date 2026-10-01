@@ -1589,13 +1589,7 @@ namespace GesMgmt.Application.Services.Boton
                         continue;
                     }
 
-                    intentos.TryGetValue(
-                        (
-                            bloque.Ventana,
-                            bloque.Canal
-                        ),
-                        out var estadisticas
-                    );
+                    intentos.TryGetValue((bloque.Ventana, bloque.Canal), out var estadisticas);
 
                     string? direccion = null;
                     string? origenDireccion = null;
@@ -1634,49 +1628,21 @@ namespace GesMgmt.Application.Services.Boton
                             origenDireccion = "DEUDOR";
                             direccion = direccionDeudor.cDirecc_Nomb?.Trim();
                             if (
-                                !string.IsNullOrWhiteSpace(
-                                    direccionDeudor
-                                        .cCli_UbigeoDistr
-                                )
+                                !string.IsNullOrWhiteSpace(direccionDeudor.cCli_UbigeoDistr)
                                 &&
-                                !(direccion ?? "")
-                                    .Contains(
-                                        direccionDeudor
-                                            .cCli_UbigeoDistr,
-
-                                        StringComparison
-                                            .OrdinalIgnoreCase
-                                    )
+                                !(direccion ?? "").Contains(direccionDeudor.cCli_UbigeoDistr, StringComparison.OrdinalIgnoreCase)
                             )
                             {
-                                direccion +=
-                                    " - "
-                                    +
-                                    direccionDeudor
-                                        .cCli_UbigeoDistr;
+                                direccion += " - " + direccionDeudor.cCli_UbigeoDistr;
                             }
                             if (
-                                !string.IsNullOrWhiteSpace(
-                                    direccionDeudor
-                                        .cCli_UbigeoProv
-                                )
-
+                                !string.IsNullOrWhiteSpace(direccionDeudor.cCli_UbigeoProv)
                                 &&
                                 !(direccion ?? "")
-                                    .Contains(
-                                        direccionDeudor
-                                            .cCli_UbigeoProv,
-
-                                        StringComparison
-                                            .OrdinalIgnoreCase
-                                    )
+                                    .Contains(direccionDeudor.cCli_UbigeoProv, StringComparison.OrdinalIgnoreCase)
                             )
                             {
-                                direccion +=
-                                    " - "
-                                    +
-                                    direccionDeudor
-                                        .cCli_UbigeoProv;
+                                direccion += " - " + direccionDeudor.cCli_UbigeoProv;
                             }
                         }
                         else
@@ -2035,6 +2001,849 @@ namespace GesMgmt.Application.Services.Boton
             workbook.SaveAs(stream);
 
             return stream.ToArray();
+        }
+        #endregion
+
+        #endregion
+
+        #region "BOTONES ALFIN"
+
+        #region "+ CÓDIGO SIP"
+        public async Task<ResultDto<GetCodigoSipResponseDto>> GetCodigoSipAlfinAsync(GetCodigoSipRequestDto request)
+        {
+            try
+            {
+                // ============================================================
+                // QUERIES
+                // ============================================================
+                var qZonaCartera = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(request.nId_Cliente);
+                var qDocCobrarParam = await _unitOfWork.av_DocxCobrarParams.GetGestionesParamByIdClienteAndIdCarteraAsync(request.nId_Cliente, request.nId_Cartera);
+                var qDocCobrar = await _unitOfWork.av_DocxCobrars.GetDocxCobByClienteAndCarteraAndDeudorAsync(request.nId_Cliente, request.nId_Cartera, request.nId_Persdeudor);
+                var qDocCobrarOpe = await _unitOfWork.av_DocxCobrarOpes.GetGestionesByIdClienteAndIdCarteraAndIdDeudorAsync(request.nId_Cliente, request.nId_Cartera, request.nId_Persdeudor);
+                var qPersDeudor = await _unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(request.nId_Persdeudor);
+                var qOpeCodCliOut = await _unitOfWork.av_OpeCodCliOuts.GetTipificacionByIdClienteAsync(request.nId_Cliente);
+                var qPersTelef = await _unitOfWork.av_PersTelefs.GetTelefonosIdDeudorAsync(request.nId_Persdeudor);
+
+                // ============================================================
+                // 1. ZONAS DE LA CARTERA
+                // ============================================================
+                var zonas = await (
+                    from dp in qDocCobrarParam
+                    join zc in qZonaCartera
+                        on dp.nId_Cliente equals zc.nid_cliente
+                    where dp.nId_Cartera == request.nId_Cartera
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.cDocParamZona != null
+                          && dp.cDocParamZona == zc.zona.ToString()
+                    select dp.cDocParamZona
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 2. DOCUMENTOS DEL DEUDOR
+                // ============================================================
+                var idsDocumentos = await (
+                    from dc in qDocCobrar
+                    join dp in qDocCobrarParam
+                        on dc.nId_DocxCobrar equals dp.nId_DocxCobrar
+                    where dc.nId_Cliente == request.nId_Cliente
+                          && dc.nId_Cartera == request.nId_Cartera
+                          && dc.nId_PersDeudor == request.nId_Persdeudor
+                          && dc.bEstado == 1
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.nId_Cartera == request.nId_Cartera
+                          && dp.cDocParamZona != null
+                          && zonas.Contains(dp.cDocParamZona)
+
+                    select dc.nId_DocxCobrar
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 4. OBTENER LA MEJOR GESTION
+                //
+                // Equivalente a:
+                //
+                // ROW_NUMBER() OVER
+                // (
+                //     PARTITION BY OP.nId_PersDeudor
+                //     ORDER BY
+                //         ISNULL(OU.nPeso,5000) ASC,
+                //         OP.dDocCobOpe_FecIni DESC,
+                //         OP.nId_DocxCobrarOpe DESC
+                // )
+                // ============================================================
+                var mejorGestion = await (
+                    from op in qDocCobrarOpe
+                    join pd in qPersDeudor
+                        on op.nId_PersDeudor
+                        equals pd.nId_PersDeudor
+                    join ou in qOpeCodCliOut
+                        on op.nId_OpeCodCliOut
+                        equals ou.nId_OpeCodCliOut
+                    where op.nId_Cliente == request.nId_Cliente
+                          && op.nId_Cartera == request.nId_Cartera
+                          && op.nId_PersDeudor == request.nId_Persdeudor
+                          && op.nId_TipoGestion == 1
+                          && idsDocumentos.Contains(op.nId_DocxCobrar)
+                    orderby
+                        (ou.nPeso ?? 5000) ascending,
+                        op.dDocCobOpe_FecIni descending,
+                        op.nId_DocxCobrarOpe descending
+                    select new
+                    {
+                        op.nId_PersDeudor,
+                        op.nTelef_Nro,
+                        op.monto_comp,
+                        op.dFechCompromisoPago,
+                        DOC_IDENTIDAD = !string.IsNullOrEmpty(pd.cPers_DNI) ? pd.cPers_DNI : pd.cPers_RUC,
+                        DEUDOR = (pd.cPers_ApePat ?? "") + " " + (pd.cPers_ApeMat ?? "") + " " + (pd.cPers_Nombres ?? "")
+                    }
+                )
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+                // ============================================================
+                // 6. VALIDAR TELEFONO
+                // ============================================================
+                var telefono = mejorGestion.nTelef_Nro?.Trim();
+
+                // ============================================================
+                // 7. RESPONSE
+                // ============================================================
+                var response = new GetCodigoSipResponseDto
+                {
+                    DOC_IDENTIDAD = mejorGestion.DOC_IDENTIDAD,
+                    DEUDOR = mejorGestion.DEUDOR.Trim(),
+                    MEJOR_CALL_TELEFONO_CONTACTO_ACTUAL = mejorGestion.nTelef_Nro,
+                    MEJOR_CALL_MONTO_COMPROMISO_LO_ACTUAL = mejorGestion.monto_comp.HasValue ? Math.Round(mejorGestion.monto_comp.Value, 2) : 0,
+                    MEJOR_CALL_FEC_COMPROMISO_ACTUAL = FormatearFecha(mejorGestion.dFechCompromisoPago?.Date) ?? "",
+                    MONTO_A_PAGAR = string.Empty,
+                    MODALIDAD = string.Empty
+                };
+
+                return ResultDto<GetCodigoSipResponseDto>.Success(response, Const.SUCCESS_CODE, Const.SUCCESS_MESSAGE, Const.SUCCESS_MESSAGE, Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetOperativaAlfin|DatabaseError: {ex.Message}");
+                return ResultDto<GetCodigoSipResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "+ SOLICITUD DE DESCUENTO"
+        public async Task<ResultDto<GetSolicitudDescuentoResponseDto>> GetSolicitudDescuentoAlfinAsync(GetSolicitudDescuentoRequestDto request)
+        {
+            try
+            {
+                // ============================================================
+                // QUERIES
+                // ============================================================
+                var qZonaCartera = await _unitOfWork.av_ZonaCarteras.GetZonasCarterasByIdClienteAsync(request.nId_Cliente);
+                var qDocCobrarParam = await _unitOfWork.av_DocxCobrarParams.GetGestionesParamByIdClienteAndIdCarteraAsync(request.nId_Cliente, request.nId_Cartera);
+                var qDocCobrar = await _unitOfWork.av_DocxCobrars.GetDocxCobByClienteAndCarteraAndDeudorAsync(request.nId_Cliente, request.nId_Cartera, request.nId_Persdeudor);
+                var qDocCobrarOpe = await _unitOfWork.av_DocxCobrarOpes.GetGestionesByIdClienteAndIdCarteraAndIdDeudorAsync(request.nId_Cliente, request.nId_Cartera, request.nId_Persdeudor);
+                var qPersDeudor = await _unitOfWork.av_PersDeudors.GetDeudoresByIdDeudorAsync(request.nId_Persdeudor);
+                var qOpeCodCliOut = await _unitOfWork.av_OpeCodCliOuts.GetTipificacionByIdClienteAsync(request.nId_Cliente);
+                var qPersTelef = await _unitOfWork.av_PersTelefs.GetTelefonosIdDeudorAsync(request.nId_Persdeudor);
+
+                // ============================================================
+                // 1. ZONAS VALIDAS DE LA CARTERA
+                // Equivalente a #TablaZona
+                // ============================================================
+                var zonas = await (
+                    from dp in qDocCobrarParam
+                    join zc in qZonaCartera
+                        on dp.nId_Cliente equals zc.nid_cliente
+                    where dp.nId_Cartera == request.nId_Cartera
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.cDocParamZona != null
+                          && dp.cDocParamZona == zc.zona.ToString()
+
+                    select dp.cDocParamZona
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 2. DOCUMENTOS ACTIVOS DEL DEUDOR
+                // Equivalente a #DeudorUnico
+                // ============================================================
+                var idsDocumentos = await (
+                    from dc in qDocCobrar
+                    join dp in qDocCobrarParam
+                        on dc.nId_DocxCobrar equals dp.nId_DocxCobrar
+                    where dc.nId_Cliente == request.nId_Cliente
+                          && dc.nId_Cartera == request.nId_Cartera
+                          && dc.nId_PersDeudor == request.nId_Persdeudor
+                          && dc.bEstado == 1
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.nId_Cartera == request.nId_Cartera
+                          && dp.cDocParamZona != null
+                          && zonas.Contains(dp.cDocParamZona)
+
+                    select dc.nId_DocxCobrar
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 3. OBTENER LA MEJOR GESTION
+                // Equivalente a:
+                // ROW_NUMBER() OVER
+                // (
+                //     PARTITION BY OP.nId_PersDeudor
+                //     ORDER BY
+                //         ISNULL(OU.nPeso,5000) ASC,
+                //         OP.dDocCobOpe_FecIni DESC,
+                //         OP.nId_DocxCobrarOpe DESC
+                // )
+                // Como estamos consultando un solo deudor:
+                // OrderBy + FirstOrDefaultAsync equivale a NRO_MEJOR = 1
+                // ============================================================
+                var mejorGestion = await (
+                    from op in qDocCobrarOpe
+                    join pd in qPersDeudor
+                        on op.nId_PersDeudor
+                        equals pd.nId_PersDeudor
+                    join ou in qOpeCodCliOut
+                        on op.nId_OpeCodCliOut
+                        equals ou.nId_OpeCodCliOut
+                    join dp in qDocCobrarParam
+                        on new
+                        {
+                            op.nId_DocxCobrar,
+                            op.nId_Cliente,
+                            op.nId_Cartera
+                        }
+                        equals new
+                        {
+                            dp.nId_DocxCobrar,
+                            nId_Cliente = dp.nId_Cliente,
+                            dp.nId_Cartera
+                        }
+                    where op.nId_Cliente == request.nId_Cliente
+                          && op.nId_Cartera == request.nId_Cartera
+                          && op.nId_PersDeudor == request.nId_Persdeudor
+                          && op.nId_TipoGestion == 1
+                          && idsDocumentos.Contains(op.nId_DocxCobrar)
+                    orderby
+                        (ou.nPeso ?? 5000) ascending,
+                        op.dDocCobOpe_FecIni descending,
+                        op.nId_DocxCobrarOpe descending
+
+                    select new
+                    {
+                        op.nId_PersDeudor,
+                        op.nTelef_Nro,
+                        DOC_IDENTIDAD = !string.IsNullOrEmpty(pd.cPers_DNI) ? pd.cPers_DNI : pd.cPers_RUC,
+                        DEUDOR = (pd.cPers_ApePat ?? "") + " " + (pd.cPers_ApeMat ?? "") + " " + (pd.cPers_Nombres ?? ""),
+                        CAPITAL_ACTUAL = dp.cDocParam66,
+                        CAMP_LIQUI = dp.cDocParam58,
+                        CAMPANA_ESPECIAL_MES = dp.cDocParam82,
+                        FECHA_SURT = dp.cDocParam46
+                    }
+                )
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+                // ============================================================
+                // 4. VALIDAR QUE EXISTA GESTION
+                // ============================================================
+                if (mejorGestion == null)
+                {
+                    return ResultDto<GetSolicitudDescuentoResponseDto>.Failure(
+                        "404",
+                        "No se encontró información para el deudor.",
+                        "No existe una gestión válida para los parámetros enviados.",
+                        404);
+                }
+
+                // ============================================================
+                // 5. VALIDAR TELEFONO
+                // Equivalente al EXISTS:
+                // EXISTS
+                // (
+                //     SELECT 1
+                //     FROM av_PersTelef PT
+                //     WHERE PT.nId_PersDeudor = GB.nId_PersDeudor
+                //       AND ISNULL(GB.nTelef_Nro,'') <> ''
+                //       AND LTRIM(RTRIM(PT.nTelef_Nro))
+                //           = LTRIM(RTRIM(GB.nTelef_Nro))
+                // )
+                // ============================================================
+                var telefonoGestion = mejorGestion.nTelef_Nro?.Trim();
+
+                var telefonoValido =
+                    !string.IsNullOrEmpty(telefonoGestion)
+                    && await qPersTelef.AnyAsync(x =>
+                        x.nId_PersDeudor == request.nId_Persdeudor
+                        && x.nTelef_Nro != null
+                        && x.nTelef_Nro.Trim() == telefonoGestion);
+
+                if (!telefonoValido)
+                {
+                    return ResultDto<GetSolicitudDescuentoResponseDto>.Failure(
+                        "404",
+                        "No se encontró información válida.",
+                        "La mejor gestión no posee un teléfono registrado para el deudor.",
+                        404);
+                }
+
+                // ============================================================
+                // 6. CONVERSIONES DE LOS CAMPOS MONEY
+                // ============================================================
+                decimal capitalActual = 0;
+                decimal campLiqui = 0;
+                decimal campanaEspecialMes = 0;
+
+                decimal.TryParse(mejorGestion.CAPITAL_ACTUAL, out capitalActual);
+                decimal.TryParse(mejorGestion.CAMP_LIQUI, out campLiqui);
+                decimal.TryParse(mejorGestion.CAMPANA_ESPECIAL_MES, out campanaEspecialMes);
+
+                // ============================================================
+                // 7. RESPONSE
+                // Equivalente al SELECT FINAL
+                // ============================================================
+                var response = new GetSolicitudDescuentoResponseDto
+                {
+                    DOC_IDENTIDAD = mejorGestion.DOC_IDENTIDAD,
+                    DEUDOR = mejorGestion.DEUDOR.Trim(),
+                    CAPITAL_ACTUAL = capitalActual,
+                    CAMP_LIQUI = campLiqui,
+                    CAMPANA_ESPECIAL_MES = campanaEspecialMes,
+                    FECHA_SURT = mejorGestion.FECHA_SURT ?? string.Empty,
+                    SOLICITA_LIQ_CON = string.Empty,
+                    FECHA_DE_PAGO = string.Empty,
+                    AGENCIA = string.Empty
+                };
+
+                return ResultDto<GetSolicitudDescuentoResponseDto>.Success(
+                    response,
+                    Const.SUCCESS_CODE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetSolicitudDescuentoAlfinAsync|DatabaseError: {ex.Message}");
+                return ResultDto<GetSolicitudDescuentoResponseDto>.Failure("500", "Error interno del servidor.", ex.Message, 500);
+            }
+        }
+        #endregion
+
+        #region "+ PLANTILLA DE LIQUIDACIÓN TOTAL"
+        public async Task<ResultDto<GetPlantillaLiquidacionResponseDto>>GetPlantillaLiquidacionAlfinAsync(GetPlantillaLiquidacionRequestDto request)
+        {
+            try
+            {
+                // ============================================================
+                // QUERIES
+                // ============================================================
+                var qZonaCartera = await _unitOfWork.av_ZonaCarteras
+                    .GetZonasCarterasByIdClienteAsync(
+                        request.nId_Cliente);
+
+                var qDocCobrarParam = await _unitOfWork.av_DocxCobrarParams
+                    .GetGestionesParamByIdClienteAndIdCarteraAsync(
+                        request.nId_Cliente,
+                        request.nId_Cartera);
+
+                var qDocCobrar = await _unitOfWork.av_DocxCobrars
+                    .GetDocxCobByClienteAndCarteraAndDeudorAsync(
+                        request.nId_Cliente,
+                        request.nId_Cartera,
+                        request.nId_Persdeudor);
+
+                var qDocCobrarOpe = await _unitOfWork.av_DocxCobrarOpes
+                    .GetGestionesByIdClienteAndIdCarteraAndIdDeudorAsync(
+                        request.nId_Cliente,
+                        request.nId_Cartera,
+                        request.nId_Persdeudor);
+
+                var qPersDeudor = await _unitOfWork.av_PersDeudors
+                    .GetDeudoresByIdDeudorAsync(
+                        request.nId_Persdeudor);
+
+                var qOpeCodCliOut = await _unitOfWork.av_OpeCodCliOuts
+                    .GetTipificacionByIdClienteAsync(
+                        request.nId_Cliente);
+
+                // ============================================================
+                // 1. ZONAS VALIDAS DE LA CARTERA
+                // Equivalente a #TablaZona
+                // ============================================================
+                var zonas = await
+                (
+                    from dp in qDocCobrarParam
+                    join zc in qZonaCartera
+                        on dp.nId_Cliente equals zc.nid_cliente
+                    where dp.nId_Cartera == request.nId_Cartera
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.cDocParamZona != null
+                          && dp.cDocParamZona == zc.zona.ToString()
+
+                    select dp.cDocParamZona
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 2. IDS DE DOCUMENTOS ACTIVOS DEL DEUDOR
+                // Equivalente a #DEUDOR_UNICO
+                // SOLO TRAEMOS nId_DocxCobrar
+                // ============================================================
+                var idsDocumentos = await
+                (
+                    from dc in qDocCobrar
+                    join dp in qDocCobrarParam
+                        on dc.nId_DocxCobrar equals dp.nId_DocxCobrar
+                    where dc.nId_Cliente == request.nId_Cliente
+                          && dc.nId_Cartera == request.nId_Cartera
+                          && dc.nId_PersDeudor == request.nId_Persdeudor
+                          && dc.bEstado == 1
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.nId_Cartera == request.nId_Cartera
+                          && dp.cDocParamZona != null
+                          && zonas.Contains(dp.cDocParamZona)
+                    select dc.nId_DocxCobrar
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 3. VALIDAR DOCUMENTOS
+                // ============================================================
+                if (!idsDocumentos.Any())
+                {
+                    return ResultDto<GetPlantillaLiquidacionResponseDto>.Failure(
+                        "404",
+                        "No se encontró información para el deudor.",
+                        "No existen documentos activos válidos para los parámetros enviados.",
+                        404);
+                }
+
+                // ============================================================
+                // 4. OBTENER LA MEJOR GESTION
+                // Equivalente a:
+                // ROW_NUMBER() OVER
+                // (
+                //     PARTITION BY OP.nId_PersDeudor
+                //     ORDER BY
+                //         ISNULL(OU.nPeso,5000) ASC,
+                //         OP.dDocCobOpe_FecIni DESC,
+                //         OP.nId_DocxCobrarOpe DESC
+                // )
+                // Como trabajamos con un solo deudor:
+                // ORDER BY + FirstOrDefaultAsync = NRO_MEJOR = 1
+                // ============================================================
+                var mejorGestion = await
+                (
+                    from op in qDocCobrarOpe
+                    join pd in qPersDeudor
+                        on op.nId_PersDeudor
+                        equals pd.nId_PersDeudor
+                    join ou in qOpeCodCliOut
+                        on op.nId_OpeCodCliOut
+                        equals ou.nId_OpeCodCliOut
+                    join dp in qDocCobrarParam
+                        on new
+                        {
+                            op.nId_DocxCobrar,
+                            op.nId_Cliente,
+                            op.nId_Cartera
+                        }
+                        equals new
+                        {
+                            dp.nId_DocxCobrar,
+                            nId_Cliente = dp.nId_Cliente,
+                            dp.nId_Cartera
+                        }
+                    join dc in qDocCobrar
+                        on op.nId_DocxCobrar
+                        equals dc.nId_DocxCobrar
+                    where op.nId_Cliente == request.nId_Cliente
+                          && op.nId_Cartera == request.nId_Cartera
+                          && op.nId_PersDeudor == request.nId_Persdeudor
+                          && op.nId_TipoGestion == 1
+                          && dc.nId_Cliente == request.nId_Cliente
+                          && dc.nId_Cartera == request.nId_Cartera
+                          && dc.nId_PersDeudor == request.nId_Persdeudor
+                          && dc.bEstado == 1
+                          && idsDocumentos.Contains(op.nId_DocxCobrar)
+                    orderby
+                        (ou.nPeso ?? 5000) ascending,
+                        op.dDocCobOpe_FecIni descending,
+                        op.nId_DocxCobrarOpe descending
+                    select new
+                    {
+                        // ====================================================
+                        // CAMPOS DEL SELECT FINAL
+                        // ====================================================
+                        DOC_IDENTIDAD = !string.IsNullOrEmpty(pd.cPers_DNI) ? pd.cPers_DNI : pd.cPers_RUC,
+                        DEUDOR = (pd.cPers_ApePat ?? "") + " " + (pd.cPers_ApeMat ?? "") + " " + (pd.cPers_Nombres ?? ""),
+                        COD_DEUDOR = dc.cPers_CodCliente,
+                        DIRECCION = dp.cDocParam13,
+                        SALDO_TOTAL_ACTUAL = dp.cDocParam65,
+                        FECHA_SURT = dp.cDocParam46
+                    }
+                )
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+                // ============================================================
+                // 5. VALIDAR QUE EXISTA MEJOR GESTION
+                // ============================================================
+                if (mejorGestion == null)
+                {
+                    return ResultDto<GetPlantillaLiquidacionResponseDto>.Failure(
+                        "404",
+                        "No se encontró información para el deudor.",
+                        "No existe una gestión válida para los parámetros enviados.",
+                        404);
+                }
+
+                // ============================================================
+                // 6. CONVERTIR SALDO TOTAL ACTUAL
+                // SQL:
+                // ROUND(CONVERT(MONEY, DP.cDocParam65), 2)
+                // ============================================================
+                decimal saldoTotalActual = 0;
+                decimal.TryParse(mejorGestion.SALDO_TOTAL_ACTUAL, out saldoTotalActual);
+
+                // ============================================================
+                // 7. RESPONSE
+                // Equivalente al SELECT FINAL
+                // ============================================================
+                var response = new GetPlantillaLiquidacionResponseDto
+                {
+                    // ========================================================
+                    // PLANTILLA PARA EMISION DE CODIGO CIP
+                    // ========================================================
+                    DOC_IDENTIDAD = mejorGestion.DOC_IDENTIDAD,
+                    DEUDOR = mejorGestion.DEUDOR.Trim(),
+
+                    // ========================================================
+                    // PLANTILLA PARA LIQUIDACION TOTAL
+                    // ========================================================
+                    COD_DEUDOR = mejorGestion.COD_DEUDOR,
+                    DIRECCION = mejorGestion.DIRECCION,
+                    SALDO_TOTAL_ACTUAL = Math.Round(saldoTotalActual, 2),
+                    MONTO_A_DESCONTAR = "",
+                    MONTO_CAMPANIA = "",
+                    FECHA_SURT = mejorGestion.FECHA_SURT,
+                    MONTO_EXCEPCION = "",
+                    AGENCIA_PAGO = "",
+                    FECHA_PAGO = ""
+                };
+
+                // ============================================================
+                // 8. RESULTADO
+                // ============================================================
+                return ResultDto<GetPlantillaLiquidacionResponseDto>.Success(
+                    response,
+                    Const.SUCCESS_CODE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError($"GetPlantillaLiquidacionAlfinAsync|DatabaseError: {ex.Message}");
+                return ResultDto<GetPlantillaLiquidacionResponseDto>.Failure(
+                    "500",
+                    "Error interno del servidor.",
+                    ex.Message,
+                    500);
+            }
+        }
+        #endregion
+
+        #region "+ CRONOGRAMA CUOTAS"
+        public async Task<ResultDto<GetCronogramaCuotasResponseDto>> GetCronogramaCuotasAlfinAsync(GetCronogramaCuotasRequestDto request)
+        {
+            try
+            {
+                // ============================================================
+                // QUERIES
+                // ============================================================
+                var qZonaCartera = await _unitOfWork.av_ZonaCarteras
+                    .GetZonasCarterasByIdClienteAsync(request.nId_Cliente);
+
+                var qDocCobrarParam = await _unitOfWork.av_DocxCobrarParams
+                    .GetGestionesParamByIdClienteAndIdCarteraAsync(
+                        request.nId_Cliente,
+                        request.nId_Cartera);
+
+                var qDocCobrar = await _unitOfWork.av_DocxCobrars
+                    .GetDocxCobByClienteAndCarteraAndDeudorAsync(
+                        request.nId_Cliente,
+                        request.nId_Cartera,
+                        request.nId_Persdeudor);
+
+                var qDocCobrarOpe = await _unitOfWork.av_DocxCobrarOpes
+                    .GetGestionesByIdClienteAndIdCarteraAndIdDeudorAsync(
+                        request.nId_Cliente,
+                        request.nId_Cartera,
+                        request.nId_Persdeudor);
+
+                var qPersDeudor = await _unitOfWork.av_PersDeudors
+                    .GetDeudoresByIdDeudorAsync(
+                        request.nId_Persdeudor);
+
+                var qOpeCodCliOut = await _unitOfWork.av_OpeCodCliOuts
+                    .GetTipificacionByIdClienteAsync(
+                        request.nId_Cliente);
+
+                var qPersTelef = await _unitOfWork.av_PersTelefs
+                    .GetTelefonosIdDeudorAsync(
+                        request.nId_Persdeudor);
+
+                var qDocCobrarCarta = await _unitOfWork.av_DocxCobrarCartas
+                    .GetCartasByIdClienteAndIdCarteraAndIdDeudorAsync(
+                        request.nId_Cliente,
+                        request.nId_Cartera,
+                        request.nId_Persdeudor);
+
+                // ============================================================
+                // 1. ZONAS VALIDAS DE LA CARTERA
+                // Equivalente a la validacion:
+                // EXISTS (
+                //     SELECT 1
+                //     FROM av_ZonaCartera
+                //     WHERE ...
+                // )
+                // ============================================================
+                var zonas = await (
+                    from dp in qDocCobrarParam
+                    join zc in qZonaCartera
+                        on dp.nId_Cliente equals zc.nid_cliente
+                    where dp.nId_Cartera == request.nId_Cartera
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.cDocParamZona != null
+                          && dp.cDocParamZona == zc.zona.ToString()
+                    select dp.cDocParamZona
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 2. DOCUMENTOS VALIDOS DEL DEUDOR
+                // ============================================================
+                var idsDocumentos = await (
+                    from dc in qDocCobrar
+                    join dp in qDocCobrarParam
+                        on dc.nId_DocxCobrar
+                        equals dp.nId_DocxCobrar
+                    where dc.nId_Cliente == request.nId_Cliente
+                          && dc.nId_Cartera == request.nId_Cartera
+                          && dc.nId_PersDeudor == request.nId_Persdeudor
+                          && dc.bEstado == 1
+                          && dp.nId_Cliente == request.nId_Cliente
+                          && dp.nId_Cartera == request.nId_Cartera
+                          && dp.cDocParamZona != null
+                          && zonas.Contains(dp.cDocParamZona)
+                    select dc.nId_DocxCobrar
+                )
+                .Distinct()
+                .ToListAsync();
+
+                // ============================================================
+                // 3. OBTENER MEJOR GESTION
+                // Equivalente a:
+                // ROW_NUMBER() OVER
+                // (
+                //     PARTITION BY OP.nId_PersDeudor
+                //     ORDER BY
+                //         ISNULL(OU.nPeso,5000) ASC,
+                //         OP.dDocCobOpe_FecIni DESC,
+                //         OP.nId_DocxCobrarOpe DESC
+                // )
+                // Como consultamos un solo deudor:
+                // ORDER BY + FirstOrDefaultAsync = NRO_MEJOR = 1
+                // ============================================================
+                var mejorGestion = await (
+                    from op in qDocCobrarOpe
+                    join pd in qPersDeudor
+                        on op.nId_PersDeudor
+                        equals pd.nId_PersDeudor
+                    join ou in qOpeCodCliOut
+                        on op.nId_OpeCodCliOut
+                        equals ou.nId_OpeCodCliOut
+                    where op.nId_Cliente == request.nId_Cliente
+                          && op.nId_Cartera == request.nId_Cartera
+                          && op.nId_PersDeudor == request.nId_Persdeudor
+                          && op.nId_TipoGestion == 1
+                          && idsDocumentos.Contains(op.nId_DocxCobrar)
+                    orderby
+                        (ou.nPeso ?? 5000) ascending,
+                        op.dDocCobOpe_FecIni descending,
+                        op.nId_DocxCobrarOpe descending
+                    select new
+                    {
+                        op.nId_PersDeudor,
+                        op.nTelef_Nro,
+
+                        DOC_IDENTIDAD =
+                            !string.IsNullOrEmpty(pd.cPers_DNI)
+                                ? pd.cPers_DNI
+                                : pd.cPers_RUC
+                    }
+                )
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+                // ============================================================
+                // 4. VALIDAR MEJOR GESTION
+                // ============================================================
+                if (mejorGestion == null)
+                {
+                    return ResultDto<GetCronogramaCuotasResponseDto>.Failure(
+                        "404",
+                        "No se encontró información.",
+                        "No existe una gestión válida para el deudor.",
+                        404);
+                }
+
+                // ============================================================
+                // 5. VALIDAR TELEFONO
+                // Equivalente a:
+                // EXISTS
+                // (
+                //     SELECT 1
+                //     FROM av_PersTelef
+                //     WHERE nId_PersDeudor = ...
+                //       AND LTRIM(RTRIM(nTelef_Nro))
+                //           = LTRIM(RTRIM(telefonoGestion))
+                // )
+                // ============================================================
+                var telefonoGestion = mejorGestion.nTelef_Nro?.Trim();
+
+                if (string.IsNullOrEmpty(telefonoGestion))
+                {
+                    return ResultDto<GetCronogramaCuotasResponseDto>.Failure(
+                        "404",
+                        "No se encontró información válida.",
+                        "La mejor gestión no posee número telefónico.",
+                        404);
+                }
+
+                var telefonoValido = await qPersTelef
+                    .AnyAsync(x =>
+                        x.nId_PersDeudor == request.nId_Persdeudor
+                        && x.nTelef_Nro != null
+                        && x.nTelef_Nro.Trim() == telefonoGestion);
+
+                if (!telefonoValido)
+                {
+                    return ResultDto<GetCronogramaCuotasResponseDto>.Failure(
+                        "404",
+                        "No se encontró información válida.",
+                        "El teléfono de la mejor gestión no está registrado para el deudor.",
+                        404);
+                }
+
+                // ============================================================
+                // 6. GESTION CRONOGRAMA
+                // SQL:
+                // MAX(CONVERT(INT, ISNULL(cNroCarta,'0')))
+                // MAX(CONVERT(MONEY, ISNULL(cDocParam01,'0')))
+                // MONTO_LIQUIDAR =
+                // MONTO_MAXIMO * NUMERO_CUOTA
+                // ============================================================
+                var cronogramaData = await qDocCobrarCarta
+                    .Where(x =>
+                        x.nId_Cliente == request.nId_Cliente
+                        && x.nId_Cartera == request.nId_Cartera
+                        && x.nId_PersDeudor == request.nId_Persdeudor
+                        && x.bEstado == true)
+                    .Select(x => new
+                    {
+                        x.cNroCarta,
+                        x.cDocParam01
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                // ============================================================
+                // 7. CONVERSION DEL CRONOGRAMA
+                // Se realiza fuera de EF porque los campos son string.
+                // Esto evita problemas de traducción SQL de Convert / TryParse.
+                // ============================================================
+                int numeroCuota = 0;
+                decimal montoMaximo = 0;
+
+                if (cronogramaData.Any())
+                {
+                    numeroCuota = cronogramaData
+                        .Select(x =>
+                        {
+                            return int.TryParse(x.cNroCarta, out var valor)
+                                ? valor
+                                : 0;
+                        })
+                        .DefaultIfEmpty(0)
+                        .Max();
+                    montoMaximo = cronogramaData
+                        .Select(x =>
+                        {
+                            return decimal.TryParse(x.cDocParam01, out var valor)
+                                ? valor
+                                : 0;
+                        })
+                        .DefaultIfEmpty(0)
+                        .Max();
+                }
+
+                // ============================================================
+                // 8. MONTO LIQUIDAR
+                // SQL:
+                // ROUND(
+                //     ISNULL(GC.MONTO_MAXIMO,0)
+                //     *
+                //     ISNULL(GC.NUMERO_CUOTA,0),
+                //     2
+                // )
+                // ============================================================
+                var montoLiquidar = Math.Round(
+                    montoMaximo * numeroCuota,
+                    2);
+
+                // ============================================================
+                // 9. RESPONSE
+                // ============================================================
+                var response = new GetCronogramaCuotasResponseDto
+                {
+                    DOC_IDENTIDAD = mejorGestion.DOC_IDENTIDAD,
+                    MEJOR_CALL_TELEFONO_CONTACTO_ACTUAL = mejorGestion.nTelef_Nro,
+                    MONTO_LIQUIDAR = montoLiquidar,
+                    OFICINA = string.Empty,
+                    CUOTAS = string.Empty,
+                    MONTO_A_PAGAR = string.Empty,
+                    FECHA_DE_PAGO = string.Empty
+                };
+
+                return ResultDto<GetCronogramaCuotasResponseDto>.Success(
+                    response,
+                    Const.SUCCESS_CODE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.SUCCESS_MESSAGE,
+                    Const.OK_REQUEST_CODE);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(
+                    $"GetLiquidacionAlfinAsync|DatabaseError: {ex.Message}");
+                return ResultDto<GetCronogramaCuotasResponseDto>.Failure(
+                    "500",
+                    "Error interno del servidor.",
+                    ex.Message,
+                    500);
+            }
         }
         #endregion
 
@@ -2486,6 +3295,15 @@ namespace GesMgmt.Application.Services.Boton
             }
 
             return data;
+        }
+
+        private static string FormatearFecha(DateTime? fecha)
+        {
+            if (fecha != null)
+            {
+                return fecha.Value.ToString("dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            return null;
         }
         #endregion
 

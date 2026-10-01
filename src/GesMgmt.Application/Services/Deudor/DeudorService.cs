@@ -464,7 +464,7 @@ namespace GesMgmt.Application.Services.Deudor
         private async Task<string> MejorStatus(int nId_Cliente, int nId_Cartera, int nId_PersDeudor)
         {
             string valor = string.Empty;
-            var mejorgestionuno = await _unitOfWork.av_DocxCobrarOpes.GetGestionMejorGestionAsync(nId_Cliente, nId_Cartera, nId_PersDeudor);
+            var mejorgestionuno = await _unitOfWork.av_DocxCobrarOpes.GetGestionMejorGestionActivoAsync(nId_Cliente, nId_Cartera, nId_PersDeudor);
             if (mejorgestionuno == null)
                 return valor;
 

@@ -1,5 +1,4 @@
 using GesMgmt.Domain.Entities;
-using GesMgmt.Domain.Interfaces;
 using GesMgmt.Infraestructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +7,8 @@ namespace GesMgmt.Infraestructure.Persistence
     public class AvalDbContext: DbContext
     {
         public DbSet<av_Agenda> av_Agendas { get; set; }
+        public DbSet<av_AloEstadoDocumental> av_AloEstadoDocumentals { get; set; }
+        public DbSet<av_AloTelefonoPerfil> av_AloTelefonoPerfils { get; set; }
         public DbSet<av_asigUsuario> av_asigUsuarios { get; set; }
         public DbSet<av_BotonCliente> av_BotonClientes { get; set; }
         public DbSet<av_CabPantallaCob> av_CabPantallaCobs { get; set; }
@@ -88,6 +89,8 @@ namespace GesMgmt.Infraestructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new av_AgendaConfiguration());
+            modelBuilder.ApplyConfiguration(new av_AloEstadoDocumentalConfiguration());
+            modelBuilder.ApplyConfiguration(new av_AloTelefonoPerfilConfiguration());
             modelBuilder.ApplyConfiguration(new av_asigUsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new av_BotonClienteConfiguration());
             modelBuilder.ApplyConfiguration(new av_CabPantallaCobConfiguration());

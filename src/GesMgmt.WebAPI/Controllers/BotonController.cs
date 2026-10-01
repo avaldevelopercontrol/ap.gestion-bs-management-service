@@ -39,9 +39,9 @@ namespace GesMgmt.WebAPI.Controllers
         /// <response code="200">Obtiene la Lista de los botones Por Cliente y Contrato.</response>
         [SwaggerOperation(Summary = "[API]: Endpoint Gestion Botones Por Cliente y Contrato")]
         [HttpGet("GetBotonesByClienteAndContrato")]
-        [ProducesResponseType(typeof(ResultDto<GetGestionBotonesResponseDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResultDto<>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ResultDto<ResultListDto<IEnumerable<GetGestionBotonesResponseDto>>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionBotonesResponseDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultListDto<IEnumerable<GetGestionBotonesResponseDto>>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetGestionBotonesAsync([FromQuery] GetGestionBotonesRequestDto gestionBotonesDto)
         {
             _Logger.LogInfo($"GetBotonesByClienteAndContrato|Begin|GetBotonesByClienteAndContratoAsync|request: {JsonSerializer.Serialize(gestionBotonesDto)}");
@@ -178,6 +178,98 @@ namespace GesMgmt.WebAPI.Controllers
             var excel = await _botonService.ExportGestionEstadoCuentaAsync(estadoCuentaDto);
             _Logger.LogInfo($"ExportGestionEstadoCuenta|End|ExportGestionEstadoCuentaAsync|response: {JsonSerializer.Serialize(excel)}");
             return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"EstadoCuenta_{DateTime.Now:yyyyMMddHHmmss}.xlsx");
+        }
+        #endregion
+
+        #endregion
+
+        #region "BOTONES ALFIN"
+
+        #region "+ CÓDIGO SIP"
+        /// <summary>
+        /// Obtiene información de CODIGO SIP - CLIENTE ALFIN.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene información de CODIGO SIP - CLIENTE ALFIN.
+        /// </remarks>
+        /// <response code="200">Obtiene información de CODIGO SIP - CLIENTE ALFIN.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene información de CODIGO SIP - CLIENTE ALFIN")]
+        [HttpGet("GetCodigoSipAlfin")]
+        [ProducesResponseType(typeof(ResultDto<GetCodigoSipResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<GetCodigoSipResponseDto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<GetCodigoSipResponseDto>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCodigoSipAlfinAsync([FromQuery] GetCodigoSipRequestDto codigoSipDto)
+        {
+            _Logger.LogInfo($"GetCodigoSipAlfin|Begin|GetCodigoSipAlfinAsync|request:{codigoSipDto}");
+            var result = await _botonService.GetCodigoSipAlfinAsync(codigoSipDto);
+            _Logger.LogInfo($"GetCodigoSipAlfin|End|GetCodigoSipAlfinAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+        #endregion
+
+        #region "+ SOLICITUD DE DESCUENTO"
+        /// <summary>
+        /// Obtiene información de SOLICITUD DE DESCUENTO - CLIENTE ALFIN.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene información de SOLICITUD DE DESCUENTO - CLIENTE ALFIN.
+        /// </remarks>
+        /// <response code="200">Obtiene información de SOLICITUD DE DESCUENTO - CLIENTE ALFIN.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene información de SOLICITUD DE DESCUENTO - CLIENTE ALFIN")]
+        [HttpGet("GetSolicitudDescuentoAlfin")]
+        [ProducesResponseType(typeof(ResultDto<GetSolicitudDescuentoResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<GetSolicitudDescuentoResponseDto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<GetSolicitudDescuentoResponseDto>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetSolicitudDescuentoAlfinAsync([FromQuery] GetSolicitudDescuentoRequestDto solicitudDescuentoDto)
+        {
+            _Logger.LogInfo($"GetSolicitudDescuentoAlfin|Begin|GetSolicitudDescuentoAlfinAsync|request:{solicitudDescuentoDto}");
+            var result = await _botonService.GetSolicitudDescuentoAlfinAsync(solicitudDescuentoDto);
+            _Logger.LogInfo($"GetSolicitudDescuentoAlfin|End|GetSolicitudDescuentoAlfinAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+        #endregion
+
+        #region "+ PLANTILLA DE LIQUIDACIÓN TOTAL"
+        /// <summary>
+        /// Obtiene información de PLANTILLA DE LIQUIDACIÓN TOTAL - CLIENTE ALFIN.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene información de PLANTILLA DE LIQUIDACIÓN TOTAL - CLIENTE ALFIN.
+        /// </remarks>
+        /// <response code="200">Obtiene información de PLANTILLA DE LIQUIDACIÓN TOTAL - CLIENTE ALFIN.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene información de PLANTILLA DE LIQUIDACIÓN TOTAL - CLIENTE ALFIN")]
+        [HttpGet("GetPlantillaLiquidacionAlfin")]
+        [ProducesResponseType(typeof(ResultDto<GetPlantillaLiquidacionResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<GetPlantillaLiquidacionResponseDto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<GetPlantillaLiquidacionResponseDto>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPlantillaLiquidacionAlfinAsync([FromQuery] GetPlantillaLiquidacionRequestDto solicitudDescuentoDto)
+        {
+            _Logger.LogInfo($"GetPlantillaLiquidacionAlfin|Begin|GetPlantillaLiquidacionAlfinAsync|request:{solicitudDescuentoDto}");
+            var result = await _botonService.GetPlantillaLiquidacionAlfinAsync(solicitudDescuentoDto);
+            _Logger.LogInfo($"GetPlantillaLiquidacionAlfin|End|GetPlantillaLiquidacionAlfinAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
+        }
+        #endregion
+
+        #region "+ CRONOGRAMA CUOTAS"
+        /// <summary>
+        /// Obtiene información de CRONOGRAMA CUOTAS - CLIENTE ALFIN.
+        /// </summary>
+        /// <remarks>
+        /// Obtiene información de CRONOGRAMA CUOTAS - CLIENTE ALFIN.
+        /// </remarks>
+        /// <response code="200">Obtiene información de CRONOGRAMA CUOTAS - CLIENTE ALFIN.</response>
+        [SwaggerOperation(Summary = "[API]: Endpoint Obtiene información de CRONOGRAMA CUOTAS - CLIENTE ALFIN")]
+        [HttpGet("GetCronogramaCuotasAlfin")]
+        [ProducesResponseType(typeof(ResultDto<GetCronogramaCuotasResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<GetCronogramaCuotasResponseDto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultDto<GetCronogramaCuotasResponseDto>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCronogramaCuotasAlfinAsync([FromQuery] GetCronogramaCuotasRequestDto cronogramaCuotasDto)
+        {
+            _Logger.LogInfo($"GetCronogramaCuotasAlfin|Begin|GetCronogramaCuotasAlfinAsync|request:{cronogramaCuotasDto}");
+            var result = await _botonService.GetCronogramaCuotasAlfinAsync(cronogramaCuotasDto);
+            _Logger.LogInfo($"GetCronogramaCuotasAlfin|End|GetCronogramaCuotasAlfinAsync|response: {JsonSerializer.Serialize(result)}");
+            return StatusCode(result.StatusCode, result);
         }
         #endregion
 

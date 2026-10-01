@@ -4,21 +4,81 @@ namespace GesMgmt.Application.DTOs.Telefono
 {
     public class TelefonoResponseDto
     {
+
+        public class GetTelefonosSqlDto
+        {
+            public string? ntelef_Prioridad { get; set; }
+            public string? telef_nro { get; set; }
+
+            public string? cNombren_PersDeudorGestionHrs { get; set; }
+            public string? cNombre_PersRefUbi { get; set; }
+            public string? cNombre_PersTelefOpe { get; set; }
+            public string? dFecUlt_PerstelefOpe { get; set; }
+            public string? dFecCarga_PersTelef { get; set; }
+            public int nid_perstelef { get; set; }
+            public int? nId_PersTelefOpe { get; set; }
+            public int? nId_PersRefUbi { get; set; }
+            public int? nid_PersDeudorGestionHrs { get; set; }
+            public string? ntelef_pre { get; set; }
+            public string? ntelef_Nro { get; set; }
+            public string? nTelef_Anexo { get; set; }
+            public string? ctelef_coment { get; set; }
+            public string? ncontactados { get; set; }
+            public string? Base { get; set; }
+            public int nreferencia { get; set; }
+            public int nfuenteBus { get; set; }
+            public string? CDescripcion { get; set; }
+            public string? dFec_ActualizaBase { get; set; }
+            public int nId_OperadorTelefonico { get; set; }
+            public int? nNoContactados { get; set; }
+            public int? nCant_Ivr { get; set; }
+            public long nOrden_Act { get; set; }
+            public bool? bReclamo { get; set; }
+            public string? sreclamo { get; set; }
+            public string? Nombre { get; set; }
+            public string? Contacto { get; set; }
+            public string? Parentesco { get; set; }
+            public string? nTelef_Nro_Enmascara { get; set; }
+            public string? ContactoClase { get; set; }
+            public string? DescripClas { get; set; }
+            public string? FContacto { get; set; }
+            public int? Horario { get; set; }
+            public string? Respuesta { get; set; }
+            public int? SMS { get; set; }
+            public int? WSP { get; set; }
+            public int? Llamadas { get; set; }
+            public string? Alcance { get; set; }
+            public int? GestionVigente { get; set; }
+        }
+
         public class GetTelefonosResponseDto
         {
             public int nId_PersTelef { get; set; }
-            public int? prioridad { get; set; }
-            public string? nroTelefono { get; set; }
-            public string? horario { get; set; }
-            public string? referenciaUbicacion { get; set; }
-            public string? estado { get; set; }
-            public string? fechaEstado { get; set; }
-            public string? fechaBase { get; set; }
-            public string? contactados { get; set; }
-            public int? noContactados { get; set; }
-            public int? cantidadIvr { get; set; }
-            public string? fuente { get; set; }
-            public string? ordenSearch { get; set; }
+            public string prioridad { get; set; } = "";
+            public string nroTelefono { get; set; } = "";
+            public string horario { get; set; } = "";
+            public string referenciaUbicacion { get; set; } = "";
+            public string estado { get; set; } = "";
+            public string fechaEstado { get; set; } = "";
+            public string fechaBase { get; set; } = "";
+            public string contactados { get; set; } = "";
+            public int noContactados { get; set; }
+            public int cantidadIvr { get; set; }
+            public string fuente { get; set; } = "";
+            public string ordenSearch { get; set; } = "";
+            // ================================================
+            // NUEVOS CAMPOS
+            // ================================================
+            public string contactoClase { get; set; } = "";
+            public string descripcionClasificacion { get; set; } = "";
+            public string fechaContacto { get; set; } = "";
+            public int? horaContacto { get; set; }
+            public string respuesta { get; set; } = "";
+            public int sms { get; set; }
+            public int wsp { get; set; }
+            public int llamadas { get; set; }
+            public string alcance { get; set; } = "";
+            public int? gestionVigente { get; set; }
         }
 
         public class GetTelefonoResultados

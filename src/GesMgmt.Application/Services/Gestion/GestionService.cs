@@ -7,6 +7,7 @@ using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.Arm;
 using static GesMgmt.Application.DTOs.Gestion.GestionRequestDto;
 using static GesMgmt.Application.DTOs.Gestion.GestionResponseDto;
 
@@ -259,7 +260,7 @@ namespace GesMgmt.Application.Services.Gestion
                                 .Take(gestionDto.PageSize)
                                 .ToListAsync();
                     }
-                    else
+                    else if (gestionDto.nId_Cliente == 59)
                     {
                         data = await (
                                     from s in q_Doc
@@ -329,8 +330,276 @@ namespace GesMgmt.Application.Services.Gestion
                                 .Take(gestionDto.PageSize)
                                 .ToListAsync();
                     }
-                    
-                    
+                    else if (gestionDto.nId_Cliente == 201)
+                    {
+                        data = await (
+                                        from s in q_Doc
+                                        join dcp in q_dcp
+                                        on new
+                                        {
+                                            nId_DocxCobrar = s.nId_DocxCobrar,
+                                            nId_Cartera = (int?)s.nId_Cartera
+                                        }
+                                        equals new
+                                        {
+                                            nId_DocxCobrar = dcp.nId_DocxCobrar,
+                                            nId_Cartera = dcp.nId_Cartera
+                                        }
+                                        where
+                                            s.nId_Cliente == gestionDto.nId_Cliente
+                                            && s.nId_Cartera == gestionDto.nId_Cartera
+                                            && s.nId_PersDeudor == gestionDto.nId_Persdeudor
+                                            && (s.bEstado == 1 || s.bEstado == 0)
+                                        orderby
+                                            s.bEstado descending,
+                                            s.dDoc_FecVenc ascending
+
+                        select new GetGestionDocumentoResponseDto
+                        {
+                            nId_ClienteJson = gestionDto.nId_Cliente,
+                            // =====================================================
+                            // CAMPOS RESERVADOS
+                            // =====================================================
+                            nId_DocxCobrar = s.nId_DocxCobrar,
+                            mejorStatus = s.mej_status ?? 0,
+                            nId_Moneda = s.av_Moneda != null ? s.av_Moneda.nId_Moneda : 0,
+                            bEstado = s.bEstado,
+                            nZona = dcp.cDocParamZona ?? "0",
+                            bSelected = s.bEstado == 1,
+                            nId_Estrategia = s.nid_estrategia ?? 0,
+                            nId_Cartera = s.nId_Cartera,
+
+                            // Se asigna posteriormente con el foreach
+                            tramo = dcp.cDocParam04 ?? "SIN-TRAMO",
+                            nro = 0,
+                            // =====================================================
+                            // CLIENTE
+                            // SQL ORIGINAL:
+                            // DC.cPers_CodCliente
+                            // +
+                            // VALIDAR CRONOGRAMA VIGENTE
+                            // +
+                            // cDocParam109
+                            // SIN HTML
+                            // =====================================================
+                            CUENTA_BIT = (s.cPers_CodCliente ?? "")
+                                        +
+                                        (
+                                            (dcp.cDocParam101 ?? "0") == "1" ? " VALIDAR CRONOGRAMA VIGENTE" : ""
+                                        )
+                                        +
+                                        (
+                                            dcp.cDocParam109 != null ? " " + dcp.cDocParam109 : ""
+                                        ),
+                            // =====================================================
+                            // SBS CALIFICACION
+                            // SQL:
+                            // cDocParam72 + ' REPORTADO A LA SBS'
+                            // =====================================================
+                            CLASIFICACION_CLIENTE = (dcp.cDocParam72 ?? "") + " REPORTADO A LA SBS",
+                            // =====================================================
+                            // ESTADO
+                            // Se elimina solamente el HTML.
+                            // Se mantiene exactamente la lógica CASE.
+                            // =====================================================
+                            ESTADO = s.bEstado == 1
+                                    ?
+                                    (
+                                        !string.IsNullOrEmpty(s.cDoc_Coment)
+                                            ? s.cDoc_Coment
+                                            : "ACTIVO"
+                                    )
+                                    :
+                                    s.bEstado == 0
+                                    ?
+                                    (
+                                        s.cDoc_Coment == "SUSPENDER GESTIÓN"
+                                            ? "SUSPENDER GESTIÓN"
+                                            : "INACTIVO"
+                                    )
+                                    :
+                                    "ANULADO",
+                            // =====================================================
+                            // DÍAS ATRASO + TRAMO
+                            // SQL:
+                            // nDoc_DiasAtrazo
+                            // <hr>
+                            // cDocParam04
+                            // SIN HTML:
+                            // "150 TRAMO 4"
+                            // =====================================================
+                            ATRASO =
+                                    (s.nDoc_DiasAtrazo ?? 0).ToString()
+                                    + " "
+                                    + (dcp.cDocParam04 ?? ""),
+                            //diasAtrazo = s.nDoc_DiasAtrazo ?? 0,
+                            // =====================================================
+                            // DNI
+                            // =====================================================
+                            DNI = dcp.cDocParam18 ?? "",
+                            // =====================================================
+                            // MONEDA
+                            // =====================================================
+                            siglaMoneda = s.av_Moneda != null ? s.av_Moneda.cSigla_Moneda ?? "" : "",
+                            // =====================================================
+                            // SALDO TOTAL
+                            // SQL:
+                            // convert(money,cDocParam65)
+                            // Lo dejamos como importeSaldo.
+                            // =====================================================
+                            importeSaldo = dcp.cDocParam65 != null ? Convert.ToDecimal(dcp.cDocParam65) : 0,
+                            // =====================================================
+                            // CAPITAL
+                            // SQL:
+                            // convert(money,cDocParam66)
+                            // =====================================================
+                            CAPITAL = dcp.cDocParam66 != null ? Convert.ToDecimal(dcp.cDocParam66) : 0,
+                            // =====================================================
+                            // REQUERIDO
+                            // SQL ORIGINAL:
+                            // cDocParam65
+                            // +
+                            // 'Cuota: '
+                            // +
+                            // cDocParam26
+                            // RESULTADO:
+                            // 15000.00 Cuota: 850.00
+                            // =====================================================
+                            REQUERIDO = (dcp.cDocParam65 ?? "0") + " Cuota: " + (dcp.cDocParam26 ?? "0"),
+                            // =====================================================
+                            // CAMPAÑA LIQUIDACIÓN
+                            // SQL:
+                            // cDocParam58
+                            // +
+                            // (% Dscto Liq: CALCULO)
+                            // =====================================================
+                            CAMPANIA_LIQUIDACION =
+                                                    (dcp.cDocParam58 ?? "0")
+                                                    +
+                                                    " (% Dscto Liq: "
+                                                    +
+                                                    (
+                                                        dcp.cDocParam65 != null
+                                                        && dcp.cDocParam58 != null
+                                                        && Convert.ToDecimal(dcp.cDocParam65) != 0
+                                                            ? (
+                                                                (
+                                                                    1 -
+                                                                    (
+                                                                        Convert.ToDecimal(dcp.cDocParam58)
+                                                                        /
+                                                                        Convert.ToDecimal(dcp.cDocParam65)
+                                                                    )
+                                                                ) * 100
+                                                              ).ToString()
+                                                            : "0"
+                                                    )
+                                                    +
+                                                    "%)",
+                            // =====================================================
+                            // DESCUENTO ESPECIAL
+                            // SQL:
+                            // cDocParam82
+                            // +
+                            // cDocParam110
+                            // SIN HTML
+                            // =====================================================
+                            DESCUENTO_ESPECIAL =
+                                                (
+                                                    !string.IsNullOrEmpty(dcp.cDocParam82)
+                                                        ? dcp.cDocParam82
+                                                        : ""
+                                                )
+                                                +
+                                                (
+                                                    !string.IsNullOrEmpty(dcp.cDocParam110)
+                                                        ? " " + dcp.cDocParam110
+                                                        : ""
+                                                ),
+                            // =====================================================
+                            // DETALLE DESCUENTO
+                            // SQL:
+                            // SI bEstado = 1
+                            //      cDocParam81
+                            //      +
+                            //      si existe cDocParam110 => NARANJA
+                            // =====================================================
+                            DESCUENTO_ESPECIAL_DETALLE =
+                                                        s.bEstado == 1
+                                                            ?
+                                                            (
+                                                                (dcp.cDocParam81 ?? "")
+                                                                +
+                                                                (
+                                                                    !string.IsNullOrEmpty(dcp.cDocParam110)
+                                                                        ? " NARANJA"
+                                                                        : ""
+                                                                )
+                                                            )
+                                                            : "",
+                            // =====================================================
+                            // FINANCIAMIENTO
+                            // SQL:
+                            // 6 cuotas: MONEDA + CAPITAL/6
+                            // 12 cuotas: MONEDA + CAPITAL/12
+                            // 18 cuotas: MONEDA + CAPITAL/18
+                            // =====================================================
+                            FINANCIAMIENTO_CAMPANIA_LIQUIDACION =
+                                                                "6 cuotas: "
+                                                                +
+                                                                (
+                                                                    s.av_Moneda != null ? s.av_Moneda.cSigla_Moneda ?? "" : ""
+                                                                )
+                                                                +
+                                                                (
+                                                                    dcp.cDocParam66 != null ? (Convert.ToDecimal(dcp.cDocParam66) / 6).ToString() : "0"
+                                                                )
+                                                                +
+                                                                " | 12 cuotas: "
+                                                                +
+                                                                (
+                                                                    s.av_Moneda != null ? s.av_Moneda.cSigla_Moneda ?? "" : ""
+                                                                )
+                                                                +
+                                                                (
+                                                                    dcp.cDocParam66 != null ? (Convert.ToDecimal(dcp.cDocParam66) / 12).ToString() : "0"
+                                                                )
+                                                                +
+                                                                " | 18 cuotas: "
+                                                                +
+                                                                (
+                                                                    s.av_Moneda != null ? s.av_Moneda.cSigla_Moneda ?? "" : ""
+                                                                )
+                                                                +
+                                                                (
+                                                                    dcp.cDocParam66 != null ? (Convert.ToDecimal(dcp.cDocParam66) / 18).ToString() : "0"
+                                                                ),
+                                                                // =====================================================
+                                                                // FECHA SURT
+                                                                // =====================================================
+                                                                FECHA_SURT = dcp.cDocParam46 ?? "",
+                                                                // =====================================================
+                                                                // CUOTAS
+                                                                // =====================================================
+                                                                NUMERO_CUOTA_TOTAL = dcp.cDocParam83 ?? "",
+                                                                NUMERO_CUOTA_PAGADO = dcp.cDocParam84 ?? "",
+                                                                NUMERO_CUOTA_PENDIENTE = dcp.cDocParam85 ?? "",
+                                                                NUMERO_CUOTA_SIN_PAGO = dcp.cDocParam86 ?? "",
+                                                                // =====================================================
+                                                                // CAMPOS COMUNES
+                                                                // =====================================================
+                                                                numeroDocumento = s.cDoc_Numero,
+                                                                fechaVencimiento = s.dDoc_FecVenc.HasValue ? FormatearFecha(s.dDoc_FecVenc) : "",
+                                                                gestorCall = s.av_Usuario != null ? s.av_Usuario.nId_Usuario + " - " + s.av_Usuario.cUsr_Login : ""
+                        }
+                    )
+                    .Skip(
+                        (gestionDto.PageNumber - 1)
+                        * gestionDto.PageSize
+                    )
+                    .Take(gestionDto.PageSize)
+                    .ToListAsync();
+                }
 
                     int correlativo = (gestionDto.PageNumber - 1) * gestionDto.PageSize + 1;
 
@@ -373,6 +642,17 @@ namespace GesMgmt.Application.Services.Gestion
         {
             return fecha.Value.ToString("dd MMM yyyy",
                 System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private static decimal ConvertirDecimal(string? valor)
+        {
+            if (string.IsNullOrWhiteSpace(valor))
+                return 0;
+
+            if (decimal.TryParse(valor, out decimal resultado))
+                return resultado;
+
+            return 0;
         }
 
         public async Task<ResultDto<GetGestionCabeceraAdicionalResponseDto>> GetGestionDocumentosAdicionalesCabeceraAsync(GetGestionCabeceraAdicionalRequestDto gestionCabeceraAdicionalDto)

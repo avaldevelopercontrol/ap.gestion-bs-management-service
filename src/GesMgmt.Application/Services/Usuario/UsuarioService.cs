@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.InkML;
-using GesMgmt.Application.DTOs;
+﻿using GesMgmt.Application.DTOs;
 using GesMgmt.Application.Interfaces;
 using GesMgmt.Application.Interfaces.Usuario;
 using GesMgmt.Application.Logger;
@@ -7,7 +6,6 @@ using GesMgmt.Application.Validators.Usuario;
 using GesMgmt.Domain.Constants;
 using GesMgmt.Domain.Entities;
 using GesMgmt.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using static GesMgmt.Application.DTOs.Usuario.UsuarioRequestDto;
