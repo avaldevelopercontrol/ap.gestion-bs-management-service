@@ -76,17 +76,48 @@ namespace GesMgmt.Infraestructure.Persistence
                 builder.Property(scope => scope.FechaActualizacion).HasColumnName("fecha_actualizacion");
             });
 
+
             modelBuilder.Entity<AlcanceOpcionGrupoAnalitica>(builder =>
             {
                 builder.ToTable("alcance_opcion_grupo", "acceso_analitica");
-                builder.HasKey(scope => new { scope.IdOpcion, scope.IdGrupoSisges });
-                builder.Property(scope => scope.IdOpcion).HasColumnName("id_opcion");
-                builder.Property(scope => scope.IdGrupoSisges).HasColumnName("id_grupo_sisges");
-                builder.Property(scope => scope.EsActivo).HasColumnName("es_activo");
-                builder.Property(scope => scope.CreadoPor).HasColumnName("creado_por");
-                builder.Property(scope => scope.FechaCreacion).HasColumnName("fecha_creacion");
-                builder.Property(scope => scope.ActualizadoPor).HasColumnName("actualizado_por");
-                builder.Property(scope => scope.FechaActualizacion).HasColumnName("fecha_actualizacion");
+
+                builder.HasKey(scope => new
+                {
+                    scope.IdOpcion,
+                    scope.IdGrupoSisges
+                });
+
+                builder.Property(scope => scope.IdOpcion)
+                    .HasColumnName("id_opcion");
+
+                builder.Property(scope => scope.IdGrupoSisges)
+                    .HasColumnName("id_grupo_sisges");
+
+                builder.Property(scope => scope.EsActivo)
+                    .HasColumnName("es_activo");
+
+                builder.Property(scope => scope.CreadoPor)
+                    .HasColumnName("creado_por");
+
+                builder.Property(scope => scope.FechaCreacion)
+                    .HasColumnName("fecha_creacion");
+
+                builder.Property(scope => scope.ActualizadoPor)
+                    .HasColumnName("actualizado_por");
+
+                builder.Property(scope => scope.FechaActualizacion)
+                    .HasColumnName("fecha_actualizacion");
+
+                // Relacion con configuracion_opcion.
+                // Permite que EF Core ordene las inserciones
+                // respetando la clave foranea existente en SQL Server.
+                builder.HasOne<ConfiguracionOpcionAnalitica>()
+                    .WithMany()
+                    .HasForeignKey(scope => scope.IdOpcion)
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .HasConstraintName(
+                        "FK_alcance_opcion_grupo_configuracion_opcion"
+                    );
             });
 
             modelBuilder.Entity<AlcanceUsuarioOpcionAnalitica>(builder =>
